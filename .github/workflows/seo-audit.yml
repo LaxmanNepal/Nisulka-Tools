@@ -1,4 +1,4 @@
-name: SEO Audit
+name: Nisulka Tools SEO Audit
 
 on:
   push:
@@ -9,13 +9,10 @@ on:
       - "seo/**"
       - ".github/workflows/seo-audit.yml"
 
-  pull_request:
-    paths:
-      - "tools/**"
-      - "seo/**"
-      - ".github/workflows/seo-audit.yml"
-
   workflow_dispatch:
+
+  schedule:
+    - cron: "30 2 * * 1"
 
 permissions:
   contents: write
@@ -28,103 +25,163 @@ jobs:
 
     steps:
 
-      # ============================================
-      # 1. Checkout repository
-      # ============================================
-
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      # ============================================
-      # 2. Setup Python
-      # ============================================
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.x"
 
-      # ============================================
-      # 3. Run SEO auditor
-      # ============================================
-
-      - name: Run SEO audit
+      - name: Run SEO auditor
         run: |
-          python3 seo/seo-auditor.py
+          python3 seo/seo_auditor.py
 
-      # ============================================
-      # 4. Show reports
-      # ============================================
-
-      - name: Show SEO results
+      - name: Display SEO summary
         run: |
-          echo "========================================"
+
+          echo "======================================"
           echo "NISULKA TOOLS SEO AUDIT"
-          echo "========================================"
+          echo "======================================"
 
-          if [ -f seo/reports/seo-results.json ]; then
-            python3 - <<'PY'
+          python3 <<'PY'
+
           import json
 
           with open(
-              "seo/reports/seo-results.json",
-              "r",
+              "data/seo-audit.json",
               encoding="utf-8"
           ) as f:
-              results = json.load(f)
+
+              data = json.load(f)
+
+          print(
+              f"Total tools: {data['totalTools']}"
+          )
+
+          print(
+              f"Average SEO score: "
+              f"{data['averageScore']}/100"
+          )
 
           print()
 
-          for result in sorted(
-              results,
-              key=lambda x: x["score"]
+          print(
+              "Tool rankings:"
+          )
+
+          print(
+              "--------------------------------------"
+          )
+
+          for index, tool in enumerate(
+              data["tools"],
+              start=1
           ):
-              print(
-                  f"{result['score']:>3}/100 "
-                  f"{result['status']} "
-                  f"{result['slug']}"
-              )
-
-          print()
-
-          if results:
-              average = round(
-                  sum(
-                      r["score"]
-                      for r in results
-                  ) / len(results)
-              )
 
               print(
-                  f"Average Score: {average}/100"
+                  f"{index}. "
+                  f"{tool['name']} — "
+                  f"{tool['score']}/100 "
+                  f"({tool['grade']})"
               )
+
           PY
-          fi
 
-      # ============================================
-      # 5. Commit reports
-      # ============================================
-
-      - name: Commit SEO reports
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      - name: Create job summary
         run: |
 
-          git config user.name "github-actions[bot]"
+          python3 <<'PY' >> "$GITHUB_STEP_SUMMARY"
 
-          git config user.email \
-            "41898282+github-actions[bot]@users.noreply.github.com"
+          import json
 
-          git add seo/reports/
+          with open(
+              "data/seo-audit.json",
+              encoding="utf-8"
+          ) as f:
 
-          if git diff --cached --quiet; then
+              data = json.load(f)
 
-            echo "No SEO report changes."
+          print("# Nisulka Tools SEO Audit")
+          print()
+
+          print(
+              f"**Average SEO Score:** "
+              f"{data['averageScore']}/100"
+          )
+
+          print()
+
+          print(
+              f"**Total Tools:** "
+              f"{data['totalTools']}"
+          )
+
+          print()
+
+          print(
+              "| # | Tool | Score | Grade | Issues |"
+          )
+
+          print(
+              "|---:|---|---:|:---:|---:|"
+          )
+
+          for index, tool in enumerate(
+              data["tools"],
+              start=1
+          ):
+
+              issues =
+                  tool["issueSummary"]["total"]
+
+              print(
+                  f"| {index} "
+                  f"| {tool['name']} "
+                  f"| {tool['score']}/100 "
+                  f"| {tool['grade']} "
+                  f"| {issues} |"
+              )
+
+          PY
+
+      - name: Check for changes
+        id: changes
+        run: |
+
+          if git diff --quiet -- data/seo-audit.json; then
+
+            echo "changed=false" \
+              >> "$GITHUB_OUTPUT"
 
           else
 
-            git commit \
-              -m "chore: update SEO audit reports"
-
-            git push
+            echo "changed=true" \
+              >> "$GITHUB_OUTPUT"
 
           fi
+
+      - name: Commit SEO audit
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+
+          git config \
+            user.name \
+            "github-actions[bot]"
+
+          git config \
+            user.email \
+            "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add data/seo-audit.json
+
+          git commit \
+            -m "chore: update SEO audit"
+
+          git push
+
+      - name: No audit changes
+        if: steps.changes.outputs.changed == 'false'
+        run: |
+
+          echo "SEO audit data is already up to date."
