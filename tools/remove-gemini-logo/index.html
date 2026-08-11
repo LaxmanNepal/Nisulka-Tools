@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gemini Watermark Remover — Free Online AI Image Watermark Eraser | Nisulka Tools</title>
+  <meta name="description" content="Remove visible Google Gemini AI logos, star badges, and watermarks from your images online for free. Clean images client-side in your browser with zero quality loss.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://apps.laxmannepal.com.np/Nisulka-Tools/tools/gemini-watermark-remover/">
+
+  <!-- Shared CSS Variables & Global Styles -->
+  <link rel="stylesheet" href="../../css/variables.css">
+  <link rel="stylesheet" href="../../css/global.css">
+  <link rel="stylesheet" href="../../css/header.css">
+  <link rel="stylesheet" href="../../css/footer.css">
+
+  <!-- Schema.org Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Gemini Watermark Remover",
+    "operatingSystem": "All",
+    "applicationCategory": "MultimediaApplication",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "description": "Free online browser tool to remove watermarks and AI logos from Gemini and Imagen generated images."
+  }
+  </script>
+</head>
+<body>
+
+  <!-- Shared Site Header Mount -->
+  <div id="site-header-mount"></div>
+
+  <main class="wrap">
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="../../">Home</a>
+      <span class="sep">/</span>
+      <a href="../">Image Tools</a>
+      <span class="sep">/</span>
+      <span class="current">Gemini Watermark Remover</span>
+    </nav>
+
+    <!-- Header Section -->
+    <header class="tool-header">
+      <div class="badge">
+        <span>✨</span> 100% Client-Side Inpainting
+      </div>
+      <h1>Gemini Watermark Remover</h1>
+      <p class="sub">Erase visible Google Gemini, Imagen 3, and AI star watermarks from images instantly inside your browser without losing quality.</p>
+      
+      <div class="pills">
+        <span class="pill"><span>✓</span> 100% Private Processing</span>
+        <span class="pill"><span>✓</span> No Upload Limits</span>
+        <span class="pill"><span>✓</span> Preset Corner Auto-Detection</span>
+        <span class="pill"><span>✓</span> Manual Brush Selection</span>
+      </div>
+    </header>
+
+    <!-- Main Tool Interface -->
+    <section class="tool-card" aria-label="Watermark Remover Workspace">
+      
+      <!-- Upload Dropzone -->
+      <div id="dropzone" class="drop" role="button" tabindex="0" aria-label="Upload image to remove watermark">
+        <div class="drop-icon">🪄</div>
+        <h2>Drop your image here or click to browse</h2>
+        <p>Supports JPG, PNG, WebP (Up to 25 MB)</p>
+        <input type="file" id="file-input" accept="image/jpeg, image/png, image/webp" aria-label="Select image file">
+      </div>
+
+      <!-- Processing Panel (Hidden initially) -->
+      <div id="panel" class="tool-panel" style="display:none;">
+        
+        <!-- Status Bar -->
+        <div class="sbar" id="status-bar">
+          <div class="sdot ok" id="status-dot"></div>
+          <span class="smsg" id="status-text">Image loaded. Select watermark region or draw with brush.</span>
+          <span class="sext" id="file-info-text"></span>
+        </div>
+
+        <div class="pbar-wrap" id="progress-wrap">
+          <div class="pbar" id="progress-bar"></div>
+        </div>
+
+        <!-- Controls Toolbar -->
+        <div class="toolbar">
+          <div class="tool-group">
+            <label for="preset-select">Watermark Position:</label>
+            <select id="preset-select" class="input-select">
+              <option value="bottom-right" selected>Bottom-Right (Standard Gemini)</option>
+              <option value="bottom-left">Bottom-Left</option>
+              <option value="top-right">Top-Right</option>
+              <option value="top-left">Top-Left</option>
+              <option value="custom">Custom Brush Selection</option>
+            </select>
+          </div>
+
+          <div class="tool-group" id="brush-size-group">
+            <label for="brush-size">Brush Size: <span id="brush-val">25px</span></label>
+            <input type="range" id="brush-size" min="5" max="100" value="25" class="input-range">
+          </div>
+
+          <div class="tool-group">
+            <button type="button" id="btn-clear-mask" class="btn btn-secondary">Clear Mask</button>
+          </div>
+        </div>
+
+        <!-- Canvas Workspace -->
+        <div class="workspace-area">
+          <div class="canvas-wrapper" id="canvas-container">
+            <canvas id="image-canvas"></canvas>
+            <canvas id="mask-canvas"></canvas>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-bar">
+          <button type="button" id="btn-process" class="btn btn-primary">
+            <span>✨</span> Remove Watermark Now
+          </button>
+          <button type="button" id="btn-reset" class="btn btn-tertiary">
+            Choose Another Image
+          </button>
+        </div>
+
+        <!-- Result / Comparison Container -->
+        <div id="result-container" class="result-section" style="display:none;">
+          <h3>Processed Result</h3>
+          <div class="cmp">
+            <div class="ipanel">
+              <span class="lbl">Original</span>
+              <img id="img-original-preview" alt="Original AI Image with Watermark">
+            </div>
+            <div class="ipanel">
+              <span class="lbl">Cleaned</span>
+              <img id="img-result-preview" alt="Cleaned Image without Watermark">
+            </div>
+          </div>
+
+          <div class="download-bar">
+            <div class="format-select">
+              <label for="export-format">Export Format:</label>
+              <select id="export-format" class="input-select">
+                <option value="image/png">PNG (Lossless Quality)</option>
+                <option value="image/jpeg">JPG (High Quality)</option>
+                <option value="image/webp">WebP (Optimized)</option>
+              </select>
+            </div>
+            <a id="btn-download" class="btn btn-success" download="nisulka-gemini-cleaned.png">
+              <span>⬇</span> Download Clean Image
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Ad Placement Holder -->
+    <div class="ad-placeholder" aria-label="Advertisement">
+      <span class="ad-label">Advertisement</span>
+    </div>
+
+    <!-- SEO Content & Documentation -->
+    <article class="seo-content">
+      <h2>About Gemini Watermark Remover</h2>
+      <p>The <strong>Gemini Watermark Remover</strong> by Nisulka Tools is a specialized online utility designed to erase visible AI star icons, logos, and translucent text overlays created by Google Gemini and Imagen 3 AI image generators. Operating entirely within your browser using advanced Canvas Inpainting technology, your personal images are processed locally without being uploaded to any remote server.</p>
+
+      <h2>How to Remove Watermarks from Gemini Generated Images</h2>
+      <ol class="steps-list">
+        <li><strong>Upload Your Image:</strong> Drag and drop your image file into the dropzone or click to browse.</li>
+        <li><strong>Select Watermark Region:</strong> Select the preset corner (most Gemini images place watermarks in the bottom-right corner) or paint over the watermark using the custom brush tool.</li>
+        <li><strong>Erase Watermark:</strong> Click "Remove Watermark Now" to execute local AI content-aware pixel inpainting.</li>
+        <li><strong>Download Clean Result:</strong> Compare the before/after preview and download your clean image in PNG, JPG, or WebP format.</li>
+      </ol>
+
+      <h2>Key Features</h2>
+      <ul class="features-list">
+        <li><strong>Client-Side Processing:</strong> Complete privacy. Images never leave your device.</li>
+        <li><strong>Auto-Preset Corners:</strong> Pre-configured targeting for Gemini, Imagen 3, Midjourney, and DALL-E default watermark positions.</li>
+        <li><strong>Precision Inpainting Brush:</strong> Custom brush tool to highlight specific or irregular watermarks easily.</li>
+        <li><strong>Multiple Export Options:</strong> Save your cleaned images in original high resolution in PNG, JPG, or WebP formats.</li>
+      </ul>
+
+      <h2>Supported Formats & Limits</h2>
+      <p>Supports all major web image formats including JPG, PNG, and WebP up to 25 MB per file. Works seamlessly on modern browsers on desktop, tablet, and mobile devices.</p>
+
+      <h2>Frequently Asked Questions (FAQ)</h2>
+      <div class="faq-accordion">
+        <details class="faq-item">
+          <summary>Does this tool upload my images to a server?</summary>
+          <p>No. All pixel processing and watermark inpainting happen locally on your device using Web API Canvas technology. Your files are never transmitted across the internet.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Where does Google Gemini place watermarks on images?</summary>
+          <p>Google Gemini and Imagen 3 typically insert a small four-pointed star logo in the bottom-right or bottom-left corner of generated images.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Can I remove custom watermarks or logos on other AI tools?</summary>
+          <p>Yes. By choosing "Custom Brush Selection", you can draw over any watermark, text overlay, or unwanted artifact anywhere on your image.</p>
+        </details>
+      </div>
+    </article>
+
+    <!-- Ad Placement Holder -->
+    <div class="ad-placeholder" aria-label="Advertisement">
+      <span class="ad-label">Advertisement</span>
+    </div>
+  </main>
+
+  <!-- Shared Site Footer Mount -->
+  <div id="site-footer-mount"></div>
+
+  <!-- Shared Main JS & Tool Script -->
+  <script src="../../js/main.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
