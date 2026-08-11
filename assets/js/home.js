@@ -1,554 +1,859 @@
-/* =========================================================
-   NISULKA TOOLS — HOMEPAGE LOGIC
-   ========================================================= */
+"use strict";
 
-(function () {
-    "use strict";
-
-    let siteData = null;
-
-    let allTools = [];
-
-    let activeCategory = "all";
-
-    let searchTerm = "";
-
-    const components =
-        window.NisulkaComponents;
+/*
+ * Nisulka Tools Homepage
+ *
+ * Loads tools from:
+ * data/tools.json
+ *
+ * The JSON file is automatically generated
+ * by GitHub Actions from the /tools/ directory.
+ */
 
 
-    /* =========================
-       DOM
-       ========================= */
+const TOOLS_DATA_URL = "data/tools.json";
 
-    const elements = {};
 
-    function cacheElements() {
+let allTools = [];
+let activeCategory = "All";
+let searchQuery = "";
 
-        elements.search =
-            document.getElementById(
-                "tool-search"
-            );
 
-        elements.categories =
-            document.getElementById(
-                "category-list"
-            );
+/* =========================================
+   DOM ELEMENTS
+   ========================================= */
 
-        elements.featured =
-            document.getElementById(
-                "featured-tools"
-            );
+const searchInput = document.getElementById("tool-search");
+const categoryList = document.getElementById("category-list");
 
-        elements.allTools =
-            document.getElementById(
-                "all-tools"
-            );
+const featuredToolsContainer =
+    document.getElementById("featured-tools");
 
-        elements.toolCount =
-            document.getElementById(
-                "tool-count"
-            );
+const allToolsContainer =
+    document.getElementById("all-tools");
+
+const toolCount =
+    document.getElementById("tool-count");
+
+
+/* =========================================
+   INITIALIZE
+   ========================================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    initializeHomepage();
+
+});
+
+
+async function initializeHomepage() {
+
+    try {
+
+        showLoadingState();
+
+        await loadTools();
+
+        setupSearch();
+
+        renderCategories();
+
+        renderFeaturedTools();
+
+        renderAllTools();
+
+        setupFAQ();
+
+    } catch (error) {
+
+        console.error(
+            "Failed to initialize Nisulka Tools:",
+            error
+        );
+
+        showErrorState();
+
     }
 
+}
 
-    /* =========================
-       Load Data
-       ========================= */
 
-    async function loadTools() {
+/* =========================================
+   LOAD TOOLS
+   ========================================= */
 
-        showLoading();
+async function loadTools() {
 
-        try {
+    const response = await fetch(
+        `${TOOLS_DATA_URL}?v=${Date.now()}`
+    );
 
-            const response =
-                await fetch(
-                    "data/tools.json",
-                    {
-                        cache: "no-cache"
-                    }
-                );
+    if (!response.ok) {
 
-            if (!response.ok) {
-                throw new Error(
-                    "Unable to load tools.json"
-                );
-            }
+        throw new Error(
+            `Unable to load tools.json (${response.status})`
+        );
 
-            siteData =
-                await response.json();
+    }
 
-            allTools =
-                Array.isArray(siteData.tools)
-                    ? siteData.tools
-                    : [];
+    const data = await response.json();
 
-            renderCategories();
+    if (!Array.isArray(data)) {
 
-            renderFeaturedTools();
+        throw new Error(
+            "tools.json must contain an array."
+        );
 
-            renderTools();
+    }
 
-        } catch (error) {
+    allTools = data.filter(tool => {
 
-            console.error(
-                "Nisulka Tools:",
-                error
-            );
+        return (
+            tool &&
+            tool.status !== "hidden"
+        );
 
-            showLoadError();
+    });
+
+}
+
+
+/* =========================================
+   SEARCH
+   ========================================= */
+
+function setupSearch() {
+
+    if (!searchInput) {
+        return;
+    }
+
+    searchInput.addEventListener(
+        "input",
+        handleSearch
+    );
+
+
+    searchInput.addEventListener(
+        "search",
+        handleSearch
+    );
+
+
+    // Support ?q=search-term
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+    const query =
+        params.get("q");
+
+    if (query) {
+
+        searchInput.value = query;
+
+        searchQuery =
+            query.trim().toLowerCase();
+
+    }
+
+}
+
+
+function handleSearch(event) {
+
+    searchQuery =
+        event.target.value
+            .trim()
+            .toLowerCase();
+
+
+    activeCategory = "All";
+
+    renderCategories();
+
+    renderFeaturedTools();
+
+    renderAllTools();
+
+}
+
+
+/* =========================================
+   FILTER TOOLS
+   ========================================= */
+
+function getFilteredTools() {
+
+    return allTools.filter(tool => {
+
+        const matchesCategory =
+            activeCategory === "All" ||
+            tool.category === activeCategory;
+
+
+        if (!searchQuery) {
+
+            return matchesCategory;
+
         }
+
+
+        const searchableText = [
+
+            tool.name,
+            tool.description,
+            tool.category,
+            ...(Array.isArray(tool.keywords)
+                ? tool.keywords
+                : [])
+
+        ]
+            .join(" ")
+            .toLowerCase();
+
+
+        return (
+            matchesCategory &&
+            searchableText.includes(searchQuery)
+        );
+
+    });
+
+}
+
+
+/* =========================================
+   CATEGORIES
+   ========================================= */
+
+function renderCategories() {
+
+    if (!categoryList) {
+        return;
     }
 
 
-    /* =========================
-       Category Map
-       ========================= */
+    const categories = [
 
-    function getCategoryMap() {
+        "All",
 
-        const map = {};
+        ...new Set(
 
-        const categories =
-            Array.isArray(siteData?.categories)
-                ? siteData.categories
-                : [];
+            allTools
 
-        categories.forEach(
-            function (category) {
-                map[category.id] =
+                .map(tool => tool.category)
+
+                .filter(Boolean)
+
+        )
+
+    ];
+
+
+    categoryList.innerHTML = "";
+
+
+    categories.forEach(category => {
+
+        const button =
+            document.createElement("button");
+
+
+        button.type = "button";
+
+        button.className =
+            "category-button";
+
+
+        if (category === activeCategory) {
+
+            button.classList.add(
+                "is-active"
+            );
+
+        }
+
+
+        button.textContent = category;
+
+
+        button.setAttribute(
+            "aria-pressed",
+            category === activeCategory
+                ? "true"
+                : "false"
+        );
+
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                activeCategory =
                     category;
+
+                renderCategories();
+
+                renderFeaturedTools();
+
+                renderAllTools();
+
             }
         );
 
-        return map;
-    }
 
-
-    /* =========================
-       Render Categories
-       ========================= */
-
-    function renderCategories() {
-
-        if (!elements.categories) {
-            return;
-        }
-
-        const categories =
-            Array.isArray(siteData?.categories)
-                ? siteData.categories
-                : [];
-
-        let html = `
-            <button
-                type="button"
-                class="category-button active"
-                data-category="all"
-            >
-                All Tools
-            </button>
-        `;
-
-        categories.forEach(
-            function (category) {
-
-                html +=
-                    components.createCategoryButton(
-                        category,
-                        false
-                    );
-            }
+        categoryList.appendChild(
+            button
         );
 
-        elements.categories.innerHTML =
-            html;
+    });
 
-        bindCategoryButtons();
+}
+
+
+/* =========================================
+   FEATURED TOOLS
+   ========================================= */
+
+function renderFeaturedTools() {
+
+    if (!featuredToolsContainer) {
+        return;
     }
 
 
-    /* =========================
-       Category Buttons
-       ========================= */
+    const filteredTools =
+        getFilteredTools();
 
-    function bindCategoryButtons() {
 
-        const buttons =
-            elements.categories.querySelectorAll(
-                ".category-button"
+    const featuredTools =
+        filteredTools.filter(
+            tool => tool.featured === true
+        );
+
+
+    /*
+     * When searching, show matching
+     * featured tools only.
+     *
+     * When there are no featured
+     * matches, hide the section.
+     */
+
+    if (
+        featuredTools.length === 0
+    ) {
+
+        featuredToolsContainer.innerHTML =
+            "";
+
+        const section =
+            document.getElementById(
+                "popular"
             );
 
-        buttons.forEach(
-            function (button) {
+        if (section) {
 
-                button.addEventListener(
-                    "click",
-                    function () {
+            section.hidden = true;
 
-                        activeCategory =
-                            button.dataset.category;
+        }
 
-                        buttons.forEach(
-                            function (item) {
-                                item.classList.remove(
-                                    "active"
-                                );
-                            }
-                        );
+        return;
 
-                        button.classList.add(
-                            "active"
-                        );
+    }
 
-                        renderTools();
 
-                        document
-                            .getElementById("tools")
-                            ?.scrollIntoView({
-                                behavior: "smooth",
-                                block: "start"
-                            });
-                    }
-                );
-            }
+    const section =
+        document.getElementById(
+            "popular"
         );
+
+
+    if (section) {
+
+        section.hidden = false;
+
     }
 
 
-    /* =========================
-       Featured Tools
-       ========================= */
+    featuredToolsContainer.innerHTML =
+        featuredTools
+            .slice(0, 6)
+            .map(createToolCard)
+            .join("");
 
-    function renderFeaturedTools() {
+}
 
-        if (!elements.featured) {
-            return;
-        }
 
-        const categoryMap =
-            getCategoryMap();
+/* =========================================
+   ALL TOOLS
+   ========================================= */
 
-        const featured =
-            allTools.filter(
-                function (tool) {
-                    return tool.featured === true;
-                }
-            );
+function renderAllTools() {
 
-        if (!featured.length) {
-
-            elements.featured.innerHTML =
-                components.createEmptyState(
-                    "No featured tools yet",
-                    "New tools will appear here soon."
-                );
-
-            return;
-        }
-
-        elements.featured.innerHTML =
-            featured
-                .map(
-                    function (tool) {
-                        return components.createToolCard(
-                            tool,
-                            categoryMap
-                        );
-                    }
-                )
-                .join("");
+    if (!allToolsContainer) {
+        return;
     }
 
 
-    /* =========================
-       Filter Tools
-       ========================= */
+    const filteredTools =
+        getFilteredTools();
 
-    function getFilteredTools() {
 
-        const normalizedSearch =
-            searchTerm
-                .trim()
-                .toLowerCase();
-
-        return allTools.filter(
-            function (tool) {
-
-                const categoryMatches =
-                    activeCategory === "all" ||
-                    tool.category ===
-                        activeCategory;
-
-                if (!categoryMatches) {
-                    return false;
-                }
-
-                if (!normalizedSearch) {
-                    return true;
-                }
-
-                const searchableText = [
-                    tool.name,
-                    tool.shortDescription,
-                    tool.category,
-                    ...(Array.isArray(tool.keywords)
-                        ? tool.keywords
-                        : [])
-                ]
-                    .join(" ")
-                    .toLowerCase();
-
-                return searchableText.includes(
-                    normalizedSearch
-                );
-            }
-        );
-    }
-
-
-    /* =========================
-       Render All Tools
-       ========================= */
-
-    function renderTools() {
-
-        if (!elements.allTools) {
-            return;
-        }
-
-        const filtered =
-            getFilteredTools();
-
-        const categoryMap =
-            getCategoryMap();
-
-        if (elements.toolCount) {
-
-            elements.toolCount.innerHTML =
-                components.createToolCount(
-                    filtered.length
-                );
-        }
-
-        if (!filtered.length) {
-
-            elements.allTools.innerHTML =
-                components.createEmptyState(
-                    "No tools found",
-                    "Try another search term or choose a different category."
-                );
-
-            return;
-        }
-
-        elements.allTools.innerHTML =
-            filtered
-                .map(
-                    function (tool) {
-                        return components.createToolCard(
-                            tool,
-                            categoryMap
-                        );
-                    }
-                )
-                .join("");
-    }
-
-
-    /* =========================
-       Search
-       ========================= */
-
-    function initializeSearch() {
-
-        if (!elements.search) {
-            return;
-        }
-
-        elements.search.addEventListener(
-            "input",
-            function () {
-
-                searchTerm =
-                    elements.search.value;
-
-                activeCategory = "all";
-
-                updateActiveCategory();
-
-                renderTools();
-            }
-        );
-    }
-
-
-    /* =========================
-       Active Category UI
-       ========================= */
-
-    function updateActiveCategory() {
-
-        if (!elements.categories) {
-            return;
-        }
-
-        const buttons =
-            elements.categories.querySelectorAll(
-                ".category-button"
-            );
-
-        buttons.forEach(
-            function (button) {
-
-                button.classList.toggle(
-                    "active",
-                    button.dataset.category ===
-                        activeCategory
-                );
-            }
-        );
-    }
-
-
-    /* =========================
-       FAQ
-       ========================= */
-
-    function initializeFAQ() {
-
-        const questions =
-            document.querySelectorAll(
-                ".tool-faq-question"
-            );
-
-        questions.forEach(
-            function (question) {
-
-                question.addEventListener(
-                    "click",
-                    function () {
-
-                        const expanded =
-                            question.getAttribute(
-                                "aria-expanded"
-                            ) === "true";
-
-                        const answer =
-                            question
-                                .closest(
-                                    ".tool-faq-item"
-                                )
-                                ?.querySelector(
-                                    ".tool-faq-answer"
-                                );
-
-                        question.setAttribute(
-                            "aria-expanded",
-                            String(!expanded)
-                        );
-
-                        if (answer) {
-                            answer.hidden =
-                                expanded;
-                        }
-
-                        const icon =
-                            question.querySelector(
-                                "span"
-                            );
-
-                        if (icon) {
-                            icon.textContent =
-                                expanded
-                                    ? "+"
-                                    : "−";
-                        }
-                    }
-                );
-            }
-        );
-    }
-
-
-    /* =========================
-       Loading
-       ========================= */
-
-    function showLoading() {
-
-        if (elements.featured) {
-
-            elements.featured.innerHTML =
-                components.createLoadingCards(
-                    3
-                );
-        }
-
-        if (elements.allTools) {
-
-            elements.allTools.innerHTML =
-                components.createLoadingCards(
-                    6
-                );
-        }
-    }
-
-
-    /* =========================
-       Load Error
-       ========================= */
-
-    function showLoadError() {
-
-        const errorHTML =
-            components.createEmptyState(
-                "Unable to load tools",
-                "Please refresh the page and try again."
-            );
-
-        if (elements.featured) {
-            elements.featured.innerHTML =
-                errorHTML;
-        }
-
-        if (elements.allTools) {
-            elements.allTools.innerHTML =
-                errorHTML;
-        }
-    }
-
-
-    /* =========================
-       Initialize
-       ========================= */
-
-    function initialize() {
-
-        cacheElements();
-
-        initializeSearch();
-
-        initializeFAQ();
-
-        loadTools();
-    }
+    allToolsContainer.innerHTML =
+        "";
 
 
     if (
-        document.readyState ===
-        "loading"
+        filteredTools.length === 0
     ) {
 
-        document.addEventListener(
-            "DOMContentLoaded",
-            initialize
-        );
+        showNoResults();
 
-    } else {
+        updateToolCount(0);
 
-        initialize();
+        return;
+
     }
 
-})();
+
+    filteredTools.forEach(tool => {
+
+        allToolsContainer.insertAdjacentHTML(
+            "beforeend",
+            createToolCard(tool)
+        );
+
+    });
+
+
+    updateToolCount(
+        filteredTools.length
+    );
+
+}
+
+
+/* =========================================
+   TOOL CARD
+   ========================================= */
+
+function createToolCard(tool) {
+
+    const name =
+        escapeHTML(
+            tool.name ||
+            "Unnamed Tool"
+        );
+
+
+    const description =
+        escapeHTML(
+            tool.description ||
+            "Useful online tool."
+        );
+
+
+    const category =
+        escapeHTML(
+            tool.category ||
+            "Tools"
+        );
+
+
+    const icon =
+        escapeHTML(
+            tool.icon ||
+            "🛠️"
+        );
+
+
+    const logo =
+        tool.logo
+            ? escapeAttribute(tool.logo)
+            : "";
+
+
+    const url =
+        tool.url
+            ? escapeAttribute(tool.url)
+            : "#";
+
+
+    /*
+     * Use logo.jpg when available.
+     *
+     * The fallback icon is kept in
+     * case an older tool doesn't have
+     * a logo yet.
+     */
+
+    const logoHTML = logo
+
+        ? `
+            <img
+                class="tool-card-logo"
+                src="${logo}"
+                alt=""
+                loading="lazy"
+                width="64"
+                height="64"
+                onerror="this.hidden=true; this.nextElementSibling.hidden=false;"
+            >
+
+            <span
+                class="tool-card-icon"
+                aria-hidden="true"
+                hidden
+            >
+                ${icon}
+            </span>
+        `
+
+        : `
+            <span
+                class="tool-card-icon"
+                aria-hidden="true"
+            >
+                ${icon}
+            </span>
+        `;
+
+
+    return `
+
+        <article class="tool-card">
+
+            <a
+                class="tool-card-link"
+                href="${url}"
+                aria-label="Open ${name}"
+            >
+
+                <div class="tool-card-icon-wrapper">
+
+                    ${logoHTML}
+
+                </div>
+
+
+                <div class="tool-card-content">
+
+                    <span class="tool-card-category">
+                        ${category}
+                    </span>
+
+                    <h3 class="tool-card-title">
+                        ${name}
+                    </h3>
+
+                    <p class="tool-card-description">
+                        ${description}
+                    </p>
+
+                </div>
+
+
+                <span
+                    class="tool-card-arrow"
+                    aria-hidden="true"
+                >
+                    →
+                </span>
+
+            </a>
+
+        </article>
+
+    `;
+
+}
+
+
+/* =========================================
+   TOOL COUNT
+   ========================================= */
+
+function updateToolCount(count) {
+
+    if (!toolCount) {
+        return;
+    }
+
+
+    toolCount.textContent =
+        `${count} ${count === 1 ? "tool" : "tools"}`;
+
+}
+
+
+/* =========================================
+   NO RESULTS
+   ========================================= */
+
+function showNoResults() {
+
+    allToolsContainer.innerHTML = `
+
+        <div class="tools-empty">
+
+            <div
+                class="tools-empty-icon"
+                aria-hidden="true"
+            >
+                🔎
+            </div>
+
+            <h3>
+                No tools found
+            </h3>
+
+            <p>
+                Try a different search term
+                or choose another category.
+            </p>
+
+            <button
+                type="button"
+                class="btn btn-primary"
+                id="clear-search"
+            >
+                Clear search
+            </button>
+
+        </div>
+
+    `;
+
+
+    const clearButton =
+        document.getElementById(
+            "clear-search"
+        );
+
+
+    if (clearButton) {
+
+        clearButton.addEventListener(
+            "click",
+            clearSearch
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   CLEAR SEARCH
+   ========================================= */
+
+function clearSearch() {
+
+    if (searchInput) {
+
+        searchInput.value = "";
+
+    }
+
+
+    searchQuery = "";
+
+    activeCategory = "All";
+
+    renderCategories();
+
+    renderFeaturedTools();
+
+    renderAllTools();
+
+}
+
+
+/* =========================================
+   LOADING
+   ========================================= */
+
+function showLoadingState() {
+
+    if (featuredToolsContainer) {
+
+        featuredToolsContainer.innerHTML = `
+
+            <div class="tools-loading">
+                Loading tools...
+            </div>
+
+        `;
+
+    }
+
+
+    if (allToolsContainer) {
+
+        allToolsContainer.innerHTML = `
+
+            <div class="tools-loading">
+                Loading tools...
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+/* =========================================
+   ERROR
+   ========================================= */
+
+function showErrorState() {
+
+    if (featuredToolsContainer) {
+
+        featuredToolsContainer.innerHTML = "";
+
+    }
+
+
+    if (allToolsContainer) {
+
+        allToolsContainer.innerHTML = `
+
+            <div class="tools-empty">
+
+                <div
+                    class="tools-empty-icon"
+                    aria-hidden="true"
+                >
+                    ⚠️
+                </div>
+
+                <h3>
+                    Tools couldn't be loaded
+                </h3>
+
+                <p>
+                    Please refresh the page and
+                    try again.
+                </p>
+
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    onclick="location.reload()"
+                >
+                    Try again
+                </button>
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+/* =========================================
+   FAQ
+   ========================================= */
+
+function setupFAQ() {
+
+    const questions =
+        document.querySelectorAll(
+            ".tool-faq-question"
+        );
+
+
+    questions.forEach(question => {
+
+        question.addEventListener(
+            "click",
+            () => {
+
+                const expanded =
+                    question.getAttribute(
+                        "aria-expanded"
+                    ) === "true";
+
+
+                question.setAttribute(
+                    "aria-expanded",
+                    expanded
+                        ? "false"
+                        : "true"
+                );
+
+
+                const answer =
+                    question
+                        .closest(
+                            ".tool-faq-item"
+                        )
+                        ?.querySelector(
+                            ".tool-faq-answer"
+                        );
+
+
+                if (answer) {
+
+                    answer.hidden =
+                        expanded;
+
+                }
+
+            }
+        );
+
+    });
+
+}
+
+
+/* =========================================
+   SECURITY HELPERS
+   ========================================= */
+
+function escapeHTML(value) {
+
+    return String(value)
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+function escapeAttribute(value) {
+
+    return escapeHTML(value);
+
+}
