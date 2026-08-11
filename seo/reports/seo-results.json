@@ -1,0 +1,198 @@
+[
+  {
+    "slug": "remove-gemini-logo",
+    "path": "tools/remove-gemini-logo/index.html",
+    "score": 72,
+    "status": "🟡 Needs improvement",
+    "checks": [
+      {
+        "name": "Title",
+        "passed": false,
+        "points": 5,
+        "message": "Title is long (80 characters)."
+      },
+      {
+        "name": "Meta description",
+        "passed": true,
+        "points": 10,
+        "message": "Good description length (165 characters)."
+      },
+      {
+        "name": "Canonical URL",
+        "passed": true,
+        "points": 8,
+        "message": "Canonical URL exists."
+      },
+      {
+        "name": "Mobile viewport",
+        "passed": true,
+        "points": 5,
+        "message": "Mobile viewport is configured."
+      },
+      {
+        "name": "H1 heading",
+        "passed": true,
+        "points": 8,
+        "message": "Exactly one H1 found: Gemini Watermark Remover"
+      },
+      {
+        "name": "Content structure",
+        "passed": true,
+        "points": 5,
+        "message": "6 H2 sections found."
+      },
+      {
+        "name": "Content depth",
+        "passed": false,
+        "points": 6,
+        "message": "Only 437 words detected."
+      },
+      {
+        "name": "Open Graph",
+        "passed": false,
+        "points": 2,
+        "message": "0/3 Open Graph properties found."
+      },
+      {
+        "name": "Structured data",
+        "passed": true,
+        "points": 8,
+        "message": "JSON-LD structured data found."
+      },
+      {
+        "name": "FAQ content",
+        "passed": true,
+        "points": 5,
+        "message": "FAQ content detected."
+      },
+      {
+        "name": "Internal links",
+        "passed": false,
+        "points": 3,
+        "message": "Only 2 internal link(s) found."
+      },
+      {
+        "name": "Image accessibility",
+        "passed": true,
+        "points": 3,
+        "message": "All images have alt attributes."
+      },
+      {
+        "name": "Helpful tool information",
+        "passed": false,
+        "points": 4,
+        "message": "3 useful information sections detected."
+      }
+    ],
+    "warnings": [
+      "Tool page may be relatively thin."
+    ],
+    "errors": [],
+    "recommendations": [
+      "Shorten the title to approximately 30–65 characters.",
+      "Complete Open Graph metadata.",
+      "Add useful links to related tools and site sections.",
+      "Expand the page with tool-specific educational content."
+    ],
+    "word_count": 437,
+    "title": "Gemini Watermark Remover — Free Online AI Image Watermark Eraser | Nisulka Tools",
+    "description": "Remove visible Google Gemini AI logos, star badges, and watermarks from your images online for free. Clean images client-side in your browser with zero quality loss."
+  },
+  {
+    "slug": "text-to-handwriting",
+    "path": "tools/text-to-handwriting/index.html",
+    "score": 84,
+    "status": "🟢 Good",
+    "checks": [
+      {
+        "name": "Title",
+        "passed": true,
+        "points": 10,
+        "message": "Good title length (45 characters)."
+      },
+      {
+        "name": "Meta description",
+        "passed": true,
+        "points": 10,
+        "message": "Good description length (160 characters)."
+      },
+      {
+        "name": "Canonical URL",
+        "passed": true,
+        "points": 8,
+        "message": "Canonical URL exists."
+      },
+      {
+        "name": "Mobile viewport",
+        "passed": true,
+        "points": 5,
+        "message": "Mobile viewport is configured."
+      },
+      {
+        "name": "H1 heading",
+        "passed": true,
+        "points": 8,
+        "message": "Exactly one H1 found: Text to Handwriting Converter"
+      },
+      {
+        "name": "Content structure",
+        "passed": true,
+        "points": 5,
+        "message": "6 H2 sections found."
+      },
+      {
+        "name": "Content depth",
+        "passed": false,
+        "points": 6,
+        "message": "Only 434 words detected."
+      },
+      {
+        "name": "Open Graph",
+        "passed": true,
+        "points": 5,
+        "message": "Open Graph metadata is configured."
+      },
+      {
+        "name": "Structured data",
+        "passed": true,
+        "points": 8,
+        "message": "JSON-LD structured data found."
+      },
+      {
+        "name": "FAQ content",
+        "passed": true,
+        "points": 5,
+        "message": "FAQ content detected."
+      },
+      {
+        "name": "Internal links",
+        "passed": false,
+        "points": 3,
+        "message": "Only 2 internal link(s) found."
+      },
+      {
+        "name": "Image accessibility",
+        "passed": true,
+        "points": 3,
+        "message": "No content images requiring alt text."
+      },
+      {
+        "name": "Helpful tool information",
+        "passed": false,
+        "points": 4,
+        "message": "3 useful information sections detected."
+      }
+    ],
+    "warnings": [
+      "Tool page may be relatively thin."
+    ],
+    "errors": [],
+    "recommendations": [
+      "Add useful links to related tools and site sections.",
+      "Expand the page with tool-specific educational content."
+    ],
+    "word_count": 434,
+    "title": "Text to Handwriting Converter — Nisulka Tools",
+    "description": "Convert typed text into a handwritten-style image online for free. Customize handwriting size, ink color, paper style, spacing and alignment with Nisulka Tools."
+  }
+]
