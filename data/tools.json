@@ -1,14 +1,21 @@
 [
   {
-    "name": "Text To Handwriting",
+    "name": "Text to Handwriting Converter",
     "slug": "text-to-handwriting",
-    "description": "Free online Text To Handwriting tool.",
-    "category": "Other Tools",
-    "icon": "🛠️",
+    "description": "Convert typed text into a handwritten-style image online for free. Customize handwriting, ink color, paper style, spacing and alignment.",
+    "category": "Text Tools",
+    "icon": "✍️",
     "logo": "/Nisulka-Tools/tools/text-to-handwriting/logo.jpg",
     "url": "/Nisulka-Tools/tools/text-to-handwriting/",
-    "keywords": [],
-    "featured": false,
+    "keywords": [
+      "text to handwriting",
+      "handwriting generator",
+      "handwritten text",
+      "handwriting converter",
+      "handwritten notes",
+      "text to handwritten image"
+    ],
+    "featured": true,
     "status": "active"
   }
 ]
