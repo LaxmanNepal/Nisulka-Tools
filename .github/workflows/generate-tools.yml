@@ -19,13 +19,20 @@ jobs:
 
     steps:
 
+      # =========================================================
       # 1. Checkout repository
+      # =========================================================
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
+
+      # =========================================================
       # 2. Generate tools.json
+      # =========================================================
+
       - name: Generate tools.json
         run: |
           python3 <<'PY'
@@ -38,120 +45,311 @@ jobs:
 
           tools = []
 
+          # -----------------------------------------------------
+          # Check tools directory
+          # -----------------------------------------------------
+
           if not os.path.isdir(TOOLS_DIR):
               print("No tools directory found.")
               raise SystemExit(0)
 
+
+          # -----------------------------------------------------
+          # Process every tool directory
+          # -----------------------------------------------------
+
           for slug in sorted(os.listdir(TOOLS_DIR)):
 
-              tool_dir = os.path.join(TOOLS_DIR, slug)
+              tool_dir = os.path.join(
+                  TOOLS_DIR,
+                  slug
+              )
 
+
+              # Ignore files
               if not os.path.isdir(tool_dir):
                   continue
 
-              index_file = os.path.join(tool_dir, "index.html")
-              logo_file = os.path.join(tool_dir, "logo.jpg")
+
+              index_file = os.path.join(
+                  tool_dir,
+                  "index.html"
+              )
+
+
+              logo_file = os.path.join(
+                  tool_dir,
+                  "logo.jpg"
+              )
+
+
+              # -------------------------------------------------
+              # index.html is required
+              # -------------------------------------------------
 
               if not os.path.isfile(index_file):
-                  print(f"Skipping {slug}: index.html not found")
+
+                  print(
+                      f"Skipping {slug}: "
+                      f"index.html not found"
+                  )
+
                   continue
+
+
+              # -------------------------------------------------
+              # logo.jpg is required
+              # -------------------------------------------------
 
               if not os.path.isfile(logo_file):
-                  print(f"Skipping {slug}: logo.jpg not found")
+
+                  print(
+                      f"Skipping {slug}: "
+                      f"logo.jpg not found"
+                  )
+
                   continue
 
-              with open(index_file, "r", encoding="utf-8") as f:
+
+              # -------------------------------------------------
+              # Read index.html
+              # -------------------------------------------------
+
+              with open(
+                  index_file,
+                  "r",
+                  encoding="utf-8"
+              ) as f:
+
                   html = f.read()
 
+
+              # -------------------------------------------------
+              # Meta tag reader
+              # -------------------------------------------------
+
               def get_meta(name):
+
                   patterns = [
-                      rf'<meta\s+name=["\']{re.escape(name)}["\']\s+content=["\'](.*?)["\']',
-                      rf'<meta\s+content=["\'](.*?)["\']\s+name=["\']{re.escape(name)}["\']'
+
+                      rf'<meta\s+name=["\']'
+                      rf'{re.escape(name)}'
+                      rf'["\']\s+content=["\']'
+                      rf'(.*?)["\']',
+
+                      rf'<meta\s+content=["\']'
+                      rf'(.*?)["\']\s+name=["\']'
+                      rf'{re.escape(name)}'
+                      rf'["\']'
+
                   ]
 
+
                   for pattern in patterns:
+
                       match = re.search(
                           pattern,
                           html,
-                          re.IGNORECASE | re.DOTALL
+                          re.IGNORECASE |
+                          re.DOTALL
                       )
 
+
                       if match:
-                          return match.group(1).strip()
+
+                          return (
+                              match.group(1)
+                              .strip()
+                          )
+
 
                   return ""
 
-              name = get_meta("tool:name")
-              description = get_meta("tool:description")
-              category = get_meta("tool:category")
-              icon = get_meta("tool:icon")
-              featured = get_meta("tool:featured").lower()
-              keywords = get_meta("tool:keywords")
-              status = get_meta("tool:status").lower()
 
+              # -------------------------------------------------
+              # Read tool metadata
+              # -------------------------------------------------
+
+              name = get_meta(
+                  "tool:name"
+              )
+
+
+              description = get_meta(
+                  "tool:description"
+              )
+
+
+              category = get_meta(
+                  "tool:category"
+              )
+
+
+              featured = get_meta(
+                  "tool:featured"
+              ).lower()
+
+
+              keywords = get_meta(
+                  "tool:keywords"
+              )
+
+
+              status = get_meta(
+                  "tool:status"
+              ).lower()
+
+
+              # -------------------------------------------------
               # Default status
+              # -------------------------------------------------
+
               if not status:
+
                   status = "active"
 
-              # Ignore hidden tools
+
+              # -------------------------------------------------
+              # Hidden tools
+              # -------------------------------------------------
+
               if status == "hidden":
-                  print(f"Skipping hidden tool: {slug}")
+
+                  print(
+                      f"Skipping hidden tool: {slug}"
+                  )
+
                   continue
 
+
+              # -------------------------------------------------
               # Default name
+              # -------------------------------------------------
+
               if not name:
-                  name = slug.replace("-", " ").title()
 
+                  name = (
+                      slug
+                      .replace("-", " ")
+                      .title()
+                  )
+
+
+              # -------------------------------------------------
               # Default description
-              if not description:
-                  description = f"Free online {name} tool."
+              # -------------------------------------------------
 
+              if not description:
+
+                  description = (
+                      f"Free online {name} tool."
+                  )
+
+
+              # -------------------------------------------------
               # Default category
+              # -------------------------------------------------
+
               if not category:
+
                   category = "Other Tools"
 
-              # Default icon
-              if not icon:
-                  icon = "🛠️"
 
-              # Boolean conversion
+              # -------------------------------------------------
+              # Featured conversion
+              # -------------------------------------------------
+
               featured_value = featured in [
                   "true",
                   "1",
                   "yes"
               ]
 
-              # Convert keywords into array
+
+              # -------------------------------------------------
+              # Convert keywords to array
+              # -------------------------------------------------
+
               keyword_list = []
 
+
               if keywords:
+
                   keyword_list = [
+
                       keyword.strip()
-                      for keyword in keywords.split(",")
+
+                      for keyword
+                      in keywords.split(",")
+
                       if keyword.strip()
+
                   ]
 
+
+              # -------------------------------------------------
+              # Build tool object
+              #
+              # IMPORTANT:
+              # There is NO "icon" field.
+              # logo.jpg is the only visual identity.
+              # -------------------------------------------------
+
               tool = {
+
                   "name": name,
+
                   "slug": slug,
+
                   "description": description,
+
                   "category": category,
-                  "icon": icon,
-                  "logo": f"/Nisulka-Tools/tools/{slug}/logo.jpg",
-                  "url": f"/Nisulka-Tools/tools/{slug}/",
+
+                  "logo": (
+                      f"/Nisulka-Tools/"
+                      f"tools/{slug}/logo.jpg"
+                  ),
+
+                  "url": (
+                      f"/Nisulka-Tools/"
+                      f"tools/{slug}/"
+                  ),
+
                   "keywords": keyword_list,
+
                   "featured": featured_value,
+
                   "status": status
+
               }
+
+
+              # -------------------------------------------------
+              # Add tool
+              # -------------------------------------------------
 
               tools.append(tool)
 
-              print(f"Added: {name}")
 
-          # Ensure data directory exists
-          os.makedirs("data", exist_ok=True)
+              print(
+                  f"Added: {name}"
+              )
 
-          # Write JSON
+
+          # =====================================================
+          # Create data directory
+          # =====================================================
+
+          os.makedirs(
+              "data",
+              exist_ok=True
+          )
+
+
+          # =====================================================
+          # Write tools.json
+          # =====================================================
+
           with open(
               OUTPUT_FILE,
               "w",
@@ -167,36 +365,70 @@ jobs:
 
               f.write("\n")
 
+
+          # =====================================================
+          # Summary
+          # =====================================================
+
           print()
-          print(f"Generated {OUTPUT_FILE}")
-          print(f"Total tools: {len(tools)}")
+          print(
+              f"Generated {OUTPUT_FILE}"
+          )
+
+          print(
+              f"Total tools: {len(tools)}"
+          )
+
           PY
 
+
+      # =========================================================
       # 3. Check whether tools.json changed
+      # =========================================================
+
       - name: Check for changes
         id: changes
         run: |
+
           if git diff --quiet -- data/tools.json; then
+
             echo "changed=false" >> "$GITHUB_OUTPUT"
+
           else
+
             echo "changed=true" >> "$GITHUB_OUTPUT"
+
           fi
 
+
+      # =========================================================
       # 4. Commit generated tools.json
+      # =========================================================
+
       - name: Commit tools.json
         if: steps.changes.outputs.changed == 'true'
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git config user.name \
+            "github-actions[bot]"
+
+          git config user.email \
+            "41898282+github-actions[bot]@users.noreply.github.com"
 
           git add data/tools.json
 
-          git commit -m "chore: update tools.json"
+          git commit \
+            -m "chore: update tools.json"
 
           git push
 
+
+      # =========================================================
       # 5. No changes
+      # =========================================================
+
       - name: No changes required
         if: steps.changes.outputs.changed == 'false'
         run: |
+
           echo "tools.json is already up to date."
