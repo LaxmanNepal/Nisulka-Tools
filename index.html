@@ -1,14 +1,549 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nisulka Tools</title>
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Nisulka Tools — Free Online Tools
+    </title>
+
+    <meta
+        name="description"
+        content="Nisulka Tools provides free, fast and easy-to-use online tools for images, video, audio, text, PDFs, developers and more."
+    >
+
+    <meta
+        name="robots"
+        content="index, follow"
+    >
+
+    <link
+        rel="canonical"
+        href="https://apps.laxmannepal.com.np/Nisulka-Tools/"
+    >
+
+    <!-- Open Graph -->
+
+    <meta
+        property="og:type"
+        content="website"
+    >
+
+    <meta
+        property="og:title"
+        content="Nisulka Tools — Free Online Tools"
+    >
+
+    <meta
+        property="og:description"
+        content="Free, fast and privacy-friendly online tools for everyday tasks."
+    >
+
+    <meta
+        property="og:url"
+        content="https://apps.laxmannepal.com.np/Nisulka-Tools/"
+    >
+
+    <!-- Theme -->
+
+    <meta
+        name="theme-color"
+        content="#2563eb"
+    >
+
+    <!-- Fonts -->
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- Styles -->
+
+    <link
+        rel="stylesheet"
+        href="assets/css/variables.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="assets/css/global.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="assets/css/components.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="assets/css/header.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="assets/css/footer.css"
+    >
+
+    <!-- Homepage specific styles -->
+
+    <link
+        rel="stylesheet"
+        href="assets/css/home.css"
+    >
+
+    <!-- Structured Data -->
+
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Nisulka Tools",
+        "url": "https://apps.laxmannepal.com.np/Nisulka-Tools/",
+        "description": "Free, fast and privacy-friendly online tools for everyday tasks.",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://apps.laxmannepal.com.np/Nisulka-Tools/?q={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+        }
+    }
+    </script>
+
 </head>
+
 <body>
 
-    <h1>Nisulka Tools</h1>
-    <p>Free, fast and privacy-friendly online tools.</p>
+    <!-- =========================
+         HEADER
+         ========================= -->
+
+    <div id="site-header-mount"></div>
+
+
+    <main>
+
+        <!-- =========================
+             HERO
+             ========================= -->
+
+        <section
+            class="home-hero"
+            aria-labelledby="hero-title"
+        >
+
+            <div class="container">
+
+                <div class="home-hero-content">
+
+                    <span class="badge badge-primary">
+                        Free Online Tools
+                    </span>
+
+                    <h1
+                        id="hero-title"
+                        class="home-hero-title"
+                    >
+                        Simple tools for everyday tasks.
+                    </h1>
+
+                    <p class="home-hero-description">
+                        Compress images, convert files,
+                        generate content and more.
+                        Fast, simple and easy to use.
+                    </p>
+
+                    <!-- Search -->
+
+                    <div class="home-search">
+
+                        <label
+                            for="tool-search"
+                            class="visually-hidden"
+                        >
+                            Search tools
+                        </label>
+
+                        <div class="search-box">
+
+                            <span
+                                class="search-box-icon"
+                                aria-hidden="true"
+                            >
+                                🔍
+                            </span>
+
+                            <input
+                                type="search"
+                                id="tool-search"
+                                placeholder="Search for a tool..."
+                                autocomplete="off"
+                                spellcheck="false"
+                            >
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             CATEGORIES
+             ========================= -->
+
+        <section
+            class="home-categories"
+            id="categories"
+            aria-labelledby="categories-title"
+        >
+
+            <div class="container">
+
+                <div class="section-header">
+
+                    <h2
+                        id="categories-title"
+                        class="section-title"
+                    >
+                        Browse by category
+                    </h2>
+
+                    <p class="section-description">
+                        Find the right tool for your task.
+                    </p>
+
+                </div>
+
+                <div
+                    id="category-list"
+                    class="category-list"
+                    aria-label="Tool categories"
+                >
+                    <!-- Categories generated by JavaScript -->
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             FEATURED TOOLS
+             ========================= -->
+
+        <section
+            class="section"
+            id="popular"
+            aria-labelledby="featured-title"
+        >
+
+            <div class="container">
+
+                <div class="section-header">
+
+                    <h2
+                        id="featured-title"
+                        class="section-title"
+                    >
+                        Popular tools
+                    </h2>
+
+                    <p class="section-description">
+                        Start with some of the most useful
+                        tools on Nisulka Tools.
+                    </p>
+
+                </div>
+
+                <div
+                    id="featured-tools"
+                    class="tool-grid"
+                >
+                    <!-- Featured tools generated by JavaScript -->
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             ALL TOOLS
+             ========================= -->
+
+        <section
+            class="section"
+            id="tools"
+            aria-labelledby="all-tools-title"
+        >
+
+            <div class="container">
+
+                <div class="section-header home-tools-header">
+
+                    <div>
+
+                        <h2
+                            id="all-tools-title"
+                            class="section-title"
+                        >
+                            All tools
+                        </h2>
+
+                        <p class="section-description">
+                            Explore all available tools.
+                        </p>
+
+                    </div>
+
+                    <div
+                        id="tool-count"
+                        aria-live="polite"
+                    >
+                    </div>
+
+                </div>
+
+                <div
+                    id="all-tools"
+                    class="tool-grid"
+                >
+                    <!-- All tools generated by JavaScript -->
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             SEO CONTENT
+             ========================= -->
+
+        <section
+            class="section home-seo"
+            aria-labelledby="about-tools-title"
+        >
+
+            <div class="container">
+
+                <div class="home-seo-content">
+
+                    <h2 id="about-tools-title">
+                        Free online tools for everyday tasks
+                    </h2>
+
+                    <p>
+                        Nisulka Tools is a collection of
+                        simple online utilities designed to
+                        help you complete common digital
+                        tasks quickly.
+                    </p>
+
+                    <p>
+                        Whether you need to compress an image,
+                        convert a video, work with text or
+                        perform another everyday task, Nisulka
+                        Tools aims to provide a straightforward
+                        experience without unnecessary steps.
+                    </p>
+
+                    <h3>
+                        Easy to use
+                    </h3>
+
+                    <p>
+                        Our tools are designed with simplicity
+                        in mind. Select a tool, provide the
+                        required input and follow the instructions
+                        provided on the page.
+                    </p>
+
+                    <h3>
+                        Privacy-focused tools
+                    </h3>
+
+                    <p>
+                        Whenever technically possible, tools
+                        can process files directly in your
+                        browser. This can reduce the need to
+                        upload files to a remote server.
+                    </p>
+
+                    <h3>
+                        More tools coming
+                    </h3>
+
+                    <p>
+                        Nisulka Tools will continue to expand
+                        with additional utilities covering
+                        images, video, audio, text, documents,
+                        development and other useful categories.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             FAQ
+             ========================= -->
+
+        <section
+            class="section"
+            id="faq"
+            aria-labelledby="faq-title"
+        >
+
+            <div class="container">
+
+                <div class="section-header">
+
+                    <h2
+                        id="faq-title"
+                        class="section-title"
+                    >
+                        Frequently asked questions
+                    </h2>
+
+                </div>
+
+                <div class="tool-faq">
+
+                    <article class="tool-faq-item">
+
+                        <h3>
+                            <button
+                                type="button"
+                                class="tool-faq-question"
+                                aria-expanded="false"
+                            >
+                                Are Nisulka Tools free?
+                                <span aria-hidden="true">
+                                    +
+                                </span>
+                            </button>
+                        </h3>
+
+                        <div
+                            class="tool-faq-answer"
+                            hidden
+                        >
+                            Nisulka Tools is designed to
+                            provide useful online utilities
+                            that can be used without unnecessary
+                            complexity or paid software.
+                        </div>
+
+                    </article>
+
+
+                    <article class="tool-faq-item">
+
+                        <h3>
+                            <button
+                                type="button"
+                                class="tool-faq-question"
+                                aria-expanded="false"
+                            >
+                                Do I need to install software?
+                                <span aria-hidden="true">
+                                    +
+                                </span>
+                            </button>
+                        </h3>
+
+                        <div
+                            class="tool-faq-answer"
+                            hidden
+                        >
+                            No. Nisulka Tools is designed to
+                            work directly in a modern web browser.
+                        </div>
+
+                    </article>
+
+
+                    <article class="tool-faq-item">
+
+                        <h3>
+                            <button
+                                type="button"
+                                class="tool-faq-question"
+                                aria-expanded="false"
+                            >
+                                Can I use Nisulka Tools on mobile?
+                                <span aria-hidden="true">
+                                    +
+                                </span>
+                            </button>
+                        </h3>
+
+                        <div
+                            class="tool-faq-answer"
+                            hidden
+                        >
+                            Yes. The website is designed to be
+                            responsive and usable on phones,
+                            tablets and desktop computers.
+                        </div>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================
+         FOOTER
+         ========================= -->
+
+    <div id="site-footer-mount"></div>
+
+
+    <!-- =========================
+         JAVASCRIPT
+         ========================= -->
+
+    <script src="assets/js/header.js"></script>
+
+    <script src="assets/js/footer.js"></script>
+
+    <script src="assets/js/components.js"></script>
+
+    <script src="assets/js/home.js"></script>
 
 </body>
 </html>
