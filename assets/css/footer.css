@@ -1,0 +1,168 @@
+/* =========================================================
+   NISULKA TOOLS — FOOTER
+   ========================================================= */
+
+.site-footer {
+    margin-top: 5rem;
+
+    border-top: 1px solid var(--border-color);
+
+    background: var(--bg-surface-secondary);
+}
+
+/* =========================
+   Footer Main
+   ========================= */
+
+.footer-main {
+    display: grid;
+
+    grid-template-columns: 1fr;
+
+    gap: 2.5rem;
+
+    padding-block: 3rem;
+}
+
+/* =========================
+   Footer Brand
+   ========================= */
+
+.footer-brand {
+    max-width: 340px;
+}
+
+.footer-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+
+    margin-bottom: 1rem;
+
+    color: var(--text-primary);
+
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+.footer-logo:hover {
+    color: var(--text-primary);
+}
+
+.footer-logo-mark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 36px;
+    height: 36px;
+
+    border-radius: 10px;
+
+    background: var(--brand-primary);
+    color: var(--text-on-primary);
+
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.footer-description {
+    margin: 0;
+
+    color: var(--text-secondary);
+
+    font-size: var(--font-size-sm);
+    line-height: 1.7;
+}
+
+/* =========================
+   Footer Columns
+   ========================= */
+
+.footer-title {
+    margin-bottom: 0.9rem;
+
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+}
+
+.footer-links {
+    display: flex;
+    flex-direction: column;
+
+    gap: 0.6rem;
+
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+}
+
+.footer-links a {
+    color: var(--text-secondary);
+
+    font-size: var(--font-size-sm);
+
+    transition:
+        color var(--transition-fast);
+}
+
+.footer-links a:hover {
+    color: var(--brand-primary);
+}
+
+/* =========================
+   Footer Bottom
+   ========================= */
+
+.footer-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    padding-block: 1.25rem;
+
+    border-top: 1px solid var(--border-color);
+}
+
+.footer-bottom p {
+    margin: 0;
+
+    color: var(--text-muted);
+
+    font-size: var(--font-size-xs);
+}
+
+/* =========================
+   Tablet
+   ========================= */
+
+@media (min-width: 640px) {
+
+    .footer-main {
+        grid-template-columns:
+            1.5fr
+            1fr
+            1fr
+            1fr;
+
+        gap: 2rem;
+    }
+
+    .footer-bottom {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+}
+
+/* =========================
+   Desktop
+   ========================= */
+
+@media (min-width: 1024px) {
+
+    .footer-main {
+        padding-block: 4rem;
+    }
+}
