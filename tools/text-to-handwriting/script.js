@@ -36,12 +36,18 @@
             "download-result"
         );
 
+    const canvas =
+        document.getElementById(
+            "handwriting-canvas"
+        );
+
 
     if (
         !textInput ||
         !preview ||
         !fontSize ||
-        !lineHeight
+        !lineHeight ||
+        !canvas
     ) {
         console.error(
             "Text to Handwriting: required elements not found."
@@ -52,7 +58,7 @@
 
 
     /* =========================
-       Update Preview
+       Preview
        ========================= */
 
     function updatePreview() {
@@ -120,45 +126,288 @@
 
 
     /* =========================
-       Download Text
+       Canvas Text Rendering
        ========================= */
 
-    function downloadText() {
+    function wrapText(
+        context,
+        text,
+        maxWidth
+    ) {
+
+        const words =
+            text.split(/\s+/);
+
+        const lines = [];
+
+        let currentLine = "";
+
+        words.forEach(
+            function (word) {
+
+                const testLine =
+                    currentLine
+                        ? `${currentLine} ${word}`
+                        : word;
+
+                const width =
+                    context.measureText(
+                        testLine
+                    ).width;
+
+                if (
+                    width >
+                        maxWidth &&
+                    currentLine
+                ) {
+
+                    lines.push(
+                        currentLine
+                    );
+
+                    currentLine =
+                        word;
+
+                } else {
+
+                    currentLine =
+                        testLine;
+                }
+            }
+        );
+
+        if (currentLine) {
+            lines.push(currentLine);
+        }
+
+        return lines;
+    }
+
+
+    /* =========================
+       Generate PNG
+       ========================= */
+
+    function generatePNG() {
 
         const text =
             textInput.value.trim();
 
         if (!text) {
+            alert(
+                "Please enter some text first."
+            );
+
             return;
         }
 
-        const blob =
-            new Blob(
-                [text],
-                {
-                    type:
-                        "text/plain;charset=utf-8"
-                }
+
+        const ctx =
+            canvas.getContext("2d");
+
+
+        const size =
+            Number(fontSize.value);
+
+        const spacing =
+            Number(lineHeight.value);
+
+
+        const padding = 80;
+
+        const width = 1600;
+
+        const maxTextWidth =
+            width - (
+                padding * 2
             );
 
-        const url =
-            URL.createObjectURL(blob);
 
-        const link =
-            document.createElement("a");
+        /*
+         * Use a handwriting-style
+         * system font.
+         */
 
-        link.href = url;
+        ctx.font =
+            `${size}px "Segoe Print", "Comic Sans MS", cursive`;
 
-        link.download =
-            "nisulka-handwritten-text.txt";
 
-        document.body.appendChild(link);
+        const paragraphs =
+            text.split("\n");
 
-        link.click();
 
-        link.remove();
+        const lines = [];
 
-        URL.revokeObjectURL(url);
+
+        paragraphs.forEach(
+            function (paragraph) {
+
+                if (!paragraph.trim()) {
+
+                    lines.push("");
+
+                    return;
+                }
+
+                const wrapped =
+                    wrapText(
+                        ctx,
+                        paragraph,
+                        maxTextWidth
+                    );
+
+                lines.push(
+                    ...wrapped
+                );
+            }
+        );
+
+
+        const height =
+            Math.max(
+                400,
+                (
+                    lines.length *
+                    spacing
+                ) +
+                (
+                    padding * 2
+                )
+            );
+
+
+        /*
+         * High-resolution canvas.
+         */
+
+        canvas.width =
+            width;
+
+        canvas.height =
+            height;
+
+
+        /*
+         * Paper.
+         */
+
+        ctx.fillStyle =
+            "#ffffff";
+
+        ctx.fillRect(
+            0,
+            0,
+            width,
+            height
+        );
+
+
+        /*
+         * Notebook lines.
+         */
+
+        ctx.strokeStyle =
+            "#dbeafe";
+
+        ctx.lineWidth = 2;
+
+
+        for (
+            let y = padding;
+            y < height - padding;
+            y += spacing
+        ) {
+
+            ctx.beginPath();
+
+            ctx.moveTo(
+                padding / 2,
+                y
+            );
+
+            ctx.lineTo(
+                width - (
+                    padding / 2
+                ),
+                y
+            );
+
+            ctx.stroke();
+        }
+
+
+        /*
+         * Handwriting text.
+         */
+
+        ctx.font =
+            `${size}px "Segoe Print", "Comic Sans MS", cursive`;
+
+        ctx.fillStyle =
+            "#1f2937";
+
+        ctx.textBaseline =
+            "top";
+
+
+        let y =
+            padding;
+
+
+        lines.forEach(
+            function (line) {
+
+                ctx.fillText(
+                    line,
+                    padding,
+                    y
+                );
+
+                y += spacing;
+            }
+        );
+
+
+        /*
+         * Download.
+         */
+
+        canvas.toBlob(
+            function (blob) {
+
+                if (!blob) {
+                    return;
+                }
+
+                const url =
+                    URL.createObjectURL(
+                        blob
+                    );
+
+                const link =
+                    document.createElement(
+                        "a"
+                    );
+
+                link.href = url;
+
+                link.download =
+                    "nisulka-handwriting.png";
+
+                document.body.appendChild(
+                    link
+                );
+
+                link.click();
+
+                link.remove();
+
+                URL.revokeObjectURL(
+                    url
+                );
+            },
+            "image/png"
+        );
     }
 
 
@@ -196,31 +445,22 @@
     );
 
 
-    if (copyButton) {
-
-        copyButton.addEventListener(
-            "click",
-            copyText
-        );
-    }
+    copyButton.addEventListener(
+        "click",
+        copyText
+    );
 
 
-    if (clearButton) {
-
-        clearButton.addEventListener(
-            "click",
-            clearTool
-        );
-    }
+    clearButton.addEventListener(
+        "click",
+        clearTool
+    );
 
 
-    if (downloadButton) {
-
-        downloadButton.addEventListener(
-            "click",
-            downloadText
-        );
-    }
+    downloadButton.addEventListener(
+        "click",
+        generatePNG
+    );
 
 
     /* =========================
