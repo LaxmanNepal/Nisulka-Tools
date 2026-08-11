@@ -1,0 +1,240 @@
+/* =========================================================
+   NISULKA TOOLS — HOMEPAGE
+   ========================================================= */
+
+/* =========================
+   Hero
+   ========================= */
+
+.home-hero {
+    padding-block: 4rem 3rem;
+
+    background:
+        radial-gradient(
+            circle at 50% 0%,
+            var(--brand-primary-light),
+            transparent 55%
+        );
+}
+
+.home-hero-content {
+    max-width: 850px;
+    margin-inline: auto;
+
+    text-align: center;
+}
+
+.home-hero .badge {
+    margin-bottom: 1rem;
+}
+
+.home-hero-title {
+    max-width: 800px;
+    margin-inline: auto;
+    margin-bottom: 1rem;
+
+    font-size: clamp(
+        2.1rem,
+        7vw,
+        4rem
+    );
+
+    line-height: 1.12;
+    letter-spacing: -0.045em;
+}
+
+.home-hero-description {
+    max-width: 680px;
+    margin-inline: auto;
+    margin-bottom: 2rem;
+
+    color: var(--text-secondary);
+
+    font-size: clamp(
+        1rem,
+        2vw,
+        1.15rem
+    );
+
+    line-height: 1.7;
+}
+
+/* =========================
+   Search
+   ========================= */
+
+.home-search {
+    width: min(100%, 680px);
+    margin-inline: auto;
+}
+
+.home-search .search-box input {
+    min-height: 58px;
+
+    font-size: var(--font-size-base);
+}
+
+/* =========================
+   Categories
+   ========================= */
+
+.home-categories {
+    padding-block: 2rem 1rem;
+}
+
+.home-categories .section-header {
+    margin-bottom: 1.25rem;
+}
+
+/* =========================
+   Tools Header
+   ========================= */
+
+.home-tools-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.tool-count {
+    display: inline-flex;
+    align-items: center;
+
+    min-height: 30px;
+
+    padding: 0.3rem 0.65rem;
+
+    border-radius: var(--radius-full);
+
+    background: var(--bg-surface-secondary);
+
+    color: var(--text-secondary);
+
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+/* =========================
+   SEO Content
+   ========================= */
+
+.home-seo {
+    background: var(--bg-surface-secondary);
+}
+
+.home-seo-content {
+    max-width: 850px;
+    margin-inline: auto;
+}
+
+.home-seo-content h2 {
+    margin-bottom: 1rem;
+}
+
+.home-seo-content h3 {
+    margin-top: 2rem;
+    margin-bottom: 0.6rem;
+
+    font-size: var(--font-size-xl);
+}
+
+.home-seo-content p {
+    max-width: 800px;
+    margin-bottom: 1rem;
+
+    line-height: 1.8;
+}
+
+/* =========================
+   FAQ
+   ========================= */
+
+#faq .section-header {
+    text-align: center;
+}
+
+#faq .section-header .section-description {
+    margin-inline: auto;
+}
+
+#faq .tool-faq {
+    width: min(100%, 850px);
+    margin-inline: auto;
+}
+
+/* =========================
+   Search State
+   ========================= */
+
+.search-active .home-search {
+    margin-bottom: 0;
+}
+
+/* =========================
+   No Results
+   ========================= */
+
+#all-tools .empty-state {
+    grid-column: 1 / -1;
+}
+
+/* =========================
+   Tablet
+   ========================= */
+
+@media (min-width: 640px) {
+
+    .home-hero {
+        padding-block: 5rem 4rem;
+    }
+
+    .home-categories {
+        padding-block: 2.5rem 1rem;
+    }
+}
+
+/* =========================
+   Desktop
+   ========================= */
+
+@media (min-width: 1024px) {
+
+    .home-hero {
+        padding-block: 6rem 4.5rem;
+    }
+
+    .home-hero-title {
+        font-size: clamp(
+            3rem,
+            5vw,
+            4.25rem
+        );
+    }
+}
+
+/* =========================
+   Mobile
+   ========================= */
+
+@media (max-width: 639px) {
+
+    .home-hero {
+        padding-block: 3rem 2.5rem;
+    }
+
+    .home-hero-title {
+        font-size: 2.15rem;
+    }
+
+    .home-tools-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .home-seo-content h3 {
+        font-size: var(--font-size-lg);
+    }
+}
