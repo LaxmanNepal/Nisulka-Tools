@@ -38,6 +38,7 @@
 <style>
 
     :root {
+
         --primary: #2563eb;
         --primary-dark: #1d4ed8;
 
@@ -46,6 +47,8 @@
 
         --text: #0f172a;
         --text-secondary: #64748b;
+        --text-muted: #94a3b8;
+
         --border: #e2e8f0;
 
         --success: #16a34a;
@@ -53,6 +56,7 @@
         --danger: #dc2626;
 
         --radius: 14px;
+
     }
 
 
@@ -62,6 +66,7 @@
 
 
     body {
+
         margin: 0;
 
         font-family:
@@ -73,23 +78,46 @@
 
         color:
             var(--text);
+
+    }
+
+
+    button,
+    input,
+    select {
+
+        font:
+            inherit;
+
     }
 
 
     .admin-header {
+
         background:
             var(--surface);
 
         border-bottom:
             1px solid
             var(--border);
+
+        position:
+            sticky;
+
+        top:
+            0;
+
+        z-index:
+            20;
+
     }
 
 
     .admin-header-inner {
+
         width:
             min(
-                1400px,
+                1440px,
                 calc(100% - 32px)
             );
 
@@ -97,7 +125,7 @@
             auto;
 
         min-height:
-            72px;
+            70px;
 
         display:
             flex;
@@ -108,12 +136,11 @@
         justify-content:
             space-between;
 
-        gap:
-            1rem;
     }
 
 
     .brand {
+
         display:
             flex;
 
@@ -121,17 +148,16 @@
             center;
 
         gap:
-            0.75rem;
+            12px;
 
         font-weight:
             700;
 
-        font-size:
-            1.1rem;
     }
 
 
     .brand-mark {
+
         width:
             40px;
 
@@ -145,23 +171,54 @@
             center;
 
         border-radius:
-            10px;
+            11px;
 
         background:
             var(--primary);
 
         color:
-            white;
+            #fff;
+
+    }
+
+
+    .brand-text {
+
+        display:
+            flex;
+
+        flex-direction:
+            column;
+
+    }
+
+
+    .brand-name {
+
+        font-size:
+            1rem;
+
+    }
+
+
+    .brand-subtitle {
+
+        color:
+            var(--text-muted);
+
+        font-size:
+            0.7rem;
 
         font-weight:
-            700;
+            500;
+
     }
 
 
     .admin-badge {
+
         padding:
-            0.35rem
-            0.7rem;
+            5px 10px;
 
         border-radius:
             999px;
@@ -173,58 +230,74 @@
             var(--primary);
 
         font-size:
-            0.75rem;
+            0.72rem;
 
         font-weight:
-            600;
+            700;
+
     }
 
 
     .admin-main {
+
         width:
             min(
-                1400px,
+                1440px,
                 calc(100% - 32px)
             );
 
         margin:
-            0 auto;
+            auto;
 
         padding:
-            32px 0
-            60px;
+            32px 0 60px;
+
     }
 
 
     .page-heading {
+
         margin-bottom:
-            28px;
+            24px;
+
     }
 
 
     .page-heading h1 {
+
         margin:
-            0 0 6px;
+            0 0 5px;
 
         font-size:
             clamp(
-                1.6rem,
+                1.5rem,
                 3vw,
-                2.2rem
+                2.1rem
             );
+
     }
 
 
     .page-heading p {
+
         margin:
             0;
 
         color:
             var(--text-secondary);
+
+        font-size:
+            0.9rem;
+
     }
 
 
+    /* =================================
+       STATS
+       ================================= */
+
     .dashboard-grid {
+
         display:
             grid;
 
@@ -238,13 +311,15 @@
             );
 
         gap:
-            18px;
+            16px;
+
     }
 
 
     .stat-card {
+
         padding:
-            22px;
+            20px;
 
         background:
             var(--surface);
@@ -255,48 +330,119 @@
 
         border-radius:
             var(--radius);
+
     }
 
 
     .stat-label {
+
         color:
             var(--text-secondary);
 
         font-size:
-            0.85rem;
+            0.78rem;
+
+        font-weight:
+            500;
+
     }
 
 
     .stat-value {
+
         margin-top:
-            8px;
+            6px;
 
         font-size:
-            2rem;
+            1.75rem;
 
         font-weight:
             700;
+
     }
 
 
     .stat-note {
+
         margin-top:
-            6px;
+            5px;
+
+        color:
+            var(--text-muted);
+
+        font-size:
+            0.7rem;
+
+    }
+
+
+    /* =================================
+       NAVIGATION
+       ================================= */
+
+    .admin-nav {
+
+        display:
+            flex;
+
+        gap:
+            8px;
+
+        margin:
+            24px 0;
+
+        overflow-x:
+            auto;
+
+    }
+
+
+    .admin-nav button {
+
+        border:
+            1px solid
+            var(--border);
+
+        background:
+            var(--surface);
 
         color:
             var(--text-secondary);
 
-        font-size:
-            0.75rem;
+        padding:
+            9px 14px;
+
+        border-radius:
+            9px;
+
+        cursor:
+            pointer;
+
+        white-space:
+            nowrap;
+
     }
 
 
-    .dashboard-section {
-        margin-top:
-            24px;
+    .admin-nav button.active {
 
-        padding:
-            24px;
+        background:
+            var(--primary);
+
+        border-color:
+            var(--primary);
+
+        color:
+            #fff;
+
+    }
+
+
+    /* =================================
+       TOOL MANAGEMENT
+       ================================= */
+
+    .dashboard-section {
 
         background:
             var(--surface);
@@ -307,117 +453,442 @@
 
         border-radius:
             var(--radius);
+
+        overflow:
+            hidden;
+
     }
 
 
-    .dashboard-section h2 {
+    .section-header {
+
+        padding:
+            20px;
+
+        border-bottom:
+            1px solid
+            var(--border);
+
+    }
+
+
+    .section-header h2 {
+
         margin:
-            0 0 6px;
+            0 0 5px;
 
         font-size:
             1.1rem;
+
     }
 
 
-    .dashboard-section p {
+    .section-header p {
+
         margin:
             0;
 
         color:
             var(--text-secondary);
-    }
-
-
-    .status {
-        display:
-            inline-flex;
-
-        align-items:
-            center;
-
-        gap:
-            6px;
-
-        padding:
-            5px 9px;
-
-        border-radius:
-            999px;
 
         font-size:
-            0.75rem;
+            0.8rem;
 
-        font-weight:
-            600;
     }
 
 
-    .status-ready {
-        background:
-            #f0fdf4;
-
-        color:
-            var(--success);
-    }
-
-
-    .integration-list {
-        margin-top:
-            20px;
+    .tool-controls {
 
         display:
-            grid;
-
-        grid-template-columns:
-            repeat(
-                3,
-                minmax(
-                    0,
-                    1fr
-                )
-            );
+            flex;
 
         gap:
-            14px;
+            10px;
+
+        padding:
+            16px;
+
+        border-bottom:
+            1px solid
+            var(--border);
+
     }
 
 
-    .integration {
-        padding:
-            18px;
+    .tool-search {
+
+        flex:
+            1;
+
+        min-width:
+            0;
+
+    }
+
+
+    .tool-search input,
+    .tool-controls select {
+
+        width:
+            100%;
+
+        height:
+            42px;
 
         border:
             1px solid
             var(--border);
 
         border-radius:
-            12px;
+            9px;
+
+        padding:
+            0 12px;
+
+        background:
+            #fff;
+
+        color:
+            var(--text);
+
+        outline:
+            none;
+
     }
 
 
-    .integration strong {
+    .tool-search input:focus,
+    .tool-controls select:focus {
+
+        border-color:
+            var(--primary);
+
+        box-shadow:
+            0 0 0 3px
+            rgba(
+                37,
+                99,
+                235,
+                0.1
+            );
+
+    }
+
+
+    .category-filter {
+
+        width:
+            220px;
+
+    }
+
+
+    /* =================================
+       TOOL ROW
+       ================================= */
+
+    #tools-table {
+
         display:
-            block;
+            flex;
 
-        margin-bottom:
-            5px;
+        flex-direction:
+            column;
+
     }
 
 
-    .integration span {
+    .admin-tool-row {
+
+        display:
+            grid;
+
+        grid-template-columns:
+            minmax(
+                0,
+                1fr
+            )
+            auto
+            130px;
+
+        gap:
+            20px;
+
+        align-items:
+            center;
+
+        padding:
+            18px 20px;
+
+        border-bottom:
+            1px solid
+            var(--border);
+
+    }
+
+
+    .admin-tool-row:last-child {
+
+        border-bottom:
+            0;
+
+    }
+
+
+    .admin-tool-main {
+
+        display:
+            flex;
+
+        align-items:
+            center;
+
+        gap:
+            14px;
+
+        min-width:
+            0;
+
+    }
+
+
+    .admin-tool-logo {
+
+        width:
+            58px;
+
+        height:
+            58px;
+
+        object-fit:
+            cover;
+
+        border-radius:
+            12px;
+
+        border:
+            1px solid
+            var(--border);
+
+        flex-shrink:
+            0;
+
+    }
+
+
+    .admin-tool-logo-fallback {
+
+        width:
+            58px;
+
+        height:
+            58px;
+
+        display:
+            grid;
+
+        place-items:
+            center;
+
+        border-radius:
+            12px;
+
+        background:
+            #eff6ff;
+
+        color:
+            var(--primary);
+
+        font-weight:
+            700;
+
+        flex-shrink:
+            0;
+
+    }
+
+
+    .admin-tool-info {
+
+        min-width:
+            0;
+
+    }
+
+
+    .admin-tool-name {
+
+        color:
+            var(--text);
+
+        text-decoration:
+            none;
+
+        font-weight:
+            600;
+
+    }
+
+
+    .admin-tool-name:hover {
+
+        color:
+            var(--primary);
+
+    }
+
+
+    .admin-tool-info p {
+
+        margin:
+            3px 0;
+
         color:
             var(--text-secondary);
 
         font-size:
-            0.8rem;
+            0.76rem;
+
+        white-space:
+            nowrap;
+
+        overflow:
+            hidden;
+
+        text-overflow:
+            ellipsis;
+
     }
 
 
+    .admin-tool-slug {
+
+        color:
+            var(--text-muted);
+
+        font-size:
+            0.68rem;
+
+    }
+
+
+    .admin-tool-meta {
+
+        display:
+            flex;
+
+        flex-direction:
+            column;
+
+        align-items:
+            flex-start;
+
+        gap:
+            4px;
+
+        color:
+            var(--text-secondary);
+
+        font-size:
+            0.7rem;
+
+    }
+
+
+    .admin-tool-seo {
+
+        text-align:
+            right;
+
+    }
+
+
+    .admin-tool-seo strong {
+
+        display:
+            block;
+
+        font-size:
+            1.2rem;
+
+        color:
+            var(--text-muted);
+
+    }
+
+
+    .admin-tool-seo span {
+
+        color:
+            var(--text-muted);
+
+        font-size:
+            0.65rem;
+
+    }
+
+
+    /* =================================
+       EMPTY
+       ================================= */
+
+    .admin-empty {
+
+        padding:
+            50px 20px;
+
+        text-align:
+            center;
+
+        color:
+            var(--text-secondary);
+
+    }
+
+
+    .admin-empty strong {
+
+        display:
+            block;
+
+        color:
+            var(--text);
+
+        margin-bottom:
+            5px;
+
+    }
+
+
+    .admin-empty p {
+
+        margin:
+            0;
+
+        font-size:
+            0.8rem;
+
+    }
+
+
+    .admin-error {
+
+        color:
+            var(--danger);
+
+    }
+
+
+    /* =================================
+       RESPONSIVE
+       ================================= */
+
     @media (
-        max-width: 900px
+        max-width: 1000px
     ) {
 
         .dashboard-grid {
+
             grid-template-columns:
                 repeat(
                     2,
@@ -426,327 +897,507 @@
                         1fr
                     )
                 );
+
         }
 
-        .integration-list {
+
+        .admin-tool-row {
+
             grid-template-columns:
-                1fr;
+                minmax(
+                    0,
+                    1fr
+                )
+                110px;
+
+        }
+
+
+        .admin-tool-meta {
+
+            display:
+                none;
+
         }
 
     }
 
 
     @media (
-        max-width: 560px
+        max-width: 620px
     ) {
 
         .admin-header-inner,
         .admin-main {
+
             width:
-                min(
-                    100% - 20px,
-                    1400px
+                calc(
+                    100% - 20px
                 );
+
         }
 
-        .dashboard-grid {
-            grid-template-columns:
-                1fr;
-        }
 
         .admin-main {
+
             padding-top:
                 22px;
+
+        }
+
+
+        .dashboard-grid {
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap:
+                10px;
+
+        }
+
+
+        .stat-card {
+
+            padding:
+                15px;
+
+        }
+
+
+        .stat-value {
+
+            font-size:
+                1.4rem;
+
+        }
+
+
+        .tool-controls {
+
+            flex-direction:
+                column;
+
+        }
+
+
+        .category-filter {
+
+            width:
+                100%;
+
+        }
+
+
+        .admin-tool-row {
+
+            grid-template-columns:
+                minmax(
+                    0,
+                    1fr
+                )
+                80px;
+
+            gap:
+                10px;
+
+            padding:
+                14px;
+
+        }
+
+
+        .admin-tool-logo,
+        .admin-tool-logo-fallback {
+
+            width:
+                48px;
+
+            height:
+                48px;
+
+        }
+
+
+        .admin-tool-info p {
+
+            display:
+                none;
+
         }
 
     }
 
 </style>
 
-</head><body><header class="admin-header">
+</head><body><header class="admin-header"><div class="admin-header-inner">
 
-    <div class="admin-header-inner">
+    <div class="brand">
 
-        <div class="brand">
+        <div class="brand-mark">
+            N
+        </div>
 
-            <div class="brand-mark">
-                N
-            </div>
+        <div class="brand-text">
 
-            <span>
+            <span class="brand-name">
                 Nisulka Tools
+            </span>
+
+            <span class="brand-subtitle">
+                Management Center
             </span>
 
         </div>
 
-        <span class="admin-badge">
-            ADMIN
-        </span>
-
     </div>
 
-</header>
+
+    <span class="admin-badge">
+        ADMIN
+    </span>
+
+</div>
+
+</header><main class="admin-main"><section class="page-heading">
+
+    <h1>
+        Dashboard
+    </h1>
+
+    <p>
+        Monitor the health, SEO and performance
+        of every Nisulka Tool.
+    </p>
+
+</section>
 
 
-<main class="admin-main">
+<!-- =================================
+     STATISTICS
+     ================================= -->
 
-    <section class="page-heading">
-
-        <h1>
-            Admin Dashboard
-        </h1>
-
-        <p>
-            Manage, monitor and improve
-            your Nisulka Tools platform.
-        </p>
-
-    </section>
+<section class="dashboard-grid">
 
 
-    <section class="dashboard-grid">
+    <article class="stat-card">
 
-        <article class="stat-card">
+        <div class="stat-label">
+            Total Tools
+        </div>
 
-            <div class="stat-label">
-                Total Tools
-            </div>
+        <div
+            class="stat-value"
+            id="total-tools"
+        >
+            —
+        </div>
 
-            <div
-                class="stat-value"
-                id="total-tools"
-            >
-                —
-            </div>
+        <div class="stat-note">
+            Registered tools
+        </div>
 
-            <div class="stat-note">
-                From tools.json
-            </div>
-
-        </article>
+    </article>
 
 
-        <article class="stat-card">
+    <article class="stat-card">
 
-            <div class="stat-label">
-                Average SEO Score
-            </div>
+        <div class="stat-label">
+            Active Tools
+        </div>
 
-            <div
-                class="stat-value"
-                id="average-seo"
-            >
-                —
-            </div>
+        <div
+            class="stat-value"
+            id="active-tools"
+        >
+            —
+        </div>
 
-            <div class="stat-note">
-                SEO auditor
-            </div>
+        <div class="stat-note">
+            Currently published
+        </div>
 
-        </article>
-
-
-        <article class="stat-card">
-
-            <div class="stat-label">
-                Google Clicks
-            </div>
-
-            <div
-                class="stat-value"
-                id="google-clicks"
-            >
-                —
-            </div>
-
-            <div class="stat-note">
-                Search Console
-            </div>
-
-        </article>
+    </article>
 
 
-        <article class="stat-card">
+    <article class="stat-card">
 
-            <div class="stat-label">
-                Page Views
-            </div>
+        <div class="stat-label">
+            Featured Tools
+        </div>
 
-            <div
-                class="stat-value"
-                id="page-views"
-            >
-                —
-            </div>
+        <div
+            class="stat-value"
+            id="featured-tools"
+        >
+            —
+        </div>
 
-            <div class="stat-note">
-                Google Analytics
-            </div>
+        <div class="stat-note">
+            Homepage featured
+        </div>
 
-        </article>
-
-    </section>
+    </article>
 
 
-    <section class="dashboard-section">
+    <article class="stat-card">
+
+        <div class="stat-label">
+            Average SEO
+        </div>
+
+        <div
+            class="stat-value"
+            id="average-seo"
+        >
+            —
+        </div>
+
+        <div class="stat-note">
+            Waiting for SEO audit
+        </div>
+
+    </article>
+
+</section>
+
+
+<!-- =================================
+     NAV
+     ================================= -->
+
+<nav class="admin-nav">
+
+    <button
+        type="button"
+        class="active"
+    >
+        Overview
+    </button>
+
+    <button type="button">
+        Tools
+    </button>
+
+    <button type="button">
+        SEO
+    </button>
+
+    <button type="button">
+        Google Search
+    </button>
+
+    <button type="button">
+        Traffic
+    </button>
+
+    <button type="button">
+        Insights
+    </button>
+
+    <button type="button">
+        Issues
+    </button>
+
+</nav>
+
+
+<!-- =================================
+     TOOLS
+     ================================= -->
+
+<section class="dashboard-section">
+
+    <header class="section-header">
 
         <h2>
-            System status
+            Tool Performance
         </h2>
 
         <p>
-            Current Nisulka Tools integrations.
+            Every registered Nisulka Tool
+            will appear here.
         </p>
 
-
-        <div class="integration-list">
-
-
-            <div class="integration">
-
-                <strong>
-                    Tools Database
-                </strong>
-
-                <span class="status status-ready">
-                    ● Ready
-                </span>
-
-            </div>
+    </header>
 
 
-            <div class="integration">
+    <div class="tool-controls">
 
-                <strong>
-                    SEO Auditor
-                </strong>
+        <div class="tool-search">
 
-                <span class="status status-ready">
-                    ● Ready to connect
-                </span>
-
-            </div>
-
-
-            <div class="integration">
-
-                <strong>
-                    Google Search Console
-                </strong>
-
-                <span class="status status-ready">
-                    ● Planned
-                </span>
-
-            </div>
-
-
-            <div class="integration">
-
-                <strong>
-                    Google Analytics
-                </strong>
-
-                <span class="status status-ready">
-                    ● Planned
-                </span>
-
-            </div>
-
-
-            <div class="integration">
-
-                <strong>
-                    GitHub Actions
-                </strong>
-
-                <span class="status status-ready">
-                    ● Active
-                </span>
-
-            </div>
-
-
-            <div class="integration">
-
-                <strong>
-                    Cloudflare Access
-                </strong>
-
-                <span class="status status-ready">
-                    ● Next step
-                </span>
-
-            </div>
+            <input
+                type="search"
+                id="tool-search"
+                placeholder="Search tools..."
+                autocomplete="off"
+            >
 
         </div>
 
-    </section>
+
+        <div class="category-filter">
+
+            <select
+                id="category-filter"
+            >
+
+                <option value="all">
+                    All categories
+                </option>
+
+            </select>
+
+        </div>
+
+    </div>
 
 
-    <section class="dashboard-section">
+    <div id="tools-table">
+
+        <div class="admin-empty">
+
+            Loading tools...
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =================================
+     FUTURE DATA
+     ================================= -->
+
+<section
+    class="dashboard-section"
+    style="margin-top:24px;"
+>
+
+    <header class="section-header">
 
         <h2>
-            What this dashboard will contain
+            External Data
         </h2>
 
         <p>
-            SEO scores, Google rankings, search
-            queries, clicks, impressions, CTR,
-            traffic, page views, indexing status,
-            technical issues, content quality,
-            recommendations and per-tool insights.
+            These integrations will be connected
+            in later steps.
         </p>
 
-    </section>
-
-</main>
+    </header>
 
 
-<script>
-
-    async function loadToolCount() {
-
-        try {
-
-            const response =
-                await fetch(
-                    "../data/tools.json?v=" +
-                    Date.now()
+    <div
+        style="
+            display:grid;
+            grid-template-columns:
+                repeat(
+                    auto-fit,
+                    minmax(
+                        220px,
+                        1fr
+                    )
                 );
+            gap:12px;
+            padding:20px;
+        "
+    >
 
-            if (!response.ok) {
-                throw new Error(
-                    "Unable to load tools.json"
-                );
-            }
+        <div
+            style="
+                padding:18px;
+                border:1px solid var(--border);
+                border-radius:12px;
+            "
+        >
 
-            const tools =
-                await response.json();
+            <strong>
+                Google Search Console
+            </strong>
 
-            document.getElementById(
-                "total-tools"
-            ).textContent =
-                Array.isArray(tools)
-                    ? tools.length
-                    : "0";
+            <p
+                style="
+                    margin:5px 0 0;
+                    color:var(--text-secondary);
+                    font-size:.75rem;
+                "
+            >
+                Rankings, clicks,
+                impressions and CTR.
+            </p>
 
-        } catch (error) {
-
-            console.error(error);
-
-            document.getElementById(
-                "total-tools"
-            ).textContent =
-                "—";
-
-        }
-
-    }
+        </div>
 
 
-    loadToolCount();
+        <div
+            style="
+                padding:18px;
+                border:1px solid var(--border);
+                border-radius:12px;
+            "
+        >
 
-</script>
+            <strong>
+                Google Analytics 4
+            </strong>
 
-</body></html>
+            <p
+                style="
+                    margin:5px 0 0;
+                    color:var(--text-secondary);
+                    font-size:.75rem;
+                "
+            >
+                Users, sessions,
+                page views and traffic.
+            </p>
+
+        </div>
+
+
+        <div
+            style="
+                padding:18px;
+                border:1px solid var(--border);
+                border-radius:12px;
+            "
+        >
+
+            <strong>
+                SEO Auditor
+            </strong>
+
+            <p
+                style="
+                    margin:5px 0 0;
+                    color:var(--text-secondary);
+                    font-size:.75rem;
+                "
+            >
+                Technical SEO and
+                content quality.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<p
+    id="last-updated"
+    style="
+        margin-top:16px;
+        text-align:right;
+        color:var(--text-muted);
+        font-size:.7rem;
+    "
+></p>
+
+</main><script
+    src="assets/js/admin.js"
+    defer
+></script></body></html>
