@@ -1,50 +1,83 @@
 "use strict";
 
 /*
- * Nisulka Tools Homepage
+ * ============================================================
+ * NISULKA TOOLS — HOMEPAGE
+ * ============================================================
  *
  * Loads tools from:
- * data/tools.json
+ *
+ *     data/tools.json
  *
  * The JSON file is automatically generated
  * by GitHub Actions from the /tools/ directory.
+ *
+ * Tool card design:
+ *
+ *     LARGE LOGO
+ *     TOOL NAME
+ *     DESCRIPTION
+ *
+ * No category, arrow or unnecessary metadata
+ * is displayed inside the tool card.
+ * ============================================================
  */
 
+
+/* ============================================================
+   CONFIGURATION
+   ============================================================ */
 
 const TOOLS_DATA_URL = "data/tools.json";
 
 
+/* ============================================================
+   APPLICATION STATE
+   ============================================================ */
+
 let allTools = [];
+
 let activeCategory = "All";
+
 let searchQuery = "";
 
 
-/* =========================================
+/* ============================================================
    DOM ELEMENTS
-   ========================================= */
+   ============================================================ */
 
-const searchInput = document.getElementById("tool-search");
-const categoryList = document.getElementById("category-list");
+const searchInput =
+    document.getElementById("tool-search");
+
+
+const categoryList =
+    document.getElementById("category-list");
+
 
 const featuredToolsContainer =
     document.getElementById("featured-tools");
 
+
 const allToolsContainer =
     document.getElementById("all-tools");
+
 
 const toolCount =
     document.getElementById("tool-count");
 
 
-/* =========================================
+/* ============================================================
    INITIALIZE
-   ========================================= */
+   ============================================================ */
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
 
-    initializeHomepage();
+        initializeHomepage();
 
-});
+    }
+);
 
 
 async function initializeHomepage() {
@@ -79,15 +112,20 @@ async function initializeHomepage() {
 }
 
 
-/* =========================================
+/* ============================================================
    LOAD TOOLS
-   ========================================= */
+   ============================================================ */
 
 async function loadTools() {
 
-    const response = await fetch(
-        `${TOOLS_DATA_URL}?v=${Date.now()}`
-    );
+    const response =
+        await fetch(
+            `${TOOLS_DATA_URL}?v=${Date.now()}`,
+            {
+                cache: "no-store"
+            }
+        );
+
 
     if (!response.ok) {
 
@@ -97,7 +135,10 @@ async function loadTools() {
 
     }
 
-    const data = await response.json();
+
+    const data =
+        await response.json();
+
 
     if (!Array.isArray(data)) {
 
@@ -107,27 +148,30 @@ async function loadTools() {
 
     }
 
-    allTools = data.filter(tool => {
 
-        return (
-            tool &&
-            tool.status !== "hidden"
-        );
+    allTools =
+        data.filter(tool => {
 
-    });
+            return (
+                tool &&
+                tool.status !== "hidden"
+            );
+
+        });
 
 }
 
 
-/* =========================================
+/* ============================================================
    SEARCH
-   ========================================= */
+   ============================================================ */
 
 function setupSearch() {
 
     if (!searchInput) {
         return;
     }
+
 
     searchInput.addEventListener(
         "input",
@@ -141,21 +185,54 @@ function setupSearch() {
     );
 
 
-    // Support ?q=search-term
+    /*
+     * Support:
+     *
+     * ?q=text-to-handwriting
+     */
+
     const params =
         new URLSearchParams(
             window.location.search
         );
 
+
     const query =
         params.get("q");
+
 
     if (query) {
 
         searchInput.value = query;
 
         searchQuery =
-            query.trim().toLowerCase();
+            query
+                .trim()
+                .toLowerCase();
+
+
+        /*
+         * Automatically scroll to
+         * tools when a search query
+         * is provided in the URL.
+         */
+
+        setTimeout(() => {
+
+            const toolsSection =
+                document.getElementById("tools");
+
+
+            if (toolsSection) {
+
+                toolsSection.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+
+            }
+
+        }, 300);
 
     }
 
@@ -170,7 +247,12 @@ function handleSearch(event) {
             .toLowerCase();
 
 
+    /*
+     * Search overrides category.
+     */
+
     activeCategory = "All";
+
 
     renderCategories();
 
@@ -181,43 +263,68 @@ function handleSearch(event) {
 }
 
 
-/* =========================================
+/* ============================================================
    FILTER TOOLS
-   ========================================= */
+   ============================================================ */
 
 function getFilteredTools() {
 
     return allTools.filter(tool => {
+
+
+        /*
+         * Category filter
+         */
 
         const matchesCategory =
             activeCategory === "All" ||
             tool.category === activeCategory;
 
 
-        if (!searchQuery) {
+        if (!matchesCategory) {
 
-            return matchesCategory;
+            return false;
 
         }
 
 
+        /*
+         * If there is no search,
+         * category filtering is enough.
+         */
+
+        if (!searchQuery) {
+
+            return true;
+
+        }
+
+
+        /*
+         * Build searchable content.
+         */
+
         const searchableText = [
 
-            tool.name,
-            tool.description,
-            tool.category,
-            ...(Array.isArray(tool.keywords)
-                ? tool.keywords
-                : [])
+            tool.name || "",
+
+            tool.description || "",
+
+            tool.category || "",
+
+            Array.isArray(tool.keywords)
+                ? tool.keywords.join(" ")
+                : "",
+
+            tool.slug || ""
 
         ]
             .join(" ")
             .toLowerCase();
 
 
-        return (
-            matchesCategory &&
-            searchableText.includes(searchQuery)
+        return searchableText.includes(
+            searchQuery
         );
 
     });
@@ -225,9 +332,9 @@ function getFilteredTools() {
 }
 
 
-/* =========================================
+/* ============================================================
    CATEGORIES
-   ========================================= */
+   ============================================================ */
 
 function renderCategories() {
 
@@ -264,11 +371,14 @@ function renderCategories() {
 
         button.type = "button";
 
+
         button.className =
             "category-button";
 
 
-        if (category === activeCategory) {
+        if (
+            category === activeCategory
+        ) {
 
             button.classList.add(
                 "is-active"
@@ -277,7 +387,8 @@ function renderCategories() {
         }
 
 
-        button.textContent = category;
+        button.textContent =
+            category;
 
 
         button.setAttribute(
@@ -294,6 +405,22 @@ function renderCategories() {
 
                 activeCategory =
                     category;
+
+
+                /*
+                 * Selecting a category
+                 * clears the search.
+                 */
+
+                if (searchInput) {
+
+                    searchInput.value = "";
+
+                }
+
+
+                searchQuery = "";
+
 
                 renderCategories();
 
@@ -314,9 +441,9 @@ function renderCategories() {
 }
 
 
-/* =========================================
+/* ============================================================
    FEATURED TOOLS
-   ========================================= */
+   ============================================================ */
 
 function renderFeaturedTools() {
 
@@ -335,12 +462,15 @@ function renderFeaturedTools() {
         );
 
 
+    const section =
+        document.getElementById(
+            "popular"
+        );
+
+
     /*
-     * When searching, show matching
-     * featured tools only.
-     *
-     * When there are no featured
-     * matches, hide the section.
+     * Hide featured section if
+     * there are no matching featured tools.
      */
 
     if (
@@ -350,10 +480,6 @@ function renderFeaturedTools() {
         featuredToolsContainer.innerHTML =
             "";
 
-        const section =
-            document.getElementById(
-                "popular"
-            );
 
         if (section) {
 
@@ -361,15 +487,10 @@ function renderFeaturedTools() {
 
         }
 
+
         return;
 
     }
-
-
-    const section =
-        document.getElementById(
-            "popular"
-        );
 
 
     if (section) {
@@ -388,9 +509,9 @@ function renderFeaturedTools() {
 }
 
 
-/* =========================================
+/* ============================================================
    ALL TOOLS
-   ========================================= */
+   ============================================================ */
 
 function renderAllTools() {
 
@@ -437,9 +558,24 @@ function renderAllTools() {
 }
 
 
-/* =========================================
+/* ============================================================
    TOOL CARD
-   ========================================= */
+   ============================================================
+ *
+ * Design:
+ *
+ *     ┌───────────────────────┐
+ *     │                       │
+ *     │       BIG LOGO        │
+ *     │                       │
+ *     │                       │
+ *     │   Tool Name           │
+ *     │   Description...      │
+ *     │                       │
+ *     └───────────────────────┘
+ *
+ * ============================================================
+ */
 
 function createToolCard(tool) {
 
@@ -457,13 +593,6 @@ function createToolCard(tool) {
         );
 
 
-    const category =
-        escapeHTML(
-            tool.category ||
-            "Tools"
-        );
-
-
     const icon =
         escapeHTML(
             tool.icon ||
@@ -473,35 +602,44 @@ function createToolCard(tool) {
 
     const logo =
         tool.logo
-            ? escapeAttribute(tool.logo)
+            ? escapeAttribute(
+                tool.logo
+            )
             : "";
 
 
     const url =
         tool.url
-            ? escapeAttribute(tool.url)
+            ? escapeAttribute(
+                tool.url
+            )
             : "#";
 
 
     /*
-     * Use logo.jpg when available.
+     * Logo
      *
-     * The fallback icon is kept in
-     * case an older tool doesn't have
-     * a logo yet.
+     * Prefer logo.jpg.
+     *
+     * If logo is unavailable or
+     * fails to load, use the icon.
      */
 
     const logoHTML = logo
 
         ? `
+
             <img
                 class="tool-card-logo"
                 src="${logo}"
-                alt=""
+                alt="${name}"
                 loading="lazy"
-                width="64"
-                height="64"
-                onerror="this.hidden=true; this.nextElementSibling.hidden=false;"
+                width="140"
+                height="140"
+                onerror="
+                    this.hidden = true;
+                    this.nextElementSibling.hidden = false;
+                "
             >
 
             <span
@@ -511,17 +649,24 @@ function createToolCard(tool) {
             >
                 ${icon}
             </span>
+
         `
 
         : `
+
             <span
                 class="tool-card-icon"
                 aria-hidden="true"
             >
                 ${icon}
             </span>
+
         `;
 
+
+    /*
+     * Return complete card.
+     */
 
     return `
 
@@ -533,36 +678,33 @@ function createToolCard(tool) {
                 aria-label="Open ${name}"
             >
 
-                <div class="tool-card-icon-wrapper">
+                <div
+                    class="tool-card-icon-wrapper"
+                >
 
                     ${logoHTML}
 
                 </div>
 
 
-                <div class="tool-card-content">
+                <div
+                    class="tool-card-content"
+                >
 
-                    <span class="tool-card-category">
-                        ${category}
-                    </span>
-
-                    <h3 class="tool-card-title">
+                    <h3
+                        class="tool-card-title"
+                    >
                         ${name}
                     </h3>
 
-                    <p class="tool-card-description">
+
+                    <p
+                        class="tool-card-description"
+                    >
                         ${description}
                     </p>
 
                 </div>
-
-
-                <span
-                    class="tool-card-arrow"
-                    aria-hidden="true"
-                >
-                    →
-                </span>
 
             </a>
 
@@ -573,9 +715,9 @@ function createToolCard(tool) {
 }
 
 
-/* =========================================
+/* ============================================================
    TOOL COUNT
-   ========================================= */
+   ============================================================ */
 
 function updateToolCount(count) {
 
@@ -585,16 +727,25 @@ function updateToolCount(count) {
 
 
     toolCount.textContent =
-        `${count} ${count === 1 ? "tool" : "tools"}`;
+        `${count} ${
+            count === 1
+                ? "tool"
+                : "tools"
+        }`;
 
 }
 
 
-/* =========================================
+/* ============================================================
    NO RESULTS
-   ========================================= */
+   ============================================================ */
 
 function showNoResults() {
+
+    if (!allToolsContainer) {
+        return;
+    }
+
 
     allToolsContainer.innerHTML = `
 
@@ -607,14 +758,17 @@ function showNoResults() {
                 🔎
             </div>
 
+
             <h3>
                 No tools found
             </h3>
+
 
             <p>
                 Try a different search term
                 or choose another category.
             </p>
+
 
             <button
                 type="button"
@@ -647,9 +801,9 @@ function showNoResults() {
 }
 
 
-/* =========================================
+/* ============================================================
    CLEAR SEARCH
-   ========================================= */
+   ============================================================ */
 
 function clearSearch() {
 
@@ -664,6 +818,7 @@ function clearSearch() {
 
     activeCategory = "All";
 
+
     renderCategories();
 
     renderFeaturedTools();
@@ -673,9 +828,9 @@ function clearSearch() {
 }
 
 
-/* =========================================
-   LOADING
-   ========================================= */
+/* ============================================================
+   LOADING STATE
+   ============================================================ */
 
 function showLoadingState() {
 
@@ -684,7 +839,9 @@ function showLoadingState() {
         featuredToolsContainer.innerHTML = `
 
             <div class="tools-loading">
+
                 Loading tools...
+
             </div>
 
         `;
@@ -697,7 +854,9 @@ function showLoadingState() {
         allToolsContainer.innerHTML = `
 
             <div class="tools-loading">
+
                 Loading tools...
+
             </div>
 
         `;
@@ -707,15 +866,16 @@ function showLoadingState() {
 }
 
 
-/* =========================================
-   ERROR
-   ========================================= */
+/* ============================================================
+   ERROR STATE
+   ============================================================ */
 
 function showErrorState() {
 
     if (featuredToolsContainer) {
 
-        featuredToolsContainer.innerHTML = "";
+        featuredToolsContainer.innerHTML =
+            "";
 
     }
 
@@ -733,19 +893,22 @@ function showErrorState() {
                     ⚠️
                 </div>
 
+
                 <h3>
                     Tools couldn't be loaded
                 </h3>
 
+
                 <p>
-                    Please refresh the page and
-                    try again.
+                    Please refresh the page
+                    and try again.
                 </p>
+
 
                 <button
                     type="button"
                     class="btn btn-primary"
-                    onclick="location.reload()"
+                    id="retry-tools"
                 >
                     Try again
                 </button>
@@ -754,14 +917,37 @@ function showErrorState() {
 
         `;
 
+
+        const retryButton =
+            document.getElementById(
+                "retry-tools"
+            );
+
+
+        if (retryButton) {
+
+            retryButton.addEventListener(
+                "click",
+                () => {
+
+                    window.location.reload();
+
+                }
+            );
+
+        }
+
     }
+
+
+    updateToolCount(0);
 
 }
 
 
-/* =========================================
+/* ============================================================
    FAQ
-   ========================================= */
+   ============================================================ */
 
 function setupFAQ() {
 
@@ -816,9 +1002,9 @@ function setupFAQ() {
 }
 
 
-/* =========================================
+/* ============================================================
    SECURITY HELPERS
-   ========================================= */
+   ============================================================ */
 
 function escapeHTML(value) {
 
