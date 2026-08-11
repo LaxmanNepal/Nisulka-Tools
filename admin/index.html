@@ -1,0 +1,752 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<meta
+    name="robots"
+    content="noindex, nofollow, noarchive"
+>
+
+<meta
+    name="theme-color"
+    content="#2563eb"
+>
+
+<title>
+    Nisulka Tools — Admin Dashboard
+</title>
+
+<link
+    rel="preconnect"
+    href="https://fonts.googleapis.com"
+>
+
+<link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+>
+
+<link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+>
+
+<style>
+
+    :root {
+        --primary: #2563eb;
+        --primary-dark: #1d4ed8;
+
+        --background: #f8fafc;
+        --surface: #ffffff;
+
+        --text: #0f172a;
+        --text-secondary: #64748b;
+        --border: #e2e8f0;
+
+        --success: #16a34a;
+        --warning: #d97706;
+        --danger: #dc2626;
+
+        --radius: 14px;
+    }
+
+
+    * {
+        box-sizing: border-box;
+    }
+
+
+    body {
+        margin: 0;
+
+        font-family:
+            "Poppins",
+            sans-serif;
+
+        background:
+            var(--background);
+
+        color:
+            var(--text);
+    }
+
+
+    .admin-header {
+        background:
+            var(--surface);
+
+        border-bottom:
+            1px solid
+            var(--border);
+    }
+
+
+    .admin-header-inner {
+        width:
+            min(
+                1400px,
+                calc(100% - 32px)
+            );
+
+        margin:
+            auto;
+
+        min-height:
+            72px;
+
+        display:
+            flex;
+
+        align-items:
+            center;
+
+        justify-content:
+            space-between;
+
+        gap:
+            1rem;
+    }
+
+
+    .brand {
+        display:
+            flex;
+
+        align-items:
+            center;
+
+        gap:
+            0.75rem;
+
+        font-weight:
+            700;
+
+        font-size:
+            1.1rem;
+    }
+
+
+    .brand-mark {
+        width:
+            40px;
+
+        height:
+            40px;
+
+        display:
+            grid;
+
+        place-items:
+            center;
+
+        border-radius:
+            10px;
+
+        background:
+            var(--primary);
+
+        color:
+            white;
+
+        font-weight:
+            700;
+    }
+
+
+    .admin-badge {
+        padding:
+            0.35rem
+            0.7rem;
+
+        border-radius:
+            999px;
+
+        background:
+            #eff6ff;
+
+        color:
+            var(--primary);
+
+        font-size:
+            0.75rem;
+
+        font-weight:
+            600;
+    }
+
+
+    .admin-main {
+        width:
+            min(
+                1400px,
+                calc(100% - 32px)
+            );
+
+        margin:
+            0 auto;
+
+        padding:
+            32px 0
+            60px;
+    }
+
+
+    .page-heading {
+        margin-bottom:
+            28px;
+    }
+
+
+    .page-heading h1 {
+        margin:
+            0 0 6px;
+
+        font-size:
+            clamp(
+                1.6rem,
+                3vw,
+                2.2rem
+            );
+    }
+
+
+    .page-heading p {
+        margin:
+            0;
+
+        color:
+            var(--text-secondary);
+    }
+
+
+    .dashboard-grid {
+        display:
+            grid;
+
+        grid-template-columns:
+            repeat(
+                4,
+                minmax(
+                    0,
+                    1fr
+                )
+            );
+
+        gap:
+            18px;
+    }
+
+
+    .stat-card {
+        padding:
+            22px;
+
+        background:
+            var(--surface);
+
+        border:
+            1px solid
+            var(--border);
+
+        border-radius:
+            var(--radius);
+    }
+
+
+    .stat-label {
+        color:
+            var(--text-secondary);
+
+        font-size:
+            0.85rem;
+    }
+
+
+    .stat-value {
+        margin-top:
+            8px;
+
+        font-size:
+            2rem;
+
+        font-weight:
+            700;
+    }
+
+
+    .stat-note {
+        margin-top:
+            6px;
+
+        color:
+            var(--text-secondary);
+
+        font-size:
+            0.75rem;
+    }
+
+
+    .dashboard-section {
+        margin-top:
+            24px;
+
+        padding:
+            24px;
+
+        background:
+            var(--surface);
+
+        border:
+            1px solid
+            var(--border);
+
+        border-radius:
+            var(--radius);
+    }
+
+
+    .dashboard-section h2 {
+        margin:
+            0 0 6px;
+
+        font-size:
+            1.1rem;
+    }
+
+
+    .dashboard-section p {
+        margin:
+            0;
+
+        color:
+            var(--text-secondary);
+    }
+
+
+    .status {
+        display:
+            inline-flex;
+
+        align-items:
+            center;
+
+        gap:
+            6px;
+
+        padding:
+            5px 9px;
+
+        border-radius:
+            999px;
+
+        font-size:
+            0.75rem;
+
+        font-weight:
+            600;
+    }
+
+
+    .status-ready {
+        background:
+            #f0fdf4;
+
+        color:
+            var(--success);
+    }
+
+
+    .integration-list {
+        margin-top:
+            20px;
+
+        display:
+            grid;
+
+        grid-template-columns:
+            repeat(
+                3,
+                minmax(
+                    0,
+                    1fr
+                )
+            );
+
+        gap:
+            14px;
+    }
+
+
+    .integration {
+        padding:
+            18px;
+
+        border:
+            1px solid
+            var(--border);
+
+        border-radius:
+            12px;
+    }
+
+
+    .integration strong {
+        display:
+            block;
+
+        margin-bottom:
+            5px;
+    }
+
+
+    .integration span {
+        color:
+            var(--text-secondary);
+
+        font-size:
+            0.8rem;
+    }
+
+
+    @media (
+        max-width: 900px
+    ) {
+
+        .dashboard-grid {
+            grid-template-columns:
+                repeat(
+                    2,
+                    minmax(
+                        0,
+                        1fr
+                    )
+                );
+        }
+
+        .integration-list {
+            grid-template-columns:
+                1fr;
+        }
+
+    }
+
+
+    @media (
+        max-width: 560px
+    ) {
+
+        .admin-header-inner,
+        .admin-main {
+            width:
+                min(
+                    100% - 20px,
+                    1400px
+                );
+        }
+
+        .dashboard-grid {
+            grid-template-columns:
+                1fr;
+        }
+
+        .admin-main {
+            padding-top:
+                22px;
+        }
+
+    }
+
+</style>
+
+</head><body><header class="admin-header">
+
+    <div class="admin-header-inner">
+
+        <div class="brand">
+
+            <div class="brand-mark">
+                N
+            </div>
+
+            <span>
+                Nisulka Tools
+            </span>
+
+        </div>
+
+        <span class="admin-badge">
+            ADMIN
+        </span>
+
+    </div>
+
+</header>
+
+
+<main class="admin-main">
+
+    <section class="page-heading">
+
+        <h1>
+            Admin Dashboard
+        </h1>
+
+        <p>
+            Manage, monitor and improve
+            your Nisulka Tools platform.
+        </p>
+
+    </section>
+
+
+    <section class="dashboard-grid">
+
+        <article class="stat-card">
+
+            <div class="stat-label">
+                Total Tools
+            </div>
+
+            <div
+                class="stat-value"
+                id="total-tools"
+            >
+                —
+            </div>
+
+            <div class="stat-note">
+                From tools.json
+            </div>
+
+        </article>
+
+
+        <article class="stat-card">
+
+            <div class="stat-label">
+                Average SEO Score
+            </div>
+
+            <div
+                class="stat-value"
+                id="average-seo"
+            >
+                —
+            </div>
+
+            <div class="stat-note">
+                SEO auditor
+            </div>
+
+        </article>
+
+
+        <article class="stat-card">
+
+            <div class="stat-label">
+                Google Clicks
+            </div>
+
+            <div
+                class="stat-value"
+                id="google-clicks"
+            >
+                —
+            </div>
+
+            <div class="stat-note">
+                Search Console
+            </div>
+
+        </article>
+
+
+        <article class="stat-card">
+
+            <div class="stat-label">
+                Page Views
+            </div>
+
+            <div
+                class="stat-value"
+                id="page-views"
+            >
+                —
+            </div>
+
+            <div class="stat-note">
+                Google Analytics
+            </div>
+
+        </article>
+
+    </section>
+
+
+    <section class="dashboard-section">
+
+        <h2>
+            System status
+        </h2>
+
+        <p>
+            Current Nisulka Tools integrations.
+        </p>
+
+
+        <div class="integration-list">
+
+
+            <div class="integration">
+
+                <strong>
+                    Tools Database
+                </strong>
+
+                <span class="status status-ready">
+                    ● Ready
+                </span>
+
+            </div>
+
+
+            <div class="integration">
+
+                <strong>
+                    SEO Auditor
+                </strong>
+
+                <span class="status status-ready">
+                    ● Ready to connect
+                </span>
+
+            </div>
+
+
+            <div class="integration">
+
+                <strong>
+                    Google Search Console
+                </strong>
+
+                <span class="status status-ready">
+                    ● Planned
+                </span>
+
+            </div>
+
+
+            <div class="integration">
+
+                <strong>
+                    Google Analytics
+                </strong>
+
+                <span class="status status-ready">
+                    ● Planned
+                </span>
+
+            </div>
+
+
+            <div class="integration">
+
+                <strong>
+                    GitHub Actions
+                </strong>
+
+                <span class="status status-ready">
+                    ● Active
+                </span>
+
+            </div>
+
+
+            <div class="integration">
+
+                <strong>
+                    Cloudflare Access
+                </strong>
+
+                <span class="status status-ready">
+                    ● Next step
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="dashboard-section">
+
+        <h2>
+            What this dashboard will contain
+        </h2>
+
+        <p>
+            SEO scores, Google rankings, search
+            queries, clicks, impressions, CTR,
+            traffic, page views, indexing status,
+            technical issues, content quality,
+            recommendations and per-tool insights.
+        </p>
+
+    </section>
+
+</main>
+
+
+<script>
+
+    async function loadToolCount() {
+
+        try {
+
+            const response =
+                await fetch(
+                    "../data/tools.json?v=" +
+                    Date.now()
+                );
+
+            if (!response.ok) {
+                throw new Error(
+                    "Unable to load tools.json"
+                );
+            }
+
+            const tools =
+                await response.json();
+
+            document.getElementById(
+                "total-tools"
+            ).textContent =
+                Array.isArray(tools)
+                    ? tools.length
+                    : "0";
+
+        } catch (error) {
+
+            console.error(error);
+
+            document.getElementById(
+                "total-tools"
+            ).textContent =
+                "—";
+
+        }
+
+    }
+
+
+    loadToolCount();
+
+</script>
+
+</body></html>
