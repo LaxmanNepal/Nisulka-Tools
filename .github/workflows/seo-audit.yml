@@ -1,0 +1,156 @@
+name: Nisulka Tools SEO Audit
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "tools/**"
+      - "data/tools.json"
+      - "scripts/seo_audit.py"
+      - ".github/workflows/seo-audit.yml"
+
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "tools/**"
+      - "data/tools.json"
+      - "scripts/seo_audit.py"
+      - ".github/workflows/seo-audit.yml"
+
+  workflow_dispatch:
+
+  schedule:
+    # Every Sunday at 02:00 UTC
+    - cron: "0 2 * * 0"
+
+permissions:
+  contents: write
+
+jobs:
+
+  seo-audit:
+
+    name: Audit Nisulka Tools
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # =========================================================
+      # 1. Checkout repository
+      # =========================================================
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+
+      # =========================================================
+      # 2. Setup Python
+      # =========================================================
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+
+      # =========================================================
+      # 3. Run SEO auditor
+      # =========================================================
+
+      - name: Run SEO audit
+        run: |
+
+          python3 scripts/seo_audit.py \
+            --tools-dir tools \
+            --output-dir data/seo
+
+
+      # =========================================================
+      # 4. Show report summary in GitHub Actions
+      # =========================================================
+
+      - name: Add audit summary
+        if: always()
+        run: |
+
+          if [ -f data/seo/summary.md ]; then
+
+            cat data/seo/summary.md >> "$GITHUB_STEP_SUMMARY"
+
+          else
+
+            echo "# Nisulka Tools SEO Audit" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "Audit summary was not generated." >> "$GITHUB_STEP_SUMMARY"
+
+          fi
+
+
+      # =========================================================
+      # 5. Upload audit reports
+      # =========================================================
+
+      - name: Upload SEO audit reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: nisulka-seo-audit
+          path: data/seo/
+          if-no-files-found: warn
+
+
+      # =========================================================
+      # 6. Commit generated reports
+      #
+      # Only runs on pushes to main.
+      # Does NOT commit on pull requests.
+      # =========================================================
+
+      - name: Check report changes
+        if: github.event_name != 'pull_request'
+        id: report_changes
+        run: |
+
+          if git diff --quiet -- data/seo; then
+
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+
+          else
+
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+
+          fi
+
+
+      - name: Commit SEO reports
+        if: |
+          github.event_name != 'pull_request' &&
+          steps.report_changes.outputs.changed == 'true'
+
+        run: |
+
+          git config user.name \
+            "github-actions[bot]"
+
+          git config user.email \
+            "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add data/seo/
+
+          git commit \
+            -m "chore: update SEO audit report"
+
+          git push
+
+
+      # =========================================================
+      # 7. Finish
+      # =========================================================
+
+      - name: Audit completed
+        if: always()
+        run: |
+
+          echo "Nisulka Tools SEO audit completed."
