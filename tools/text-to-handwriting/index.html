@@ -16,7 +16,7 @@
 
     <meta
         name="description"
-        content="Convert typed text into a handwritten-style document with Nisulka Tools. Customize the handwriting appearance and generate your result directly in your browser."
+        content="Convert typed text into a handwritten-style image online for free. Customize handwriting size, ink color, paper style, spacing and alignment with Nisulka Tools."
     >
 
     <meta
@@ -27,6 +27,11 @@
     <link
         rel="canonical"
         href="https://apps.laxmannepal.com.np/Nisulka-Tools/tools/text-to-handwriting/"
+    >
+
+    <meta
+        name="theme-color"
+        content="#2563eb"
     >
 
     <!-- Open Graph -->
@@ -43,19 +48,12 @@
 
     <meta
         property="og:description"
-        content="Convert typed text into a handwritten-style document directly in your browser."
+        content="Convert typed text into a handwritten-style image with customizable handwriting, paper and ink settings."
     >
 
     <meta
         property="og:url"
         content="https://apps.laxmannepal.com.np/Nisulka-Tools/tools/text-to-handwriting/"
-    >
-
-    <!-- Theme -->
-
-    <meta
-        name="theme-color"
-        content="#2563eb"
     >
 
     <!-- Fonts -->
@@ -72,11 +70,11 @@
     >
 
     <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap"
         rel="stylesheet"
     >
 
-    <!-- Global Styles -->
+    <!-- Nisulka Global CSS -->
 
     <link
         rel="stylesheet"
@@ -108,79 +106,491 @@
         href="../../assets/css/tool.css"
     >
 
-    <!-- Tool-specific CSS -->
+
+    <!-- Tool-specific styling -->
 
     <style>
 
-        .handwriting-input {
-            min-height: 280px;
+        /* =========================
+           Tool Layout
+           ========================= */
+
+        .handwriting-tool {
+            width: min(
+                100%,
+                1100px
+            );
+
+            margin-inline: auto;
         }
 
-        .handwriting-preview {
-            min-height: 420px;
 
-            align-items: flex-start;
-            justify-content: flex-start;
+        /* =========================
+           Hero
+           ========================= */
 
-            padding: 2rem;
+        .handwriting-hero {
+            text-align: center;
 
-            background-color: #fff;
+            max-width: 800px;
 
-            background-image:
-                linear-gradient(
-                    to bottom,
-                    transparent 31px,
-                    #dbeafe 32px
+            margin-inline: auto;
+
+            margin-bottom: 2rem;
+        }
+
+        .handwriting-hero h1 {
+            margin-top: 0.75rem;
+        }
+
+        .handwriting-hero p {
+            max-width: 700px;
+
+            margin-inline: auto;
+
+            color:
+                var(--text-secondary);
+
+            line-height: 1.7;
+        }
+
+
+        /* =========================
+           Input Header
+           ========================= */
+
+        .tool-field-header {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 1rem;
+
+            margin-bottom: 0.5rem;
+        }
+
+
+        /* =========================
+           Text Input
+           ========================= */
+
+        .handwriting-input {
+            min-height: 260px;
+
+            resize: vertical;
+        }
+
+
+        /* =========================
+           Character Count
+           ========================= */
+
+        .character-count {
+            color:
+                var(--text-muted);
+
+            font-size:
+                var(--font-size-xs);
+
+            white-space: nowrap;
+        }
+
+
+        /* =========================
+           Settings
+           ========================= */
+
+        .handwriting-settings {
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    2,
+                    minmax(
+                        0,
+                        1fr
+                    )
                 );
 
-            background-size:
-                100% 32px;
+            gap: 1rem;
+        }
 
-            font-family:
-                "Comic Sans MS",
-                "Segoe Print",
-                cursive;
 
-            font-size: 1.15rem;
+        .option-group {
+            display: flex;
 
-            line-height: 32px;
+            flex-direction: column;
+
+            gap: 0.45rem;
+        }
+
+
+        .option-group label {
+            font-size:
+                var(--font-size-sm);
+
+            font-weight: 600;
+
+            color:
+                var(--text-primary);
+        }
+
+
+        .setting-value {
+            color:
+                var(--text-muted);
+
+            font-size:
+                var(--font-size-xs);
+        }
+
+
+        /* =========================
+           Color Input
+           ========================= */
+
+        .color-input {
+            width: 100%;
+
+            height: 46px;
+
+            padding: 0.25rem;
+
+            border:
+                1px solid
+                var(--border-color);
+
+            border-radius:
+                var(--radius-md);
+
+            background:
+                var(--bg-surface);
+
+            cursor: pointer;
+        }
+
+
+        /* =========================
+           Preview
+           ========================= */
+
+        .handwriting-preview-wrapper {
+            overflow: hidden;
+
+            border:
+                1px solid
+                var(--border-color);
+
+            border-radius:
+                var(--radius-lg);
+
+            background:
+                #ffffff;
+        }
+
+
+        .handwriting-preview {
+            min-height: 450px;
+
+            padding: 70px;
+
+            overflow-wrap: anywhere;
 
             white-space: pre-wrap;
 
             word-break: break-word;
 
-            color: #1f2937;
+            font-family:
+                "Caveat",
+                cursive;
+
+            font-size: 26px;
+
+            line-height: 38px;
+
+            color:
+                #1f2937;
+
+            text-align: left;
+
+            background-color:
+                #ffffff;
+
+            background-image:
+                linear-gradient(
+                    to bottom,
+                    transparent 37px,
+                    #dbeafe 38px
+                );
+
+            background-size:
+                100% 38px;
         }
 
-        .handwriting-options {
-            display: grid;
 
-            grid-template-columns: 1fr;
+        /* =========================
+           Preview Placeholder
+           ========================= */
+
+        .handwriting-preview.placeholder {
+            color:
+                #9ca3af;
+        }
+
+
+        /* =========================
+           Tool Actions
+           ========================= */
+
+        .handwriting-actions {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
 
             gap: 1rem;
+
+            flex-wrap: wrap;
         }
 
-        .option-group {
+
+        .handwriting-actions-right {
             display: flex;
-            flex-direction: column;
-            gap: 0.4rem;
+
+            gap: 0.75rem;
+
+            flex-wrap: wrap;
         }
 
-        .option-group label {
-            font-size: var(--font-size-sm);
+
+        /* =========================
+           Privacy Notice
+           ========================= */
+
+        .local-processing-notice {
+            display: flex;
+
+            align-items: flex-start;
+
+            gap: 0.75rem;
+
+            padding: 1rem;
+
+            margin-top: 1rem;
+
+            border:
+                1px solid
+                var(--border-color);
+
+            border-radius:
+                var(--radius-md);
+
+            background:
+                var(--bg-surface-secondary);
+
+            color:
+                var(--text-secondary);
+
+            font-size:
+                var(--font-size-sm);
+
+            line-height: 1.6;
+        }
+
+
+        /* =========================
+           Content
+           ========================= */
+
+        .tool-information {
+            max-width: 850px;
+
+            margin-inline: auto;
+
+            margin-top: 3rem;
+        }
+
+
+        .tool-information section {
+            margin-bottom: 2.5rem;
+        }
+
+
+        .tool-information h2 {
+            margin-bottom: 0.75rem;
+        }
+
+
+        .tool-information p,
+        .tool-information li {
+            color:
+                var(--text-secondary);
+
+            line-height: 1.8;
+        }
+
+
+        .tool-information ol {
+            padding-left: 1.25rem;
+        }
+
+
+        /* =========================
+           FAQ
+           ========================= */
+
+        .tool-faq {
+            margin-top: 1rem;
+        }
+
+
+        .tool-faq-item {
+            border-bottom:
+                1px solid
+                var(--border-color);
+        }
+
+
+        .tool-faq-question {
+            width: 100%;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 1rem;
+
+            padding: 1rem 0;
+
+            border: 0;
+
+            background: transparent;
+
+            color:
+                var(--text-primary);
+
+            font-family:
+                inherit;
+
+            font-size:
+                var(--font-size-base);
+
             font-weight: 600;
+
+            text-align: left;
+
+            cursor: pointer;
         }
 
-        @media (min-width: 640px) {
 
-            .handwriting-options {
-                grid-template-columns:
-                    repeat(2, 1fr);
+        .tool-faq-question span {
+            font-size: 1.25rem;
+
+            flex-shrink: 0;
+        }
+
+
+        .tool-faq-answer {
+            padding:
+                0 0 1rem;
+
+            color:
+                var(--text-secondary);
+
+            line-height: 1.7;
+        }
+
+
+        /* =========================
+           Ad Placeholder
+           ========================= */
+
+        .tool-ad-placeholder {
+            min-height: 100px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            margin:
+                2rem 0;
+
+            border:
+                1px dashed
+                var(--border-color);
+
+            border-radius:
+                var(--radius-md);
+
+            color:
+                var(--text-muted);
+
+            font-size:
+                var(--font-size-xs);
+        }
+
+
+        /* =========================
+           Mobile
+           ========================= */
+
+        @media (
+            max-width: 639px
+        ) {
+
+            .handwriting-settings {
+                grid-template-columns: 1fr;
+            }
+
+
+            .handwriting-preview {
+                min-height: 350px;
+
+                padding: 45px 30px;
+
+                font-size: 24px;
+
+                line-height: 36px;
+            }
+
+
+            .handwriting-actions {
+                align-items: stretch;
+
+                flex-direction: column;
+            }
+
+
+            .handwriting-actions-right {
+                width: 100%;
+            }
+
+
+            .handwriting-actions
+            .btn {
+                flex: 1;
+            }
+
+
+            .tool-field-header {
+                align-items: flex-start;
+
+                flex-direction: column;
+
+                gap: 0.25rem;
             }
 
         }
 
     </style>
+
 
     <!-- Structured Data -->
 
@@ -191,8 +601,13 @@
         "name": "Text to Handwriting Converter",
         "applicationCategory": "UtilitiesApplication",
         "operatingSystem": "Web",
-        "description": "Convert typed text into a handwritten-style document.",
-        "url": "https://apps.laxmannepal.com.np/Nisulka-Tools/tools/text-to-handwriting/"
+        "description": "Convert typed text into a handwritten-style image with customizable handwriting, paper and ink settings.",
+        "url": "https://apps.laxmannepal.com.np/Nisulka-Tools/tools/text-to-handwriting/",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        }
     }
     </script>
 
@@ -200,6 +615,7 @@
 
 
 <body>
+
 
     <!-- =========================
          HEADER
@@ -210,7 +626,8 @@
 
     <main class="tool-page">
 
-        <div class="container">
+        <div class="container handwriting-tool">
+
 
             <!-- =========================
                  BREADCRUMB
@@ -251,11 +668,11 @@
 
 
             <!-- =========================
-                 TOOL HERO
+                 HERO
                  ========================= -->
 
             <section
-                class="tool-hero"
+                class="handwriting-hero"
                 aria-labelledby="tool-title"
             >
 
@@ -263,41 +680,44 @@
                     Text Tool
                 </span>
 
-                <h1
-                    id="tool-title"
-                    class="tool-hero-title"
-                >
+                <h1 id="tool-title">
                     Text to Handwriting Converter
                 </h1>
 
-                <p class="tool-hero-description">
-                    Convert typed text into a handwritten-style
-                    document directly in your browser.
+                <p>
+                    Convert typed text into a
+                    handwritten-style image online.
+                    Customize the handwriting, ink,
+                    paper, spacing and alignment,
+                    then download your result as a PNG.
                 </p>
 
             </section>
 
 
             <!-- =========================
-                 TOOL WORKSPACE
+                 TOOL
                  ========================= -->
 
             <section
                 class="tool-workspace"
-                aria-label="Text to handwriting tool"
+                aria-label="Text to handwriting converter"
             >
 
                 <div class="tool-panel">
 
+
+                    <!-- INPUT -->
+
                     <div class="tool-panel-header">
 
                         <h2 class="tool-panel-title">
-                            Create your handwriting
+                            Enter your text
                         </h2>
 
                         <p class="tool-panel-description">
-                            Enter your text and customize
-                            the appearance of the preview.
+                            Type or paste the text you
+                            want to convert.
                         </p>
 
                     </div>
@@ -305,22 +725,35 @@
 
                     <div class="tool-panel-body">
 
-                        <!-- Text -->
 
                         <div class="tool-field">
 
-                            <label
-                                for="handwriting-text"
-                                class="tool-label"
-                            >
-                                Your text
-                            </label>
+                            <div class="tool-field-header">
+
+                                <label
+                                    for="handwriting-text"
+                                    class="tool-label"
+                                >
+                                    Your text
+                                </label>
+
+                                <span
+                                    id="character-count"
+                                    class="character-count"
+                                >
+                                    0 characters
+                                </span>
+
+                            </div>
+
 
                             <textarea
                                 id="handwriting-text"
                                 class="input tool-textarea handwriting-input"
-                                placeholder="Type or paste your text here..."
+                                placeholder="Write or paste your text here..."
+                                spellcheck="true"
                             ></textarea>
+
 
                             <p class="tool-help-text">
                                 Your text is processed locally
@@ -330,19 +763,49 @@
                         </div>
 
 
-                        <!-- Options -->
+                        <!-- SETTINGS -->
 
                         <div class="tool-field">
 
                             <div class="tool-settings">
 
                                 <h3 class="tool-settings-title">
-                                    Appearance
+                                    Customize
                                 </h3>
 
-                                <div
-                                    class="handwriting-options"
-                                >
+
+                                <div class="handwriting-settings">
+
+
+                                    <!-- Font -->
+
+                                    <div class="option-group">
+
+                                        <label
+                                            for="handwriting-font"
+                                        >
+                                            Handwriting Style
+                                        </label>
+
+                                        <select
+                                            id="handwriting-font"
+                                            class="input"
+                                        >
+
+                                            <option value="Caveat">
+                                                Caveat
+                                            </option>
+
+                                            <option value="cursive">
+                                                Classic Cursive
+                                            </option>
+
+                                        </select>
+
+                                    </div>
+
+
+                                    <!-- Font Size -->
 
                                     <div class="option-group">
 
@@ -356,13 +819,22 @@
                                             id="font-size"
                                             class="tool-range"
                                             type="range"
-                                            min="14"
-                                            max="32"
-                                            value="18"
+                                            min="18"
+                                            max="42"
+                                            value="26"
                                         >
+
+                                        <span
+                                            id="font-size-value"
+                                            class="setting-value"
+                                        >
+                                            26 px
+                                        </span>
 
                                     </div>
 
+
+                                    <!-- Line Height -->
 
                                     <div class="option-group">
 
@@ -376,10 +848,101 @@
                                             id="line-height"
                                             class="tool-range"
                                             type="range"
-                                            min="24"
-                                            max="50"
-                                            value="32"
+                                            min="28"
+                                            max="60"
+                                            value="38"
                                         >
+
+                                        <span
+                                            id="line-height-value"
+                                            class="setting-value"
+                                        >
+                                            38 px
+                                        </span>
+
+                                    </div>
+
+
+                                    <!-- Ink Color -->
+
+                                    <div class="option-group">
+
+                                        <label
+                                            for="ink-color"
+                                        >
+                                            Ink Color
+                                        </label>
+
+                                        <input
+                                            id="ink-color"
+                                            class="color-input"
+                                            type="color"
+                                            value="#1f2937"
+                                        >
+
+                                    </div>
+
+
+                                    <!-- Paper -->
+
+                                    <div class="option-group">
+
+                                        <label
+                                            for="paper-style"
+                                        >
+                                            Paper Style
+                                        </label>
+
+                                        <select
+                                            id="paper-style"
+                                            class="input"
+                                        >
+
+                                            <option value="lined">
+                                                Lined Paper
+                                            </option>
+
+                                            <option value="plain">
+                                                Plain Paper
+                                            </option>
+
+                                            <option value="grid">
+                                                Grid Paper
+                                            </option>
+
+                                        </select>
+
+                                    </div>
+
+
+                                    <!-- Alignment -->
+
+                                    <div class="option-group">
+
+                                        <label
+                                            for="text-align"
+                                        >
+                                            Text Alignment
+                                        </label>
+
+                                        <select
+                                            id="text-align"
+                                            class="input"
+                                        >
+
+                                            <option value="left">
+                                                Left
+                                            </option>
+
+                                            <option value="center">
+                                                Center
+                                            </option>
+
+                                            <option value="right">
+                                                Right
+                                            </option>
+
+                                        </select>
 
                                     </div>
 
@@ -390,7 +953,7 @@
                         </div>
 
 
-                        <!-- Preview -->
+                        <!-- PREVIEW -->
 
                         <div class="tool-field">
 
@@ -398,51 +961,111 @@
 
                                 <div class="tool-result-header">
 
-                                    <h3 class="tool-result-title">
-                                        Preview
-                                    </h3>
+                                    <div>
+
+                                        <h3 class="tool-result-title">
+                                            Preview
+                                        </h3>
+
+                                        <p class="tool-help-text">
+                                            Your handwriting will
+                                            appear below.
+                                        </p>
+
+                                    </div>
+
 
                                     <button
                                         type="button"
                                         id="copy-result"
                                         class="btn btn-secondary"
                                     >
-                                        Copy
+                                        Copy Text
                                     </button>
 
                                 </div>
 
+
                                 <div
-                                    id="handwriting-preview"
-                                    class="tool-preview handwriting-preview"
+                                    class="handwriting-preview-wrapper"
                                 >
-                                    Your handwritten preview
-                                    will appear here.
+
+                                    <div
+                                        id="handwriting-preview"
+                                        class="handwriting-preview placeholder"
+                                    >
+                                        Your handwritten preview
+                                        will appear here.
+                                    </div>
+
                                 </div>
 
                             </div>
 
                         </div>
 
+
+                        <!-- PRIVACY -->
+
+                        <div
+                            class="local-processing-notice"
+                            role="note"
+                        >
+
+                            <span aria-hidden="true">
+                                🔒
+                            </span>
+
+                            <div>
+
+                                <strong>
+                                    Processed in your browser
+                                </strong>
+
+                                <br>
+
+                                Your text is processed locally
+                                by this tool. It is not intentionally
+                                uploaded to a remote server.
+
+                            </div>
+
+                        </div>
+
+
                     </div>
 
 
+                    <!-- ACTIONS -->
+
                     <div class="tool-panel-footer">
 
-                        <button
-                            type="button"
-                            id="clear-tool"
-                            class="btn btn-secondary"
-                        >
-                            Clear
-                        </button>
-<button
-    type="button"
-    id="download-result"
-    class="btn btn-primary"
->
-    Download PNG
-</button>
+                        <div class="handwriting-actions">
+
+                            <button
+                                type="button"
+                                id="clear-tool"
+                                class="btn btn-secondary"
+                            >
+                                Clear
+                            </button>
+
+
+                            <div
+                                class="handwriting-actions-right"
+                            >
+
+                                <button
+                                    type="button"
+                                    id="download-result"
+                                    class="btn btn-primary"
+                                >
+                                    Download PNG
+                                </button>
+
+                            </div>
+
+                        </div>
 
                     </div>
 
@@ -456,57 +1079,66 @@
                  ========================= -->
 
             <div
-                class="ad-container"
-                aria-hidden="true"
+                class="tool-ad-placeholder"
+                aria-label="Advertisement"
             >
                 Advertisement
             </div>
 
 
             <!-- =========================
-                 TOOL INFORMATION
+                 INFORMATION
                  ========================= -->
 
-            <section
-                class="tool-content"
-                aria-labelledby="about-tool"
-            >
+            <article class="tool-information">
 
-                <div class="tool-content-section">
 
-                    <h2 id="about-tool">
+                <!-- ABOUT -->
+
+                <section>
+
+                    <h2>
                         About the Text to Handwriting Converter
                     </h2>
 
                     <p>
                         The Nisulka Tools Text to Handwriting
-                        Converter is designed to transform
-                        typed text into a handwriting-style
-                        preview that can be customized before
-                        saving or copying the result.
+                        Converter turns typed text into a
+                        handwritten-style image. You can
+                        customize the handwriting appearance,
+                        font size, line spacing, ink color,
+                        paper style and text alignment before
+                        downloading the result.
                     </p>
 
                     <p>
-                        It can be useful for creating
-                        handwriting-style notes, examples,
-                        study materials and other personal
-                        projects where a handwritten appearance
-                        is preferred.
+                        The tool is useful for creating
+                        handwritten-style notes, study materials,
+                        personal projects, examples and other
+                        digital content where a handwriting
+                        appearance is preferred.
                     </p>
 
-                </div>
+                </section>
 
 
-                <div class="tool-content-section">
+                <!-- HOW TO USE -->
+
+                <section>
 
                     <h2>
-                        How to use this tool
+                        How to use the Text to Handwriting Converter
                     </h2>
 
                     <ol>
 
                         <li>
-                            Enter or paste your text.
+                            Enter or paste your text into
+                            the text box.
+                        </li>
+
+                        <li>
+                            Choose a handwriting style.
                         </li>
 
                         <li>
@@ -514,19 +1146,85 @@
                         </li>
 
                         <li>
-                            Review the handwriting preview.
+                            Select an ink color and paper style.
                         </li>
 
                         <li>
-                            Copy or download the result.
+                            Choose your preferred text alignment.
+                        </li>
+
+                        <li>
+                            Review the live preview.
+                        </li>
+
+                        <li>
+                            Click <strong>Download PNG</strong>
+                            to save the handwritten image.
                         </li>
 
                     </ol>
 
-                </div>
+                </section>
 
 
-                <div class="tool-content-section">
+                <!-- FEATURES -->
+
+                <section>
+
+                    <h2>
+                        Features
+                    </h2>
+
+                    <ul>
+
+                        <li>
+                            Live handwriting preview
+                        </li>
+
+                        <li>
+                            Handwriting-style font
+                        </li>
+
+                        <li>
+                            Adjustable font size
+                        </li>
+
+                        <li>
+                            Adjustable line spacing
+                        </li>
+
+                        <li>
+                            Custom ink color
+                        </li>
+
+                        <li>
+                            Lined, plain and grid paper
+                        </li>
+
+                        <li>
+                            Left, center and right alignment
+                        </li>
+
+                        <li>
+                            PNG image download
+                        </li>
+
+                        <li>
+                            Client-side browser processing
+                        </li>
+
+                        <li>
+                            Mobile-friendly interface
+                        </li>
+
+                    </ul>
+
+                </section>
+
+
+                <!-- PRIVACY -->
+
+                <section>
 
                     <h2>
                         Privacy
@@ -534,43 +1232,66 @@
 
                     <p>
                         This tool is designed to process your
-                        text locally in your browser. Your input
-                        is not intentionally uploaded to a remote
-                        server by this tool.
+                        text directly in your web browser.
+                        The tool does not intentionally send
+                        your text to a remote processing server.
                     </p>
 
-                </div>
+                    <p>
+                        As with any website, your browser may
+                        still communicate with external services
+                        used by the website, such as fonts or
+                        analytics when those services are enabled.
+                    </p>
+
+                </section>
 
 
-                <div class="tool-content-section">
+                <!-- FAQ -->
+
+                <section>
 
                     <h2>
-                        Frequently asked questions
+                        Frequently Asked Questions
                     </h2>
+
 
                     <div class="tool-faq">
 
+
                         <article class="tool-faq-item">
 
                             <h3>
+
                                 <button
                                     type="button"
                                     class="tool-faq-question"
                                     aria-expanded="false"
+                                    aria-controls="faq-answer-1"
                                 >
-                                    Is this tool free?
+
+                                    Is the Text to Handwriting
+                                    Converter free?
+
                                     <span aria-hidden="true">
                                         +
                                     </span>
+
                                 </button>
+
                             </h3>
 
+
                             <div
+                                id="faq-answer-1"
                                 class="tool-faq-answer"
                                 hidden
                             >
-                                Yes. The tool is available
-                                for free through Nisulka Tools.
+
+                                Yes. The Text to Handwriting
+                                Converter is available for free
+                                through Nisulka Tools.
+
                             </div>
 
                         </article>
@@ -579,24 +1300,38 @@
                         <article class="tool-faq-item">
 
                             <h3>
+
                                 <button
                                     type="button"
                                     class="tool-faq-question"
                                     aria-expanded="false"
+                                    aria-controls="faq-answer-2"
                                 >
+
                                     Is my text uploaded?
+
                                     <span aria-hidden="true">
                                         +
                                     </span>
+
                                 </button>
+
                             </h3>
 
+
                             <div
+                                id="faq-answer-2"
                                 class="tool-faq-answer"
                                 hidden
                             >
-                                The tool is designed to process
-                                your text locally in your browser.
+
+                                The text conversion and PNG
+                                generation are performed in
+                                your browser. The tool does
+                                not intentionally upload the
+                                text to a remote processing
+                                server.
+
                             </div>
 
                         </article>
@@ -605,34 +1340,119 @@
                         <article class="tool-faq-item">
 
                             <h3>
+
                                 <button
                                     type="button"
                                     class="tool-faq-question"
                                     aria-expanded="false"
+                                    aria-controls="faq-answer-3"
                                 >
-                                    Can I use it on mobile?
+
+                                    Can I use this tool on mobile?
+
                                     <span aria-hidden="true">
                                         +
                                     </span>
+
                                 </button>
+
                             </h3>
 
+
                             <div
+                                id="faq-answer-3"
                                 class="tool-faq-answer"
                                 hidden
                             >
-                                Yes. The interface is responsive
-                                and designed to work on modern
-                                mobile browsers.
+
+                                Yes. The interface is designed
+                                to work on modern mobile browsers,
+                                tablets and desktop computers.
+
                             </div>
 
                         </article>
+
+
+                        <article class="tool-faq-item">
+
+                            <h3>
+
+                                <button
+                                    type="button"
+                                    class="tool-faq-question"
+                                    aria-expanded="false"
+                                    aria-controls="faq-answer-4"
+                                >
+
+                                    Can I download the result?
+
+                                    <span aria-hidden="true">
+                                        +
+                                    </span>
+
+                                </button>
+
+                            </h3>
+
+
+                            <div
+                                id="faq-answer-4"
+                                class="tool-faq-answer"
+                                hidden
+                            >
+
+                                Yes. You can download your
+                                generated handwriting as a
+                                PNG image.
+
+                            </div>
+
+                        </article>
+
+
+                        <article class="tool-faq-item">
+
+                            <h3>
+
+                                <button
+                                    type="button"
+                                    class="tool-faq-question"
+                                    aria-expanded="false"
+                                    aria-controls="faq-answer-5"
+                                >
+
+                                    What paper styles are available?
+
+                                    <span aria-hidden="true">
+                                        +
+                                    </span>
+
+                                </button>
+
+                            </h3>
+
+
+                            <div
+                                id="faq-answer-5"
+                                class="tool-faq-answer"
+                                hidden
+                            >
+
+                                The tool currently supports
+                                lined paper, plain paper and
+                                grid paper.
+
+                            </div>
+
+                        </article>
+
 
                     </div>
 
-                </div>
+                </section>
 
-            </section>
+            </article>
 
         </div>
 
@@ -645,268 +1465,32 @@
 
     <div id="site-footer-mount"></div>
 
-<canvas
-    id="handwriting-canvas"
-    hidden
-></canvas>
+
     <!-- =========================
-         JAVASCRIPT
+         CANVAS
+         ========================= -->
+
+    <canvas
+        id="handwriting-canvas"
+        hidden
+    ></canvas>
+
+
+    <!-- =========================
+         SHARED JS
          ========================= -->
 
     <script src="../../assets/js/header.js"></script>
 
     <script src="../../assets/js/footer.js"></script>
 
-    <script>
 
-        document.addEventListener(
-            "DOMContentLoaded",
-            function () {
+    <!-- =========================
+         TOOL JS
+         ========================= -->
 
-                const textInput =
-                    document.getElementById(
-                        "handwriting-text"
-                    );
+    <script src="./script.js"></script>
 
-                const preview =
-                    document.getElementById(
-                        "handwriting-preview"
-                    );
-
-                const fontSize =
-                    document.getElementById(
-                        "font-size"
-                    );
-
-                const lineHeight =
-                    document.getElementById(
-                        "line-height"
-                    );
-
-                const clearButton =
-                    document.getElementById(
-                        "clear-tool"
-                    );
-
-                const copyButton =
-                    document.getElementById(
-                        "copy-result"
-                    );
-
-                const downloadButton =
-                    document.getElementById(
-                        "download-result"
-                    );
-
-
-                function updatePreview() {
-
-                    const text =
-                        textInput.value.trim();
-
-                    preview.textContent =
-                        text ||
-                        "Your handwritten preview will appear here.";
-
-                    preview.style.fontSize =
-                        fontSize.value + "px";
-
-                    preview.style.lineHeight =
-                        lineHeight.value + "px";
-
-                    preview.style.backgroundSize =
-                        "100% " +
-                        lineHeight.value +
-                        "px";
-
-                }
-
-
-                textInput.addEventListener(
-                    "input",
-                    updatePreview
-                );
-
-
-                fontSize.addEventListener(
-                    "input",
-                    updatePreview
-                );
-
-
-                lineHeight.addEventListener(
-                    "input",
-                    updatePreview
-                );
-
-
-                clearButton.addEventListener(
-                    "click",
-                    function () {
-
-                        textInput.value = "";
-
-                        updatePreview();
-
-                    }
-                );
-
-
-                copyButton.addEventListener(
-                    "click",
-                    async function () {
-
-                        const text =
-                            textInput.value.trim();
-
-                        if (!text) {
-                            return;
-                        }
-
-                        try {
-
-                            await navigator.clipboard.writeText(
-                                text
-                            );
-
-                            copyButton.textContent =
-                                "Copied!";
-
-                            setTimeout(
-                                function () {
-                                    copyButton.textContent =
-                                        "Copy";
-                                },
-                                1500
-                            );
-
-                        } catch (error) {
-
-                            console.error(
-                                "Copy failed:",
-                                error
-                            );
-
-                        }
-
-                    }
-                );
-
-
-                downloadButton.addEventListener(
-                    "click",
-                    function () {
-
-                        const text =
-                            textInput.value.trim();
-
-                        if (!text) {
-                            return;
-                        }
-
-                        const blob =
-                            new Blob(
-                                [text],
-                                {
-                                    type:
-                                        "text/plain"
-                                }
-                            );
-
-                        const url =
-                            URL.createObjectURL(
-                                blob
-                            );
-
-                        const link =
-                            document.createElement(
-                                "a"
-                            );
-
-                        link.href = url;
-
-                        link.download =
-                            "handwritten-text.txt";
-
-                        document.body.appendChild(
-                            link
-                        );
-
-                        link.click();
-
-                        link.remove();
-
-                        URL.revokeObjectURL(
-                            url
-                        );
-
-                    }
-                );
-
-
-                /* FAQ */
-
-                const questions =
-                    document.querySelectorAll(
-                        ".tool-faq-question"
-                    );
-
-                questions.forEach(
-                    function (question) {
-
-                        question.addEventListener(
-                            "click",
-                            function () {
-
-                                const expanded =
-                                    question.getAttribute(
-                                        "aria-expanded"
-                                    ) === "true";
-
-                                const answer =
-                                    question
-                                        .closest(
-                                            ".tool-faq-item"
-                                        )
-                                        ?.querySelector(
-                                            ".tool-faq-answer"
-                                        );
-
-                                question.setAttribute(
-                                    "aria-expanded",
-                                    String(!expanded)
-                                );
-
-                                if (answer) {
-                                    answer.hidden =
-                                        expanded;
-                                }
-
-                                const icon =
-                                    question.querySelector(
-                                        "span"
-                                    );
-
-                                if (icon) {
-                                    icon.textContent =
-                                        expanded
-                                            ? "+"
-                                            : "−";
-                                }
-
-                            }
-                        );
-
-                    }
-                );
-
-
-                updatePreview();
-
-            }
-        );
-
-    </script>
 
 </body>
 
