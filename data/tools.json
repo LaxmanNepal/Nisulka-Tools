@@ -1,105 +1,14 @@
-{
-  "site": {
-    "name": "Nisulka Tools",
-    "description": "Free, fast and privacy-friendly online tools for everyday tasks."
-  },
-
-  "categories": [
-    {
-      "id": "image",
-      "name": "Image Tools",
-      "description": "Compress, resize, convert and optimize images."
-    },
-    {
-      "id": "video",
-      "name": "Video Tools",
-      "description": "Useful tools for working with video files."
-    },
-    {
-      "id": "audio",
-      "name": "Audio Tools",
-      "description": "Convert and process audio files easily."
-    },
-    {
-      "id": "text",
-      "name": "Text Tools",
-      "description": "Useful tools for writing, formatting and transforming text."
-    },
-    {
-      "id": "pdf",
-      "name": "PDF Tools",
-      "description": "Work with PDF files quickly and easily."
-    },
-    {
-      "id": "developer",
-      "name": "Developer Tools",
-      "description": "Helpful utilities for developers and technical users."
-    },
-    {
-      "id": "converter",
-      "name": "Converters",
-      "description": "Convert files, units and formats online."
-    },
-    {
-      "id": "generator",
-      "name": "Generators",
-      "description": "Generate useful content and assets online."
-    }
-  ],
-
-  "tools": [
-    {
-      "id": "image-compressor",
-      "name": "Image Compressor",
-      "shortDescription": "Compress JPG, PNG and WebP images while reducing file size.",
-      "category": "image",
-      "icon": "🖼️",
-      "url": "/Nisulka-Tools/tools/image-compressor/",
-      "popular": true,
-      "featured": true,
-      "keywords": [
-        "image compressor",
-        "compress image",
-        "jpg compressor",
-        "png compressor",
-        "webp compressor",
-        "reduce image size"
-      ]
-    },
-
-    {
-      "id": "text-to-handwriting",
-      "name": "Text to Handwriting",
-      "shortDescription": "Convert typed text into a realistic handwritten-style document.",
-      "category": "text",
-      "icon": "✍️",
-      "url": "/Nisulka-Tools/tools/text-to-handwriting/",
-      "popular": true,
-      "featured": true,
-      "keywords": [
-        "text to handwriting",
-        "handwriting generator",
-        "handwritten text",
-        "text handwriting"
-      ]
-    },
-
-    {
-      "id": "mp4-to-mp3",
-      "name": "MP4 to MP3",
-      "shortDescription": "Extract audio from MP4 video files and convert it to MP3.",
-      "category": "audio",
-      "icon": "🎵",
-      "url": "/Nisulka-Tools/tools/mp4-to-mp3/",
-      "popular": true,
-      "featured": true,
-      "keywords": [
-        "mp4 to mp3",
-        "video to mp3",
-        "extract audio",
-        "convert video to audio"
-      ]
-
-},
-  ]
-}
+[
+  {
+    "name": "Text To Handwriting",
+    "slug": "text-to-handwriting",
+    "description": "Free online Text To Handwriting tool.",
+    "category": "Other Tools",
+    "icon": "🛠️",
+    "logo": "/Nisulka-Tools/tools/text-to-handwriting/logo.jpg",
+    "url": "/Nisulka-Tools/tools/text-to-handwriting/",
+    "keywords": [],
+    "featured": false,
+    "status": "active"
+  }
+]
