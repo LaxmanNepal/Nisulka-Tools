@@ -1,1403 +1,634 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
-
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
-
-<meta
-    name="robots"
-    content="noindex, nofollow, noarchive"
->
-
-<meta
-    name="theme-color"
-    content="#2563eb"
->
-
-<title>
-    Nisulka Tools — Admin Dashboard
-</title>
-
-<link
-    rel="preconnect"
-    href="https://fonts.googleapis.com"
->
-
-<link
-    rel="preconnect"
-    href="https://fonts.gstatic.com"
-    crossorigin
->
-
-<link
-    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
-    rel="stylesheet"
->
-
-<style>
-
-    :root {
-
-        --primary: #2563eb;
-        --primary-dark: #1d4ed8;
-
-        --background: #f8fafc;
-        --surface: #ffffff;
-
-        --text: #0f172a;
-        --text-secondary: #64748b;
-        --text-muted: #94a3b8;
-
-        --border: #e2e8f0;
-
-        --success: #16a34a;
-        --warning: #d97706;
-        --danger: #dc2626;
-
-        --radius: 14px;
-
-    }
-
-
-    * {
-        box-sizing: border-box;
-    }
-
-
-    body {
-
-        margin: 0;
-
-        font-family:
-            "Poppins",
-            sans-serif;
-
-        background:
-            var(--background);
-
-        color:
-            var(--text);
-
-    }
-
-
-    button,
-    input,
-    select {
-
-        font:
-            inherit;
-
-    }
-
-
-    .admin-header {
-
-        background:
-            var(--surface);
-
-        border-bottom:
-            1px solid
-            var(--border);
-
-        position:
-            sticky;
-
-        top:
-            0;
-
-        z-index:
-            20;
-
-    }
-
-
-    .admin-header-inner {
-
-        width:
-            min(
-                1440px,
-                calc(100% - 32px)
-            );
-
-        margin:
-            auto;
-
-        min-height:
-            70px;
-
-        display:
-            flex;
-
-        align-items:
-            center;
-
-        justify-content:
-            space-between;
-
-    }
-
-
-    .brand {
-
-        display:
-            flex;
-
-        align-items:
-            center;
-
-        gap:
-            12px;
-
-        font-weight:
-            700;
-
-    }
-
-
-    .brand-mark {
-
-        width:
-            40px;
-
-        height:
-            40px;
-
-        display:
-            grid;
-
-        place-items:
-            center;
-
-        border-radius:
-            11px;
-
-        background:
-            var(--primary);
-
-        color:
-            #fff;
-
-    }
-
-
-    .brand-text {
-
-        display:
-            flex;
-
-        flex-direction:
-            column;
-
-    }
-
-
-    .brand-name {
-
-        font-size:
-            1rem;
-
-    }
-
-
-    .brand-subtitle {
-
-        color:
-            var(--text-muted);
-
-        font-size:
-            0.7rem;
-
-        font-weight:
-            500;
-
-    }
-
-
-    .admin-badge {
-
-        padding:
-            5px 10px;
-
-        border-radius:
-            999px;
-
-        background:
-            #eff6ff;
-
-        color:
-            var(--primary);
-
-        font-size:
-            0.72rem;
-
-        font-weight:
-            700;
-
-    }
-
-
-    .admin-main {
-
-        width:
-            min(
-                1440px,
-                calc(100% - 32px)
-            );
-
-        margin:
-            auto;
-
-        padding:
-            32px 0 60px;
-
-    }
-
-
-    .page-heading {
-
-        margin-bottom:
-            24px;
-
-    }
-
-
-    .page-heading h1 {
-
-        margin:
-            0 0 5px;
-
-        font-size:
-            clamp(
-                1.5rem,
-                3vw,
-                2.1rem
-            );
-
-    }
-
-
-    .page-heading p {
-
-        margin:
-            0;
-
-        color:
-            var(--text-secondary);
-
-        font-size:
-            0.9rem;
-
-    }
-
-
-    /* =================================
-       STATS
-       ================================= */
-
-    .dashboard-grid {
-
-        display:
-            grid;
-
-        grid-template-columns:
-            repeat(
-                4,
-                minmax(
-                    0,
-                    1fr
-                )
-            );
-
-        gap:
-            16px;
-
-    }
-
-
-    .stat-card {
-
-        padding:
-            20px;
-
-        background:
-            var(--surface);
-
-        border:
-            1px solid
-            var(--border);
-
-        border-radius:
-            var(--radius);
-
-    }
-
-
-    .stat-label {
-
-        color:
-            var(--text-secondary);
-
-        font-size:
-            0.78rem;
-
-        font-weight:
-            500;
-
-    }
-
-
-    .stat-value {
-
-        margin-top:
-            6px;
-
-        font-size:
-            1.75rem;
-
-        font-weight:
-            700;
-
-    }
-
-
-    .stat-note {
-
-        margin-top:
-            5px;
-
-        color:
-            var(--text-muted);
-
-        font-size:
-            0.7rem;
-
-    }
-
-
-    /* =================================
-       NAVIGATION
-       ================================= */
-
-    .admin-nav {
-
-        display:
-            flex;
-
-        gap:
-            8px;
-
-        margin:
-            24px 0;
-
-        overflow-x:
-            auto;
-
-    }
-
-
-    .admin-nav button {
-
-        border:
-            1px solid
-            var(--border);
-
-        background:
-            var(--surface);
-
-        color:
-            var(--text-secondary);
-
-        padding:
-            9px 14px;
-
-        border-radius:
-            9px;
-
-        cursor:
-            pointer;
-
-        white-space:
-            nowrap;
-
-    }
-
-
-    .admin-nav button.active {
-
-        background:
-            var(--primary);
-
-        border-color:
-            var(--primary);
-
-        color:
-            #fff;
-
-    }
-
-
-    /* =================================
-       TOOL MANAGEMENT
-       ================================= */
-
-    .dashboard-section {
-
-        background:
-            var(--surface);
-
-        border:
-            1px solid
-            var(--border);
-
-        border-radius:
-            var(--radius);
-
-        overflow:
-            hidden;
-
-    }
-
-
-    .section-header {
-
-        padding:
-            20px;
-
-        border-bottom:
-            1px solid
-            var(--border);
-
-    }
-
-
-    .section-header h2 {
-
-        margin:
-            0 0 5px;
-
-        font-size:
-            1.1rem;
-
-    }
-
-
-    .section-header p {
-
-        margin:
-            0;
-
-        color:
-            var(--text-secondary);
-
-        font-size:
-            0.8rem;
-
-    }
-
-
-    .tool-controls {
-
-        display:
-            flex;
-
-        gap:
-            10px;
-
-        padding:
-            16px;
-
-        border-bottom:
-            1px solid
-            var(--border);
-
-    }
-
-
-    .tool-search {
-
-        flex:
-            1;
-
-        min-width:
-            0;
-
-    }
-
-
-    .tool-search input,
-    .tool-controls select {
-
-        width:
-            100%;
-
-        height:
-            42px;
-
-        border:
-            1px solid
-            var(--border);
-
-        border-radius:
-            9px;
-
-        padding:
-            0 12px;
-
-        background:
-            #fff;
-
-        color:
-            var(--text);
-
-        outline:
-            none;
-
-    }
-
-
-    .tool-search input:focus,
-    .tool-controls select:focus {
-
-        border-color:
-            var(--primary);
-
-        box-shadow:
-            0 0 0 3px
-            rgba(
-                37,
-                99,
-                235,
-                0.1
-            );
-
-    }
-
-
-    .category-filter {
-
-        width:
-            220px;
-
-    }
-
-
-    /* =================================
-       TOOL ROW
-       ================================= */
-
-    #tools-table {
-
-        display:
-            flex;
-
-        flex-direction:
-            column;
-
-    }
-
-
-    .admin-tool-row {
-
-        display:
-            grid;
-
-        grid-template-columns:
-            minmax(
-                0,
-                1fr
-            )
-            auto
-            130px;
-
-        gap:
-            20px;
-
-        align-items:
-            center;
-
-        padding:
-            18px 20px;
-
-        border-bottom:
-            1px solid
-            var(--border);
-
-    }
-
-
-    .admin-tool-row:last-child {
-
-        border-bottom:
-            0;
-
-    }
-
-
-    .admin-tool-main {
-
-        display:
-            flex;
-
-        align-items:
-            center;
-
-        gap:
-            14px;
-
-        min-width:
-            0;
-
-    }
-
-
-    .admin-tool-logo {
-
-        width:
-            58px;
-
-        height:
-            58px;
-
-        object-fit:
-            cover;
-
-        border-radius:
-            12px;
-
-        border:
-            1px solid
-            var(--border);
-
-        flex-shrink:
-            0;
-
-    }
-
-
-    .admin-tool-logo-fallback {
-
-        width:
-            58px;
-
-        height:
-            58px;
-
-        display:
-            grid;
-
-        place-items:
-            center;
-
-        border-radius:
-            12px;
-
-        background:
-            #eff6ff;
-
-        color:
-            var(--primary);
-
-        font-weight:
-            700;
-
-        flex-shrink:
-            0;
-
-    }
-
-
-    .admin-tool-info {
-
-        min-width:
-            0;
-
-    }
-
-
-    .admin-tool-name {
-
-        color:
-            var(--text);
-
-        text-decoration:
-            none;
-
-        font-weight:
-            600;
-
-    }
-
-
-    .admin-tool-name:hover {
-
-        color:
-            var(--primary);
-
-    }
-
-
-    .admin-tool-info p {
-
-        margin:
-            3px 0;
-
-        color:
-            var(--text-secondary);
-
-        font-size:
-            0.76rem;
-
-        white-space:
-            nowrap;
-
-        overflow:
-            hidden;
-
-        text-overflow:
-            ellipsis;
-
-    }
-
-
-    .admin-tool-slug {
-
-        color:
-            var(--text-muted);
-
-        font-size:
-            0.68rem;
-
-    }
-
-
-    .admin-tool-meta {
-
-        display:
-            flex;
-
-        flex-direction:
-            column;
-
-        align-items:
-            flex-start;
-
-        gap:
-            4px;
-
-        color:
-            var(--text-secondary);
-
-        font-size:
-            0.7rem;
-
-    }
-
-
-    .admin-tool-seo {
-
-        text-align:
-            right;
-
-    }
-
-
-    .admin-tool-seo strong {
-
-        display:
-            block;
-
-        font-size:
-            1.2rem;
-
-        color:
-            var(--text-muted);
-
-    }
-
-
-    .admin-tool-seo span {
-
-        color:
-            var(--text-muted);
-
-        font-size:
-            0.65rem;
-
-    }
-
-
-    /* =================================
-       EMPTY
-       ================================= */
-
-    .admin-empty {
-
-        padding:
-            50px 20px;
-
-        text-align:
-            center;
-
-        color:
-            var(--text-secondary);
-
-    }
-
-
-    .admin-empty strong {
-
-        display:
-            block;
-
-        color:
-            var(--text);
-
-        margin-bottom:
-            5px;
-
-    }
-
-
-    .admin-empty p {
-
-        margin:
-            0;
-
-        font-size:
-            0.8rem;
-
-    }
-
-
-    .admin-error {
-
-        color:
-            var(--danger);
-
-    }
-
-
-    /* =================================
-       RESPONSIVE
-       ================================= */
-
-    @media (
-        max-width: 1000px
-    ) {
-
-        .dashboard-grid {
-
-            grid-template-columns:
-                repeat(
-                    2,
-                    minmax(
-                        0,
-                        1fr
-                    )
-                );
-
-        }
-
-
-        .admin-tool-row {
-
-            grid-template-columns:
-                minmax(
-                    0,
-                    1fr
-                )
-                110px;
-
-        }
-
-
-        .admin-tool-meta {
-
-            display:
-                none;
-
-        }
-
-    }
-
-
-    @media (
-        max-width: 620px
-    ) {
-
-        .admin-header-inner,
-        .admin-main {
-
-            width:
-                calc(
-                    100% - 20px
-                );
-
-        }
-
-
-        .admin-main {
-
-            padding-top:
-                22px;
-
-        }
-
-
-        .dashboard-grid {
-
-            grid-template-columns:
-                1fr 1fr;
-
-            gap:
-                10px;
-
-        }
-
-
-        .stat-card {
-
-            padding:
-                15px;
-
-        }
-
-
-        .stat-value {
-
-            font-size:
-                1.4rem;
-
-        }
-
-
-        .tool-controls {
-
-            flex-direction:
-                column;
-
-        }
-
-
-        .category-filter {
-
-            width:
-                100%;
-
-        }
-
-
-        .admin-tool-row {
-
-            grid-template-columns:
-                minmax(
-                    0,
-                    1fr
-                )
-                80px;
-
-            gap:
-                10px;
-
-            padding:
-                14px;
-
-        }
-
-
-        .admin-tool-logo,
-        .admin-tool-logo-fallback {
-
-            width:
-                48px;
-
-            height:
-                48px;
-
-        }
-
-
-        .admin-tool-info p {
-
-            display:
-                none;
-
-        }
-
-    }
-
-</style>
-
-</head><body><header class="admin-header"><div class="admin-header-inner">
-
-    <div class="brand">
-
-        <div class="brand-mark">
-            N
-        </div>
-
-        <div class="brand-text">
-
-            <span class="brand-name">
-                Nisulka Tools
-            </span>
-
-            <span class="brand-subtitle">
-                Management Center
-            </span>
-
-        </div>
-
-    </div>
-
-
-    <span class="admin-badge">
-        ADMIN
-    </span>
-
-</div>
-
-</header><main class="admin-main"><section class="page-heading">
-
-    <h1>
-        Dashboard
-    </h1>
-
-    <p>
-        Monitor the health, SEO and performance
-        of every Nisulka Tool.
-    </p>
-
-</section>
-
-
-<!-- =================================
-     STATISTICS
-     ================================= -->
-
-<section class="dashboard-grid">
-
-
-    <article class="stat-card">
-
-        <div class="stat-label">
-            Total Tools
-        </div>
-
-        <div
-            class="stat-value"
-            id="total-tools"
-        >
-            —
-        </div>
-
-        <div class="stat-note">
-            Registered tools
-        </div>
-
-    </article>
-
-
-    <article class="stat-card">
-
-        <div class="stat-label">
-            Active Tools
-        </div>
-
-        <div
-            class="stat-value"
-            id="active-tools"
-        >
-            —
-        </div>
-
-        <div class="stat-note">
-            Currently published
-        </div>
-
-    </article>
-
-
-    <article class="stat-card">
-
-        <div class="stat-label">
-            Featured Tools
-        </div>
-
-        <div
-            class="stat-value"
-            id="featured-tools"
-        >
-            —
-        </div>
-
-        <div class="stat-note">
-            Homepage featured
-        </div>
-
-    </article>
-
-
-    <article class="stat-card">
-
-        <div class="stat-label">
-            Average SEO
-        </div>
-
-        <div
-            class="stat-value"
-            id="average-seo"
-        >
-            —
-        </div>
-
-        <div class="stat-note">
-            Waiting for SEO audit
-        </div>
-
-    </article>
-
-</section>
-
-
-<!-- =================================
-     NAV
-     ================================= -->
-
-<nav class="admin-nav">
-
-    <button
-        type="button"
-        class="active"
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
     >
-        Overview
-    </button>
 
-    <button type="button">
-        Tools
-    </button>
+    <title>Nisulka Tools — Admin Dashboard</title>
 
-    <button type="button">
-        SEO
-    </button>
+    <meta
+        name="robots"
+        content="noindex, nofollow"
+    >
 
-    <button type="button">
-        Google Search
-    </button>
+    <meta
+        name="theme-color"
+        content="#2563eb"
+    >
 
-    <button type="button">
-        Traffic
-    </button>
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
 
-    <button type="button">
-        Insights
-    </button>
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
 
-    <button type="button">
-        Issues
-    </button>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
 
-</nav>
+    <link
+        rel="stylesheet"
+        href="admin.css"
+    >
+</head>
 
+<body>
 
-<!-- =================================
-     TOOLS
-     ================================= -->
+    <header class="admin-header">
 
-<section class="dashboard-section">
+        <div class="admin-header-inner">
 
-    <header class="section-header">
+            <a
+                href="../"
+                class="brand"
+            >
+                <span class="brand-mark">N</span>
 
-        <h2>
-            Tool Performance
-        </h2>
+                <span>
+                    Nisulka Tools
+                    <small>Admin</small>
+                </span>
+            </a>
 
-        <p>
-            Every registered Nisulka Tool
-            will appear here.
-        </p>
+            <a
+                href="../"
+                class="back-button"
+            >
+                ← View Website
+            </a>
+
+        </div>
 
     </header>
 
 
-    <div class="tool-controls">
+    <main class="admin-main">
 
-        <div class="tool-search">
+        <!-- PAGE HEADER -->
 
-            <input
-                type="search"
-                id="tool-search"
-                placeholder="Search tools..."
-                autocomplete="off"
+        <section class="page-heading">
+
+            <div>
+
+                <span class="eyebrow">
+                    ADMIN DASHBOARD
+                </span>
+
+                <h1>
+                    SEO Health Dashboard
+                </h1>
+
+                <p>
+                    Monitor the SEO health of every Nisulka Tools tool.
+                </p>
+
+            </div>
+
+            <div class="last-audit">
+
+                <span>
+                    Last audit
+                </span>
+
+                <strong id="last-audit">
+                    Loading...
+                </strong>
+
+            </div>
+
+        </section>
+
+
+        <!-- LOADING -->
+
+        <div
+            id="loading"
+            class="state-card"
+        >
+            <div class="spinner"></div>
+
+            <h2>
+                Loading SEO data...
+            </h2>
+
+            <p>
+                Reading data/seo-audit.json
+            </p>
+        </div>
+
+
+        <!-- ERROR -->
+
+        <div
+            id="error"
+            class="state-card error-state"
+            hidden
+        >
+
+            <div class="state-icon">
+                ⚠️
+            </div>
+
+            <h2>
+                SEO data unavailable
+            </h2>
+
+            <p id="error-message">
+                Unable to load SEO audit data.
+            </p>
+
+            <button
+                id="retry-button"
+                class="primary-button"
+                type="button"
+            >
+                Try Again
+            </button>
+
+        </div>
+
+
+        <!-- DASHBOARD -->
+
+        <div
+            id="dashboard"
+            hidden
+        >
+
+            <!-- OVERVIEW -->
+
+            <section class="overview-grid">
+
+                <article class="score-card">
+
+                    <div class="score-card-top">
+
+                        <div>
+
+                            <span class="card-label">
+                                Overall SEO Health
+                            </span>
+
+                            <h2 id="overall-score">
+                                —
+                            </h2>
+
+                        </div>
+
+                        <div
+                            id="overall-grade"
+                            class="grade-badge"
+                        >
+                            —
+                        </div>
+
+                    </div>
+
+                    <div class="score-bar">
+
+                        <span
+                            id="overall-score-bar"
+                        ></span>
+
+                    </div>
+
+                    <p id="overall-message">
+                        Calculating overall SEO health...
+                    </p>
+
+                </article>
+
+
+                <article class="stat-card">
+
+                    <span class="stat-icon">
+                        🧰
+                    </span>
+
+                    <span class="card-label">
+                        Total Tools
+                    </span>
+
+                    <strong id="total-tools">
+                        —
+                    </strong>
+
+                    <span class="stat-description">
+                        Active tools
+                    </span>
+
+                </article>
+
+
+                <article class="stat-card">
+
+                    <span class="stat-icon">
+                        ✓
+                    </span>
+
+                    <span class="card-label">
+                        Excellent
+                    </span>
+
+                    <strong id="excellent-tools">
+                        —
+                    </strong>
+
+                    <span class="stat-description">
+                        Score 90+
+                    </span>
+
+                </article>
+
+
+                <article class="stat-card">
+
+                    <span class="stat-icon">
+                        ⚠
+                    </span>
+
+                    <span class="card-label">
+                        Needs Attention
+                    </span>
+
+                    <strong id="warning-tools">
+                        —
+                    </strong>
+
+                    <span class="stat-description">
+                        Score below 70
+                    </span>
+
+                </article>
+
+            </section>
+
+
+            <!-- SEARCH / FILTER -->
+
+            <section class="controls">
+
+                <div class="search-wrapper">
+
+                    <span aria-hidden="true">
+                        🔍
+                    </span>
+
+                    <input
+                        id="tool-search"
+                        type="search"
+                        placeholder="Search tools..."
+                        autocomplete="off"
+                    >
+
+                </div>
+
+
+                <select
+                    id="grade-filter"
+                    class="filter-select"
+                >
+
+                    <option value="all">
+                        All grades
+                    </option>
+
+                    <option value="A">
+                        A — Excellent
+                    </option>
+
+                    <option value="B">
+                        B — Good
+                    </option>
+
+                    <option value="C">
+                        C — Needs work
+                    </option>
+
+                    <option value="D">
+                        D — Poor
+                    </option>
+
+                    <option value="F">
+                        F — Critical
+                    </option>
+
+                </select>
+
+
+                <select
+                    id="sort-tools"
+                    class="filter-select"
+                >
+
+                    <option value="score-desc">
+                        Highest score
+                    </option>
+
+                    <option value="score-asc">
+                        Lowest score
+                    </option>
+
+                    <option value="name">
+                        Name A–Z
+                    </option>
+
+                    <option value="issues">
+                        Most issues
+                    </option>
+
+                </select>
+
+            </section>
+
+
+            <!-- TOOL TABLE -->
+
+            <section class="panel">
+
+                <div class="panel-header">
+
+                    <div>
+
+                        <h2>
+                            Tool SEO Ranking
+                        </h2>
+
+                        <p>
+                            SEO health score for every tool.
+                        </p>
+
+                    </div>
+
+                    <span
+                        id="visible-count"
+                        class="result-count"
+                    >
+                        —
+                    </span>
+
+                </div>
+
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    #
+                                </th>
+
+                                <th>
+                                    Tool
+                                </th>
+
+                                <th>
+                                    Category
+                                </th>
+
+                                <th>
+                                    Score
+                                </th>
+
+                                <th>
+                                    Grade
+                                </th>
+
+                                <th>
+                                    Issues
+                                </th>
+
+                                <th>
+                                    Action
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="tools-table">
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                <div
+                    id="empty-results"
+                    class="empty-results"
+                    hidden
+                >
+
+                    <div>
+                        🔎
+                    </div>
+
+                    <h3>
+                        No tools found
+                    </h3>
+
+                    <p>
+                        Try changing your search or filter.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <!-- DETAIL PANEL -->
+
+            <section
+                id="tool-detail"
+                class="panel detail-panel"
+                hidden
             >
 
+                <div class="panel-header">
+
+                    <div>
+
+                        <span class="eyebrow">
+                            TOOL DETAILS
+                        </span>
+
+                        <h2 id="detail-name">
+                            Tool
+                        </h2>
+
+                        <p id="detail-description">
+                        </p>
+
+                    </div>
+
+                    <button
+                        id="close-detail"
+                        class="close-button"
+                        type="button"
+                    >
+                        ×
+                    </button>
+
+                </div>
+
+
+                <div class="detail-score">
+
+                    <div>
+
+                        <span class="card-label">
+                            SEO Score
+                        </span>
+
+                        <strong id="detail-score">
+                            —
+                        </strong>
+
+                    </div>
+
+                    <div
+                        id="detail-grade"
+                        class="grade-badge large"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+
+                <div class="detail-grid">
+
+                    <div class="detail-section">
+
+                        <h3>
+                            SEO Issues
+                        </h3>
+
+                        <div
+                            id="detail-issues"
+                            class="issue-list"
+                        >
+                        </div>
+
+                    </div>
+
+
+                    <div class="detail-section">
+
+                        <h3>
+                            SEO Checks
+                        </h3>
+
+                        <div
+                            id="detail-checks"
+                            class="check-list"
+                        >
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- INFORMATION -->
+
+            <section class="information-grid">
+
+                <article class="info-card">
+
+                    <div class="info-icon">
+                        🤖
+                    </div>
+
+                    <h3>
+                        Automated Audit
+                    </h3>
+
+                    <p>
+                        SEO data is generated automatically
+                        by GitHub Actions whenever tools
+                        are updated.
+                    </p>
+
+                </article>
+
+
+                <article class="info-card">
+
+                    <div class="info-icon">
+                        📊
+                    </div>
+
+                    <h3>
+                        SEO Health Score
+                    </h3>
+
+                    <p>
+                        The score represents Nisulka's internal
+                        technical and on-page SEO audit.
+                    </p>
+
+                </article>
+
+
+                <article class="info-card">
+
+                    <div class="info-icon">
+                        🔎
+                    </div>
+
+                    <h3>
+                        Google Data
+                    </h3>
+
+                    <p>
+                        Actual Google rankings, clicks and
+                        impressions will be connected through
+                        Search Console later.
+                    </p>
+
+                </article>
+
+            </section>
+
         </div>
 
-
-        <div class="category-filter">
-
-            <select
-                id="category-filter"
-            >
-
-                <option value="all">
-                    All categories
-                </option>
-
-            </select>
-
-        </div>
-
-    </div>
+    </main>
 
 
-    <div id="tools-table">
-
-        <div class="admin-empty">
-
-            Loading tools...
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- =================================
-     FUTURE DATA
-     ================================= -->
-
-<section
-    class="dashboard-section"
-    style="margin-top:24px;"
->
-
-    <header class="section-header">
-
-        <h2>
-            External Data
-        </h2>
+    <footer class="admin-footer">
 
         <p>
-            These integrations will be connected
-            in later steps.
+            Nisulka Tools Admin Dashboard
         </p>
 
-    </header>
+        <p>
+            SEO Health Monitoring
+        </p>
+
+    </footer>
 
 
-    <div
-        style="
-            display:grid;
-            grid-template-columns:
-                repeat(
-                    auto-fit,
-                    minmax(
-                        220px,
-                        1fr
-                    )
-                );
-            gap:12px;
-            padding:20px;
-        "
-    >
+    <script src="admin.js"></script>
 
-        <div
-            style="
-                padding:18px;
-                border:1px solid var(--border);
-                border-radius:12px;
-            "
-        >
+</body>
 
-            <strong>
-                Google Search Console
-            </strong>
-
-            <p
-                style="
-                    margin:5px 0 0;
-                    color:var(--text-secondary);
-                    font-size:.75rem;
-                "
-            >
-                Rankings, clicks,
-                impressions and CTR.
-            </p>
-
-        </div>
-
-
-        <div
-            style="
-                padding:18px;
-                border:1px solid var(--border);
-                border-radius:12px;
-            "
-        >
-
-            <strong>
-                Google Analytics 4
-            </strong>
-
-            <p
-                style="
-                    margin:5px 0 0;
-                    color:var(--text-secondary);
-                    font-size:.75rem;
-                "
-            >
-                Users, sessions,
-                page views and traffic.
-            </p>
-
-        </div>
-
-
-        <div
-            style="
-                padding:18px;
-                border:1px solid var(--border);
-                border-radius:12px;
-            "
-        >
-
-            <strong>
-                SEO Auditor
-            </strong>
-
-            <p
-                style="
-                    margin:5px 0 0;
-                    color:var(--text-secondary);
-                    font-size:.75rem;
-                "
-            >
-                Technical SEO and
-                content quality.
-            </p>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<p
-    id="last-updated"
-    style="
-        margin-top:16px;
-        text-align:right;
-        color:var(--text-muted);
-        font-size:.7rem;
-    "
-></p>
-
-</main><script
-    src="assets/js/admin.js"
-    defer
-></script></body></html>
+</html>
