@@ -1,6 +1,8 @@
 name: Generate Category Pages
 
 on:
+  workflow_dispatch:
+
   push:
     branches:
       - main
@@ -8,30 +10,25 @@ on:
       - "data/tools.json"
       - ".github/workflows/generate-category-pages.yml"
 
-  workflow_dispatch:
-
 permissions:
   contents: write
 
 jobs:
   generate-category-pages:
-
     runs-on: ubuntu-latest
 
     steps:
-
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Generate category pages
+        shell: bash
         run: |
-
           python3 <<'PY'
-
           import json
           import os
           import re
-          import html
+          from html import escape
 
           DATA_FILE = "data/tools.json"
           OUTPUT_DIR = "categories"
@@ -41,79 +38,61 @@ jobs:
           print("======================================")
 
           if not os.path.isfile(DATA_FILE):
-              print("ERROR: data/tools.json not found.")
-              raise SystemExit(1)
+              raise SystemExit(
+                  "ERROR: data/tools.json does not exist."
+              )
 
-          with open(
-              DATA_FILE,
-              "r",
-              encoding="utf-8"
-          ) as f:
+          with open(DATA_FILE, "r", encoding="utf-8") as f:
               tools = json.load(f)
 
-          os.makedirs(
-              OUTPUT_DIR,
-              exist_ok=True
-          )
+          if not isinstance(tools, list):
+              raise SystemExit(
+                  "ERROR: data/tools.json must contain an array."
+              )
 
           categories = {}
 
           for tool in tools:
+              if not isinstance(tool, dict):
+                  continue
+
+              if tool.get("status") == "hidden":
+                  continue
 
               category = str(
-                  tool.get(
-                      "category",
-                      "Other Tools"
-                  )
+                  tool.get("category") or "Other Tools"
               ).strip()
 
-              if not category:
-                  category = "Other Tools"
+              categories.setdefault(category, []).append(tool)
 
-              categories.setdefault(
-                  category,
-                  []
-              ).append(tool)
+          os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-          print(
-              f"Found {len(categories)} categories."
-          )
+          def slugify(value):
+              value = value.lower()
+              value = re.sub(r"[^a-z0-9]+", "-", value)
+              return value.strip("-")
 
-          def slugify(text):
+          generated = 0
 
-              text = text.lower()
+          for category, category_tools in sorted(categories.items()):
 
-              text = re.sub(
-                  r"[^a-z0-9]+",
-                  "-",
-                  text
-              )
+              slug = slugify(category)
 
-              return text.strip("-")
+              if not slug:
+                  slug = "other-tools"
 
-          generated = []
-
-          for category in sorted(categories):
-
-              category_tools = categories[category]
-
-              category_slug = slugify(category)
-
-              category_dir = os.path.join(
+              directory = os.path.join(
                   OUTPUT_DIR,
-                  category_slug
+                  slug
               )
 
-              os.makedirs(
-                  category_dir,
-                  exist_ok=True
-              )
+              os.makedirs(directory, exist_ok=True)
 
               cards = []
 
               for tool in category_tools:
 
-                  name = html.escape(
+                  name = escape(
                       str(
                           tool.get(
                               "name",
@@ -122,7 +101,7 @@ jobs:
                       )
                   )
 
-                  description = html.escape(
+                  description = escape(
                       str(
                           tool.get(
                               "description",
@@ -131,17 +110,7 @@ jobs:
                       )
                   )
 
-                  logo = html.escape(
-                      str(
-                          tool.get(
-                              "logo",
-                              ""
-                          )
-                      ),
-                      quote=True
-                  )
-
-                  url = html.escape(
+                  url = escape(
                       str(
                           tool.get(
                               "url",
@@ -151,252 +120,271 @@ jobs:
                       quote=True
                   )
 
-                  cards.append(
-                      f"""
-<article class="category-tool-card">
-
-    <a
-        href="{url}"
-        class="category-tool-link"
-    >
-
-        <div class="category-tool-logo">
-
-            <img
-                src="{logo}"
-                alt=""
-                loading="lazy"
-            >
-
-        </div>
-
-        <div class="category-tool-content">
-
-            <h2>
-                {name}
-            </h2>
-
-            <p>
-                {description}
-            </p>
-
-        </div>
-
-    </a>
-
-</article>
-"""
+                  logo = str(
+                      tool.get(
+                          "logo",
+                          ""
+                      )
                   )
 
-              cards_html = "\n".join(cards)
+                  if logo:
+                      logo_html = f'''
+                      <img
+                          src="{escape(logo, quote=True)}"
+                          alt=""
+                          loading="lazy"
+                      >
+                      '''
+                  else:
+                      logo_html = '''
+                      <div class="category-tool-fallback">
+                          🛠️
+                      </div>
+                      '''
 
-              page_title = (
+                  cards.append(f'''
+          <article class="category-tool-card">
+
+              <a
+                  href="{url}"
+                  class="category-tool-link"
+              >
+
+                  <div class="category-tool-logo">
+                      {logo_html}
+                  </div>
+
+                  <div class="category-tool-content">
+
+                      <h2>
+                          {name}
+                      </h2>
+
+                      <p>
+                          {description}
+                      </p>
+
+                  </div>
+
+              </a>
+
+          </article>
+          ''')
+
+              title = (
                   f"{category} — Free Online Tools | "
                   f"Nisulka Tools"
               )
 
-              page_description = (
+              description = (
                   f"Explore free {category.lower()} "
-                  f"available on Nisulka Tools. "
+                  f"tools on Nisulka Tools. "
                   f"Fast, simple and easy-to-use "
-                  f"online tools."
+                  f"online utilities."
               )
 
-              page = f"""<!DOCTYPE html>
+              canonical = (
+                  "https://apps.laxmannepal.com.np/"
+                  f"Nisulka-Tools/categories/{slug}/"
+              )
 
-<html lang="en">
+              page = f'''<!DOCTYPE html>
+          <html lang="en">
 
-<head>
+          <head>
 
-<meta charset="UTF-8">
+              <meta charset="UTF-8">
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
+              <meta
+                  name="viewport"
+                  content="width=device-width, initial-scale=1.0"
+              >
 
-<title>
-{html.escape(page_title)}
-</title>
+              <title>{escape(title)}</title>
 
-<meta
-    name="description"
-    content="{html.escape(page_description)}"
->
+              <meta
+                  name="description"
+                  content="{escape(description)}"
+              >
 
-<meta
-    name="robots"
-    content="index, follow"
->
+              <meta
+                  name="robots"
+                  content="index, follow"
+              >
 
-<link
-    rel="canonical"
-    href="https://apps.laxmannepal.com.np/Nisulka-Tools/categories/{category_slug}/"
->
+              <link
+                  rel="canonical"
+                  href="{canonical}"
+              >
 
-<link
-    rel="stylesheet"
-    href="../../assets/css/variables.css"
->
+              <meta
+                  name="theme-color"
+                  content="#2563eb"
+              >
 
-<link
-    rel="stylesheet"
-    href="../../assets/css/global.css"
->
+              <link
+                  rel="stylesheet"
+                  href="../../assets/css/variables.css"
+              >
 
-<link
-    rel="stylesheet"
-    href="../../assets/css/components.css"
->
+              <link
+                  rel="stylesheet"
+                  href="../../assets/css/global.css"
+              >
 
-<link
-    rel="stylesheet"
-    href="../../assets/css/header.css"
->
+              <link
+                  rel="stylesheet"
+                  href="../../assets/css/components.css"
+              >
 
-<link
-    rel="stylesheet"
-    href="../../assets/css/footer.css"
->
+              <link
+                  rel="stylesheet"
+                  href="../../assets/css/header.css"
+              >
 
-<link
-    rel="stylesheet"
-    href="../../assets/css/category.css"
->
+              <link
+                  rel="stylesheet"
+                  href="../../assets/css/footer.css"
+              >
 
-</head>
+              <link
+                  rel="stylesheet"
+                  href="../../assets/css/category.css"
+              >
 
-<body>
+          </head>
 
-<div id="site-header-mount"></div>
+          <body>
 
-<main class="category-page">
+              <div id="site-header-mount"></div>
 
-<section class="category-hero">
+              <main class="category-page">
 
-<div class="container">
+                  <section class="category-hero">
 
-<nav
-    class="breadcrumb"
-    aria-label="Breadcrumb"
->
+                      <div class="container">
 
-<a href="../../">
-    Home
-</a>
+                          <nav
+                              class="breadcrumb"
+                              aria-label="Breadcrumb"
+                          >
 
-<span>
-    /
-</span>
+                              <a href="../../">
+                                  Home
+                              </a>
 
-<span aria-current="page">
-    {html.escape(category)}
-</span>
+                              <span aria-hidden="true">
+                                  /
+                              </span>
 
-</nav>
+                              <span>
+                                  {escape(category)}
+                              </span>
 
-<span class="badge badge-primary">
-    Nisulka Tools
-</span>
+                          </nav>
 
-<h1>
-    {html.escape(category)}
-</h1>
+                          <span class="badge badge-primary">
+                              Nisulka Tools
+                          </span>
 
-<p>
-    Explore {len(category_tools)}
-    free online
-    {html.escape(category.lower())}
-    tools.
-</p>
+                          <h1>
+                              {escape(category)}
+                          </h1>
 
-</div>
+                          <p>
+                              Explore
+                              {len(category_tools)}
+                              free online tools in this category.
+                          </p>
 
-</section>
+                      </div>
 
-<section class="section">
+                  </section>
 
-<div class="container">
+                  <section class="section">
 
-<div class="category-tools-grid">
+                      <div class="container">
 
-{cards_html}
+                          <div class="category-tools-grid">
 
-</div>
+                              {"".join(cards)}
 
-</div>
+                          </div>
 
-</section>
+                      </div>
 
-</main>
+                  </section>
 
-<div id="site-footer-mount"></div>
+              </main>
 
-<script src="../../assets/js/header.js"></script>
-<script src="../../assets/js/footer.js"></script>
-<script src="../../assets/js/category.js"></script>
+              <div id="site-footer-mount"></div>
 
-</body>
+              <script src="../../assets/js/header.js"></script>
+              <script src="../../assets/js/footer.js"></script>
+              <script src="../../assets/js/category.js"></script>
 
-</html>
-"""
+          </body>
 
-              index_file = os.path.join(
-                  category_dir,
+          </html>
+          '''
+
+              output_file = os.path.join(
+                  directory,
                   "index.html"
               )
 
               with open(
-                  index_file,
+                  output_file,
                   "w",
                   encoding="utf-8"
               ) as f:
-
                   f.write(page)
 
-              generated.append(category)
+              generated += 1
 
               print(
-                  f"Generated: "
-                  f"{category} "
-                  f"({len(category_tools)} tools)"
+                  f"Generated: {category} "
+                  f"-> categories/{slug}/index.html"
               )
 
           print()
           print(
-              "======================================"
+              f"Generated {generated} category pages."
           )
-          print(
-              f"Generated {len(generated)} category pages."
-          )
-          print(
-              "======================================"
-          )
+          print("Done.")
 
           PY
 
-      - name: Commit category pages
+      - name: Show generated files
+        run: |
+          echo "======================================"
+          echo "GENERATED CATEGORY PAGES"
+          echo "======================================"
+
+          find categories \
+            -maxdepth 2 \
+            -type f \
+            -name "index.html" \
+            -print
+
+      - name: Commit generated pages
+        shell: bash
         run: |
 
-          git config \
-            user.name \
+          git config user.name \
             "github-actions[bot]"
 
-          git config \
-            user.email \
+          git config user.email \
             "41898282+github-actions[bot]@users.noreply.github.com"
 
           git add categories/
 
           if git diff --cached --quiet; then
-
               echo "No category page changes."
-
-          else
-
-              git commit \
-                -m "chore: update category pages"
-
-              git push
-
+              exit 0
           fi
+
+          git commit \
+            -m "chore: update category pages"
+
+          git push
