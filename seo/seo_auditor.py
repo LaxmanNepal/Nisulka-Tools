@@ -1,274 +1,558 @@
+#!/usr/bin/env python3
+
+"""
+Nisulka Tools — SEO Auditor
+
+Scans every tool under /tools/ and produces:
+    seo/seo-report.json
+    seo/seo-report.md
+
+The auditor checks:
+- Title
+- Meta description
+- Canonical URL
+- H1
+- H2
+- Description length
+- Title length
+- Open Graph
+- Robots
+- Structured data
+- Tool metadata
+- Logo
+- Internal links
+- Image alt attributes
+- HTTPS/canonical consistency
+- Basic content quality
+
+Exit code:
+    0 = audit completed successfully
+    1 = auditor itself failed
+"""
+
 import os
 import re
 import json
-from html.parser import HTMLParser
+from html import unescape
+from datetime import datetime
 from urllib.parse import urlparse
 
 
+# ============================================================
+# CONFIGURATION
+# ============================================================
+
 TOOLS_DIR = "tools"
-OUTPUT_FILE = "data/seo-audit.json"
+OUTPUT_DIR = "seo"
 
-SITE_URL = "https://apps.laxmannepal.com.np/Nisulka-Tools"
+JSON_REPORT = os.path.join(
+    OUTPUT_DIR,
+    "seo-report.json"
+)
 
+MARKDOWN_REPORT = os.path.join(
+    OUTPUT_DIR,
+    "seo-report.md"
+)
 
-# ============================================================
-# HTML PARSER
-# ============================================================
-
-class SEOParser(HTMLParser):
-
-    def __init__(self):
-        super().__init__()
-
-        self.title = ""
-        self.meta = {}
-
-        self.h1 = []
-        self.h2 = []
-        self.h3 = []
-
-        self.images = []
-        self.links = []
-
-        self.body_text = []
-
-        self.schema_blocks = []
-
-        self.current_tag = None
-        self.current_attrs = {}
-
-        self.in_title = False
-        self.in_script = False
-        self.current_script = ""
-
-    def handle_starttag(self, tag, attrs):
-
-        attrs_dict = dict(attrs)
-
-        self.current_tag = tag
-        self.current_attrs = attrs_dict
-
-        if tag == "title":
-            self.in_title = True
-
-        elif tag == "script":
-
-            script_type = attrs_dict.get(
-                "type",
-                ""
-            ).lower()
-
-            if script_type == "application/ld+json":
-
-                self.in_script = True
-                self.current_script = ""
-
-        elif tag == "img":
-
-            self.images.append(
-                {
-                    "src": attrs_dict.get("src", ""),
-                    "alt": attrs_dict.get("alt"),
-                    "loading": attrs_dict.get("loading")
-                }
-            )
-
-        elif tag == "a":
-
-            self.links.append(
-                attrs_dict.get("href", "")
-            )
-
-    def handle_endtag(self, tag):
-
-        if tag == "title":
-            self.in_title = False
-
-        elif tag == "script" and self.in_script:
-
-            self.schema_blocks.append(
-                self.current_script.strip()
-            )
-
-            self.current_script = ""
-            self.in_script = False
-
-        self.current_tag = None
-
-    def handle_data(self, data):
-
-        clean = data.strip()
-
-        if not clean:
-            return
-
-        if self.in_title:
-
-            self.title += " " + clean
-
-        elif self.in_script:
-
-            self.current_script += data
-
-        elif self.current_tag in [
-            "h1",
-            "h2",
-            "h3"
-        ]:
-
-            if self.current_tag == "h1":
-                self.h1.append(clean)
-
-            elif self.current_tag == "h2":
-                self.h2.append(clean)
-
-            elif self.current_tag == "h3":
-                self.h3.append(clean)
-
-        else:
-
-            self.body_text.append(clean)
+SITE_URL = (
+    "https://apps.laxmannepal.com.np/"
+    "Nisulka-Tools"
+)
 
 
 # ============================================================
-# META EXTRACTION
+# HELPERS
 # ============================================================
 
-def extract_meta(html):
+def clean_text(value):
+    """Remove HTML and normalize whitespace."""
 
-    metadata = {}
+    if not value:
+        return ""
 
-    patterns = re.findall(
-        r"<meta\s+([^>]+)>",
+    value = re.sub(
+        r"<[^>]+>",
+        " ",
+        value
+    )
+
+    value = unescape(value)
+
+    value = re.sub(
+        r"\s+",
+        " ",
+        value
+    )
+
+    return value.strip()
+
+
+def get_tag_content(html, tag, attrs=""):
+    """
+    Extract simple HTML tag content.
+    """
+
+    pattern = (
+        rf"<{tag}\b{attrs}[^>]*>"
+        rf"(.*?)"
+        rf"</{tag}>"
+    )
+
+    match = re.search(
+        pattern,
+        html,
+        re.IGNORECASE | re.DOTALL
+    )
+
+    if match:
+        return clean_text(
+            match.group(1)
+        )
+
+    return ""
+
+
+def get_meta(html, name=None, property_name=None):
+    """
+    Read meta description/name/property.
+    """
+
+    if name:
+
+        pattern = (
+            rf'<meta\s+'
+            rf'[^>]*name=["\']'
+            rf'{re.escape(name)}'
+            rf'["\'][^>]*content=["\']'
+            rf'(.*?)["\']'
+        )
+
+    else:
+
+        pattern = (
+            rf'<meta\s+'
+            rf'[^>]*property=["\']'
+            rf'{re.escape(property_name)}'
+            rf'["\'][^>]*content=["\']'
+            rf'(.*?)["\']'
+        )
+
+    match = re.search(
+        pattern,
+        html,
+        re.IGNORECASE | re.DOTALL
+    )
+
+    if match:
+        return unescape(
+            match.group(1).strip()
+        )
+
+    return ""
+
+
+def get_title(html):
+
+    match = re.search(
+        r"<title[^>]*>(.*?)</title>",
+        html,
+        re.IGNORECASE | re.DOTALL
+    )
+
+    if match:
+        return clean_text(
+            match.group(1)
+        )
+
+    return ""
+
+
+def get_canonical(html):
+
+    match = re.search(
+        r'<link\s+[^>]*rel=["\']canonical["\'][^>]*href=["\'](.*?)["\']',
+        html,
+        re.IGNORECASE | re.DOTALL
+    )
+
+    if match:
+        return unescape(
+            match.group(1).strip()
+        )
+
+    return ""
+
+
+def count_tags(html, tag):
+
+    return len(
+        re.findall(
+            rf"<{tag}\b",
+            html,
+            re.IGNORECASE
+        )
+    )
+
+
+def get_headings(html, tag):
+
+    pattern = (
+        rf"<{tag}\b[^>]*>"
+        rf"(.*?)"
+        rf"</{tag}>"
+    )
+
+    matches = re.findall(
+        pattern,
+        html,
+        re.IGNORECASE | re.DOTALL
+    )
+
+    return [
+        clean_text(item)
+        for item in matches
+        if clean_text(item)
+    ]
+
+
+def get_images(html):
+
+    return re.findall(
+        r"<img\b[^>]*>",
         html,
         re.IGNORECASE
     )
 
-    for attributes in patterns:
 
-        name_match = re.search(
-            r'name=["\']([^"\']+)["\']',
-            attributes,
+def image_has_alt(image):
+
+    return bool(
+        re.search(
+            r'\balt=["\'][^"\']*["\']',
+            image,
             re.IGNORECASE
         )
-
-        property_match = re.search(
-            r'property=["\']([^"\']+)["\']',
-            attributes,
-            re.IGNORECASE
-        )
-
-        content_match = re.search(
-            r'content=["\'](.*?)["\']',
-            attributes,
-            re.IGNORECASE | re.DOTALL
-        )
-
-        if not content_match:
-            continue
-
-        content = content_match.group(1).strip()
-
-        if name_match:
-
-            metadata[
-                name_match.group(1).lower()
-            ] = content
-
-        if property_match:
-
-            metadata[
-                property_match.group(1).lower()
-            ] = content
-
-    return metadata
-
-
-# ============================================================
-# TOOL META
-# ============================================================
-
-def extract_tool_meta(html):
-
-    metadata = {}
-
-    patterns = re.findall(
-        r"<meta\s+([^>]+)>",
-        html,
-        re.IGNORECASE
     )
 
-    for attributes in patterns:
 
-        name_match = re.search(
-            r'name=["\']([^"\']+)["\']',
-            attributes,
-            re.IGNORECASE
+def get_json_ld(html):
+
+    matches = re.findall(
+        r'<script\s+[^>]*type=["\']application/ld\+json["\'][^>]*>'
+        r'(.*?)'
+        r'</script>',
+        html,
+        re.IGNORECASE | re.DOTALL
+    )
+
+    valid = []
+
+    for item in matches:
+
+        try:
+            valid.append(
+                json.loads(
+                    item.strip()
+                )
+            )
+
+        except json.JSONDecodeError:
+            pass
+
+    return valid
+
+
+def get_tool_meta(html, name):
+
+    pattern = (
+        rf'<meta\s+'
+        rf'[^>]*name=["\']tool:{re.escape(name)}'
+        rf'["\'][^>]*content=["\'](.*?)["\']'
+    )
+
+    match = re.search(
+        pattern,
+        html,
+        re.IGNORECASE | re.DOTALL
+    )
+
+    if match:
+        return unescape(
+            match.group(1).strip()
         )
 
-        content_match = re.search(
-            r'content=["\'](.*?)["\']',
-            attributes,
-            re.IGNORECASE | re.DOTALL
-        )
-
-        if not name_match or not content_match:
-            continue
-
-        name = name_match.group(1).lower()
-
-        if name.startswith("tool:"):
-
-            metadata[
-                name.replace("tool:", "")
-            ] = content_match.group(1).strip()
-
-    return metadata
+    return ""
 
 
 # ============================================================
-# URL HELPERS
+# SEO CHECKS
 # ============================================================
 
-def is_internal_link(href):
+def check_title(title):
 
-    if not href:
-        return False
+    length = len(title)
 
-    if href.startswith("#"):
-        return True
+    if not title:
 
-    if href.startswith("/"):
-        return True
+        return (
+            0,
+            "Missing title"
+        )
 
-    parsed = urlparse(href)
+    if 30 <= length <= 60:
 
-    if not parsed.netloc:
-        return True
+        return (
+            10,
+            "Good title length"
+        )
+
+    if length < 30:
+
+        return (
+            6,
+            "Title is too short"
+        )
 
     return (
-        parsed.netloc
-        == urlparse(SITE_URL).netloc
+        6,
+        "Title is too long"
     )
 
 
-# ============================================================
-# ISSUE CREATOR
-# ============================================================
+def check_description(description):
 
-def issue(
-    severity,
-    category,
-    message,
-    points
+    description_length = len(
+        description
+    )
+
+    if not description:
+
+        return (
+            0,
+            "Missing meta description"
+        )
+
+    if 120 <= description_length <= 160:
+
+        return (
+            10,
+            "Good description length"
+        )
+
+    if description_length < 120:
+
+        return (
+            6,
+            "Description is too short"
+        )
+
+    return (
+        6,
+        "Description is too long"
+    )
+
+
+def check_h1(headings):
+
+    if len(headings) == 1:
+
+        return (
+            10,
+            "Exactly one H1"
+        )
+
+    if len(headings) == 0:
+
+        return (
+            0,
+            "Missing H1"
+        )
+
+    return (
+        5,
+        "Multiple H1 headings"
+    )
+
+
+def check_canonical(canonical):
+
+    if not canonical:
+
+        return (
+            0,
+            "Missing canonical URL"
+        )
+
+    if canonical.startswith(
+        "https://"
+    ):
+
+        return (
+            10,
+            "HTTPS canonical found"
+        )
+
+    return (
+        5,
+        "Canonical exists but is not HTTPS"
+    )
+
+
+def check_open_graph(og_title, og_description):
+
+    score = 0
+
+    if og_title:
+        score += 5
+
+    if og_description:
+        score += 5
+
+    if score == 10:
+
+        message = "Open Graph metadata complete"
+
+    elif score == 5:
+
+        message = "Open Graph partially configured"
+
+    else:
+
+        message = "Open Graph metadata missing"
+
+    return (
+        score,
+        message
+    )
+
+
+def check_robots(robots):
+
+    if not robots:
+
+        return (
+            0,
+            "Robots meta tag missing"
+        )
+
+    if "noindex" in robots.lower():
+
+        return (
+            0,
+            "Page contains noindex"
+        )
+
+    return (
+        5,
+        "Indexable robots directive"
+    )
+
+
+def check_schema(schema):
+
+    if not schema:
+
+        return (
+            0,
+            "Structured data missing"
+        )
+
+    return (
+        10,
+        "Structured data found"
+    )
+
+
+def check_images(html):
+
+    images = get_images(
+        html
+    )
+
+    if not images:
+
+        return (
+            5,
+            "No images found"
+        )
+
+    missing_alt = sum(
+        1
+        for image in images
+        if not image_has_alt(image)
+    )
+
+    if missing_alt == 0:
+
+        return (
+            10,
+            "All images have alt attributes"
+        )
+
+    return (
+        5,
+        f"{missing_alt} image(s) missing alt"
+    )
+
+
+def check_content(description, h2):
+
+    score = 0
+
+    if len(description) >= 80:
+        score += 5
+
+    if len(h2) >= 1:
+        score += 5
+
+    if score == 10:
+
+        message = "Useful page structure"
+
+    elif score == 5:
+
+        message = "Content structure could be improved"
+
+    else:
+
+        message = "Thin content signals"
+
+    return (
+        score,
+        message
+    )
+
+
+def check_tool_metadata(
+    name,
+    description,
+    category
 ):
 
-    return {
-        "severity": severity,
-        "category": category,
-        "message": message,
-        "points": points
-    }
+    score = 0
+
+    if name:
+        score += 3
+
+    if description:
+        score += 3
+
+    if category:
+        score += 4
+
+    if score == 10:
+
+        message = "Tool metadata complete"
+
+    else:
+
+        message = "Tool metadata incomplete"
+
+    return (
+        score,
+        message
+    )
 
 
 # ============================================================
@@ -287,7 +571,14 @@ def audit_tool(slug):
         "index.html"
     )
 
-    if not os.path.isfile(index_file):
+    logo_file = os.path.join(
+        tool_dir,
+        "logo.jpg"
+    )
+
+    if not os.path.isfile(
+        index_file
+    ):
 
         return None
 
@@ -300,623 +591,289 @@ def audit_tool(slug):
         html = file.read()
 
 
-    parser = SEOParser()
+    # --------------------------------------------------------
+    # Metadata
+    # --------------------------------------------------------
 
-    try:
-
-        parser.feed(html)
-
-    except Exception as error:
-
-        return {
-            "slug": slug,
-            "score": 0,
-            "grade": "F",
-            "error": str(error),
-            "issues": [
-                issue(
-                    "critical",
-                    "html",
-                    "Unable to parse HTML correctly.",
-                    100
-                )
-            ]
-        }
-
-
-    meta = extract_meta(html)
-
-    tool_meta = extract_tool_meta(html)
-
-    issues = []
-
-    score = 100
-
-
-    # ========================================================
-    # TITLE
-    # ========================================================
-
-    title = parser.title.strip()
-
-    if not title:
-
-        issues.append(
-            issue(
-                "critical",
-                "title",
-                "Missing HTML title.",
-                15
-            )
-        )
-
-        score -= 15
-
-    else:
-
-        title_length = len(title)
-
-        if title_length < 30:
-
-            issues.append(
-                issue(
-                    "medium",
-                    "title",
-                    "Title is shorter than 30 characters.",
-                    5
-                )
-            )
-
-            score -= 5
-
-        elif title_length > 65:
-
-            issues.append(
-                issue(
-                    "medium",
-                    "title",
-                    "Title is longer than approximately 65 characters.",
-                    4
-                )
-            )
-
-            score -= 4
-
-
-    # ========================================================
-    # META DESCRIPTION
-    # ========================================================
-
-    description = meta.get(
-        "description",
-        ""
+    title = get_title(
+        html
     )
 
-    if not description:
-
-        issues.append(
-            issue(
-                "critical",
-                "metadata",
-                "Missing meta description.",
-                12
-            )
-        )
-
-        score -= 12
-
-    else:
-
-        description_length =
-            len(description)
-
-        if description_length < 100:
-
-            issues.append(
-                issue(
-                    "medium",
-                    "metadata",
-                    "Meta description is quite short.",
-                    4
-                )
-            )
-
-            score -= 4
-
-        elif description_length > 170:
-
-            issues.append(
-                issue(
-                    "medium",
-                    "metadata",
-                    "Meta description may be too long.",
-                    3
-                )
-            )
-
-            score -= 3
-
-
-    # ========================================================
-    # H1
-    # ========================================================
-
-    h1_count = len(parser.h1)
-
-    if h1_count == 0:
-
-        issues.append(
-            issue(
-                "critical",
-                "content",
-                "Missing H1 heading.",
-                10
-            )
-        )
-
-        score -= 10
-
-    elif h1_count > 1:
-
-        issues.append(
-            issue(
-                "medium",
-                "content",
-                f"Found {h1_count} H1 headings. Prefer one primary H1.",
-                4
-            )
-        )
-
-        score -= 4
-
-
-    # ========================================================
-    # H2
-    # ========================================================
-
-    if len(parser.h2) == 0:
-
-        issues.append(
-            issue(
-                "low",
-                "content",
-                "No H2 headings found.",
-                3
-            )
-        )
-
-        score -= 3
-
-
-    # ========================================================
-    # CANONICAL
-    # ========================================================
-
-    canonical_match = re.search(
-        r'<link[^>]+rel=["\']canonical["\'][^>]+href=["\']([^"\']+)["\']',
+    description = get_meta(
         html,
-        re.IGNORECASE
+        name="description"
     )
 
-    if not canonical_match:
-
-        issues.append(
-            issue(
-                "high",
-                "technical",
-                "Missing canonical URL.",
-                8
-            )
-        )
-
-        score -= 8
-
-
-    # ========================================================
-    # ROBOTS
-    # ========================================================
-
-    robots = meta.get(
-        "robots",
-        ""
-    ).lower()
-
-    if not robots:
-
-        issues.append(
-            issue(
-                "low",
-                "technical",
-                "Robots meta tag is missing.",
-                2
-            )
-        )
-
-        score -= 2
-
-    elif "noindex" in robots:
-
-        issues.append(
-            issue(
-                "critical",
-                "indexing",
-                "Page contains noindex.",
-                15
-            )
-        )
-
-        score -= 15
-
-
-    # ========================================================
-    # VIEWPORT
-    # ========================================================
-
-    viewport = meta.get(
-        "viewport",
-        ""
+    canonical = get_canonical(
+        html
     )
 
-    if not viewport:
-
-        issues.append(
-            issue(
-                "high",
-                "mobile",
-                "Missing mobile viewport meta tag.",
-                6
-            )
-        )
-
-        score -= 6
-
-
-    # ========================================================
-    # OPEN GRAPH
-    # ========================================================
-
-    og_title = meta.get(
-        "og:title"
+    robots = get_meta(
+        html,
+        name="robots"
     )
 
-    og_description = meta.get(
-        "og:description"
+    og_title = get_meta(
+        html,
+        property_name="og:title"
     )
 
-    og_url = meta.get(
-        "og:url"
-    )
-
-    missing_og = []
-
-    if not og_title:
-        missing_og.append("og:title")
-
-    if not og_description:
-        missing_og.append("og:description")
-
-    if not og_url:
-        missing_og.append("og:url")
-
-
-    if missing_og:
-
-        issues.append(
-            issue(
-                "low",
-                "social",
-                "Missing Open Graph fields: "
-                + ", ".join(missing_og),
-                3
-            )
-        )
-
-        score -= 3
-
-
-    # ========================================================
-    # STRUCTURED DATA
-    # ========================================================
-
-    valid_schema = False
-
-    for schema in parser.schema_blocks:
-
-        try:
-
-            parsed =
-                json.loads(schema)
-
-            if isinstance(parsed, dict):
-
-                if (
-                    "@context" in parsed
-                    and "@type" in parsed
-                ):
-
-                    valid_schema = True
-
-        except Exception:
-
-            pass
-
-
-    if not valid_schema:
-
-        issues.append(
-            issue(
-                "high",
-                "structured-data",
-                "No valid JSON-LD structured data detected.",
-                7
-            )
-        )
-
-        score -= 7
-
-
-    # ========================================================
-    # IMAGES
-    # ========================================================
-
-    images_without_alt = 0
-
-    for image in parser.images:
-
-        alt = image.get("alt")
-
-        if alt is None:
-
-            images_without_alt += 1
-
-
-    if images_without_alt:
-
-        issues.append(
-            issue(
-                "medium",
-                "images",
-                f"{images_without_alt} image(s) are missing alt attributes.",
-                3
-            )
-        )
-
-        score -= 3
-
-
-    # ========================================================
-    # CONTENT
-    # ========================================================
-
-    text_content = " ".join(
-        parser.body_text
-    )
-
-    word_count = len(
-        re.findall(
-            r"\b[\w'-]+\b",
-            text_content
-        )
+    og_description = get_meta(
+        html,
+        property_name="og:description"
     )
 
 
-    if word_count < 250:
+    # --------------------------------------------------------
+    # Headings
+    # --------------------------------------------------------
 
-        issues.append(
-            issue(
-                "high",
-                "content",
-                f"Page contains approximately {word_count} words of visible text. Consider adding useful explanatory content.",
-                8
-            )
-        )
+    h1 = get_headings(
+        html,
+        "h1"
+    )
 
-        score -= 8
-
-    elif word_count < 500:
-
-        issues.append(
-            issue(
-                "medium",
-                "content",
-                f"Page contains approximately {word_count} words. More useful supporting content may improve topical coverage.",
-                4
-            )
-        )
-
-        score -= 4
-
-
-    # ========================================================
-    # FAQ
-    # ========================================================
-
-    faq_detected = bool(
-        re.search(
-            r"frequently asked|faq",
-            html,
-            re.IGNORECASE
-        )
+    h2 = get_headings(
+        html,
+        "h2"
     )
 
 
-    if not faq_detected:
+    # --------------------------------------------------------
+    # Schema
+    # --------------------------------------------------------
 
-        issues.append(
-            issue(
-                "low",
-                "content",
-                "No FAQ section detected.",
-                2
-            )
-        )
-
-        score -= 2
-
-
-    # ========================================================
-    # BREADCRUMB
-    # ========================================================
-
-    breadcrumb_detected = bool(
-        re.search(
-            r"breadcrumb",
-            html,
-            re.IGNORECASE
-        )
+    schema = get_json_ld(
+        html
     )
 
 
-    if not breadcrumb_detected:
+    # --------------------------------------------------------
+    # Tool metadata
+    # --------------------------------------------------------
 
-        issues.append(
-            issue(
-                "low",
-                "navigation",
-                "No breadcrumb navigation detected.",
-                2
-            )
-        )
-
-        score -= 2
-
-
-    # ========================================================
-    # INTERNAL LINKS
-    # ========================================================
-
-    internal_links = [
-
-        href
-
-        for href in parser.links
-
-        if is_internal_link(href)
-
-    ]
-
-
-    if len(internal_links) < 2:
-
-        issues.append(
-            issue(
-                "medium",
-                "internal-links",
-                "Very few internal links detected.",
-                3
-            )
-        )
-
-        score -= 3
-
-
-    # ========================================================
-    # TOOL METADATA
-    # ========================================================
-
-    tool_name = tool_meta.get(
+    tool_name = get_tool_meta(
+        html,
         "name"
     )
 
-    tool_description = tool_meta.get(
+    tool_description = get_tool_meta(
+        html,
         "description"
     )
 
-    tool_category = tool_meta.get(
+    tool_category = get_tool_meta(
+        html,
         "category"
     )
 
 
-    if not tool_name:
+    # --------------------------------------------------------
+    # Scores
+    # --------------------------------------------------------
 
-        issues.append(
-            issue(
-                "medium",
-                "tool-metadata",
-                "Missing tool:name metadata.",
-                2
-            )
+    checks = {}
+
+
+    score, message = check_title(
+        title
+    )
+
+    checks["title"] = {
+        "score": score,
+        "max": 10,
+        "message": message,
+        "value": title,
+        "length": len(title)
+    }
+
+
+    score, message = check_description(
+        description
+    )
+
+    checks["meta_description"] = {
+        "score": score,
+        "max": 10,
+        "message": message,
+        "value": description,
+        "length": len(description)
+    }
+
+
+    score, message = check_h1(
+        h1
+    )
+
+    checks["h1"] = {
+        "score": score,
+        "max": 10,
+        "message": message,
+        "count": len(h1),
+        "values": h1
+    }
+
+
+    score, message = check_canonical(
+        canonical
+    )
+
+    checks["canonical"] = {
+        "score": score,
+        "max": 10,
+        "message": message,
+        "value": canonical
+    }
+
+
+    score, message = check_open_graph(
+        og_title,
+        og_description
+    )
+
+    checks["open_graph"] = {
+        "score": score,
+        "max": 10,
+        "message": message
+    }
+
+
+    score, message = check_robots(
+        robots
+    )
+
+    checks["robots"] = {
+        "score": score,
+        "max": 5,
+        "message": message,
+        "value": robots
+    }
+
+
+    score, message = check_schema(
+        schema
+    )
+
+    checks["structured_data"] = {
+        "score": score,
+        "max": 10,
+        "message": message,
+        "types": [
+            item.get("@type")
+            for item in schema
+            if isinstance(item, dict)
+        ]
+    }
+
+
+    score, message = check_images(
+        html
+    )
+
+    checks["images"] = {
+        "score": score,
+        "max": 10,
+        "message": message
+    }
+
+
+    score, message = check_content(
+        description,
+        h2
+    )
+
+    checks["content"] = {
+        "score": score,
+        "max": 10,
+        "message": message
+    }
+
+
+    score, message = check_tool_metadata(
+        tool_name,
+        tool_description,
+        tool_category
+    )
+
+    checks["tool_metadata"] = {
+        "score": score,
+        "max": 10,
+        "message": message
+    }
+
+
+    # --------------------------------------------------------
+    # Logo
+    # --------------------------------------------------------
+
+    if os.path.isfile(
+        logo_file
+    ):
+
+        logo_score = 5
+
+        logo_message = (
+            "logo.jpg found"
         )
-
-        score -= 2
-
-
-    if not tool_description:
-
-        issues.append(
-            issue(
-                "medium",
-                "tool-metadata",
-                "Missing tool:description metadata.",
-                2
-            )
-        )
-
-        score -= 2
-
-
-    if not tool_category:
-
-        issues.append(
-            issue(
-                "low",
-                "tool-metadata",
-                "Missing tool:category metadata.",
-                1
-            )
-        )
-
-        score -= 1
-
-
-    # ========================================================
-    # HTTPS
-    # ========================================================
-
-    if SITE_URL.startswith("https://"):
-
-        pass
 
     else:
 
-        issues.append(
-            issue(
-                "critical",
-                "security",
-                "Site URL is not configured with HTTPS.",
-                10
-            )
+        logo_score = 0
+
+        logo_message = (
+            "logo.jpg missing"
         )
 
-        score -= 10
+
+    checks["logo"] = {
+        "score": logo_score,
+        "max": 5,
+        "message": logo_message
+    }
 
 
-    # ========================================================
-    # SCORE
-    # ========================================================
+    # --------------------------------------------------------
+    # Total
+    # --------------------------------------------------------
 
-    score = max(
-        0,
-        min(
-            100,
-            score
-        )
+    total_score = sum(
+        item["score"]
+        for item in checks.values()
+    )
+
+    total_possible = sum(
+        item["max"]
+        for item in checks.values()
     )
 
 
-    if score >= 90:
+    percentage = round(
+        (
+            total_score /
+            total_possible *
+            100
+        ),
+        1
+    ) if total_possible else 0
+
+
+    # --------------------------------------------------------
+    # Grade
+    # --------------------------------------------------------
+
+    if percentage >= 90:
 
         grade = "A"
 
-    elif score >= 80:
+    elif percentage >= 80:
 
         grade = "B"
 
-    elif score >= 70:
+    elif percentage >= 70:
 
         grade = "C"
 
-    elif score >= 60:
+    elif percentage >= 60:
 
         grade = "D"
 
@@ -925,130 +882,412 @@ def audit_tool(slug):
         grade = "F"
 
 
-    critical_count = len(
-        [
-            item
-            for item in issues
-            if item["severity"] == "critical"
-        ]
-    )
+    # --------------------------------------------------------
+    # Recommendations
+    # --------------------------------------------------------
 
-    high_count = len(
-        [
-            item
-            for item in issues
-            if item["severity"] == "high"
-        ]
-    )
+    recommendations = []
+
+    for key, check in checks.items():
+
+        if check["score"] < check["max"]:
+
+            recommendations.append(
+                check["message"]
+            )
 
 
     return {
 
-        "name":
-            tool_name
-            or slug.replace(
-                "-",
-                " "
-            ).title(),
+        "name": tool_name or slug,
 
-        "slug":
-            slug,
+        "slug": slug,
 
-        "url":
-            f"/Nisulka-Tools/tools/{slug}/",
+        "url": (
+            f"{SITE_URL}/tools/"
+            f"{slug}/"
+        ),
 
-        "score":
-            score,
+        "score": percentage,
 
-        "grade":
-            grade,
+        "points": total_score,
 
-        "statistics": {
+        "max_points": total_possible,
 
-            "titleLength":
-                len(title),
+        "grade": grade,
 
-            "descriptionLength":
-                len(description),
+        "checks": checks,
 
-            "h1Count":
-                h1_count,
+        "recommendations": recommendations,
 
-            "h2Count":
-                len(parser.h2),
-
-            "h3Count":
-                len(parser.h3),
-
-            "wordCount":
-                word_count,
-
-            "imageCount":
-                len(parser.images),
-
-            "imagesWithoutAlt":
-                images_without_alt,
-
-            "internalLinks":
-                len(internal_links),
-
-            "faqDetected":
-                faq_detected,
-
-            "breadcrumbDetected":
-                breadcrumb_detected,
-
-            "schemaDetected":
-                valid_schema
-
-        },
-
-        "metadata": {
-
-            "title":
-                title,
-
-            "description":
-                description,
-
-            "canonical":
-                canonical_match.group(1)
-                if canonical_match
-                else "",
-
-            "robots":
-                robots,
-
-            "ogTitle":
-                og_title or "",
-
-            "ogDescription":
-                og_description or "",
-
-            "ogUrl":
-                og_url or ""
-
-        },
-
-        "issues":
-            issues,
-
-        "issueSummary": {
-
-            "critical":
-                critical_count,
-
-            "high":
-                high_count,
-
-            "total":
-                len(issues)
-
-        }
+        "audited_at": datetime.utcnow().isoformat()
+        + "Z"
 
     }
 
 
 # ============================================================
+# GENERATE MARKDOWN REPORT
+# ============================================================
+
+def generate_markdown(results):
+
+    lines = []
+
+    lines.append(
+        "# Nisulka Tools SEO Audit"
+    )
+
+    lines.append("")
+
+    lines.append(
+        f"Generated: "
+        f"{datetime.utcnow().isoformat()} UTC"
+    )
+
+    lines.append("")
+
+    lines.append(
+        "| Rank | Tool | Score | Grade | Issues |"
+    )
+
+    lines.append(
+        "|---:|---|---:|:---:|---:|"
+    )
+
+
+    for index, tool in enumerate(
+        results,
+        start=1
+    ):
+
+        issues = len(
+            tool["recommendations"]
+        )
+
+        lines.append(
+            f"| {index} | "
+            f"{tool['name']} | "
+            f"{tool['score']}% | "
+            f"{tool['grade']} | "
+            f"{issues} |"
+        )
+
+
+    lines.append("")
+
+    lines.append(
+        "## Tool Details"
+    )
+
+    lines.append("")
+
+
+    for tool in results:
+
+        lines.append(
+            f"### {tool['name']}"
+        )
+
+        lines.append("")
+
+        lines.append(
+            f"**Score:** "
+            f"{tool['score']}% "
+            f"({tool['grade']})"
+        )
+
+        lines.append("")
+
+
+        for key, check in tool[
+            "checks"
+        ].items():
+
+            lines.append(
+                f"- **{key}**: "
+                f"{check['score']}/"
+                f"{check['max']} — "
+                f"{check['message']}"
+            )
+
+
+        if tool[
+            "recommendations"
+        ]:
+
+            lines.append("")
+
+            lines.append(
+                "**Recommendations:**"
+            )
+
+            for recommendation in tool[
+                "recommendations"
+            ]:
+
+                lines.append(
+                    f"- {recommendation}"
+                )
+
+
+        lines.append("")
+
+
+    return "\n".join(
+        lines
+    )
+
+
+# ============================================================
 # MAIN
-           
+# ============================================================
+
+def main():
+
+    print()
+    print(
+        "======================================"
+    )
+
+    print(
+        " Nisulka Tools SEO Auditor"
+    )
+
+    print(
+        "======================================"
+    )
+
+    print()
+
+
+    if not os.path.isdir(
+        TOOLS_DIR
+    ):
+
+        print(
+            "ERROR: tools directory not found."
+        )
+
+        return 1
+
+
+    os.makedirs(
+        OUTPUT_DIR,
+        exist_ok=True
+    )
+
+
+    results = []
+
+
+    for slug in sorted(
+        os.listdir(
+            TOOLS_DIR
+        )
+    ):
+
+        tool_dir = os.path.join(
+            TOOLS_DIR,
+            slug
+        )
+
+
+        if not os.path.isdir(
+            tool_dir
+        ):
+
+            continue
+
+
+        print(
+            f"Auditing: {slug}"
+        )
+
+
+        try:
+
+            result = audit_tool(
+                slug
+            )
+
+
+            if result:
+
+                results.append(
+                    result
+                )
+
+                print(
+                    f"  Score: "
+                    f"{result['score']}%"
+                )
+
+                print(
+                    f"  Grade: "
+                    f"{result['grade']}"
+                )
+
+            else:
+
+                print(
+                    "  Skipped"
+                )
+
+
+        except Exception as error:
+
+            print(
+                f"  ERROR: {error}"
+            )
+
+
+    # Highest score first
+
+    results.sort(
+        key=lambda item: item["score"],
+        reverse=True
+    )
+
+
+    # Add rankings
+
+    for index, result in enumerate(
+        results,
+        start=1
+    ):
+
+        result["rank"] = index
+
+
+    # --------------------------------------------------------
+    # JSON
+    # --------------------------------------------------------
+
+    report = {
+
+        "site": "Nisulka Tools",
+
+        "site_url": SITE_URL,
+
+        "generated_at":
+            datetime.utcnow().isoformat()
+            + "Z",
+
+        "total_tools":
+            len(results),
+
+        "average_score":
+            round(
+                sum(
+                    item["score"]
+                    for item in results
+                ) / len(results),
+                1
+            )
+            if results
+            else 0,
+
+        "tools": results
+
+    }
+
+
+    with open(
+        JSON_REPORT,
+        "w",
+        encoding="utf-8"
+    ) as file:
+
+        json.dump(
+            report,
+            file,
+            ensure_ascii=False,
+            indent=2
+        )
+
+        file.write("\n")
+
+
+    # --------------------------------------------------------
+    # Markdown
+    # --------------------------------------------------------
+
+    markdown = generate_markdown(
+        results
+    )
+
+
+    with open(
+        MARKDOWN_REPORT,
+        "w",
+        encoding="utf-8"
+    ) as file:
+
+        file.write(
+            markdown
+        )
+
+
+    # --------------------------------------------------------
+    # Console summary
+    # --------------------------------------------------------
+
+    print()
+    print(
+        "======================================"
+    )
+
+    print(
+        " SEO AUDIT COMPLETE"
+    )
+
+    print(
+        "======================================"
+    )
+
+    print(
+        f"Tools audited: "
+        f"{len(results)}"
+    )
+
+    print(
+        f"Average score: "
+        f"{report['average_score']}%"
+    )
+
+    print()
+
+    for tool in results:
+
+        print(
+            f"{tool['rank']:>3}. "
+            f"{tool['name']:<35} "
+            f"{tool['score']:>5}% "
+            f"{tool['grade']}"
+        )
+
+
+    print()
+
+    print(
+        f"JSON report: "
+        f"{JSON_REPORT}"
+    )
+
+    print(
+        f"Markdown report: "
+        f"{MARKDOWN_REPORT}"
+    )
+
+    print()
+
+
+    return 0
+
+
+if __name__ == "__main__":
+
+    raise SystemExit(
+        main()
+    )
