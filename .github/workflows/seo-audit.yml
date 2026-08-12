@@ -1,11 +1,9 @@
 name: Nisulka Tools SEO Audit
 
 on:
-
   push:
     branches:
       - main
-
     paths:
       - "tools/**"
       - "seo/**"
@@ -16,10 +14,8 @@ on:
   schedule:
     - cron: "30 2 * * 1"
 
-
 permissions:
   contents: write
-
 
 jobs:
 
@@ -29,267 +25,105 @@ jobs:
 
     steps:
 
-
-      # =====================================================
-      # CHECKOUT
-      # =====================================================
-
       - name: Checkout repository
         uses: actions/checkout@v4
 
-
-      # =====================================================
-      # PYTHON
-      # =====================================================
-
       - name: Setup Python
-        uses: actions/setup-python@v5
-
+        uses: actions/setup-python@v6
         with:
-          python-version: "3.12"
-
-
-      # =====================================================
-      # SHOW FILES
-      # =====================================================
-
-      - name: Check repository
-        run: |
-
-          echo "======================================"
-          echo "NISULKA TOOLS"
-          echo "======================================"
-
-          echo ""
-
-          echo "Python version:"
-          python3 --version
-
-          echo ""
-
-          echo "Repository:"
-          pwd
-
-          echo ""
-
-          echo "Tools:"
-          ls -la tools || true
-
-          echo ""
-
-          echo "SEO:"
-          ls -la seo || true
-
-
-      # =====================================================
-      # RUN AUDITOR
-      # =====================================================
+          python-version: "3.x"
 
       - name: Run SEO auditor
         run: |
-
-          echo "======================================"
-          echo "RUNNING SEO AUDITOR"
-          echo "======================================"
+          echo "Running Nisulka Tools SEO Auditor..."
 
           python3 seo/seo_auditor.py
 
-
-      # =====================================================
-      # VERIFY JSON
-      # =====================================================
-
-      - name: Verify SEO report
-        run: |
-
-          echo "======================================"
-          echo "VERIFYING SEO REPORT"
-          echo "======================================"
+          echo ""
+          echo "Checking generated file..."
 
           if [ ! -f "data/seo-audit.json" ]; then
-
-            echo ""
-            echo "ERROR:"
-            echo "data/seo-audit.json was NOT created."
-            echo ""
-
-            echo "Data directory:"
-            ls -la data || true
-
+            echo "ERROR: data/seo-audit.json was not created."
             exit 1
-
           fi
 
-
-          echo ""
-
-          echo "SEO report found:"
-          ls -lh data/seo-audit.json
-
-
-          echo ""
-
-          echo "Validating JSON..."
-
-
-          python3 - <<'PY'
-
-          import json
-
-          file_path = "data/seo-audit.json"
-
-          with open(
-              file_path,
-              encoding="utf-8"
-          ) as file:
-
-              data = json.load(file)
-
-
-          required = [
-              "site",
-              "site_url",
-              "generated_at",
-              "total_tools",
-              "average_score",
-              "tools"
-          ]
-
-
-          for key in required:
-
-              if key not in data:
-
-                  raise SystemExit(
-                      f"Missing JSON field: {key}"
-                  )
-
-
-          print("JSON validation successful.")
-
-          print(
-              f"Total tools: "
-              f"{data['total_tools']}"
-          )
-
-          print(
-              f"Average score: "
-              f"{data['average_score']}/100"
-          )
-
-          PY
-
-
-      # =====================================================
-      # CONSOLE SUMMARY
-      # =====================================================
+          echo "SEO audit JSON successfully created."
 
       - name: Display SEO summary
         run: |
 
-          echo ""
-          echo "======================================"
-          echo "NISULKA TOOLS SEO AUDIT"
-          echo "======================================"
-
-          python3 - <<'PY'
+          python3 <<'PY'
 
           import json
-
 
           with open(
               "data/seo-audit.json",
               encoding="utf-8"
-          ) as file:
+          ) as f:
 
-              data = json.load(file)
+              data = json.load(f)
 
-
-          print()
+          print("")
+          print("=" * 60)
+          print("NISULKA TOOLS SEO AUDIT")
+          print("=" * 60)
 
           print(
-              f"Total tools: "
-              f"{data['total_tools']}"
+              f"Total tools: {data['totalTools']}"
           )
 
           print(
               f"Average SEO score: "
-              f"{data['average_score']}/100"
+              f"{data['averageScore']}/100"
           )
 
-          print()
-
-          print(
-              "Tool rankings:"
-          )
-
-          print(
-              "--------------------------------------"
-          )
-
+          print("")
+          print("Tool rankings:")
+          print("-" * 60)
 
           for tool in data["tools"]:
-
-              issues = len(
-                  tool.get(
-                      "recommendations",
-                      []
-                  )
-              )
-
 
               print(
                   f"{tool['rank']}. "
                   f"{tool['name']} — "
                   f"{tool['score']}/100 "
-                  f"({tool['grade']}) — "
-                  f"{issues} issue(s)"
+                  f"({tool['grade']})"
               )
 
-          print()
+          print("=" * 60)
 
           PY
-
-
-      # =====================================================
-      # GITHUB ACTIONS SUMMARY
-      # =====================================================
 
       - name: Create GitHub Actions Summary
         run: |
 
-          python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          python3 <<'PY' >> "$GITHUB_STEP_SUMMARY"
 
           import json
-
 
           with open(
               "data/seo-audit.json",
               encoding="utf-8"
-          ) as file:
+          ) as f:
 
-              data = json.load(file)
-
+              data = json.load(f)
 
           print("# 🔍 Nisulka Tools SEO Audit")
-          print()
-
+          print("")
 
           print(
-              f"## Average Score: "
-              f"{data['average_score']}/100"
+              f"### Average SEO Score: "
+              f"**{data['averageScore']}/100**"
           )
 
-          print()
-
+          print("")
 
           print(
               f"**Total Tools:** "
-              f"{data['total_tools']}"
+              f"{data['totalTools']}"
           )
 
-          print()
-
+          print("")
 
           print(
               "| Rank | Tool | Score | Grade | Issues |"
@@ -299,16 +133,11 @@ jobs:
               "|---:|---|---:|:---:|---:|"
           )
 
-
           for tool in data["tools"]:
 
-              issues = len(
-                  tool.get(
-                      "recommendations",
-                      []
-                  )
-              )
-
+              issues = tool[
+                  "issueSummary"
+              ]["total"]
 
               print(
                   f"| {tool['rank']} "
@@ -318,66 +147,17 @@ jobs:
                   f"| {issues} |"
               )
 
-
-          print()
-
+          print("")
+          print("---")
+          print("")
           print(
-              "## Recommendations"
+              "Generated automatically by "
+              "Nisulka Tools SEO Auditor."
           )
-
-          print()
-
-
-          found_recommendation = False
-
-
-          for tool in data["tools"]:
-
-              recommendations = tool.get(
-                  "recommendations",
-                  []
-              )
-
-
-              if not recommendations:
-
-                  continue
-
-
-              found_recommendation = True
-
-
-              print(
-                  f"### {tool['name']}"
-              )
-
-              print()
-
-
-              for recommendation in recommendations:
-
-                  print(
-                      f"- ⚠️ {recommendation}"
-                  )
-
-              print()
-
-
-          if not found_recommendation:
-
-              print(
-                  "🎉 All audited tools passed "
-                  "the current SEO checks."
-              )
 
           PY
 
-
-      # =====================================================
-      # CHECK CHANGES
-      # =====================================================
-
-      - name: Check for changes
+      - name: Check for SEO audit changes
         id: changes
         run: |
 
@@ -391,43 +171,25 @@ jobs:
 
           fi
 
-
-      # =====================================================
-      # COMMIT
-      # =====================================================
-
       - name: Commit SEO audit
         if: steps.changes.outputs.changed == 'true'
-
         run: |
 
-          git config \
-            user.name \
+          git config user.name \
             "github-actions[bot]"
 
-
-          git config \
-            user.email \
+          git config user.email \
             "41898282+github-actions[bot]@users.noreply.github.com"
 
-
           git add data/seo-audit.json
-
 
           git commit \
             -m "chore: update SEO audit"
 
-
           git push
 
-
-      # =====================================================
-      # NO CHANGES
-      # =====================================================
-
-      - name: No audit changes
+      - name: No SEO audit changes
         if: steps.changes.outputs.changed == 'false'
-
         run: |
 
           echo "SEO audit data is already up to date."
