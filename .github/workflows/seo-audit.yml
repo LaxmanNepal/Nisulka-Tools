@@ -25,29 +25,212 @@ jobs:
 
     steps:
 
+      # ==========================================================
+      # 1. CHECKOUT
+      # ==========================================================
+
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+
+      # ==========================================================
+      # 2. SETUP PYTHON
+      # ==========================================================
 
       - name: Setup Python
         uses: actions/setup-python@v6
         with:
           python-version: "3.x"
 
+
+      # ==========================================================
+      # 3. SHOW REPOSITORY STRUCTURE
+      # ==========================================================
+
+      - name: Check repository structure
+        run: |
+
+          echo "=========================================="
+          echo "REPOSITORY STRUCTURE"
+          echo "=========================================="
+
+          echo ""
+          echo "Current directory:"
+          pwd
+
+          echo ""
+          echo "Root files:"
+          ls -la
+
+          echo ""
+          echo "Tools:"
+          find tools -maxdepth 2 -type f | sort || true
+
+          echo ""
+          echo "SEO:"
+          find seo -maxdepth 2 -type f | sort || true
+
+          echo ""
+          echo "Data:"
+          find data -maxdepth 2 -type f | sort || true
+
+
+      # ==========================================================
+      # 4. CHECK SEO AUDITOR
+      # ==========================================================
+
+      - name: Check SEO auditor
+        run: |
+
+          echo "=========================================="
+          echo "CHECKING SEO AUDITOR"
+          echo "=========================================="
+
+          if [ ! -f "seo/seo_auditor.py" ]; then
+
+            echo "ERROR:"
+            echo "seo/seo_auditor.py does not exist."
+
+            exit 1
+
+          fi
+
+          echo "SEO auditor found."
+
+          python3 -m py_compile seo/seo_auditor.py
+
+          echo "SEO auditor syntax is valid."
+
+
+      # ==========================================================
+      # 5. RUN SEO AUDITOR
+      # ==========================================================
+
       - name: Run SEO auditor
         run: |
-          echo "Running Nisulka Tools SEO Auditor..."
+
+          echo "=========================================="
+          echo "RUNNING NISULKA TOOLS SEO AUDITOR"
+          echo "=========================================="
 
           python3 seo/seo_auditor.py
 
-          echo ""
-          echo "Checking generated file..."
+
+      # ==========================================================
+      # 6. VERIFY SEO JSON
+      # ==========================================================
+
+      - name: Verify SEO audit JSON
+        run: |
+
+          echo "=========================================="
+          echo "VERIFYING SEO AUDIT JSON"
+          echo "=========================================="
 
           if [ ! -f "data/seo-audit.json" ]; then
-            echo "ERROR: data/seo-audit.json was not created."
+
+            echo ""
+            echo "ERROR:"
+            echo "data/seo-audit.json was NOT created."
+            echo ""
+
+            echo "Data directory:"
+            ls -la data || true
+
+            echo ""
+            echo "Repository structure:"
+            find . -maxdepth 3 -type f | sort
+
             exit 1
+
           fi
 
-          echo "SEO audit JSON successfully created."
+          echo ""
+          echo "SUCCESS:"
+          echo "data/seo-audit.json exists."
+
+          echo ""
+          echo "File size:"
+          wc -c data/seo-audit.json
+
+          echo ""
+          echo "JSON contents:"
+          cat data/seo-audit.json
+
+
+      # ==========================================================
+      # 7. VALIDATE JSON
+      # ==========================================================
+
+      - name: Validate JSON
+        run: |
+
+          echo "=========================================="
+          echo "VALIDATING JSON"
+          echo "=========================================="
+
+          python3 <<'PY'
+
+          import json
+
+          file = "data/seo-audit.json"
+
+          with open(
+              file,
+              "r",
+              encoding="utf-8"
+          ) as f:
+
+              data = json.load(f)
+
+          if not isinstance(data, dict):
+              raise SystemExit(
+                  "SEO audit JSON must be an object."
+              )
+
+          required = [
+              "generatedAt",
+              "totalTools",
+              "averageScore",
+              "tools"
+          ]
+
+          for key in required:
+
+              if key not in data:
+
+                  raise SystemExit(
+                      f"Missing required field: {key}"
+                  )
+
+          if not isinstance(
+              data["tools"],
+              list
+          ):
+
+              raise SystemExit(
+                  "The tools field must be an array."
+              )
+
+          print("JSON validation successful.")
+
+          print(
+              f"Total tools: {data['totalTools']}"
+          )
+
+          print(
+              f"Average score: "
+              f"{data['averageScore']}/100"
+          )
+
+          PY
+
+
+      # ==========================================================
+      # 8. DISPLAY TERMINAL SUMMARY
+      # ==========================================================
 
       - name: Display SEO summary
         run: |
@@ -64,12 +247,13 @@ jobs:
               data = json.load(f)
 
           print("")
-          print("=" * 60)
+          print("=" * 70)
           print("NISULKA TOOLS SEO AUDIT")
-          print("=" * 60)
+          print("=" * 70)
 
           print(
-              f"Total tools: {data['totalTools']}"
+              f"Total tools: "
+              f"{data['totalTools']}"
           )
 
           print(
@@ -78,21 +262,42 @@ jobs:
           )
 
           print("")
-          print("Tool rankings:")
-          print("-" * 60)
+          print("TOOL RANKINGS")
+          print("-" * 70)
 
           for tool in data["tools"]:
 
-              print(
-                  f"{tool['rank']}. "
-                  f"{tool['name']} — "
-                  f"{tool['score']}/100 "
-                  f"({tool['grade']})"
+              issues = tool.get(
+                  "issueSummary",
+                  {}
+              ).get(
+                  "total",
+                  len(
+                      tool.get(
+                          "issues",
+                          []
+                      )
+                  )
               )
 
-          print("=" * 60)
+              print(
+                  f"{tool.get('rank', '-')}. "
+                  f"{tool.get('name', 'Unknown')} "
+                  f"— "
+                  f"{tool.get('score', 0)}/100 "
+                  f"({tool.get('grade', 'F')}) "
+                  f"— "
+                  f"{issues} issues"
+              )
+
+          print("=" * 70)
 
           PY
+
+
+      # ==========================================================
+      # 9. CREATE GITHUB ACTIONS SUMMARY
+      # ==========================================================
 
       - name: Create GitHub Actions Summary
         run: |
@@ -112,7 +317,7 @@ jobs:
           print("")
 
           print(
-              f"### Average SEO Score: "
+              f"## Average SEO Score: "
               f"**{data['averageScore']}/100**"
           )
 
@@ -135,15 +340,24 @@ jobs:
 
           for tool in data["tools"]:
 
-              issues = tool[
-                  "issueSummary"
-              ]["total"]
+              issues = tool.get(
+                  "issueSummary",
+                  {}
+              ).get(
+                  "total",
+                  len(
+                      tool.get(
+                          "issues",
+                          []
+                      )
+                  )
+              )
 
               print(
-                  f"| {tool['rank']} "
-                  f"| {tool['name']} "
-                  f"| {tool['score']}/100 "
-                  f"| {tool['grade']} "
+                  f"| {tool.get('rank', '-')} "
+                  f"| {tool.get('name', 'Unknown')} "
+                  f"| {tool.get('score', 0)}/100 "
+                  f"| {tool.get('grade', 'F')} "
                   f"| {issues} |"
               )
 
@@ -157,23 +371,79 @@ jobs:
 
           PY
 
-      - name: Check for SEO audit changes
+
+      # ==========================================================
+      # 10. CHECK GIT STATUS
+      # ==========================================================
+
+      - name: Check Git status
+        run: |
+
+          echo "=========================================="
+          echo "GIT STATUS"
+          echo "=========================================="
+
+          git status --short
+
+          echo ""
+          echo "SEO audit diff:"
+
+          git diff -- data/seo-audit.json || true
+
+
+      # ==========================================================
+      # 11. STAGE SEO JSON
+      # ==========================================================
+
+      - name: Stage SEO audit
+        run: |
+
+          echo "Staging data/seo-audit.json..."
+
+          git add data/seo-audit.json
+
+          echo ""
+          echo "Staged files:"
+
+          git status --short
+
+
+      # ==========================================================
+      # 12. CHECK WHETHER CHANGED
+      # ==========================================================
+
+      - name: Check for changes
         id: changes
         run: |
 
-          if git diff --quiet -- data/seo-audit.json; then
+          if git diff --cached --quiet; then
 
             echo "changed=false" >> "$GITHUB_OUTPUT"
+
+            echo ""
+            echo "No changes detected."
 
           else
 
             echo "changed=true" >> "$GITHUB_OUTPUT"
 
+            echo ""
+            echo "Changes detected."
+
           fi
+
+
+      # ==========================================================
+      # 13. COMMIT
+      # ==========================================================
 
       - name: Commit SEO audit
         if: steps.changes.outputs.changed == 'true'
         run: |
+
+          echo "=========================================="
+          echo "COMMITTING SEO AUDIT"
+          echo "=========================================="
 
           git config user.name \
             "github-actions[bot]"
@@ -181,15 +451,39 @@ jobs:
           git config user.email \
             "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add data/seo-audit.json
-
           git commit \
             -m "chore: update SEO audit"
 
+          echo ""
+          echo "Commit created."
+
+
+      # ==========================================================
+      # 14. PUSH
+      # ==========================================================
+
+      - name: Push SEO audit
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+
+          echo "Pushing SEO audit..."
+
           git push
 
-      - name: No SEO audit changes
+          echo ""
+          echo "SEO audit pushed successfully."
+
+
+      # ==========================================================
+      # 15. NO CHANGES
+      # ==========================================================
+
+      - name: No audit changes
         if: steps.changes.outputs.changed == 'false'
         run: |
 
-          echo "SEO audit data is already up to date."
+          echo "=========================================="
+          echo "NO CHANGES"
+          echo "=========================================="
+
+          echo "data/seo-audit.json is already up to date."
