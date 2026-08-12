@@ -1,218 +1,145 @@
 "use strict";
 
+
 /*
- * =========================================================
- * NISULKA TOOLS ADMIN DASHBOARD
- * =========================================================
- *
- * Reads:
- *
- * ../data/seo-audit.json
- *
- * No authentication for now.
- *
- * =========================================================
+ * =========================================
+ * CONFIGURATION
+ * =========================================
  */
 
-
-const SEO_DATA_URL =
-    "../data/seo-audit.json";
-
-
-let auditData = null;
-
-let tools = [];
-
-let selectedTool = null;
+const API_BASE =
+    "https://admin-api.laxmannepal.com.np";
 
 
-/* =========================================================
-   DOM
-   ========================================================= */
+const REFRESH_INTERVAL =
+    15000;
 
-const loading =
-    document.getElementById("loading");
 
-const errorBox =
-    document.getElementById("error");
+/*
+ * =========================================
+ * DOM
+ * =========================================
+ */
 
-const errorMessage =
-    document.getElementById("error-message");
+const runButton =
+    document.getElementById(
+        "run-audit"
+    );
 
-const dashboard =
-    document.getElementById("dashboard");
 
-const retryButton =
-    document.getElementById("retry-button");
+const auditStatus =
+    document.getElementById(
+        "audit-status"
+    );
+
 
 const lastAudit =
-    document.getElementById("last-audit");
-
-const overallScore =
-    document.getElementById("overall-score");
-
-const overallGrade =
-    document.getElementById("overall-grade");
-
-const overallScoreBar =
     document.getElementById(
-        "overall-score-bar"
+        "last-audit"
     );
 
-const overallMessage =
+
+const averageScore =
     document.getElementById(
-        "overall-message"
+        "average-score"
     );
+
 
 const totalTools =
-    document.getElementById("total-tools");
+    document.getElementById(
+        "total-tools"
+    );
+
 
 const excellentTools =
     document.getElementById(
         "excellent-tools"
     );
 
-const warningTools =
+
+const attentionTools =
     document.getElementById(
-        "warning-tools"
+        "attention-tools"
     );
 
-const searchInput =
-    document.getElementById("tool-search");
 
-const gradeFilter =
-    document.getElementById("grade-filter");
+const healthProgress =
+    document.getElementById(
+        "health-progress"
+    );
 
-const sortTools =
-    document.getElementById("sort-tools");
+
+const healthLabel =
+    document.getElementById(
+        "health-label"
+    );
+
 
 const toolsTable =
-    document.getElementById("tools-table");
-
-const visibleCount =
     document.getElementById(
-        "visible-count"
-    );
-
-const emptyResults =
-    document.getElementById(
-        "empty-results"
-    );
-
-const detailPanel =
-    document.getElementById(
-        "tool-detail"
-    );
-
-const detailName =
-    document.getElementById(
-        "detail-name"
-    );
-
-const detailDescription =
-    document.getElementById(
-        "detail-description"
-    );
-
-const detailScore =
-    document.getElementById(
-        "detail-score"
-    );
-
-const detailGrade =
-    document.getElementById(
-        "detail-grade"
-    );
-
-const detailIssues =
-    document.getElementById(
-        "detail-issues"
-    );
-
-const detailChecks =
-    document.getElementById(
-        "detail-checks"
-    );
-
-const closeDetail =
-    document.getElementById(
-        "close-detail"
+        "tools-table"
     );
 
 
-/* =========================================================
-   INITIALIZE
-   ========================================================= */
+const workflowRuns =
+    document.getElementById(
+        "workflow-runs"
+    );
+
+
+/*
+ * =========================================
+ * INITIALIZE
+ * =========================================
+ */
 
 document.addEventListener(
     "DOMContentLoaded",
-    initialize
+    () => {
+
+        loadEverything();
+
+        setInterval(
+            loadEverything,
+            REFRESH_INTERVAL
+        );
+
+    }
 );
 
 
-async function initialize() {
+/*
+ * =========================================
+ * LOAD EVERYTHING
+ * =========================================
+ */
 
-    setupEvents();
+async function loadEverything() {
 
-    await loadAuditData();
-
-}
-
-
-/* =========================================================
-   EVENTS
-   ========================================================= */
-
-function setupEvents() {
-
-    searchInput?.addEventListener(
-        "input",
-        renderTools
-    );
-
-
-    gradeFilter?.addEventListener(
-        "change",
-        renderTools
-    );
-
-
-    sortTools?.addEventListener(
-        "change",
-        renderTools
-    );
-
-
-    retryButton?.addEventListener(
-        "click",
-        loadAuditData
-    );
-
-
-    closeDetail?.addEventListener(
-        "click",
-        closeToolDetail
-    );
+    await Promise.allSettled([
+        loadAudit(),
+        loadStatus()
+    ]);
 
 }
 
 
-/* =========================================================
-   LOAD DATA
-   ========================================================= */
+/*
+ * =========================================
+ * LOAD AUDIT
+ * =========================================
+ */
 
-async function loadAuditData() {
-
-    showLoading();
-
+async function loadAudit() {
 
     try {
 
         const response =
             await fetch(
-                `${SEO_DATA_URL}?v=${Date.now()}`,
+                `${API_BASE}/api/audit?t=${Date.now()}`,
                 {
-                    cache: "no-store"
+                    cache:
+                        "no-store"
                 }
             );
 
@@ -226,1159 +153,732 @@ async function loadAuditData() {
         }
 
 
-        auditData =
+        const data =
             await response.json();
 
 
-        if (
-            !auditData ||
-            typeof auditData !== "object"
-        ) {
+        renderAudit(data);
 
-            throw new Error(
-                "Invalid SEO audit data."
-            );
-
-        }
-
-
-        tools =
-            Array.isArray(
-                auditData.tools
-            )
-                ? auditData.tools
-                : [];
-
-
-        normalizeTools();
-
-
-        renderOverview();
-
-        renderTools();
-
-        renderLastAudit();
-
-
-        showDashboard();
 
     } catch (error) {
 
         console.error(
-            "Failed to load SEO audit:",
+            "Audit loading error:",
             error
         );
 
 
-        showError(
-            error.message
-        );
+        toolsTable.innerHTML = `
+
+            <div class="error">
+
+                ⚠️ SEO data unavailable
+
+                <br>
+
+                ${escapeHTML(
+                    error.message
+                )}
+
+            </div>
+
+        `;
 
     }
 
 }
 
 
-/* =========================================================
-   NORMALIZE DATA
-   ========================================================= */
+/*
+ * =========================================
+ * RENDER AUDIT
+ * =========================================
+ */
 
-function normalizeTools() {
+function renderAudit(data) {
 
-    tools =
-        tools.map(
-            (tool, index) => {
-
-                const score =
-                    Number(
-                        tool.score
-                    );
+    const tools =
+        Array.isArray(data.tools)
+            ? data.tools
+            : [];
 
 
-                return {
-
-                    ...tool,
-
-                    _index:
-                        index,
-
-                    _score:
-                        Number.isFinite(score)
-                            ? score
-                            : 0,
-
-                    _grade:
-                        tool.grade ||
-                        calculateGrade(score),
-
-                    _issues:
-                        getIssueCount(tool)
-
-                };
-
-            }
-        );
-
-}
-
-
-/* =========================================================
-   OVERVIEW
-   ========================================================= */
-
-function renderOverview() {
-
-    const average =
-        Number(
-            auditData.averageScore
-        );
-
-
-    const calculatedAverage =
-        tools.length
-            ? tools.reduce(
-                (
-                    total,
-                    tool
-                ) => total + tool._score,
-                0
-            ) / tools.length
-            : 0;
-
-
-    const score =
-        Number.isFinite(average)
-            ? average
-            : calculatedAverage;
-
-
-    const roundedScore =
-        Math.round(score);
-
-
-    const grade =
-        calculateGrade(
-            roundedScore
-        );
-
-
-    overallScore.textContent =
-        roundedScore;
-
-
-    overallGrade.textContent =
-        grade;
-
-
-    applyGradeClass(
-        overallGrade,
-        grade
-    );
-
-
-    overallScoreBar.style.width =
-        `${Math.max(
-            0,
-            Math.min(
-                100,
-                roundedScore
-            )
-        )}%`;
-
-
-    overallMessage.textContent =
-        getScoreMessage(
-            roundedScore
-        );
+    averageScore.textContent =
+        `${data.averageScore ?? 0}/100`;
 
 
     totalTools.textContent =
+        data.totalTools ??
         tools.length;
 
 
+    const excellent =
+        tools.filter(
+            tool =>
+                Number(tool.score) >= 90
+        ).length;
+
+
+    const attention =
+        tools.filter(
+            tool =>
+                Number(tool.score) < 80
+        ).length;
+
+
     excellentTools.textContent =
-        tools.filter(
-            tool => tool._score >= 90
-        ).length;
+        excellent;
 
 
-    warningTools.textContent =
-        tools.filter(
-            tool => tool._score < 70
-        ).length;
-
-}
-
-
-/* =========================================================
-   LAST AUDIT
-   ========================================================= */
-
-function renderLastAudit() {
-
-    const date =
-        auditData.generatedAt ||
-        auditData.timestamp ||
-        auditData.updatedAt ||
-        auditData.lastAudit;
-
-
-    if (!date) {
-
-        lastAudit.textContent =
-            "Available";
-
-        return;
-
-    }
-
-
-    const parsed =
-        new Date(date);
-
-
-    if (
-        Number.isNaN(
-            parsed.getTime()
-        )
-    ) {
-
-        lastAudit.textContent =
-            String(date);
-
-        return;
-
-    }
-
-
-    lastAudit.textContent =
-        parsed.toLocaleString(
-            undefined,
-            {
-                dateStyle: "medium",
-                timeStyle: "short"
-            }
-        );
-
-}
-
-
-/* =========================================================
-   RENDER TOOLS
-   ========================================================= */
-
-function renderTools() {
-
-    if (!toolsTable) {
-        return;
-    }
-
-
-    let filtered =
-        [...tools];
-
-
-    const query =
-        searchInput?.value
-            ?.trim()
-            .toLowerCase() || "";
-
-
-    const grade =
-        gradeFilter?.value || "all";
-
-
-    const sort =
-        sortTools?.value ||
-        "score-desc";
-
-
-    if (query) {
-
-        filtered =
-            filtered.filter(
-                tool => {
-
-                    const text =
-                        [
-                            tool.name,
-                            tool.description,
-                            tool.category,
-                            tool.slug
-                        ]
-                            .filter(Boolean)
-                            .join(" ")
-                            .toLowerCase();
-
-
-                    return text.includes(
-                        query
-                    );
-
-                }
-            );
-
-    }
-
-
-    if (grade !== "all") {
-
-        filtered =
-            filtered.filter(
-                tool =>
-                    tool._grade === grade
-            );
-
-    }
-
-
-    if (sort === "score-desc") {
-
-        filtered.sort(
-            (a, b) =>
-                b._score - a._score
-        );
-
-    }
-
-
-    if (sort === "score-asc") {
-
-        filtered.sort(
-            (a, b) =>
-                a._score - b._score
-        );
-
-    }
-
-
-    if (sort === "name") {
-
-        filtered.sort(
-            (a, b) =>
-                String(a.name)
-                    .localeCompare(
-                        String(b.name)
-                    )
-        );
-
-    }
-
-
-    if (sort === "issues") {
-
-        filtered.sort(
-            (a, b) =>
-                b._issues - a._issues
-        );
-
-    }
-
-
-    toolsTable.innerHTML = "";
-
-
-    visibleCount.textContent =
-        `${filtered.length} ${
-            filtered.length === 1
-                ? "tool"
-                : "tools"
-        }`;
-
-
-    if (!filtered.length) {
-
-        emptyResults.hidden =
-            false;
-
-        return;
-
-    }
-
-
-    emptyResults.hidden =
-        true;
-
-
-    filtered.forEach(
-        (tool, index) => {
-
-            toolsTable.insertAdjacentHTML(
-                "beforeend",
-                createToolRow(
-                    tool,
-                    index
-                )
-            );
-
-        }
-    );
-
-
-    toolsTable
-        .querySelectorAll(
-            "[data-tool-index]"
-        )
-        .forEach(
-            button => {
-
-                button.addEventListener(
-                    "click",
-                    () => {
-
-                        const index =
-                            Number(
-                                button.dataset
-                                    .toolIndex
-                            );
-
-
-                        const tool =
-                            filtered[index];
-
-
-                        openToolDetail(
-                            tool
-                        );
-
-                    }
-                );
-
-            }
-        );
-
-}
-
-
-/* =========================================================
-   TABLE ROW
-   ========================================================= */
-
-function createToolRow(
-    tool,
-    index
-) {
-
-    const name =
-        escapeHTML(
-            tool.name ||
-            "Unnamed Tool"
-        );
-
-
-    const category =
-        escapeHTML(
-            tool.category ||
-            "Other Tools"
-        );
+    attentionTools.textContent =
+        attention;
 
 
     const score =
-        Math.round(
-            tool._score
+        Number(
+            data.averageScore || 0
         );
 
 
-    const grade =
-        escapeHTML(
-            tool._grade
-        );
+    healthProgress.style.width =
+        `${Math.min(score, 100)}%`;
 
 
-    const issues =
-        tool._issues;
+    healthLabel.textContent =
+        getHealthLabel(score);
 
 
-    const logo =
-        tool.logo
-            ? escapeAttribute(
-                tool.logo
-            )
-            : "";
+    if (data.generatedAt) {
+
+        lastAudit.textContent =
+            formatDate(
+                data.generatedAt
+            );
+
+    }
 
 
-    const logoHTML = logo
+    renderToolsTable(
+        tools
+    );
 
-        ? `
-            <img
-                class="tool-logo"
-                src="${logo}"
-                alt=""
-                loading="lazy"
-                onerror="this.style.display='none'"
-            >
-        `
+}
 
-        : `
-            <div
-                class="tool-logo"
-                aria-hidden="true"
-            >
-                🧰
+
+/*
+ * =========================================
+ * TOOLS TABLE
+ * =========================================
+ */
+
+function renderToolsTable(
+    tools
+) {
+
+    if (!tools.length) {
+
+        toolsTable.innerHTML = `
+            <div class="loading">
+                No SEO data available.
             </div>
         `;
 
+        return;
 
-    return `
-
-        <tr>
-
-            <td>
-                ${index + 1}
-            </td>
+    }
 
 
-            <td>
+    const rows =
+        tools.map(
+            tool => {
 
-                <div class="tool-name-cell">
-
-                    ${logoHTML}
-
-                    <div>
-
-                        <div class="tool-name">
-                            ${name}
-                        </div>
-
-                        <div class="tool-category">
-                            ${escapeHTML(
-                                tool.slug || ""
-                            )}
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </td>
+                const score =
+                    Number(
+                        tool.score || 0
+                    );
 
 
-            <td>
-                ${category}
-            </td>
+                const issues =
+                    tool.issueSummary
+                        ?.total || 0;
 
 
-            <td>
+                return `
 
-                <span class="score-value">
-                    ${score}/100
-                </span>
+                    <tr>
 
-            </td>
+                        <td>
+                            #${tool.rank || "—"}
+                        </td>
+
+                        <td>
+
+                            <div class="tool-name">
+
+                                ${escapeHTML(
+                                    tool.name
+                                )}
+
+                            </div>
+
+                            <small>
+
+                                ${escapeHTML(
+                                    tool.slug || ""
+                                )}
+
+                            </small>
+
+                        </td>
+
+                        <td>
+
+                            <span class="score">
+
+                                ${score}/100
+
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <span class="badge ${getBadgeClass(score)}">
+
+                                ${escapeHTML(
+                                    tool.grade || "—"
+                                )}
+
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            ${issues}
+
+                        </td>
+
+                    </tr>
+
+                `;
+
+            }
+        )
+        .join("");
 
 
-            <td>
+    toolsTable.innerHTML = `
 
-                <span
-                    class="
-                        grade-badge
-                        ${getGradeClass(grade)}
-                    "
-                >
-                    ${grade}
-                </span>
+        <table>
 
-            </td>
+            <thead>
 
+                <tr>
 
-            <td>
+                    <th>
+                        Rank
+                    </th>
 
-                <span
-                    class="
-                        issue-count
-                        ${issues === 0
-                            ? "zero"
-                            : ""}
-                    "
-                >
-                    ${issues}
-                </span>
+                    <th>
+                        Tool
+                    </th>
 
-            </td>
+                    <th>
+                        Score
+                    </th>
 
+                    <th>
+                        Grade
+                    </th>
 
-            <td>
+                    <th>
+                        Issues
+                    </th>
 
-                <button
-                    type="button"
-                    class="view-button"
-                    data-tool-index="${index}"
-                >
-                    View
-                </button>
+                </tr>
 
-            </td>
+            </thead>
 
-        </tr>
+            <tbody>
+
+                ${rows}
+
+            </tbody>
+
+        </table>
 
     `;
 
 }
 
 
-/* =========================================================
-   TOOL DETAIL
-   ========================================================= */
+/*
+ * =========================================
+ * LOAD WORKFLOW STATUS
+ * =========================================
+ */
 
-function openToolDetail(tool) {
+async function loadStatus() {
 
-    selectedTool =
-        tool;
+    try {
 
-
-    detailName.textContent =
-        tool.name ||
-        "Unnamed Tool";
-
-
-    detailDescription.textContent =
-        tool.description ||
-        "No description available.";
-
-
-    detailScore.textContent =
-        `${Math.round(
-            tool._score
-        )}/100`;
+        const response =
+            await fetch(
+                `${API_BASE}/api/status?t=${Date.now()}`,
+                {
+                    cache:
+                        "no-store"
+                }
+            );
 
 
-    detailGrade.textContent =
-        tool._grade;
+        if (!response.ok) {
 
-
-    applyGradeClass(
-        detailGrade,
-        tool._grade
-    );
-
-
-    renderIssues(tool);
-
-    renderChecks(tool);
-
-
-    detailPanel.hidden =
-        false;
-
-
-    detailPanel.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-    });
-
-}
-
-
-/* =========================================================
-   CLOSE DETAIL
-   ========================================================= */
-
-function closeToolDetail() {
-
-    detailPanel.hidden =
-        true;
-
-    selectedTool =
-        null;
-
-}
-
-
-/* =========================================================
-   ISSUES
-   ========================================================= */
-
-function renderIssues(tool) {
-
-    detailIssues.innerHTML =
-        "";
-
-
-    const issues =
-        extractIssues(tool);
-
-
-    if (!issues.length) {
-
-        detailIssues.innerHTML = `
-
-            <div class="check-item">
-                ✓ No recorded issues
-            </div>
-
-        `;
-
-        return;
-
-    }
-
-
-    issues.forEach(
-        issue => {
-
-            const item =
-                document.createElement(
-                    "div"
-                );
-
-
-            item.className =
-                "issue-item";
-
-
-            item.textContent =
-                issue;
-
-
-            detailIssues.appendChild(
-                item
+            throw new Error(
+                `HTTP ${response.status}`
             );
 
         }
-    );
-
-}
 
 
-/* =========================================================
-   CHECKS
-   ========================================================= */
-
-function renderChecks(tool) {
-
-    detailChecks.innerHTML =
-        "";
+        const data =
+            await response.json();
 
 
-    const checks =
-        extractChecks(tool);
-
-
-    if (!checks.length) {
-
-        detailChecks.innerHTML = `
-
-            <div class="check-item">
-                ✓ Audit completed successfully
-            </div>
-
-        `;
-
-        return;
-
-    }
-
-
-    checks.forEach(
-        check => {
-
-            const item =
-                document.createElement(
-                    "div"
-                );
-
-
-            item.className =
-                "check-item";
-
-
-            item.textContent =
-                `✓ ${check}`;
-
-
-            detailChecks.appendChild(
-                item
-            );
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   EXTRACT ISSUES
-   ========================================================= */
-
-function extractIssues(tool) {
-
-    const result = [];
-
-
-    if (
-        Array.isArray(
-            tool.issues
-        )
-    ) {
-
-        tool.issues.forEach(
-            issue => {
-
-                if (
-                    typeof issue ===
-                    "string"
-                ) {
-
-                    result.push(
-                        issue
-                    );
-
-                } else if (
-                    issue &&
-                    typeof issue ===
-                    "object"
-                ) {
-
-                    result.push(
-                        issue.message ||
-                        issue.description ||
-                        issue.title ||
-                        JSON.stringify(
-                            issue
-                        )
-                    );
-
-                }
-
-            }
+        renderWorkflowStatus(
+            data
         );
 
-    }
 
+    } catch (error) {
 
-    if (
-        Array.isArray(
-            tool.warnings
-        )
-    ) {
-
-        tool.warnings.forEach(
-            warning => {
-
-                if (
-                    typeof warning ===
-                    "string"
-                ) {
-
-                    result.push(
-                        warning
-                    );
-
-                }
-
-            }
+        console.error(
+            "Status error:",
+            error
         );
 
-    }
-
-
-    if (
-        tool.issueSummary &&
-        Array.isArray(
-            tool.issueSummary.items
-        )
-    ) {
-
-        tool.issueSummary.items.forEach(
-            issue => {
-
-                if (
-                    typeof issue ===
-                    "string"
-                ) {
-
-                    result.push(
-                        issue
-                    );
-
-                } else if (
-                    issue &&
-                    typeof issue ===
-                    "object"
-                ) {
-
-                    result.push(
-                        issue.message ||
-                        issue.description ||
-                        issue.title ||
-                        "SEO issue detected"
-                    );
-
-                }
-
-            }
-        );
+        auditStatus.textContent =
+            "Status unavailable";
 
     }
-
-
-    return [
-        ...new Set(
-            result.filter(Boolean)
-        )
-    ];
 
 }
 
 
-/* =========================================================
-   EXTRACT CHECKS
-   ========================================================= */
+/*
+ * =========================================
+ * WORKFLOW STATUS
+ * =========================================
+ */
 
-function extractChecks(tool) {
-
-    const result = [];
-
-
-    if (
-        Array.isArray(
-            tool.checks
-        )
-    ) {
-
-        tool.checks.forEach(
-            check => {
-
-                if (
-                    typeof check ===
-                    "string"
-                ) {
-
-                    result.push(
-                        check
-                    );
-
-                } else if (
-                    check &&
-                    typeof check ===
-                    "object"
-                ) {
-
-                    result.push(
-                        check.message ||
-                        check.description ||
-                        check.title ||
-                        "SEO check passed"
-                    );
-
-                }
-
-            }
-        );
-
-    }
-
-
-    if (
-        tool.pass &&
-        Array.isArray(
-            tool.pass
-        )
-    ) {
-
-        result.push(
-            ...tool.pass
-        );
-
-    }
-
-
-    return [
-        ...new Set(
-            result.filter(Boolean)
-        )
-    ];
-
-}
-
-
-/* =========================================================
-   ISSUE COUNT
-   ========================================================= */
-
-function getIssueCount(tool) {
-
-    if (
-        tool.issueSummary &&
-        typeof tool.issueSummary.total ===
-        "number"
-    ) {
-
-        return tool.issueSummary.total;
-
-    }
-
-
-    return extractIssues(
-        tool
-    ).length;
-
-}
-
-
-/* =========================================================
-   GRADE
-   ========================================================= */
-
-function calculateGrade(score) {
-
-    score =
-        Number(score) || 0;
-
-
-    if (score >= 90) {
-        return "A";
-    }
-
-    if (score >= 80) {
-        return "B";
-    }
-
-    if (score >= 70) {
-        return "C";
-    }
-
-    if (score >= 60) {
-        return "D";
-    }
-
-    return "F";
-
-}
-
-
-function getGradeClass(grade) {
-
-    return `grade-${String(
-        grade
-    ).toLowerCase()}`;
-
-}
-
-
-function applyGradeClass(
-    element,
-    grade
+function renderWorkflowStatus(
+    data
 ) {
 
-    if (!element) {
+    const runs =
+        data.runs || [];
+
+
+    if (!runs.length) {
+
+        auditStatus.textContent =
+            "No audit runs yet";
+
+        workflowRuns.innerHTML = `
+            <div class="loading">
+                No GitHub Actions runs found.
+            </div>
+        `;
+
         return;
+
     }
 
 
-    element.classList.remove(
-        "grade-a",
-        "grade-b",
-        "grade-c",
-        "grade-d",
-        "grade-f"
-    );
+    const latest =
+        runs[0];
 
 
-    element.classList.add(
-        getGradeClass(
-            grade
-        )
-    );
+    if (
+        latest.status ===
+        "in_progress" ||
+        latest.status ===
+        "queued"
+    ) {
+
+        auditStatus.textContent =
+            "🟡 Audit running...";
+
+    }
+
+    else if (
+        latest.conclusion ===
+        "success"
+    ) {
+
+        auditStatus.textContent =
+            "🟢 Audit successful";
+
+    }
+
+    else if (
+        latest.conclusion ===
+        "failure"
+    ) {
+
+        auditStatus.textContent =
+            "🔴 Audit failed";
+
+    }
+
+    else {
+
+        auditStatus.textContent =
+            latest.status ||
+            "Unknown";
+
+    }
+
+
+    workflowRuns.innerHTML =
+        runs
+            .map(
+                run => {
+
+                    const status =
+                        getRunStatus(
+                            run
+                        );
+
+
+                    return `
+
+                        <div class="workflow-item">
+
+                            <div>
+
+                                <strong>
+
+                                    Audit #${run.runNumber}
+
+                                </strong>
+
+                                <br>
+
+                                <small>
+
+                                    ${formatDate(
+                                        run.createdAt
+                                    )}
+
+                                </small>
+
+                            </div>
+
+
+                            <div>
+
+                                <span
+                                    class="badge ${getRunBadge(run)}"
+                                >
+
+                                    ${status}
+
+                                </span>
+
+
+                                ${
+                                    run.htmlUrl
+                                    ? `
+                                        <a
+                                            href="${escapeAttribute(
+                                                run.htmlUrl
+                                            )}"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            View
+                                        </a>
+                                      `
+                                    : ""
+                                }
+
+                            </div>
+
+                        </div>
+
+                    `;
+
+                }
+            )
+            .join("");
 
 }
 
 
-/* =========================================================
-   SCORE MESSAGE
-   ========================================================= */
+/*
+ * =========================================
+ * RUN AUDIT
+ * =========================================
+ */
 
-function getScoreMessage(score) {
+runButton.addEventListener(
+    "click",
+    async () => {
+
+        if (
+            runButton.disabled
+        ) {
+
+            return;
+
+        }
+
+
+        runButton.disabled =
+            true;
+
+
+        runButton.textContent =
+            "⏳ Starting audit...";
+
+
+        auditStatus.textContent =
+            "Starting GitHub Action...";
+
+
+        try {
+
+            const response =
+                await fetch(
+                    `${API_BASE}/api/run-audit`,
+                    {
+                        method:
+                            "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        }
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.error ||
+                    `HTTP ${response.status}`
+                );
+
+            }
+
+
+            auditStatus.textContent =
+                "🟡 Audit started";
+
+
+            /*
+             * Give GitHub a moment to create
+             * the workflow run.
+             */
+
+            setTimeout(
+                loadStatus,
+                3000
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                error
+            );
+
+
+            auditStatus.textContent =
+                `❌ ${error.message}`;
+
+        }
+
+
+        setTimeout(
+            () => {
+
+                runButton.disabled =
+                    false;
+
+                runButton.textContent =
+                    "🔍 Run SEO Audit";
+
+            },
+            5000
+        );
+
+    }
+);
+
+
+/*
+ * =========================================
+ * HELPERS
+ * =========================================
+ */
+
+function getHealthLabel(
+    score
+) {
 
     if (score >= 90) {
-
-        return "Excellent SEO health. Keep maintaining this level.";
-
+        return "Excellent";
     }
-
 
     if (score >= 80) {
-
-        return "Good SEO health. A few improvements could make it stronger.";
-
+        return "Good";
     }
-
 
     if (score >= 70) {
+        return "Needs improvement";
+    }
 
-        return "Fair SEO health. Several improvements are recommended.";
+    return "Poor";
+
+}
+
+
+function getBadgeClass(
+    score
+) {
+
+    if (score >= 90) {
+        return "badge-good";
+    }
+
+    if (score >= 80) {
+        return "badge-warning";
+    }
+
+    return "badge-danger";
+
+}
+
+
+function getRunStatus(
+    run
+) {
+
+    if (
+        run.status ===
+        "queued"
+    ) {
+
+        return "Queued";
 
     }
 
 
-    if (score >= 60) {
+    if (
+        run.status ===
+        "in_progress"
+    ) {
 
-        return "SEO needs attention. Review the reported issues.";
+        return "Running";
 
     }
 
 
-    return "Critical SEO problems detected. Prioritize fixing the highest-impact issues.";
+    if (
+        run.conclusion ===
+        "success"
+    ) {
+
+        return "Success";
+
+    }
+
+
+    if (
+        run.conclusion ===
+        "failure"
+    ) {
+
+        return "Failed";
+
+    }
+
+
+    return run.status ||
+        "Unknown";
 
 }
 
 
-/* =========================================================
-   STATES
-   ========================================================= */
+function getRunBadge(
+    run
+) {
 
-function showLoading() {
+    if (
+        run.conclusion ===
+        "success"
+    ) {
 
-    loading.hidden =
-        false;
+        return "badge-good";
 
-    errorBox.hidden =
-        true;
-
-    dashboard.hidden =
-        true;
-
-}
+    }
 
 
-function showDashboard() {
+    if (
+        run.conclusion ===
+        "failure"
+    ) {
 
-    loading.hidden =
-        true;
+        return "badge-danger";
 
-    errorBox.hidden =
-        true;
+    }
 
-    dashboard.hidden =
-        false;
+
+    return "badge-warning";
 
 }
 
 
-function showError(message) {
+function formatDate(
+    value
+) {
 
-    loading.hidden =
-        true;
-
-    dashboard.hidden =
-        true;
-
-    errorBox.hidden =
-        false;
+    if (!value) {
+        return "—";
+    }
 
 
-    errorMessage.textContent =
-        message ||
-        "Unable to load SEO audit data.";
+    const date =
+        new Date(value);
+
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+
+        return value;
+
+    }
+
+
+    return date.toLocaleString();
 
 }
 
 
-/* =========================================================
-   SECURITY HELPERS
-   ========================================================= */
-
-function escapeHTML(value) {
+function escapeHTML(
+    value
+) {
 
     return String(value)
 
@@ -1410,7 +910,9 @@ function escapeHTML(value) {
 }
 
 
-function escapeAttribute(value) {
+function escapeAttribute(
+    value
+) {
 
     return escapeHTML(
         value
