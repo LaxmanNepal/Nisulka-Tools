@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -9,100 +10,88 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Nisulka Tools — Admin Dashboard</title>
+    <title>
+        Nisulka Tools Admin
+    </title>
 
     <meta
         name="robots"
         content="noindex, nofollow"
     >
 
-    <meta
-        name="theme-color"
-        content="#2563eb"
-    >
-
-    <link
-        rel="preconnect"
-        href="https://fonts.googleapis.com"
-    >
-
-    <link
-        rel="preconnect"
-        href="https://fonts.gstatic.com"
-        crossorigin
-    >
-
-    <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
-        rel="stylesheet"
-    >
-
     <link
         rel="stylesheet"
         href="admin.css"
     >
+
 </head>
+
 
 <body>
 
-    <header class="admin-header">
+    <main class="admin-container">
 
-        <div class="admin-header-inner">
-
-            <a
-                href="../"
-                class="brand"
-            >
-                <span class="brand-mark">N</span>
-
-                <span>
-                    Nisulka Tools
-                    <small>Admin</small>
-                </span>
-            </a>
-
-            <a
-                href="../"
-                class="back-button"
-            >
-                ← View Website
-            </a>
-
-        </div>
-
-    </header>
-
-
-    <main class="admin-main">
-
-        <!-- PAGE HEADER -->
-
-        <section class="page-heading">
+        <header class="admin-header">
 
             <div>
 
-                <span class="eyebrow">
-                    ADMIN DASHBOARD
+                <span class="admin-label">
+                    NISULKA TOOLS
                 </span>
 
                 <h1>
-                    SEO Health Dashboard
+                    SEO Dashboard
                 </h1>
 
                 <p>
-                    Monitor the SEO health of every Nisulka Tools tool.
+                    Monitor and audit every tool.
                 </p>
 
             </div>
 
-            <div class="last-audit">
+
+            <button
+                id="run-audit"
+                class="audit-button"
+            >
+                🔍 Run SEO Audit
+            </button>
+
+        </header>
+
+
+        <!-- STATUS -->
+
+        <section
+            id="status-card"
+            class="status-card"
+        >
+
+            <div>
+
+                <strong>
+                    Audit Status
+                </strong>
+
+                <span
+                    id="audit-status"
+                >
+                    Checking...
+                </span>
+
+            </div>
+
+
+            <div>
 
                 <span>
                     Last audit
                 </span>
 
-                <strong id="last-audit">
-                    Loading...
+                <strong
+                    id="last-audit"
+                >
+                    —
                 </strong>
 
             </div>
@@ -110,521 +99,155 @@
         </section>
 
 
-        <!-- LOADING -->
+        <!-- STATS -->
 
-        <div
-            id="loading"
-            class="state-card"
-        >
-            <div class="spinner"></div>
+        <section class="stats-grid">
 
-            <h2>
-                Loading SEO data...
-            </h2>
+            <article class="stat-card">
 
-            <p>
-                Reading data/seo-audit.json
-            </p>
-        </div>
+                <span>
+                    Average Score
+                </span>
+
+                <strong id="average-score">
+                    —
+                </strong>
+
+            </article>
 
 
-        <!-- ERROR -->
+            <article class="stat-card">
 
-        <div
-            id="error"
-            class="state-card error-state"
-            hidden
-        >
+                <span>
+                    Total Tools
+                </span>
 
-            <div class="state-icon">
-                ⚠️
+                <strong id="total-tools">
+                    —
+                </strong>
+
+            </article>
+
+
+            <article class="stat-card">
+
+                <span>
+                    Excellent
+                </span>
+
+                <strong id="excellent-tools">
+                    —
+                </strong>
+
+            </article>
+
+
+            <article class="stat-card">
+
+                <span>
+                    Need Attention
+                </span>
+
+                <strong id="attention-tools">
+                    —
+                </strong>
+
+            </article>
+
+        </section>
+
+
+        <!-- PROGRESS -->
+
+        <section class="panel">
+
+            <div class="panel-header">
+
+                <h2>
+                    Overall SEO Health
+                </h2>
+
+                <span id="health-label">
+                    —
+                </span>
+
             </div>
 
-            <h2>
-                SEO data unavailable
-            </h2>
 
-            <p id="error-message">
-                Unable to load SEO audit data.
-            </p>
-
-            <button
-                id="retry-button"
-                class="primary-button"
-                type="button"
-            >
-                Try Again
-            </button>
-
-        </div>
-
-
-        <!-- DASHBOARD -->
-
-        <div
-            id="dashboard"
-            hidden
-        >
-
-            <!-- OVERVIEW -->
-
-            <section class="overview-grid">
-
-                <article class="score-card">
-
-                    <div class="score-card-top">
-
-                        <div>
-
-                            <span class="card-label">
-                                Overall SEO Health
-                            </span>
-
-                            <h2 id="overall-score">
-                                —
-                            </h2>
-
-                        </div>
-
-                        <div
-                            id="overall-grade"
-                            class="grade-badge"
-                        >
-                            —
-                        </div>
-
-                    </div>
-
-                    <div class="score-bar">
-
-                        <span
-                            id="overall-score-bar"
-                        ></span>
-
-                    </div>
-
-                    <p id="overall-message">
-                        Calculating overall SEO health...
-                    </p>
-
-                </article>
-
-
-                <article class="stat-card">
-
-                    <span class="stat-icon">
-                        🧰
-                    </span>
-
-                    <span class="card-label">
-                        Total Tools
-                    </span>
-
-                    <strong id="total-tools">
-                        —
-                    </strong>
-
-                    <span class="stat-description">
-                        Active tools
-                    </span>
-
-                </article>
-
-
-                <article class="stat-card">
-
-                    <span class="stat-icon">
-                        ✓
-                    </span>
-
-                    <span class="card-label">
-                        Excellent
-                    </span>
-
-                    <strong id="excellent-tools">
-                        —
-                    </strong>
-
-                    <span class="stat-description">
-                        Score 90+
-                    </span>
-
-                </article>
-
-
-                <article class="stat-card">
-
-                    <span class="stat-icon">
-                        ⚠
-                    </span>
-
-                    <span class="card-label">
-                        Needs Attention
-                    </span>
-
-                    <strong id="warning-tools">
-                        —
-                    </strong>
-
-                    <span class="stat-description">
-                        Score below 70
-                    </span>
-
-                </article>
-
-            </section>
-
-
-            <!-- SEARCH / FILTER -->
-
-            <section class="controls">
-
-                <div class="search-wrapper">
-
-                    <span aria-hidden="true">
-                        🔍
-                    </span>
-
-                    <input
-                        id="tool-search"
-                        type="search"
-                        placeholder="Search tools..."
-                        autocomplete="off"
-                    >
-
-                </div>
-
-
-                <select
-                    id="grade-filter"
-                    class="filter-select"
-                >
-
-                    <option value="all">
-                        All grades
-                    </option>
-
-                    <option value="A">
-                        A — Excellent
-                    </option>
-
-                    <option value="B">
-                        B — Good
-                    </option>
-
-                    <option value="C">
-                        C — Needs work
-                    </option>
-
-                    <option value="D">
-                        D — Poor
-                    </option>
-
-                    <option value="F">
-                        F — Critical
-                    </option>
-
-                </select>
-
-
-                <select
-                    id="sort-tools"
-                    class="filter-select"
-                >
-
-                    <option value="score-desc">
-                        Highest score
-                    </option>
-
-                    <option value="score-asc">
-                        Lowest score
-                    </option>
-
-                    <option value="name">
-                        Name A–Z
-                    </option>
-
-                    <option value="issues">
-                        Most issues
-                    </option>
-
-                </select>
-
-            </section>
-
-
-            <!-- TOOL TABLE -->
-
-            <section class="panel">
-
-                <div class="panel-header">
-
-                    <div>
-
-                        <h2>
-                            Tool SEO Ranking
-                        </h2>
-
-                        <p>
-                            SEO health score for every tool.
-                        </p>
-
-                    </div>
-
-                    <span
-                        id="visible-count"
-                        class="result-count"
-                    >
-                        —
-                    </span>
-
-                </div>
-
-
-                <div class="table-wrapper">
-
-                    <table>
-
-                        <thead>
-
-                            <tr>
-
-                                <th>
-                                    #
-                                </th>
-
-                                <th>
-                                    Tool
-                                </th>
-
-                                <th>
-                                    Category
-                                </th>
-
-                                <th>
-                                    Score
-                                </th>
-
-                                <th>
-                                    Grade
-                                </th>
-
-                                <th>
-                                    Issues
-                                </th>
-
-                                <th>
-                                    Action
-                                </th>
-
-                            </tr>
-
-                        </thead>
-
-                        <tbody id="tools-table">
-
-                        </tbody>
-
-                    </table>
-
-                </div>
+            <div class="progress">
 
                 <div
-                    id="empty-results"
-                    class="empty-results"
-                    hidden
-                >
+                    id="health-progress"
+                    class="progress-bar"
+                ></div>
 
-                    <div>
-                        🔎
-                    </div>
+            </div>
 
-                    <h3>
-                        No tools found
-                    </h3>
+        </section>
+
+
+        <!-- TOOLS -->
+
+        <section class="panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <h2>
+                        Tool SEO Rankings
+                    </h2>
 
                     <p>
-                        Try changing your search or filter.
+                        Every tool sorted by SEO score.
                     </p>
 
                 </div>
 
-            </section>
+            </div>
 
 
-            <!-- DETAIL PANEL -->
-
-            <section
-                id="tool-detail"
-                class="panel detail-panel"
-                hidden
+            <div
+                id="tools-table"
+                class="table-wrapper"
             >
 
-                <div class="panel-header">
-
-                    <div>
-
-                        <span class="eyebrow">
-                            TOOL DETAILS
-                        </span>
-
-                        <h2 id="detail-name">
-                            Tool
-                        </h2>
-
-                        <p id="detail-description">
-                        </p>
-
-                    </div>
-
-                    <button
-                        id="close-detail"
-                        class="close-button"
-                        type="button"
-                    >
-                        ×
-                    </button>
-
+                <div class="loading">
+                    Loading SEO data...
                 </div>
 
+            </div>
 
-                <div class="detail-score">
-
-                    <div>
-
-                        <span class="card-label">
-                            SEO Score
-                        </span>
-
-                        <strong id="detail-score">
-                            —
-                        </strong>
-
-                    </div>
-
-                    <div
-                        id="detail-grade"
-                        class="grade-badge large"
-                    >
-                        —
-                    </div>
-
-                </div>
+        </section>
 
 
-                <div class="detail-grid">
+        <!-- ACTION STATUS -->
 
-                    <div class="detail-section">
+        <section class="panel">
 
-                        <h3>
-                            SEO Issues
-                        </h3>
+            <h2>
+                GitHub Actions
+            </h2>
 
-                        <div
-                            id="detail-issues"
-                            class="issue-list"
-                        >
-                        </div>
+            <div
+                id="workflow-runs"
+                class="workflow-list"
+            >
 
-                    </div>
+                Loading...
 
+            </div>
 
-                    <div class="detail-section">
-
-                        <h3>
-                            SEO Checks
-                        </h3>
-
-                        <div
-                            id="detail-checks"
-                            class="check-list"
-                        >
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </section>
+        </section>
 
 
-            <!-- INFORMATION -->
+        <footer>
 
-            <section class="information-grid">
+            Nisulka Tools SEO Administration
 
-                <article class="info-card">
-
-                    <div class="info-icon">
-                        🤖
-                    </div>
-
-                    <h3>
-                        Automated Audit
-                    </h3>
-
-                    <p>
-                        SEO data is generated automatically
-                        by GitHub Actions whenever tools
-                        are updated.
-                    </p>
-
-                </article>
-
-
-                <article class="info-card">
-
-                    <div class="info-icon">
-                        📊
-                    </div>
-
-                    <h3>
-                        SEO Health Score
-                    </h3>
-
-                    <p>
-                        The score represents Nisulka's internal
-                        technical and on-page SEO audit.
-                    </p>
-
-                </article>
-
-
-                <article class="info-card">
-
-                    <div class="info-icon">
-                        🔎
-                    </div>
-
-                    <h3>
-                        Google Data
-                    </h3>
-
-                    <p>
-                        Actual Google rankings, clicks and
-                        impressions will be connected through
-                        Search Console later.
-                    </p>
-
-                </article>
-
-            </section>
-
-        </div>
+        </footer>
 
     </main>
-
-
-    <footer class="admin-footer">
-
-        <p>
-            Nisulka Tools Admin Dashboard
-        </p>
-
-        <p>
-            SEO Health Monitoring
-        </p>
-
-    </footer>
 
 
     <script src="admin.js"></script>
