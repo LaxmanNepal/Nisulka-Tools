@@ -1,0 +1,82 @@
+{
+  "generatedAt": "2026-08-12T08:49:05.664366+00:00",
+  "totalTools": 2,
+  "averageScore": 86.5,
+  "tools": [
+    {
+      "name": "Text To Handwriting",
+      "slug": "text-to-handwriting",
+      "url": "/Nisulka-Tools/tools/text-to-handwriting/",
+      "score": 95,
+      "grade": "A+",
+      "title": "Text to Handwriting Converter — Nisulka Tools",
+      "description": "Convert typed text into a handwritten-style image online for free. Customize handwriting size, ink color, paper style, spacing and alignment with Nisulka Tools.",
+      "wordCount": 1054,
+      "h1Count": 1,
+      "h2Count": 6,
+      "images": 0,
+      "imagesWithoutAlt": 0,
+      "canonical": "https://apps.laxmannepal.com.np/Nisulka-Tools/tools/text-to-handwriting/",
+      "openGraph": {
+        "title": true,
+        "description": true
+      },
+      "passed": [
+        "Title length is good",
+        "Meta description length is good",
+        "Exactly one H1 found",
+        "H2 headings found",
+        "Canonical URL found",
+        "Open Graph title found",
+        "Open Graph description found",
+        "No images requiring alt text",
+        "Sufficient page content"
+      ],
+      "issues": [],
+      "issueSummary": {
+        "total": 0,
+        "critical": 0,
+        "warning": 0
+      },
+      "rank": 1
+    },
+    {
+      "name": "Remove Gemini Logo",
+      "slug": "remove-gemini-logo",
+      "url": "/Nisulka-Tools/tools/remove-gemini-logo/",
+      "score": 78,
+      "grade": "B",
+      "title": "Gemini Watermark Remover — Free Online AI Image Watermark Eraser | Nisulka Tools",
+      "description": "Remove visible Google Gemini AI logos, star badges, and watermarks from your images online for free. Clean images client-side in your browser with zero quality loss.",
+      "wordCount": 501,
+      "h1Count": 1,
+      "h2Count": 6,
+      "images": 2,
+      "imagesWithoutAlt": 0,
+      "canonical": "https://apps.laxmannepal.com.np/Nisulka-Tools/tools/gemini-watermark-remover/",
+      "openGraph": {
+        "title": false,
+        "description": false
+      },
+      "passed": [
+        "Meta description length is good",
+        "Exactly one H1 found",
+        "H2 headings found",
+        "Canonical URL found",
+        "All images have alt attributes",
+        "Sufficient page content"
+      ],
+      "issues": [
+        "Title length should ideally be 30-65 characters (80)",
+        "Missing Open Graph title",
+        "Missing Open Graph description"
+      ],
+      "issueSummary": {
+        "total": 3,
+        "critical": 0,
+        "warning": 3
+      },
+      "rank": 2
+    }
+  ]
+}
