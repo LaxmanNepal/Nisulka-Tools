@@ -1,33 +1,16 @@
 #!/usr/bin/env python3
 
 """
-Nisulka Tools — SEO Auditor
+Nisulka Tools SEO Auditor
 
-Scans every tool under /tools/ and produces:
-    seo/seo-report.json
-    seo/seo-report.md
+Scans:
+    /tools/*/index.html
 
-The auditor checks:
-- Title
-- Meta description
-- Canonical URL
-- H1
-- H2
-- Description length
-- Title length
-- Open Graph
-- Robots
-- Structured data
-- Tool metadata
-- Logo
-- Internal links
-- Image alt attributes
-- HTTPS/canonical consistency
-- Basic content quality
+Generates:
+    /data/seo-audit.json
+    /data/seo-audit.md
 
-Exit code:
-    0 = audit completed successfully
-    1 = auditor itself failed
+No external Python packages required.
 """
 
 import os
@@ -35,7 +18,6 @@ import re
 import json
 from html import unescape
 from datetime import datetime
-from urllib.parse import urlparse
 
 
 # ============================================================
@@ -43,16 +25,16 @@ from urllib.parse import urlparse
 # ============================================================
 
 TOOLS_DIR = "tools"
-OUTPUT_DIR = "seo"
+DATA_DIR = "data"
 
-JSON_REPORT = os.path.join(
-    OUTPUT_DIR,
-    "seo-report.json"
+JSON_FILE = os.path.join(
+    DATA_DIR,
+    "seo-audit.json"
 )
 
-MARKDOWN_REPORT = os.path.join(
-    OUTPUT_DIR,
-    "seo-report.md"
+MARKDOWN_FILE = os.path.join(
+    DATA_DIR,
+    "seo-audit.md"
 )
 
 SITE_URL = (
@@ -62,12 +44,10 @@ SITE_URL = (
 
 
 # ============================================================
-# HELPERS
+# BASIC HELPERS
 # ============================================================
 
 def clean_text(value):
-    """Remove HTML and normalize whitespace."""
-
     if not value:
         return ""
 
@@ -88,70 +68,6 @@ def clean_text(value):
     return value.strip()
 
 
-def get_tag_content(html, tag, attrs=""):
-    """
-    Extract simple HTML tag content.
-    """
-
-    pattern = (
-        rf"<{tag}\b{attrs}[^>]*>"
-        rf"(.*?)"
-        rf"</{tag}>"
-    )
-
-    match = re.search(
-        pattern,
-        html,
-        re.IGNORECASE | re.DOTALL
-    )
-
-    if match:
-        return clean_text(
-            match.group(1)
-        )
-
-    return ""
-
-
-def get_meta(html, name=None, property_name=None):
-    """
-    Read meta description/name/property.
-    """
-
-    if name:
-
-        pattern = (
-            rf'<meta\s+'
-            rf'[^>]*name=["\']'
-            rf'{re.escape(name)}'
-            rf'["\'][^>]*content=["\']'
-            rf'(.*?)["\']'
-        )
-
-    else:
-
-        pattern = (
-            rf'<meta\s+'
-            rf'[^>]*property=["\']'
-            rf'{re.escape(property_name)}'
-            rf'["\'][^>]*content=["\']'
-            rf'(.*?)["\']'
-        )
-
-    match = re.search(
-        pattern,
-        html,
-        re.IGNORECASE | re.DOTALL
-    )
-
-    if match:
-        return unescape(
-            match.group(1).strip()
-        )
-
-    return ""
-
-
 def get_title(html):
 
     match = re.search(
@@ -160,23 +76,48 @@ def get_title(html):
         re.IGNORECASE | re.DOTALL
     )
 
-    if match:
-        return clean_text(
-            match.group(1)
+    if not match:
+        return ""
+
+    return clean_text(
+        match.group(1)
+    )
+
+
+def get_meta(html, name=None, property_name=None):
+
+    if name:
+
+        pattern = (
+            r'<meta\b[^>]*'
+            r'\bname=["\']'
+            + re.escape(name)
+            + r'["\'][^>]*'
+            r'\bcontent=["\'](.*?)["\']'
         )
 
-    return ""
+    elif property_name:
 
+        pattern = (
+            r'<meta\b[^>]*'
+            r'\bproperty=["\']'
+            + re.escape(property_name)
+            + r'["\'][^>]*'
+            r'\bcontent=["\'](.*?)["\']'
+        )
 
-def get_canonical(html):
+    else:
+
+        return ""
 
     match = re.search(
-        r'<link\s+[^>]*rel=["\']canonical["\'][^>]*href=["\'](.*?)["\']',
+        pattern,
         html,
         re.IGNORECASE | re.DOTALL
     )
 
     if match:
+
         return unescape(
             match.group(1).strip()
         )
@@ -184,23 +125,35 @@ def get_canonical(html):
     return ""
 
 
-def count_tags(html, tag):
+def get_canonical(html):
 
-    return len(
-        re.findall(
-            rf"<{tag}\b",
-            html,
-            re.IGNORECASE
-        )
+    pattern = (
+        r'<link\b[^>]*'
+        r'\brel=["\']canonical["\']'
+        r'[^>]*'
+        r'\bhref=["\'](.*?)["\']'
+    )
+
+    match = re.search(
+        pattern,
+        html,
+        re.IGNORECASE | re.DOTALL
+    )
+
+    if not match:
+        return ""
+
+    return unescape(
+        match.group(1).strip()
     )
 
 
-def get_headings(html, tag):
+def get_headings(html, heading):
 
     pattern = (
-        rf"<{tag}\b[^>]*>"
+        rf"<{heading}\b[^>]*>"
         rf"(.*?)"
-        rf"</{tag}>"
+        rf"</{heading}>"
     )
 
     matches = re.findall(
@@ -227,48 +180,59 @@ def get_images(html):
 
 def image_has_alt(image):
 
+    match = re.search(
+        r'\balt=["\'](.*?)["\']',
+        image,
+        re.IGNORECASE | re.DOTALL
+    )
+
+    if not match:
+        return False
+
     return bool(
-        re.search(
-            r'\balt=["\'][^"\']*["\']',
-            image,
-            re.IGNORECASE
-        )
+        match.group(1).strip()
     )
 
 
-def get_json_ld(html):
+def get_schema(html):
 
-    matches = re.findall(
-        r'<script\s+[^>]*type=["\']application/ld\+json["\'][^>]*>'
+    scripts = re.findall(
+        r'<script\b[^>]*'
+        r'type=["\']application/ld\+json["\']'
+        r'[^>]*>'
         r'(.*?)'
         r'</script>',
         html,
         re.IGNORECASE | re.DOTALL
     )
 
-    valid = []
+    schemas = []
 
-    for item in matches:
+    for script in scripts:
 
         try:
-            valid.append(
-                json.loads(
-                    item.strip()
-                )
+
+            data = json.loads(
+                script.strip()
             )
 
-        except json.JSONDecodeError:
-            pass
+            schemas.append(data)
 
-    return valid
+        except Exception:
+
+            continue
+
+    return schemas
 
 
-def get_tool_meta(html, name):
+def get_tool_meta(html, key):
 
     pattern = (
-        rf'<meta\s+'
-        rf'[^>]*name=["\']tool:{re.escape(name)}'
-        rf'["\'][^>]*content=["\'](.*?)["\']'
+        r'<meta\b[^>]*'
+        r'\bname=["\']tool:'
+        + re.escape(key)
+        + r'["\'][^>]*'
+        r'\bcontent=["\'](.*?)["\']'
     )
 
     match = re.search(
@@ -277,16 +241,16 @@ def get_tool_meta(html, name):
         re.IGNORECASE | re.DOTALL
     )
 
-    if match:
-        return unescape(
-            match.group(1).strip()
-        )
+    if not match:
+        return ""
 
-    return ""
+    return unescape(
+        match.group(1).strip()
+    )
 
 
 # ============================================================
-# SEO CHECKS
+# CHECK FUNCTIONS
 # ============================================================
 
 def check_title(title):
@@ -295,111 +259,79 @@ def check_title(title):
 
     if not title:
 
-        return (
-            0,
-            "Missing title"
-        )
+        return 0, "Missing page title"
 
     if 30 <= length <= 60:
 
-        return (
-            10,
-            "Good title length"
-        )
+        return 10, "Title length is good"
 
     if length < 30:
 
-        return (
-            6,
-            "Title is too short"
-        )
+        return 6, "Title is too short"
 
-    return (
-        6,
-        "Title is too long"
-    )
+    return 6, "Title is too long"
 
 
 def check_description(description):
 
-    description_length = len(
-        description
-    )
+    length = len(description)
 
     if not description:
 
-        return (
-            0,
-            "Missing meta description"
-        )
+        return 0, "Missing meta description"
 
-    if 120 <= description_length <= 160:
+    if 120 <= length <= 160:
 
-        return (
-            10,
-            "Good description length"
-        )
+        return 10, "Meta description length is good"
 
-    if description_length < 120:
+    if length < 120:
 
-        return (
-            6,
-            "Description is too short"
-        )
+        return 6, "Meta description is too short"
 
-    return (
-        6,
-        "Description is too long"
-    )
+    return 6, "Meta description is too long"
 
 
-def check_h1(headings):
+def check_h1(h1):
 
-    if len(headings) == 1:
+    count = len(h1)
 
-        return (
-            10,
-            "Exactly one H1"
-        )
+    if count == 1:
 
-    if len(headings) == 0:
+        return 10, "Exactly one H1 found"
 
-        return (
-            0,
-            "Missing H1"
-        )
+    if count == 0:
 
-    return (
-        5,
-        "Multiple H1 headings"
-    )
+        return 0, "H1 is missing"
+
+    return 5, "Multiple H1 headings found"
+
+
+def check_h2(h2):
+
+    if len(h2) >= 1:
+
+        return 5, "H2 headings found"
+
+    return 0, "No H2 headings found"
 
 
 def check_canonical(canonical):
 
     if not canonical:
 
-        return (
-            0,
-            "Missing canonical URL"
-        )
+        return 0, "Canonical URL is missing"
 
-    if canonical.startswith(
-        "https://"
-    ):
+    if canonical.startswith("https://"):
 
-        return (
-            10,
-            "HTTPS canonical found"
-        )
+        return 10, "HTTPS canonical found"
 
-    return (
-        5,
-        "Canonical exists but is not HTTPS"
-    )
+    return 5, "Canonical exists but is not HTTPS"
 
 
-def check_open_graph(og_title, og_description):
+def check_open_graph(
+    og_title,
+    og_description
+):
 
     score = 0
 
@@ -411,117 +343,80 @@ def check_open_graph(og_title, og_description):
 
     if score == 10:
 
-        message = "Open Graph metadata complete"
+        message = (
+            "Open Graph metadata is complete"
+        )
 
     elif score == 5:
 
-        message = "Open Graph partially configured"
+        message = (
+            "Open Graph metadata is incomplete"
+        )
 
     else:
 
-        message = "Open Graph metadata missing"
+        message = (
+            "Open Graph metadata is missing"
+        )
 
-    return (
-        score,
-        message
-    )
+    return score, message
 
 
 def check_robots(robots):
 
     if not robots:
 
-        return (
-            0,
-            "Robots meta tag missing"
-        )
+        return 0, "Robots meta tag is missing"
 
     if "noindex" in robots.lower():
 
-        return (
-            0,
-            "Page contains noindex"
-        )
+        return 0, "Page contains noindex"
 
-    return (
-        5,
-        "Indexable robots directive"
-    )
+    return 5, "Page is indexable"
 
 
 def check_schema(schema):
 
-    if not schema:
+    if schema:
 
-        return (
-            0,
-            "Structured data missing"
-        )
+        return 10, "Structured data found"
 
-    return (
-        10,
-        "Structured data found"
-    )
+    return 0, "Structured data is missing"
 
 
 def check_images(html):
 
-    images = get_images(
-        html
-    )
+    images = get_images(html)
 
     if not images:
 
-        return (
-            5,
-            "No images found"
-        )
+        return 5, "No images found"
 
-    missing_alt = sum(
-        1
-        for image in images
-        if not image_has_alt(image)
-    )
+    missing = 0
 
-    if missing_alt == 0:
+    for image in images:
 
-        return (
-            10,
-            "All images have alt attributes"
-        )
+        if not image_has_alt(image):
+
+            missing += 1
+
+    if missing == 0:
+
+        return 10, "All images have alt text"
 
     return (
         5,
-        f"{missing_alt} image(s) missing alt"
+        f"{missing} image(s) missing alt text"
     )
 
 
-def check_content(description, h2):
+def check_logo(logo_file):
 
-    score = 0
+    if os.path.isfile(logo_file):
 
-    if len(description) >= 80:
-        score += 5
+        return 5, "Tool logo found"
 
-    if len(h2) >= 1:
-        score += 5
-
-    if score == 10:
-
-        message = "Useful page structure"
-
-    elif score == 5:
-
-        message = "Content structure could be improved"
-
-    else:
-
-        message = "Thin content signals"
-
-    return (
-        score,
-        message
-    )
+    return 0, "logo.jpg is missing"
 
 
 def check_tool_metadata(
@@ -543,20 +438,21 @@ def check_tool_metadata(
 
     if score == 10:
 
-        message = "Tool metadata complete"
+        message = (
+            "Tool metadata is complete"
+        )
 
     else:
 
-        message = "Tool metadata incomplete"
+        message = (
+            "Tool metadata is incomplete"
+        )
 
-    return (
-        score,
-        message
-    )
+    return score, message
 
 
 # ============================================================
-# AUDIT ONE TOOL
+# AUDIT TOOL
 # ============================================================
 
 def audit_tool(slug):
@@ -576,11 +472,10 @@ def audit_tool(slug):
         "logo.jpg"
     )
 
-    if not os.path.isfile(
-        index_file
-    ):
+    if not os.path.isfile(index_file):
 
         return None
+
 
     with open(
         index_file,
@@ -592,21 +487,17 @@ def audit_tool(slug):
 
 
     # --------------------------------------------------------
-    # Metadata
+    # Extract information
     # --------------------------------------------------------
 
-    title = get_title(
-        html
-    )
+    title = get_title(html)
 
     description = get_meta(
         html,
         name="description"
     )
 
-    canonical = get_canonical(
-        html
-    )
+    canonical = get_canonical(html)
 
     robots = get_meta(
         html,
@@ -623,11 +514,6 @@ def audit_tool(slug):
         property_name="og:description"
     )
 
-
-    # --------------------------------------------------------
-    # Headings
-    # --------------------------------------------------------
-
     h1 = get_headings(
         html,
         "h1"
@@ -638,19 +524,7 @@ def audit_tool(slug):
         "h2"
     )
 
-
-    # --------------------------------------------------------
-    # Schema
-    # --------------------------------------------------------
-
-    schema = get_json_ld(
-        html
-    )
-
-
-    # --------------------------------------------------------
-    # Tool metadata
-    # --------------------------------------------------------
+    schema = get_schema(html)
 
     tool_name = get_tool_meta(
         html,
@@ -669,7 +543,7 @@ def audit_tool(slug):
 
 
     # --------------------------------------------------------
-    # Scores
+    # Individual checks
     # --------------------------------------------------------
 
     checks = {}
@@ -711,6 +585,19 @@ def audit_tool(slug):
         "message": message,
         "count": len(h1),
         "values": h1
+    }
+
+
+    score, message = check_h2(
+        h2
+    )
+
+    checks["h2"] = {
+        "score": score,
+        "max": 5,
+        "message": message,
+        "count": len(h2),
+        "values": h2
     }
 
 
@@ -758,11 +645,7 @@ def audit_tool(slug):
         "score": score,
         "max": 10,
         "message": message,
-        "types": [
-            item.get("@type")
-            for item in schema
-            if isinstance(item, dict)
-        ]
+        "schema_count": len(schema)
     }
 
 
@@ -777,14 +660,13 @@ def audit_tool(slug):
     }
 
 
-    score, message = check_content(
-        description,
-        h2
+    score, message = check_logo(
+        logo_file
     )
 
-    checks["content"] = {
+    checks["logo"] = {
         "score": score,
-        "max": 10,
+        "max": 5,
         "message": message
     }
 
@@ -803,77 +685,47 @@ def audit_tool(slug):
 
 
     # --------------------------------------------------------
-    # Logo
+    # Calculate score
     # --------------------------------------------------------
 
-    if os.path.isfile(
-        logo_file
-    ):
-
-        logo_score = 5
-
-        logo_message = (
-            "logo.jpg found"
-        )
-
-    else:
-
-        logo_score = 0
-
-        logo_message = (
-            "logo.jpg missing"
-        )
-
-
-    checks["logo"] = {
-        "score": logo_score,
-        "max": 5,
-        "message": logo_message
-    }
-
-
-    # --------------------------------------------------------
-    # Total
-    # --------------------------------------------------------
-
-    total_score = sum(
-        item["score"]
-        for item in checks.values()
+    points = sum(
+        check["score"]
+        for check in checks.values()
     )
 
-    total_possible = sum(
-        item["max"]
-        for item in checks.values()
+    max_points = sum(
+        check["max"]
+        for check in checks.values()
     )
 
 
-    percentage = round(
+    score = round(
         (
-            total_score /
-            total_possible *
+            points /
+            max_points *
             100
         ),
         1
-    ) if total_possible else 0
+    ) if max_points else 0
 
 
     # --------------------------------------------------------
     # Grade
     # --------------------------------------------------------
 
-    if percentage >= 90:
+    if score >= 90:
 
         grade = "A"
 
-    elif percentage >= 80:
+    elif score >= 80:
 
         grade = "B"
 
-    elif percentage >= 70:
+    elif score >= 70:
 
         grade = "C"
 
-    elif percentage >= 60:
+    elif score >= 60:
 
         grade = "D"
 
@@ -888,7 +740,7 @@ def audit_tool(slug):
 
     recommendations = []
 
-    for key, check in checks.items():
+    for check in checks.values():
 
         if check["score"] < check["max"]:
 
@@ -896,6 +748,10 @@ def audit_tool(slug):
                 check["message"]
             )
 
+
+    # --------------------------------------------------------
+    # Result
+    # --------------------------------------------------------
 
     return {
 
@@ -908,26 +764,28 @@ def audit_tool(slug):
             f"{slug}/"
         ),
 
-        "score": percentage,
-
-        "points": total_score,
-
-        "max_points": total_possible,
+        "score": score,
 
         "grade": grade,
+
+        "points": points,
+
+        "max_points": max_points,
 
         "checks": checks,
 
         "recommendations": recommendations,
 
-        "audited_at": datetime.utcnow().isoformat()
-        + "Z"
+        "audited_at": (
+            datetime.utcnow().isoformat()
+            + "Z"
+        )
 
     }
 
 
 # ============================================================
-# GENERATE MARKDOWN REPORT
+# MARKDOWN REPORT
 # ============================================================
 
 def generate_markdown(results):
@@ -961,23 +819,26 @@ def generate_markdown(results):
         start=1
     ):
 
-        issues = len(
-            tool["recommendations"]
+        issue_count = len(
+            tool.get(
+                "recommendations",
+                []
+            )
         )
 
         lines.append(
-            f"| {index} | "
-            f"{tool['name']} | "
-            f"{tool['score']}% | "
-            f"{tool['grade']} | "
-            f"{issues} |"
+            f"| {index} "
+            f"| {tool['name']} "
+            f"| {tool['score']}/100 "
+            f"| {tool['grade']} "
+            f"| {issue_count} |"
         )
 
 
     lines.append("")
 
     lines.append(
-        "## Tool Details"
+        "## Recommendations"
     )
 
     lines.append("")
@@ -985,58 +846,33 @@ def generate_markdown(results):
 
     for tool in results:
 
+        recommendations = tool.get(
+            "recommendations",
+            []
+        )
+
+        if not recommendations:
+
+            continue
+
+
         lines.append(
             f"### {tool['name']}"
         )
 
         lines.append("")
 
-        lines.append(
-            f"**Score:** "
-            f"{tool['score']}% "
-            f"({tool['grade']})"
-        )
+
+        for recommendation in recommendations:
+
+            lines.append(
+                f"- {recommendation}"
+            )
 
         lines.append("")
 
 
-        for key, check in tool[
-            "checks"
-        ].items():
-
-            lines.append(
-                f"- **{key}**: "
-                f"{check['score']}/"
-                f"{check['max']} — "
-                f"{check['message']}"
-            )
-
-
-        if tool[
-            "recommendations"
-        ]:
-
-            lines.append("")
-
-            lines.append(
-                "**Recommendations:**"
-            )
-
-            for recommendation in tool[
-                "recommendations"
-            ]:
-
-                lines.append(
-                    f"- {recommendation}"
-                )
-
-
-        lines.append("")
-
-
-    return "\n".join(
-        lines
-    )
+    return "\n".join(lines)
 
 
 # ============================================================
@@ -1045,35 +881,38 @@ def generate_markdown(results):
 
 def main():
 
-    print()
+    print("")
     print(
         "======================================"
     )
-
     print(
-        " Nisulka Tools SEO Auditor"
+        "NISULKA TOOLS SEO AUDITOR"
     )
-
     print(
         "======================================"
     )
+    print("")
 
-    print()
 
+    # --------------------------------------------------------
+    # Check tools directory
+    # --------------------------------------------------------
 
-    if not os.path.isdir(
-        TOOLS_DIR
-    ):
+    if not os.path.isdir(TOOLS_DIR):
 
         print(
-            "ERROR: tools directory not found."
+            "ERROR: tools/ directory does not exist."
         )
 
         return 1
 
 
+    # --------------------------------------------------------
+    # Create data directory
+    # --------------------------------------------------------
+
     os.makedirs(
-        OUTPUT_DIR,
+        DATA_DIR,
         exist_ok=True
     )
 
@@ -1081,10 +920,12 @@ def main():
     results = []
 
 
+    # --------------------------------------------------------
+    # Scan tools
+    # --------------------------------------------------------
+
     for slug in sorted(
-        os.listdir(
-            TOOLS_DIR
-        )
+        os.listdir(TOOLS_DIR)
     ):
 
         tool_dir = os.path.join(
@@ -1092,10 +933,7 @@ def main():
             slug
         )
 
-
-        if not os.path.isdir(
-            tool_dir
-        ):
+        if not os.path.isdir(tool_dir):
 
             continue
 
@@ -1111,28 +949,36 @@ def main():
                 slug
             )
 
-
-            if result:
-
-                results.append(
-                    result
-                )
+            if result is None:
 
                 print(
-                    f"  Score: "
-                    f"{result['score']}%"
+                    "  SKIPPED: index.html missing"
                 )
 
-                print(
-                    f"  Grade: "
-                    f"{result['grade']}"
-                )
+                continue
 
-            else:
 
-                print(
-                    "  Skipped"
-                )
+            results.append(
+                result
+            )
+
+
+            print(
+                f"  Score: "
+                f"{result['score']}/100"
+            )
+
+            print(
+                f"  Grade: "
+                f"{result['grade']}"
+            )
+
+            print(
+                f"  Issues: "
+                f"{len(result['recommendations'])}"
+            )
+
+            print("")
 
 
         except Exception as error:
@@ -1141,8 +987,12 @@ def main():
                 f"  ERROR: {error}"
             )
 
+            print("")
 
-    # Highest score first
+
+    # --------------------------------------------------------
+    # Sort by score
+    # --------------------------------------------------------
 
     results.sort(
         key=lambda item: item["score"],
@@ -1150,18 +1000,39 @@ def main():
     )
 
 
-    # Add rankings
+    # --------------------------------------------------------
+    # Add ranking
+    # --------------------------------------------------------
 
-    for index, result in enumerate(
+    for rank, tool in enumerate(
         results,
         start=1
     ):
 
-        result["rank"] = index
+        tool["rank"] = rank
 
 
     # --------------------------------------------------------
-    # JSON
+    # Average
+    # --------------------------------------------------------
+
+    if results:
+
+        average_score = round(
+            sum(
+                tool["score"]
+                for tool in results
+            ) / len(results),
+            1
+        )
+
+    else:
+
+        average_score = 0
+
+
+    # --------------------------------------------------------
+    # Final JSON
     # --------------------------------------------------------
 
     report = {
@@ -1170,31 +1041,26 @@ def main():
 
         "site_url": SITE_URL,
 
-        "generated_at":
+        "generated_at": (
             datetime.utcnow().isoformat()
-            + "Z",
+            + "Z"
+        ),
 
-        "total_tools":
-            len(results),
+        "total_tools": len(results),
 
-        "average_score":
-            round(
-                sum(
-                    item["score"]
-                    for item in results
-                ) / len(results),
-                1
-            )
-            if results
-            else 0,
+        "average_score": average_score,
 
         "tools": results
 
     }
 
 
+    # --------------------------------------------------------
+    # Write JSON
+    # --------------------------------------------------------
+
     with open(
-        JSON_REPORT,
+        JSON_FILE,
         "w",
         encoding="utf-8"
     ) as file:
@@ -1210,7 +1076,7 @@ def main():
 
 
     # --------------------------------------------------------
-    # Markdown
+    # Write Markdown
     # --------------------------------------------------------
 
     markdown = generate_markdown(
@@ -1219,7 +1085,7 @@ def main():
 
 
     with open(
-        MARKDOWN_REPORT,
+        MARKDOWN_FILE,
         "w",
         encoding="utf-8"
     ) as file:
@@ -1230,16 +1096,15 @@ def main():
 
 
     # --------------------------------------------------------
-    # Console summary
+    # Final console output
     # --------------------------------------------------------
 
-    print()
     print(
         "======================================"
     )
 
     print(
-        " SEO AUDIT COMPLETE"
+        "SEO AUDIT COMPLETE"
     )
 
     print(
@@ -1247,44 +1112,54 @@ def main():
     )
 
     print(
-        f"Tools audited: "
-        f"{len(results)}"
+        f"Total tools: {len(results)}"
     )
 
     print(
         f"Average score: "
-        f"{report['average_score']}%"
+        f"{average_score}/100"
     )
 
-    print()
+    print("")
+
+    print(
+        "Rankings:"
+    )
+
+    print(
+        "--------------------------------------"
+    )
+
 
     for tool in results:
 
         print(
-            f"{tool['rank']:>3}. "
-            f"{tool['name']:<35} "
-            f"{tool['score']:>5}% "
-            f"{tool['grade']}"
+            f"{tool['rank']}. "
+            f"{tool['name']} — "
+            f"{tool['score']}/100 "
+            f"({tool['grade']})"
         )
 
 
-    print()
+    print("")
 
     print(
-        f"JSON report: "
-        f"{JSON_REPORT}"
+        f"Generated: {JSON_FILE}"
     )
 
     print(
-        f"Markdown report: "
-        f"{MARKDOWN_REPORT}"
+        f"Generated: {MARKDOWN_FILE}"
     )
 
-    print()
+    print("")
 
 
     return 0
 
+
+# ============================================================
+# ENTRY POINT
+# ============================================================
 
 if __name__ == "__main__":
 
