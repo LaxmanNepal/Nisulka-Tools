@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-08-12T09:48:01.032252+00:00",
-  "totalTools": 2,
-  "averageScore": 86.5,
+  "generatedAt": "2026-08-12T23:07:00.998471+00:00",
+  "totalTools": 3,
+  "averageScore": 67.7,
   "tools": [
     {
       "name": "Text To Handwriting",
@@ -77,6 +77,44 @@
         "warning": 3
       },
       "rank": 2
+    },
+    {
+      "name": "Youtube Channel Extractor",
+      "slug": "YouTube-Channel-Extractor",
+      "url": "/Nisulka-Tools/tools/YouTube-Channel-Extractor/",
+      "score": 30,
+      "grade": "F",
+      "title": "",
+      "description": "",
+      "wordCount": 4378,
+      "h1Count": 0,
+      "h2Count": 1,
+      "images": 0,
+      "imagesWithoutAlt": 0,
+      "canonical": "",
+      "openGraph": {
+        "title": false,
+        "description": false
+      },
+      "passed": [
+        "H2 headings found",
+        "No images requiring alt text",
+        "Sufficient page content"
+      ],
+      "issues": [
+        "Missing title",
+        "Missing meta description",
+        "Missing H1",
+        "Missing canonical URL",
+        "Missing Open Graph title",
+        "Missing Open Graph description"
+      ],
+      "issueSummary": {
+        "total": 6,
+        "critical": 0,
+        "warning": 6
+      },
+      "rank": 3
     }
   ]
 }
