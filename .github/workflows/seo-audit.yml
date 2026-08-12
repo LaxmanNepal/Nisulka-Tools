@@ -25,17 +25,68 @@ jobs:
 
     steps:
 
+      # ==========================================
+      # 1. Checkout
+      # ==========================================
+
       - name: Checkout repository
         uses: actions/checkout@v4
+
+
+      # ==========================================
+      # 2. Setup Python
+      # ==========================================
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.x"
+          python-version: "3.12"
+
+
+      # ==========================================
+      # 3. Run SEO Auditor
+      # ==========================================
 
       - name: Run SEO auditor
         run: |
+          echo "======================================"
+          echo "RUNNING NISULKA TOOLS SEO AUDITOR"
+          echo "======================================"
+
           python3 seo/seo_auditor.py
+
+
+      # ==========================================
+      # 4. Verify Audit File
+      # ==========================================
+
+      - name: Verify SEO audit
+        run: |
+
+          if [ ! -f "data/seo-audit.json" ]; then
+
+            echo "ERROR:"
+            echo "data/seo-audit.json was not generated."
+
+            echo ""
+            echo "Files inside data/:"
+
+            ls -la data || true
+
+            exit 1
+
+          fi
+
+          echo "SEO audit file successfully generated."
+
+          echo ""
+          echo "File:"
+          ls -lh data/seo-audit.json
+
+
+      # ==========================================
+      # 5. Display Console Summary
+      # ==========================================
 
       - name: Display SEO summary
         run: |
@@ -55,38 +106,51 @@ jobs:
 
               data = json.load(f)
 
+
           print(
-              f"Total tools: {data['totalTools']}"
+              f"Total tools: "
+              f"{data['total_tools']}"
           )
+
 
           print(
               f"Average SEO score: "
-              f"{data['averageScore']}/100"
+              f"{data['average_score']}/100"
           )
+
 
           print()
+          print("Tool rankings:")
+          print("--------------------------------------")
 
-          print(
-              "Tool rankings:"
-          )
-
-          print(
-              "--------------------------------------"
-          )
 
           for index, tool in enumerate(
               data["tools"],
               start=1
           ):
 
+              issues = len(
+                  tool.get(
+                      "recommendations",
+                      []
+                  )
+              )
+
+
               print(
                   f"{index}. "
                   f"{tool['name']} — "
                   f"{tool['score']}/100 "
-                  f"({tool['grade']})"
+                  f"({tool['grade']}) — "
+                  f"{issues} issue(s)"
               )
 
           PY
+
+
+      # ==========================================
+      # 6. GitHub Actions Summary
+      # ==========================================
 
       - name: Create job summary
         run: |
@@ -95,6 +159,7 @@ jobs:
 
           import json
 
+
           with open(
               "data/seo-audit.json",
               encoding="utf-8"
@@ -102,38 +167,48 @@ jobs:
 
               data = json.load(f)
 
-          print("# Nisulka Tools SEO Audit")
+
+          print("# 🔍 Nisulka Tools SEO Audit")
           print()
 
+
           print(
-              f"**Average SEO Score:** "
-              f"{data['averageScore']}/100"
+              f"### Average SEO Score: "
+              f"**{data['average_score']}/100**"
           )
 
           print()
+
 
           print(
               f"**Total Tools:** "
-              f"{data['totalTools']}"
+              f"{data['total_tools']}"
           )
 
           print()
 
+
           print(
-              "| # | Tool | Score | Grade | Issues |"
+              "| Rank | Tool | Score | Grade | Issues |"
           )
 
           print(
               "|---:|---|---:|:---:|---:|"
           )
 
+
           for index, tool in enumerate(
               data["tools"],
               start=1
           ):
 
-              issues =
-                  tool["issueSummary"]["total"]
+              issues = len(
+                  tool.get(
+                      "recommendations",
+                      []
+                  )
+              )
+
 
               print(
                   f"| {index} "
@@ -143,7 +218,50 @@ jobs:
                   f"| {issues} |"
               )
 
+
+          print()
+          print("---")
+          print()
+          print(
+              "## Recommendations"
+          )
+
+          print()
+
+
+          for tool in data["tools"]:
+
+              recommendations = tool.get(
+                  "recommendations",
+                  []
+              )
+
+
+              if not recommendations:
+                  continue
+
+
+              print(
+                  f"### {tool['name']}"
+              )
+
+              print()
+
+
+              for recommendation in recommendations:
+
+                  print(
+                      f"- ⚠️ {recommendation}"
+                  )
+
+              print()
+
           PY
+
+
+      # ==========================================
+      # 7. Check for Changes
+      # ==========================================
 
       - name: Check for changes
         id: changes
@@ -161,6 +279,11 @@ jobs:
 
           fi
 
+
+      # ==========================================
+      # 8. Commit SEO Audit
+      # ==========================================
+
       - name: Commit SEO audit
         if: steps.changes.outputs.changed == 'true'
         run: |
@@ -169,16 +292,25 @@ jobs:
             user.name \
             "github-actions[bot]"
 
+
           git config \
             user.email \
             "41898282+github-actions[bot]@users.noreply.github.com"
 
+
           git add data/seo-audit.json
+
 
           git commit \
             -m "chore: update SEO audit"
 
+
           git push
+
+
+      # ==========================================
+      # 9. No Changes
+      # ==========================================
 
       - name: No audit changes
         if: steps.changes.outputs.changed == 'false'
