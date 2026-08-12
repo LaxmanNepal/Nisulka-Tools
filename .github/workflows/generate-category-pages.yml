@@ -1,0 +1,417 @@
+name: Generate Category Pages
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "data/tools.json"
+      - "assets/css/category.css"
+      - "assets/js/category.js"
+      - ".github/workflows/generate-category-pages.yml"
+
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+
+  generate-category-pages:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate category pages
+        run: |
+
+          python3 <<'PY'
+
+          import json
+          import os
+          import re
+          import html
+
+          DATA_FILE = "data/tools.json"
+          OUTPUT_DIR = "categories"
+
+          with open(
+              DATA_FILE,
+              "r",
+              encoding="utf-8"
+          ) as f:
+
+              tools = json.load(f)
+
+
+          os.makedirs(
+              OUTPUT_DIR,
+              exist_ok=True
+          )
+
+
+          categories = {}
+
+          for tool in tools:
+
+              category = (
+                  tool.get(
+                      "category",
+                      "Other Tools"
+                  )
+                  .strip()
+              )
+
+              if not category:
+                  category = "Other Tools"
+
+              categories.setdefault(
+                  category,
+                  []
+              ).append(tool)
+
+
+          def slugify(text):
+
+              text = text.lower()
+
+              text = re.sub(
+                  r"[^a-z0-9]+",
+                  "-",
+                  text
+              )
+
+              return text.strip("-")
+
+
+          generated = []
+
+
+          for category, category_tools in sorted(
+              categories.items()
+          ):
+
+              category_slug = slugify(
+                  category
+              )
+
+              category_dir = os.path.join(
+                  OUTPUT_DIR,
+                  category_slug
+              )
+
+              os.makedirs(
+                  category_dir,
+                  exist_ok=True
+              )
+
+
+              cards = []
+
+
+              for tool in category_tools:
+
+                  name = html.escape(
+                      tool.get(
+                          "name",
+                          "Unnamed Tool"
+                      )
+                  )
+
+                  description = html.escape(
+                      tool.get(
+                          "description",
+                          "Useful online tool."
+                      )
+                  )
+
+                  logo = html.escape(
+                      tool.get(
+                          "logo",
+                          ""
+                      ),
+                      quote=True
+                  )
+
+                  url = html.escape(
+                      tool.get(
+                          "url",
+                          "#"
+                      ),
+                      quote=True
+                  )
+
+
+                  cards.append(
+                      f"""
+                      <article class="category-tool-card">
+
+                          <a
+                              href="{url}"
+                              class="category-tool-link"
+                          >
+
+                              <div class="category-tool-logo">
+
+                                  <img
+                                      src="{logo}"
+                                      alt=""
+                                      loading="lazy"
+                                  >
+
+                              </div>
+
+                              <div class="category-tool-content">
+
+                                  <h2>
+                                      {name}
+                                  </h2>
+
+                                  <p>
+                                      {description}
+                                  </p>
+
+                              </div>
+
+                          </a>
+
+                      </article>
+                      """
+                  )
+
+
+              page_title = (
+                  f"{category} — Free Online Tools | "
+                  f"Nisulka Tools"
+              )
+
+
+              page_description = (
+                  f"Explore free {category.lower()} "
+                  f"available on Nisulka Tools. "
+                  f"Fast, simple and easy-to-use "
+                  f"online tools."
+              )
+
+
+              cards_html = "\n".join(
+                  cards
+              )
+
+
+              page = f"""<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>
+    {html.escape(page_title)}
+</title>
+
+<meta
+    name="description"
+    content="{html.escape(page_description)}"
+>
+
+<meta
+    name="robots"
+    content="index, follow"
+>
+
+<link
+    rel="canonical"
+    href="https://apps.laxmannepal.com.np/Nisulka-Tools/categories/{category_slug}/"
+>
+
+<link
+    rel="stylesheet"
+    href="../../assets/css/variables.css"
+>
+
+<link
+    rel="stylesheet"
+    href="../../assets/css/global.css"
+>
+
+<link
+    rel="stylesheet"
+    href="../../assets/css/components.css"
+>
+
+<link
+    rel="stylesheet"
+    href="../../assets/css/header.css"
+>
+
+<link
+    rel="stylesheet"
+    href="../../assets/css/footer.css"
+>
+
+<link
+    rel="stylesheet"
+    href="../../assets/css/category.css"
+>
+
+</head>
+
+
+<body>
+
+
+<div id="site-header-mount"></div>
+
+
+<main class="category-page">
+
+
+<section class="category-hero">
+
+<div class="container">
+
+<nav
+    class="breadcrumb"
+    aria-label="Breadcrumb"
+>
+
+<a href="../../">
+    Home
+</a>
+
+<span>
+    /
+</span>
+
+<span aria-current="page">
+    {html.escape(category)}
+</span>
+
+</nav>
+
+
+<span class="badge badge-primary">
+    Nisulka Tools
+</span>
+
+
+<h1>
+    {html.escape(category)}
+</h1>
+
+
+<p>
+    Explore {len(category_tools)}
+    free online
+    {html.escape(category.lower())}
+    tools.
+</p>
+
+</div>
+
+</section>
+
+
+<section class="section">
+
+<div class="container">
+
+<div class="category-tools-grid">
+
+{cards_html}
+
+</div>
+
+</div>
+
+</section>
+
+
+</main>
+
+
+<div id="site-footer-mount"></div>
+
+
+<script src="../../assets/js/header.js"></script>
+
+<script src="../../assets/js/footer.js"></script>
+
+<script src="../../assets/js/category.js"></script>
+
+</body>
+
+</html>
+"""
+
+
+              index_path = os.path.join(
+                  category_dir,
+                  "index.html"
+              )
+
+
+              with open(
+                  index_path,
+                  "w",
+                  encoding="utf-8"
+              ) as f:
+
+                  f.write(page)
+
+
+              generated.append(
+                  category
+              )
+
+
+              print(
+                  f"Generated category: "
+                  f"{category}"
+              )
+
+
+          print()
+          print(
+              f"Generated {len(generated)} category pages."
+          )
+
+          PY
+
+
+      - name: Commit category pages
+        run: |
+
+          git config \
+            user.name \
+            "github-actions[bot]"
+
+          git config \
+            user.email \
+            "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add categories/
+
+          if git diff --cached --quiet; then
+
+            echo "No category changes."
+
+          else
+
+            git commit \
+              -m "chore: update category pages"
+
+            git push
+
+          fi
