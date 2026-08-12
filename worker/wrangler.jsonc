@@ -1,0 +1,20 @@
+{
+  "name": "nisulka-tools-admin-api",
+  "main": "src/index.js",
+  "compatibility_date": "2026-08-12",
+
+  "vars": {
+    "GITHUB_OWNER": "LaxmanNepal",
+    "GITHUB_REPO": "Nisulka-Tools",
+    "GITHUB_WORKFLOW": "seo-audit.yml",
+    "GITHUB_BRANCH": "main",
+    "ALLOWED_ORIGIN": "https://apps.laxmannepal.com.np"
+  },
+
+  "kv_namespaces": [
+    {
+      "binding": "AUDIT_KV",
+      "id": "REPLACE_WITH_YOUR_KV_ID"
+    }
+  ]
+}
