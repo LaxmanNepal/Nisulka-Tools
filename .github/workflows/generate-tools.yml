@@ -6,7 +6,6 @@ on:
       - main
     paths:
       - "tools/**"
-      - "category-template.html"
       - ".github/workflows/generate-tools.yml"
 
   workflow_dispatch:
@@ -15,13 +14,14 @@ permissions:
   contents: write
 
 jobs:
-  generate-tools:
+  generate:
+    name: Generate tools.json and category pages
     runs-on: ubuntu-latest
 
     steps:
 
       # ==========================================
-      # 1. CHECKOUT
+      # CHECKOUT
       # ==========================================
 
       - name: Checkout repository
@@ -31,34 +31,28 @@ jobs:
 
 
       # ==========================================
-      # 2. GENERATE TOOLS.JSON + CATEGORY PAGES
+      # GENERATE
       # ==========================================
 
-      - name: Generate tools data and category pages
+      - name: Generate tools data and categories
+        shell: bash
         run: |
 
           python3 <<'PY'
 
           import os
-          import json
           import re
+          import json
           import html
           import shutil
           from datetime import datetime, timezone
 
 
-          # ==========================================
-          # CONFIGURATION
-          # ==========================================
-
           TOOLS_DIR = "tools"
           DATA_DIR = "data"
           CATEGORY_DIR = "category"
 
-          OUTPUT_FILE = os.path.join(
-              DATA_DIR,
-              "tools.json"
-          )
+          TOOLS_JSON = "data/tools.json"
 
           BASE_URL = (
               "https://apps.laxmannepal.com.np/"
@@ -89,7 +83,7 @@ jobs:
               return value.strip("-")
 
 
-          def escape_html(value):
+          def escape(value):
 
               return html.escape(
                   str(value),
@@ -101,15 +95,9 @@ jobs:
 
               patterns = [
 
-                  rf'<meta\s+name=["\']'
-                  rf'{re.escape(name)}'
-                  rf'["\']\s+content=["\']'
-                  rf'(.*?)["\']',
+                  rf'<meta\s+name=["\']{re.escape(name)}["\']\s+content=["\'](.*?)["\']',
 
-                  rf'<meta\s+content=["\']'
-                  rf'(.*?)["\']\s+name=["\']'
-                  rf'{re.escape(name)}'
-                  rf'["\']'
+                  rf'<meta\s+content=["\'](.*?)["\']\s+name=["\']{re.escape(name)}["\']'
 
               ]
 
@@ -124,17 +112,21 @@ jobs:
 
                   if match:
 
-                      return (
-                          match.group(1)
-                          .strip()
-                      )
+                      return match.group(1).strip()
 
               return ""
 
 
           # ==========================================
-          # PREPARE DIRECTORIES
+          # CHECK TOOLS DIRECTORY
           # ==========================================
+
+          if not os.path.isdir(TOOLS_DIR):
+
+              print("ERROR: tools/ directory does not exist.")
+
+              raise SystemExit(1)
+
 
           os.makedirs(
               DATA_DIR,
@@ -154,25 +146,28 @@ jobs:
           tools = []
 
 
-          if not os.path.isdir(TOOLS_DIR):
-
-              print(
-                  "ERROR: tools directory not found."
-              )
-
-              raise SystemExit(1)
-
-
-          for tool_slug in sorted(
+          tool_directories = sorted(
               os.listdir(TOOLS_DIR)
-          ):
+          )
+
+
+          print()
+          print("==========================================")
+          print("NISULKA TOOLS SCANNER")
+          print("==========================================")
+          print()
+
+
+          for slug in tool_directories:
 
               tool_dir = os.path.join(
                   TOOLS_DIR,
-                  tool_slug
+                  slug
               )
 
+
               if not os.path.isdir(tool_dir):
+
                   continue
 
 
@@ -181,47 +176,47 @@ jobs:
                   "index.html"
               )
 
+
               logo_file = os.path.join(
                   tool_dir,
                   "logo.jpg"
               )
 
 
-              # ------------------------------------------
-              # index.html required
-              # ------------------------------------------
+              print(
+                  f"Checking: {slug}"
+              )
 
-              if not os.path.isfile(
-                  index_file
-              ):
+
+              # --------------------------------------
+              # INDEX
+              # --------------------------------------
+
+              if not os.path.isfile(index_file):
 
                   print(
-                      f"Skipping {tool_slug}: "
-                      "index.html missing"
+                      f"  SKIP: index.html missing"
                   )
 
                   continue
 
 
-              # ------------------------------------------
-              # logo.jpg required
-              # ------------------------------------------
+              # --------------------------------------
+              # LOGO
+              # --------------------------------------
 
-              if not os.path.isfile(
-                  logo_file
-              ):
+              if not os.path.isfile(logo_file):
 
                   print(
-                      f"Skipping {tool_slug}: "
-                      "logo.jpg missing"
+                      f"  SKIP: logo.jpg missing"
                   )
 
                   continue
 
 
-              # ------------------------------------------
+              # --------------------------------------
               # READ HTML
-              # ------------------------------------------
+              # --------------------------------------
 
               with open(
                   index_file,
@@ -232,9 +227,9 @@ jobs:
                   content = file.read()
 
 
-              # ------------------------------------------
-              # READ TOOL METADATA
-              # ------------------------------------------
+              # --------------------------------------
+              # METADATA
+              # --------------------------------------
 
               name = get_meta(
                   content,
@@ -254,7 +249,7 @@ jobs:
               featured = get_meta(
                   content,
                   "tool:featured"
-              ).lower()
+              )
 
               keywords = get_meta(
                   content,
@@ -264,17 +259,17 @@ jobs:
               status = get_meta(
                   content,
                   "tool:status"
-              ).lower()
+              )
 
 
-              # ------------------------------------------
-              # DEFAULTS
-              # ------------------------------------------
+              # --------------------------------------
+              # DEFAULT VALUES
+              # --------------------------------------
 
               if not name:
 
                   name = (
-                      tool_slug
+                      slug
                       .replace("-", " ")
                       .title()
                   )
@@ -283,8 +278,7 @@ jobs:
               if not description:
 
                   description = (
-                      f"Free online "
-                      f"{name} tool."
+                      f"Free online {name} tool."
                   )
 
 
@@ -298,45 +292,51 @@ jobs:
                   status = "active"
 
 
-              # ------------------------------------------
-              # HIDDEN TOOL
-              # ------------------------------------------
+              status = status.lower()
+
+
+              # --------------------------------------
+              # HIDDEN
+              # --------------------------------------
 
               if status == "hidden":
 
                   print(
-                      f"Skipping hidden tool: "
-                      f"{tool_slug}"
+                      "  SKIP: hidden"
                   )
 
                   continue
 
 
-              # ------------------------------------------
+              # --------------------------------------
               # CATEGORY SLUG
-              # ------------------------------------------
+              # --------------------------------------
 
               category_slug = slugify(
                   category
               )
 
 
-              # ------------------------------------------
+              # --------------------------------------
               # FEATURED
-              # ------------------------------------------
+              # --------------------------------------
 
-              featured_value = featured in [
-                  "true",
-                  "1",
-                  "yes"
-              ]
+              featured_value = (
+                  featured.lower()
+                  in [
+                      "true",
+                      "1",
+                      "yes"
+                  ]
+              )
 
 
-              # ------------------------------------------
+              # --------------------------------------
               # KEYWORDS
-              # ------------------------------------------
+              # --------------------------------------
 
               keyword_list = []
+
 
               if keywords:
 
@@ -352,15 +352,15 @@ jobs:
                   ]
 
 
-              # ------------------------------------------
-              # TOOL DATA
-              # ------------------------------------------
+              # --------------------------------------
+              # TOOL OBJECT
+              # --------------------------------------
 
               tool = {
 
                   "name": name,
 
-                  "slug": tool_slug,
+                  "slug": slug,
 
                   "description": description,
 
@@ -370,12 +370,12 @@ jobs:
 
                   "logo": (
                       f"/Nisulka-Tools/"
-                      f"tools/{tool_slug}/logo.jpg"
+                      f"tools/{slug}/logo.jpg"
                   ),
 
                   "url": (
                       f"/Nisulka-Tools/"
-                      f"tools/{tool_slug}/"
+                      f"tools/{slug}/"
                   ),
 
                   "keywords": keyword_list,
@@ -391,8 +391,11 @@ jobs:
 
 
               print(
-                  f"Added: {name} "
-                  f"[{category}]"
+                  f"  OK: {name}"
+              )
+
+              print(
+                  f"  Category: {category}"
               )
 
 
@@ -401,7 +404,7 @@ jobs:
           # ==========================================
 
           with open(
-              OUTPUT_FILE,
+              TOOLS_JSON,
               "w",
               encoding="utf-8"
           ) as file:
@@ -418,7 +421,7 @@ jobs:
 
           print()
           print(
-              f"Generated {OUTPUT_FILE}"
+              f"Generated {TOOLS_JSON}"
           )
 
           print(
@@ -427,7 +430,7 @@ jobs:
 
 
           # ==========================================
-          # BUILD CATEGORY LIST
+          # CREATE CATEGORY GROUPS
           # ==========================================
 
           categories = {}
@@ -435,29 +438,27 @@ jobs:
 
           for tool in tools:
 
-              category_slug = (
-                  tool["categorySlug"]
-              )
+              slug = tool["categorySlug"]
 
-              if category_slug not in categories:
 
-                  categories[
-                      category_slug
-                  ] = {
+              if slug not in categories:
+
+                  categories[slug] = {
 
                       "name":
                           tool["category"],
 
                       "slug":
-                          category_slug,
+                          slug,
 
-                      "tools": []
+                      "tools":
+                          []
 
                   }
 
 
               categories[
-                  category_slug
+                  slug
               ]["tools"].append(tool)
 
 
@@ -469,48 +470,46 @@ jobs:
 
 
           # ==========================================
-          # CATEGORY PAGE TEMPLATE
+          # GENERATE CATEGORY PAGES
           # ==========================================
 
-          for category_slug, category_data in categories.items():
+          for category_slug, category in categories.items():
 
-              category_name = (
-                  category_data["name"]
-              )
+              category_name = category["name"]
 
-              category_tools = (
-                  category_data["tools"]
-              )
+              category_tools = category["tools"]
 
 
-              category_path = os.path.join(
+              category_directory = os.path.join(
                   CATEGORY_DIR,
                   category_slug
               )
 
 
               os.makedirs(
-                  category_path,
+                  category_directory,
                   exist_ok=True
               )
 
 
-              page_file = os.path.join(
-                  category_path,
+              output_file = os.path.join(
+                  category_directory,
                   "index.html"
               )
 
 
-              title = (
+              page_title = (
                   f"Free {category_name} "
                   f"Online — Nisulka Tools"
               )
 
 
-              description = (
-                  f"Explore free {category_name.lower()} "
-                  f"on Nisulka Tools. Fast, simple and "
-                  f"easy-to-use online tools for everyday tasks."
+              page_description = (
+                  f"Explore free "
+                  f"{category_name.lower()} "
+                  f"on Nisulka Tools. "
+                  f"Fast, simple and easy-to-use "
+                  f"online tools for everyday tasks."
               )
 
 
@@ -520,71 +519,69 @@ jobs:
               )
 
 
-              # ------------------------------------------
-              # GENERATE TOOL CARDS
-              # ------------------------------------------
+              # ======================================
+              # TOOL CARDS
+              # ======================================
 
               cards = []
 
 
               for tool in category_tools:
 
-                  tool_name = escape_html(
+                  tool_name = escape(
                       tool["name"]
                   )
 
-                  tool_description = escape_html(
+                  tool_description = escape(
                       tool["description"]
                   )
 
-                  tool_url = escape_html(
+                  tool_url = escape(
                       tool["url"]
                   )
 
-                  tool_logo = escape_html(
+                  tool_logo = escape(
                       tool["logo"]
                   )
 
 
                   card = f"""
-                  <article class="category-tool-card">
+<article class="tool-card">
 
-                      <a
-                          href="{tool_url}"
-                          class="category-tool-link"
-                          aria-label="Open {tool_name}"
-                      >
+    <a
+        href="{tool_url}"
+        class="tool-card-link"
+    >
 
-                          <div class="category-tool-logo-wrapper">
+        <div class="tool-logo-box">
 
-                              <img
-                                  src="{tool_logo}"
-                                  alt="{tool_name}"
-                                  class="category-tool-logo"
-                                  loading="lazy"
-                                  width="180"
-                                  height="180"
-                              >
+            <img
+                src="{tool_logo}"
+                alt="{tool_name}"
+                class="tool-logo"
+                loading="lazy"
+                width="220"
+                height="220"
+            >
 
-                          </div>
+        </div>
 
+        <div class="tool-card-content">
 
-                          <div class="category-tool-content">
+            <h2>
+                {tool_name}
+            </h2>
 
-                              <h2>
-                                  {tool_name}
-                              </h2>
+            <p>
+                {tool_description}
+            </p>
 
-                              <p>
-                                  {tool_description}
-                              </p>
+        </div>
 
-                          </div>
+    </a>
 
-                      </a>
-
-                  </article>
-                  """
+</article>
+"""
 
                   cards.append(card)
 
@@ -594,11 +591,12 @@ jobs:
               )
 
 
-              # ------------------------------------------
-              # JSON-LD ITEM LIST
-              # ------------------------------------------
+              # ======================================
+              # ITEM LIST JSON-LD
+              # ======================================
 
               item_list = []
+
 
               for position, tool in enumerate(
                   category_tools,
@@ -623,7 +621,7 @@ jobs:
                   })
 
 
-              json_ld = {
+              schema = {
 
                   "@context":
                       "https://schema.org",
@@ -632,10 +630,10 @@ jobs:
                       "CollectionPage",
 
                   "name":
-                      title,
+                      page_title,
 
                   "description":
-                      description,
+                      page_description,
 
                   "url":
                       canonical,
@@ -657,18 +655,16 @@ jobs:
               }
 
 
-              json_ld_html = (
-                  json.dumps(
-                      json_ld,
-                      ensure_ascii=False,
-                      indent=2
-                  )
+              schema_html = json.dumps(
+                  schema,
+                  ensure_ascii=False,
+                  indent=2
               )
 
 
-              # ------------------------------------------
-              # CATEGORY PAGE
-              # ------------------------------------------
+              # ======================================
+              # CATEGORY HTML
+              # ======================================
 
               page = f"""<!DOCTYPE html>
 
@@ -684,12 +680,12 @@ jobs:
     >
 
     <title>
-        {escape_html(title)}
+        {escape(page_title)}
     </title>
 
     <meta
         name="description"
-        content="{escape_html(description)}"
+        content="{escape(page_description)}"
     >
 
     <meta
@@ -714,12 +710,12 @@ jobs:
 
     <meta
         property="og:title"
-        content="{escape_html(title)}"
+        content="{escape(page_title)}"
     >
 
     <meta
         property="og:description"
-        content="{escape_html(description)}"
+        content="{escape(page_description)}"
     >
 
     <meta
@@ -768,205 +764,343 @@ jobs:
         href="../../assets/css/footer.css"
     >
 
+
     <style>
+
+        * {{
+            box-sizing: border-box;
+        }}
+
+
+        body {{
+            margin: 0;
+
+            font-family:
+                "Poppins",
+                sans-serif;
+
+            background:
+                #ffffff;
+
+            color:
+                #111827;
+        }}
+
 
         .category-page {{
             padding:
-                2rem 0 5rem;
+                30px 0 80px;
         }}
 
 
-        .category-hero {{
-            text-align: center;
-            max-width: 850px;
-            margin: 0 auto 3rem;
-        }}
-
-
-        .category-hero h1 {{
-            margin:
-                1rem 0 1rem;
-
-            font-size:
-                clamp(2rem, 5vw, 3.5rem);
-
-            line-height: 1.15;
-        }}
-
-
-        .category-hero p {{
-            color:
-                var(--text-secondary);
-
-            line-height: 1.8;
-
-            max-width: 700px;
+        .container {{
+            width:
+                min(
+                    92%,
+                    1200px
+                );
 
             margin:
                 0 auto;
         }}
 
 
-        .category-meta {{
-            margin-top: 1rem;
+        .breadcrumb {{
+            display:
+                flex;
 
-            color:
-                var(--text-muted);
+            gap:
+                10px;
+
+            margin-bottom:
+                40px;
 
             font-size:
-                var(--font-size-sm);
+                14px;
+
+            color:
+                #6b7280;
         }}
 
 
-        .category-tools-grid {{
-            display: grid;
+        .breadcrumb a {{
+            color:
+                #2563eb;
+
+            text-decoration:
+                none;
+        }}
+
+
+        .category-hero {{
+            text-align:
+                center;
+
+            max-width:
+                800px;
+
+            margin:
+                0 auto 55px;
+        }}
+
+
+        .category-hero h1 {{
+            margin:
+                15px 0;
+
+            font-size:
+                clamp(
+                    2rem,
+                    5vw,
+                    3.5rem
+                );
+
+            line-height:
+                1.15;
+        }}
+
+
+        .category-hero p {{
+            margin:
+                0 auto;
+
+            max-width:
+                700px;
+
+            color:
+                #6b7280;
+
+            line-height:
+                1.8;
+        }}
+
+
+        .tool-count {{
+            margin-top:
+                15px;
+
+            font-size:
+                14px;
+
+            color:
+                #9ca3af;
+        }}
+
+
+        .tools-grid {{
+            display:
+                grid;
 
             grid-template-columns:
                 repeat(
-                    auto-fit,
+                    4,
                     minmax(
-                        240px,
+                        0,
                         1fr
                     )
                 );
 
-            gap: 1.5rem;
+            gap:
+                24px;
         }}
 
 
-        .category-tool-card {{
-            overflow: hidden;
+        .tool-card {{
+            overflow:
+                hidden;
+
+            background:
+                #ffffff;
 
             border:
                 1px solid
-                var(--border-color);
+                #e5e7eb;
 
             border-radius:
-                var(--radius-lg);
-
-            background:
-                var(--bg-surface);
+                18px;
 
             transition:
-                transform 0.2s ease,
-                box-shadow 0.2s ease,
-                border-color 0.2s ease;
+                transform .2s ease,
+                box-shadow .2s ease,
+                border-color .2s ease;
         }}
 
 
-        .category-tool-card:hover {{
+        .tool-card:hover {{
             transform:
                 translateY(-5px);
 
+            border-color:
+                #d1d5db;
+
             box-shadow:
-                0 12px 30px
-                rgba(0,0,0,0.08);
+                0 15px 35px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    0.08
+                );
         }}
 
 
-        .category-tool-link {{
-            display: block;
+        .tool-card-link {{
+            display:
+                block;
 
-            height: 100%;
+            color:
+                inherit;
 
-            text-decoration: none;
-
-            color: inherit;
+            text-decoration:
+                none;
         }}
 
 
-        .category-tool-logo-wrapper {{
-            width: 100%;
+        .tool-logo-box {{
+            aspect-ratio:
+                1 / 1;
 
-            aspect-ratio: 1 / 1;
+            display:
+                flex;
 
-            display: flex;
+            align-items:
+                center;
 
-            align-items: center;
+            justify-content:
+                center;
 
-            justify-content: center;
-
-            padding: 2rem;
+            padding:
+                25px;
 
             background:
                 #f8fafc;
         }}
 
 
-        .category-tool-logo {{
-            width: 100%;
+        .tool-logo {{
+            width:
+                100%;
 
-            height: 100%;
+            height:
+                100%;
 
-            object-fit: contain;
+            object-fit:
+                contain;
 
             border-radius:
-                1rem;
+                14px;
         }}
 
 
-        .category-tool-content {{
+        .tool-card-content {{
             padding:
-                1.25rem;
+                20px;
         }}
 
 
-        .category-tool-content h2 {{
+        .tool-card-content h2 {{
             margin:
-                0 0 0.5rem;
+                0 0 8px;
 
             font-size:
-                1.1rem;
+                18px;
+
+            line-height:
+                1.4;
         }}
 
 
-        .category-tool-content p {{
-            margin: 0;
+        .tool-card-content p {{
+            margin:
+                0;
 
             color:
-                var(--text-secondary);
-
-            line-height: 1.6;
+                #6b7280;
 
             font-size:
-                var(--font-size-sm);
+                14px;
+
+            line-height:
+                1.6;
+
+            display:
+                -webkit-box;
+
+            -webkit-line-clamp:
+                3;
+
+            -webkit-box-orient:
+                vertical;
+
+            overflow:
+                hidden;
         }}
 
 
-        .category-breadcrumb {{
-            margin-bottom: 2rem;
-        }}
+        @media (max-width: 1000px) {{
 
-
-        @media (max-width: 640px) {{
-
-            .category-page {{
-                padding-top: 1rem;
-            }}
-
-            .category-tools-grid {{
+            .tools-grid {{
                 grid-template-columns:
-                    repeat(2, minmax(0, 1fr));
-
-                gap: 0.8rem;
+                    repeat(
+                        3,
+                        minmax(
+                            0,
+                            1fr
+                        )
+                    );
             }}
 
-            .category-tool-logo-wrapper {{
-                padding: 1rem;
+        }}
+
+
+        @media (max-width: 700px) {{
+
+            .tools-grid {{
+                grid-template-columns:
+                    repeat(
+                        2,
+                        minmax(
+                            0,
+                            1fr
+                        )
+                    );
+
+                gap:
+                    12px;
             }}
 
-            .category-tool-content {{
-                padding: 0.85rem;
+
+            .tool-logo-box {{
+                padding:
+                    15px;
             }}
 
-            .category-tool-content h2 {{
+
+            .tool-card-content {{
+                padding:
+                    13px;
+            }}
+
+
+            .tool-card-content h2 {{
                 font-size:
-                    0.95rem;
+                    15px;
             }}
 
-            .category-tool-content p {{
+
+            .tool-card-content p {{
                 font-size:
-                    0.78rem;
+                    12px;
+            }}
+
+        }}
+
+
+        @media (max-width: 420px) {{
+
+            .tools-grid {{
+                grid-template-columns:
+                    1fr;
             }}
 
         }}
@@ -975,7 +1109,7 @@ jobs:
 
 
     <script type="application/ld+json">
-{json_ld_html}
+{schema_html}
     </script>
 
 </head>
@@ -993,7 +1127,7 @@ jobs:
 
 
         <nav
-            class="breadcrumb category-breadcrumb"
+            class="breadcrumb"
             aria-label="Breadcrumb"
         >
 
@@ -1001,66 +1135,39 @@ jobs:
                 Home
             </a>
 
-            <span
-                aria-hidden="true"
-            >
+            <span>
                 /
             </span>
 
-            <span aria-current="page">
-                {escape_html(category_name)}
+            <span>
+                {escape(category_name)}
             </span>
 
         </nav>
 
 
-        <section
-            class="category-hero"
-            aria-labelledby="category-title"
-        >
+        <section class="category-hero">
 
-            <span class="badge badge-primary">
-                Nisulka Tools
-            </span>
-
-            <h1 id="category-title">
-                Free {escape_html(category_name)} Online
+            <h1>
+                Free {escape(category_name)} Online
             </h1>
 
             <p>
-                {escape_html(description)}
+                {escape(page_description)}
             </p>
 
-            <div class="category-meta">
+            <div class="tool-count">
                 {len(category_tools)}
-                { "tool" if len(category_tools) == 1 else "tools" }
+                {"tool" if len(category_tools) == 1 else "tools"}
                 available
             </div>
 
         </section>
 
 
-        <section
-            aria-labelledby="tools-title"
-        >
+        <section>
 
-            <div class="section-header">
-
-                <h2
-                    id="tools-title"
-                    class="section-title"
-                >
-                    {escape_html(category_name)}
-                </h2>
-
-                <p class="section-description">
-                    Choose a tool below to get started.
-                </p>
-
-            </div>
-
-
-            <div class="category-tools-grid">
+            <div class="tools-grid">
 
                 {cards_html}
 
@@ -1089,7 +1196,7 @@ jobs:
 
 
               with open(
-                  page_file,
+                  output_file,
                   "w",
                   encoding="utf-8"
               ) as file:
@@ -1098,13 +1205,13 @@ jobs:
 
 
               print(
-                  f"Generated category: "
-                  f"/category/{category_slug}/"
+                  f"Generated: "
+                  f"{output_file}"
               )
 
 
           # ==========================================
-          # REMOVE OLD EMPTY CATEGORY DIRECTORIES
+          # REMOVE OLD CATEGORY PAGES
           # ==========================================
 
           valid_categories = set(
@@ -1112,93 +1219,97 @@ jobs:
           )
 
 
-          for existing in os.listdir(
+          for directory in os.listdir(
               CATEGORY_DIR
           ):
 
-              existing_path = os.path.join(
+              path = os.path.join(
                   CATEGORY_DIR,
-                  existing
+                  directory
               )
 
-              if not os.path.isdir(
-                  existing_path
-              ):
 
+              if not os.path.isdir(path):
                   continue
 
 
-              if existing not in valid_categories:
+              if directory not in valid_categories:
 
                   print(
                       f"Removing old category: "
-                      f"{existing}"
+                      f"{directory}"
                   )
 
-                  shutil.rmtree(
-                      existing_path
-                  )
+                  shutil.rmtree(path)
 
 
           # ==========================================
-          # COMPLETE
+          # FINISHED
           # ==========================================
 
           print()
-          print(
-              "======================================"
-          )
-
-          print(
-              "NISULKA TOOLS GENERATION COMPLETE"
-          )
-
-          print(
-              "======================================"
-          )
-
+          print("==========================================")
+          print("GENERATION COMPLETE")
+          print("==========================================")
           print(
               f"Tools: {len(tools)}"
           )
-
           print(
               f"Categories: {len(categories)}"
           )
-
           print(
-              f"Generated at: "
+              f"Generated: "
               f"{datetime.now(timezone.utc).isoformat()}"
           )
+          print("==========================================")
+
 
           PY
 
 
       # ==========================================
-      # 3. CHECK CHANGES
+      # SHOW GENERATED FILES
       # ==========================================
 
-      - name: Check for changes
+      - name: Show generated files
+        run: |
+
+          echo "===== tools.json ====="
+
+          cat data/tools.json
+
+          echo ""
+          echo "===== CATEGORY PAGES ====="
+
+          find category \
+            -type f \
+            -name "index.html" \
+            -print
+
+
+      # ==========================================
+      # DETECT CHANGES
+      # ==========================================
+
+      - name: Check generated changes
         id: changes
         run: |
 
-          if git diff --quiet -- \
-            data/tools.json \
-            category
-          then
+          if [[ -n "$(git status --porcelain)" ]]; then
 
-            echo "changed=false" \
+            echo "changed=true" \
               >> "$GITHUB_OUTPUT"
 
           else
 
-            echo "changed=true" \
+            echo "changed=false" \
               >> "$GITHUB_OUTPUT"
 
           fi
 
 
       # ==========================================
-      # 4. COMMIT
+      # COMMIT
       # ==========================================
 
       - name: Commit generated files
@@ -1220,19 +1331,18 @@ jobs:
 
 
           git commit \
-            -m "chore: generate tools and category pages"
+            -m "chore: update tools data and category pages"
 
 
           git push
 
 
       # ==========================================
-      # 5. NO CHANGES
+      # NOTHING TO UPDATE
       # ==========================================
 
-      - name: No changes required
+      - name: No changes
         if: steps.changes.outputs.changed == 'false'
         run: |
 
-          echo \
-            "Tools data and category pages are already up to date."
+          echo "Everything is already up to date."
