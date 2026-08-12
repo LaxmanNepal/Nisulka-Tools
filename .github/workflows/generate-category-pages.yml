@@ -6,8 +6,6 @@ on:
       - main
     paths:
       - "data/tools.json"
-      - "assets/css/category.css"
-      - "assets/js/category.js"
       - ".github/workflows/generate-category-pages.yml"
 
   workflow_dispatch:
@@ -16,7 +14,6 @@ permissions:
   contents: write
 
 jobs:
-
   generate-category-pages:
 
     runs-on: ubuntu-latest
@@ -39,32 +36,36 @@ jobs:
           DATA_FILE = "data/tools.json"
           OUTPUT_DIR = "categories"
 
+          print("======================================")
+          print("NISULKA TOOLS CATEGORY GENERATOR")
+          print("======================================")
+
+          if not os.path.isfile(DATA_FILE):
+              print("ERROR: data/tools.json not found.")
+              raise SystemExit(1)
+
           with open(
               DATA_FILE,
               "r",
               encoding="utf-8"
           ) as f:
-
               tools = json.load(f)
-
 
           os.makedirs(
               OUTPUT_DIR,
               exist_ok=True
           )
 
-
           categories = {}
 
           for tool in tools:
 
-              category = (
+              category = str(
                   tool.get(
                       "category",
                       "Other Tools"
                   )
-                  .strip()
-              )
+              ).strip()
 
               if not category:
                   category = "Other Tools"
@@ -74,6 +75,9 @@ jobs:
                   []
               ).append(tool)
 
+          print(
+              f"Found {len(categories)} categories."
+          )
 
           def slugify(text):
 
@@ -87,17 +91,13 @@ jobs:
 
               return text.strip("-")
 
-
           generated = []
 
+          for category in sorted(categories):
 
-          for category, category_tools in sorted(
-              categories.items()
-          ):
+              category_tools = categories[category]
 
-              category_slug = slugify(
-                  category
-              )
+              category_slug = slugify(category)
 
               category_dir = os.path.join(
                   OUTPUT_DIR,
@@ -109,86 +109,91 @@ jobs:
                   exist_ok=True
               )
 
-
               cards = []
-
 
               for tool in category_tools:
 
                   name = html.escape(
-                      tool.get(
-                          "name",
-                          "Unnamed Tool"
+                      str(
+                          tool.get(
+                              "name",
+                              "Unnamed Tool"
+                          )
                       )
                   )
 
                   description = html.escape(
-                      tool.get(
-                          "description",
-                          "Useful online tool."
+                      str(
+                          tool.get(
+                              "description",
+                              "Useful online tool."
+                          )
                       )
                   )
 
                   logo = html.escape(
-                      tool.get(
-                          "logo",
-                          ""
+                      str(
+                          tool.get(
+                              "logo",
+                              ""
+                          )
                       ),
                       quote=True
                   )
 
                   url = html.escape(
-                      tool.get(
-                          "url",
-                          "#"
+                      str(
+                          tool.get(
+                              "url",
+                              "#"
+                          )
                       ),
                       quote=True
                   )
 
-
                   cards.append(
                       f"""
-                      <article class="category-tool-card">
+<article class="category-tool-card">
 
-                          <a
-                              href="{url}"
-                              class="category-tool-link"
-                          >
+    <a
+        href="{url}"
+        class="category-tool-link"
+    >
 
-                              <div class="category-tool-logo">
+        <div class="category-tool-logo">
 
-                                  <img
-                                      src="{logo}"
-                                      alt=""
-                                      loading="lazy"
-                                  >
+            <img
+                src="{logo}"
+                alt=""
+                loading="lazy"
+            >
 
-                              </div>
+        </div>
 
-                              <div class="category-tool-content">
+        <div class="category-tool-content">
 
-                                  <h2>
-                                      {name}
-                                  </h2>
+            <h2>
+                {name}
+            </h2>
 
-                                  <p>
-                                      {description}
-                                  </p>
+            <p>
+                {description}
+            </p>
 
-                              </div>
+        </div>
 
-                          </a>
+    </a>
 
-                      </article>
-                      """
+</article>
+"""
                   )
 
+              cards_html = "\n".join(cards)
 
               page_title = (
                   f"{category} — Free Online Tools | "
                   f"Nisulka Tools"
               )
-
 
               page_description = (
                   f"Explore free {category.lower()} "
@@ -196,12 +201,6 @@ jobs:
                   f"Fast, simple and easy-to-use "
                   f"online tools."
               )
-
-
-              cards_html = "\n".join(
-                  cards
-              )
-
 
               page = f"""<!DOCTYPE html>
 
@@ -217,7 +216,7 @@ jobs:
 >
 
 <title>
-    {html.escape(page_title)}
+{html.escape(page_title)}
 </title>
 
 <meta
@@ -267,15 +266,11 @@ jobs:
 
 </head>
 
-
 <body>
-
 
 <div id="site-header-mount"></div>
 
-
 <main class="category-page">
-
 
 <section class="category-hero">
 
@@ -300,16 +295,13 @@ jobs:
 
 </nav>
 
-
 <span class="badge badge-primary">
     Nisulka Tools
 </span>
 
-
 <h1>
     {html.escape(category)}
 </h1>
-
 
 <p>
     Explore {len(category_tools)}
@@ -321,7 +313,6 @@ jobs:
 </div>
 
 </section>
-
 
 <section class="section">
 
@@ -337,17 +328,12 @@ jobs:
 
 </section>
 
-
 </main>
-
 
 <div id="site-footer-mount"></div>
 
-
 <script src="../../assets/js/header.js"></script>
-
 <script src="../../assets/js/footer.js"></script>
-
 <script src="../../assets/js/category.js"></script>
 
 </body>
@@ -355,40 +341,39 @@ jobs:
 </html>
 """
 
-
-              index_path = os.path.join(
+              index_file = os.path.join(
                   category_dir,
                   "index.html"
               )
 
-
               with open(
-                  index_path,
+                  index_file,
                   "w",
                   encoding="utf-8"
               ) as f:
 
                   f.write(page)
 
-
-              generated.append(
-                  category
-              )
-
+              generated.append(category)
 
               print(
-                  f"Generated category: "
-                  f"{category}"
+                  f"Generated: "
+                  f"{category} "
+                  f"({len(category_tools)} tools)"
               )
-
 
           print()
           print(
+              "======================================"
+          )
+          print(
               f"Generated {len(generated)} category pages."
+          )
+          print(
+              "======================================"
           )
 
           PY
-
 
       - name: Commit category pages
         run: |
@@ -405,13 +390,13 @@ jobs:
 
           if git diff --cached --quiet; then
 
-            echo "No category changes."
+              echo "No category page changes."
 
           else
 
-            git commit \
-              -m "chore: update category pages"
+              git commit \
+                -m "chore: update category pages"
 
-            git push
+              git push
 
           fi
