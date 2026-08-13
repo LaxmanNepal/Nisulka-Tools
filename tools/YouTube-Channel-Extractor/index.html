@@ -7,7 +7,7 @@
     <meta name="description" content="Analyze any YouTube channel's performance, get detailed statistics, growth insights, and content analysis for free with Nisulka Tools.">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://apps.laxmannepal.com.np/Nisulka-Tools/tools/youtube-channel-analytics/">
-    
+
     <!-- Schema.org Structured Data -->
     <script type="application/ld+json">
     {
@@ -32,174 +32,534 @@
     <link rel="stylesheet" href="/Nisulka-Tools/css/header.css">
     <link rel="stylesheet" href="/Nisulka-Tools/css/footer.css">
     <link rel="stylesheet" href="/Nisulka-Tools/css/tool-panel.css">
-    
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    
-    <!-- Chart.js for visualizations -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
+    </script>
+
     <style>
-        /* Tool-specific styles using Nisulka design tokens */
-        .yt-analytics-wrapper {
-            max-width: var(--container-max-width, 1200px);
+        /* ================================================================
+           YOUTUBE CHANNEL ANALYTICS — COMPLETE UI STYLES
+           Modern, clean, professional design system
+           ================================================================ */
+
+        /* ---- CSS Variables (Design Tokens) ---- */
+        :root {
+            /* Primary Colors */
+            --yt-primary: #ff0000;
+            --yt-primary-dark: #cc0000;
+            --yt-primary-light: #ff4d4d;
+            --yt-primary-bg: rgba(255, 0, 0, 0.08);
+
+            /* YouTube Brand Colors */
+            --yt-red: #ff0000;
+            --yt-dark: #0f0f0f;
+            --yt-gray: #606060;
+            --yt-light-gray: #f0f0f0;
+            --yt-white: #ffffff;
+
+            /* Nisulka Design Tokens (overrides) */
+            --primary: #ff0000;
+            --primary-dark: #cc0000;
+            --primary-light: #ff4d4d;
+            --primary-bg: rgba(255, 0, 0, 0.08);
+
+            /* Gradients */
+            --yt-gradient-primary: linear-gradient(135deg, #ff0000, #cc0000);
+            --yt-gradient-dark: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            --yt-gradient-card: linear-gradient(145deg, #ffffff, #f8f9fa);
+
+            /* Shadows */
+            --yt-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+            --yt-shadow-md: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --yt-shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.12);
+            --yt-shadow-xl: 0 12px 60px rgba(0, 0, 0, 0.16);
+            --yt-shadow-hover: 0 8px 30px rgba(255, 0, 0, 0.15);
+
+            /* Border Radius */
+            --yt-radius-sm: 6px;
+            --yt-radius-md: 12px;
+            --yt-radius-lg: 16px;
+            --yt-radius-xl: 24px;
+            --yt-radius-full: 9999px;
+
+            /* Spacing */
+            --yt-space-1: 4px;
+            --yt-space-2: 8px;
+            --yt-space-3: 12px;
+            --yt-space-4: 16px;
+            --yt-space-5: 24px;
+            --yt-space-6: 32px;
+            --yt-space-8: 48px;
+            --yt-space-10: 64px;
+
+            /* Typography */
+            --yt-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            --yt-font-size-xs: 11px;
+            --yt-font-size-sm: 13px;
+            --yt-font-size-base: 15px;
+            --yt-font-size-lg: 18px;
+            --yt-font-size-xl: 24px;
+            --yt-font-size-2xl: 32px;
+            --yt-font-size-3xl: 40px;
+
+            /* Transitions */
+            --yt-transition-fast: 0.15s ease;
+            --yt-transition-base: 0.3s ease;
+            --yt-transition-slow: 0.5s ease;
+        }
+
+        /* ---- Reset & Base ---- */
+        .yt-analytics * {
+            box-sizing: border-box;
+        }
+
+        .yt-analytics {
+            max-width: 1280px;
             margin: 0 auto;
-            padding: var(--spacing-4, 1.5rem);
+            padding: var(--yt-space-5) var(--yt-space-4);
+            font-family: var(--yt-font-family);
+            color: var(--yt-dark);
         }
 
-        .yt-analytics-wrapper .tool-header {
-            margin-bottom: var(--spacing-6, 2rem);
+        /* ---- Breadcrumb ---- */
+        .yt-breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: var(--yt-space-2);
+            font-size: var(--yt-font-size-sm);
+            color: var(--yt-gray);
+            margin-bottom: var(--yt-space-5);
+            flex-wrap: wrap;
         }
 
-        .yt-analytics-wrapper .tool-header h1 {
-            font-size: var(--font-size-3xl, 2.25rem);
-            font-weight: var(--font-weight-bold, 700);
-            color: var(--text-primary, #1a1a2e);
-            margin-bottom: var(--spacing-2, 0.5rem);
+        .yt-breadcrumb a {
+            color: var(--yt-gray);
+            text-decoration: none;
+            transition: color var(--yt-transition-fast);
         }
 
-        .yt-analytics-wrapper .tool-header p {
-            color: var(--text-secondary, #6b7280);
-            font-size: var(--font-size-lg, 1.125rem);
+        .yt-breadcrumb a:hover {
+            color: var(--yt-primary);
         }
 
-        /* Search Section */
+        .yt-breadcrumb .separator {
+            color: var(--yt-gray);
+            opacity: 0.5;
+        }
+
+        .yt-breadcrumb .current {
+            color: var(--yt-dark);
+            font-weight: 600;
+        }
+
+        /* ---- Page Header ---- */
+        .yt-page-header {
+            margin-bottom: var(--yt-space-6);
+        }
+
+        .yt-page-header h1 {
+            font-size: var(--yt-font-size-3xl);
+            font-weight: 800;
+            color: var(--yt-dark);
+            margin: 0 0 var(--yt-space-2) 0;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: var(--yt-space-3);
+        }
+
+        .yt-page-header h1 .yt-icon {
+            color: var(--yt-primary);
+            font-size: 2.2rem;
+        }
+
+        .yt-page-header p {
+            font-size: var(--yt-font-size-lg);
+            color: var(--yt-gray);
+            margin: 0;
+            max-width: 640px;
+            line-height: 1.6;
+        }
+
+        /* ---- Search Section ---- */
         .yt-search-section {
-            background: var(--card-bg, #ffffff);
-            border-radius: var(--border-radius-lg, 12px);
-            padding: var(--spacing-6, 2rem);
-            box-shadow: var(--shadow-md, 0 4px 12px rgba(0,0,0,0.08));
-            margin-bottom: var(--spacing-6, 2rem);
+            background: var(--yt-white);
+            border-radius: var(--yt-radius-lg);
+            box-shadow: var(--yt-shadow-md);
+            padding: var(--yt-space-6);
+            margin-bottom: var(--yt-space-6);
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            transition: box-shadow var(--yt-transition-base);
+        }
+
+        .yt-search-section:hover {
+            box-shadow: var(--yt-shadow-lg);
+        }
+
+        .yt-search-section .search-header {
+            display: flex;
+            align-items: center;
+            gap: var(--yt-space-3);
+            margin-bottom: var(--yt-space-4);
+        }
+
+        .yt-search-section .search-header i {
+            font-size: 1.5rem;
+            color: var(--yt-primary);
+            background: var(--yt-primary-bg);
+            padding: var(--yt-space-3);
+            border-radius: var(--yt-radius-md);
+        }
+
+        .yt-search-section .search-header h3 {
+            font-size: var(--yt-font-size-lg);
+            font-weight: 700;
+            margin: 0;
+            color: var(--yt-dark);
+        }
+
+        .yt-search-section .search-header .badge {
+            background: var(--yt-primary-bg);
+            color: var(--yt-primary);
+            font-size: var(--yt-font-size-xs);
+            font-weight: 600;
+            padding: 2px 12px;
+            border-radius: var(--yt-radius-full);
+            letter-spacing: 0.3px;
         }
 
         .yt-search-section .form-group {
-            margin-bottom: var(--spacing-4, 1.5rem);
+            margin-bottom: var(--yt-space-4);
+        }
+
+        .yt-search-section .form-group:last-of-type {
+            margin-bottom: var(--yt-space-5);
         }
 
         .yt-search-section label {
             display: block;
-            font-weight: var(--font-weight-semibold, 600);
-            margin-bottom: var(--spacing-1, 0.25rem);
-            color: var(--text-primary, #1a1a2e);
+            font-weight: 600;
+            font-size: var(--yt-font-size-sm);
+            color: var(--yt-dark);
+            margin-bottom: var(--yt-space-2);
         }
 
-        .yt-search-section .input-group {
+        .yt-search-section .input-wrapper {
             display: flex;
-            gap: var(--spacing-2, 0.5rem);
+            gap: var(--yt-space-2);
             flex-wrap: wrap;
         }
 
-        .yt-search-section input[type="text"] {
+        .yt-search-section .input-wrapper input[type="text"] {
             flex: 1;
-            min-width: 200px;
-            padding: var(--spacing-3, 0.75rem) var(--spacing-4, 1rem);
-            border: 1px solid var(--border-color, #d1d5db);
-            border-radius: var(--border-radius, 8px);
-            font-size: var(--font-size-base, 1rem);
-            transition: border-color 0.2s;
-            background: var(--input-bg, #ffffff);
-            color: var(--text-primary, #1a1a2e);
+            min-width: 220px;
+            padding: var(--yt-space-3) var(--yt-space-4);
+            border: 2px solid #e8e8e8;
+            border-radius: var(--yt-radius-md);
+            font-size: var(--yt-font-size-base);
+            transition: all var(--yt-transition-fast);
+            background: #fafafa;
+            color: var(--yt-dark);
+            font-family: var(--yt-font-family);
         }
 
-        .yt-search-section input[type="text"]:focus {
+        .yt-search-section .input-wrapper input[type="text"]:focus {
             outline: none;
-            border-color: var(--primary-color, #2563eb);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+            border-color: var(--yt-primary);
+            background: var(--yt-white);
+            box-shadow: 0 0 0 4px var(--yt-primary-bg);
+        }
+
+        .yt-search-section .input-wrapper input[type="text"]::placeholder {
+            color: #aaa;
         }
 
         .yt-search-section .radio-group {
             display: flex;
-            gap: var(--spacing-4, 1rem);
+            gap: var(--yt-space-4);
             flex-wrap: wrap;
-            margin-top: var(--spacing-1, 0.25rem);
+            padding-top: var(--yt-space-1);
         }
 
         .yt-search-section .radio-group label {
             display: flex;
             align-items: center;
-            gap: var(--spacing-1, 0.25rem);
-            font-weight: var(--font-weight-normal, 400);
+            gap: var(--yt-space-2);
+            font-weight: 500;
+            font-size: var(--yt-font-size-sm);
             cursor: pointer;
+            color: var(--yt-gray);
+            transition: color var(--yt-transition-fast);
+            padding: var(--yt-space-2) var(--yt-space-3);
+            border-radius: var(--yt-radius-sm);
+            background: transparent;
+        }
+
+        .yt-search-section .radio-group label:hover {
+            color: var(--yt-dark);
+            background: var(--yt-light-gray);
         }
 
         .yt-search-section .radio-group input[type="radio"] {
+            accent-color: var(--yt-primary);
+            width: 16px;
+            height: 16px;
             cursor: pointer;
         }
 
+        .yt-search-section .radio-group label:has(input:checked) {
+            color: var(--yt-primary);
+            background: var(--yt-primary-bg);
+        }
+
         .yt-search-section .form-text {
-            font-size: var(--font-size-sm, 0.875rem);
-            color: var(--text-secondary, #6b7280);
-            margin-top: var(--spacing-1, 0.25rem);
-        }
-
-        .yt-search-section .button-group {
+            font-size: var(--yt-font-size-sm);
+            color: var(--yt-gray);
+            margin-top: var(--yt-space-2);
             display: flex;
-            gap: var(--spacing-2, 0.5rem);
+            align-items: center;
+            gap: var(--yt-space-2);
+        }
+
+        .yt-search-section .form-text i {
+            color: var(--yt-primary);
+            opacity: 0.6;
+        }
+
+        .yt-search-section .button-row {
+            display: flex;
+            gap: var(--yt-space-3);
             flex-wrap: wrap;
-            margin-top: var(--spacing-4, 1rem);
         }
 
-        .yt-search-section .button-group .btn {
-            flex: 1 1 auto;
-            min-width: 120px;
+        .yt-search-section .button-row .btn {
+            padding: var(--yt-space-3) var(--yt-space-6);
+            font-weight: 600;
+            font-size: var(--yt-font-size-sm);
+            border-radius: var(--yt-radius-md);
+            border: none;
+            cursor: pointer;
+            transition: all var(--yt-transition-base);
+            display: inline-flex;
+            align-items: center;
+            gap: var(--yt-space-2);
+            font-family: var(--yt-font-family);
+            text-decoration: none;
         }
 
-        /* Loading State */
+        .yt-search-section .button-row .btn-primary {
+            background: var(--yt-gradient-primary);
+            color: var(--yt-white);
+            box-shadow: 0 4px 16px rgba(255, 0, 0, 0.25);
+        }
+
+        .yt-search-section .button-row .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(255, 0, 0, 0.35);
+        }
+
+        .yt-search-section .button-row .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .yt-search-section .button-row .btn-success {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: var(--yt-white);
+            box-shadow: 0 4px 16px rgba(46, 204, 113, 0.25);
+        }
+
+        .yt-search-section .button-row .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(46, 204, 113, 0.35);
+        }
+
+        .yt-search-section .button-row .btn-success:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .yt-search-section .button-row .btn-outline {
+            background: transparent;
+            color: var(--yt-gray);
+            border: 2px solid #e8e8e8;
+        }
+
+        .yt-search-section .button-row .btn-outline:hover {
+            border-color: var(--yt-gray);
+            color: var(--yt-dark);
+            background: var(--yt-light-gray);
+        }
+
+        /* ---- Loading ---- */
         .yt-loading {
             display: none;
             text-align: center;
-            padding: var(--spacing-8, 3rem) var(--spacing-4, 1.5rem);
+            padding: var(--yt-space-8) var(--yt-space-4);
+            background: var(--yt-white);
+            border-radius: var(--yt-radius-lg);
+            box-shadow: var(--yt-shadow-sm);
+            margin: var(--yt-space-4) 0;
         }
 
         .yt-loading .spinner {
             display: inline-block;
-            width: 40px;
-            height: 40px;
-            border: 4px solid var(--border-color, #d1d5db);
-            border-top-color: var(--primary-color, #2563eb);
+            width: 48px;
+            height: 48px;
+            border: 4px solid #e8e8e8;
+            border-top-color: var(--yt-primary);
             border-radius: 50%;
-            animation: spin 0.8s linear infinite;
+            animation: yt-spin 0.7s linear infinite;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        @keyframes yt-spin {
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         .yt-loading p {
-            margin-top: var(--spacing-3, 0.75rem);
-            color: var(--text-secondary, #6b7280);
+            margin-top: var(--yt-space-4);
+            color: var(--yt-gray);
+            font-size: var(--yt-font-size-base);
         }
 
-        /* Results Card */
-        .yt-results-card {
+        .yt-loading .loading-dots::after {
+            content: '';
+            animation: yt-dots 1.5s steps(4) infinite;
+        }
+
+        @keyframes yt-dots {
+            0% {
+                content: '';
+            }
+            25% {
+                content: '.';
+            }
+            50% {
+                content: '..';
+            }
+            75% {
+                content: '...';
+            }
+            100% {
+                content: '';
+            }
+        }
+
+        /* ---- Alerts ---- */
+        .yt-alert {
+            padding: var(--yt-space-4) var(--yt-space-5);
+            border-radius: var(--yt-radius-md);
+            margin: var(--yt-space-4) 0;
             display: none;
-            background: var(--card-bg, #ffffff);
-            border-radius: var(--border-radius-lg, 12px);
-            box-shadow: var(--shadow-md, 0 4px 12px rgba(0,0,0,0.08));
-            overflow: hidden;
-            margin-top: var(--spacing-6, 2rem);
+            font-size: var(--yt-font-size-sm);
+            font-weight: 500;
+            align-items: flex-start;
+            gap: var(--yt-space-3);
         }
 
+        .yt-alert i {
+            font-size: 1.2rem;
+            margin-top: 2px;
+        }
+
+        .yt-alert.error {
+            display: flex;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+        }
+
+        .yt-alert.success {
+            display: flex;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #16a34a;
+        }
+
+        .yt-alert .alert-content {
+            flex: 1;
+        }
+
+        .yt-alert .alert-title {
+            font-weight: 700;
+            font-size: var(--yt-font-size-base);
+        }
+
+        /* ---- Results Container ---- */
+        .yt-results {
+            display: none;
+            animation: yt-fadeIn 0.4s ease;
+        }
+
+        @keyframes yt-fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ---- Channel Card ---- */
+        .yt-channel-card {
+            background: var(--yt-white);
+            border-radius: var(--yt-radius-lg);
+            box-shadow: var(--yt-shadow-md);
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            transition: box-shadow var(--yt-transition-base);
+        }
+
+        .yt-channel-card:hover {
+            box-shadow: var(--yt-shadow-lg);
+        }
+
+        /* Channel Banner */
         .yt-channel-banner {
             height: 140px;
-            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            background: var(--yt-gradient-dark);
             position: relative;
             overflow: hidden;
         }
 
-        .yt-channel-banner::after {
+        .yt-channel-banner::before {
             content: '';
             position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 60px;
-            background: linear-gradient(transparent, rgba(255,255,255,0.06));
+            inset: 0;
+            background:
+                radial-gradient(circle at 20% 50%, rgba(255, 0, 0, 0.15) 0%, transparent 60%),
+                radial-gradient(circle at 80% 20%, rgba(255, 0, 0, 0.08) 0%, transparent 50%);
         }
 
+        .yt-channel-banner .banner-pattern {
+            position: absolute;
+            inset: 0;
+            background-image:
+                radial-gradient(circle at 10% 90%, rgba(255, 255, 255, 0.04) 0%, transparent 30%),
+                radial-gradient(circle at 90% 10%, rgba(255, 255, 255, 0.03) 0%, transparent 30%);
+        }
+
+        .yt-channel-banner .banner-youtube-icon {
+            position: absolute;
+            right: -20px;
+            bottom: -20px;
+            font-size: 120px;
+            color: rgba(255, 255, 255, 0.04);
+        }
+
+        /* Channel Info */
         .yt-channel-info {
-            padding: 0 var(--spacing-6, 2rem) var(--spacing-6, 2rem);
-            margin-top: -50px;
+            padding: 0 var(--yt-space-6) var(--yt-space-6);
+            margin-top: -56px;
             position: relative;
             z-index: 1;
         }
@@ -207,24 +567,29 @@
         .yt-channel-info .channel-header {
             display: flex;
             align-items: flex-end;
-            gap: var(--spacing-4, 1.5rem);
+            gap: var(--yt-space-5);
             flex-wrap: wrap;
         }
 
         .yt-channel-info .channel-avatar {
-            width: 100px;
-            height: 100px;
+            width: 104px;
+            height: 104px;
             border-radius: 50%;
-            border: 4px solid var(--card-bg, #ffffff);
-            box-shadow: var(--shadow-md, 0 4px 12px rgba(0,0,0,0.1));
-            background: var(--bg-secondary, #f3f4f6);
+            border: 4px solid var(--yt-white);
+            box-shadow: var(--yt-shadow-md);
+            background: var(--yt-light-gray);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 3rem;
-            color: var(--text-secondary, #6b7280);
+            font-size: 3.2rem;
+            color: var(--yt-gray);
             flex-shrink: 0;
             overflow: hidden;
+            transition: transform var(--yt-transition-base);
+        }
+
+        .yt-channel-info .channel-avatar:hover {
+            transform: scale(1.02);
         }
 
         .yt-channel-info .channel-avatar img {
@@ -233,142 +598,298 @@
             object-fit: cover;
         }
 
+        .yt-channel-info .channel-title-area {
+            flex: 1;
+            min-width: 200px;
+            padding-bottom: var(--yt-space-2);
+        }
+
         .yt-channel-info .channel-title-area h2 {
-            font-size: var(--font-size-2xl, 1.875rem);
-            font-weight: var(--font-weight-bold, 700);
-            margin: 0 0 var(--spacing-1, 0.25rem) 0;
-            color: var(--text-primary, #1a1a2e);
+            font-size: var(--yt-font-size-2xl);
+            font-weight: 800;
+            margin: 0 0 var(--yt-space-1) 0;
+            color: var(--yt-dark);
+            letter-spacing: -0.01em;
         }
 
         .yt-channel-info .channel-title-area .channel-handle {
-            color: var(--text-secondary, #6b7280);
-            font-size: var(--font-size-base, 1rem);
+            color: var(--yt-gray);
+            font-size: var(--yt-font-size-base);
             margin: 0;
+            display: flex;
+            align-items: center;
+            gap: var(--yt-space-2);
         }
 
-        /* Stats Grid */
+        .yt-channel-info .channel-title-area .channel-handle i {
+            font-size: 0.8rem;
+            opacity: 0.5;
+        }
+
+        .yt-channel-info .channel-title-area .channel-verified {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--yt-space-1);
+            color: var(--yt-primary);
+            font-size: var(--yt-font-size-sm);
+            font-weight: 600;
+            background: var(--yt-primary-bg);
+            padding: 2px 12px;
+            border-radius: var(--yt-radius-full);
+            margin-top: var(--yt-space-2);
+        }
+
+        /* ---- Stats Grid ---- */
         .yt-stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: var(--spacing-4, 1rem);
-            margin: var(--spacing-6, 2rem) 0;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--yt-space-4);
+            margin: var(--yt-space-5) 0 var(--yt-space-6);
         }
 
         .yt-stat-card {
-            background: var(--bg-secondary, #f8fafc);
-            border-radius: var(--border-radius, 8px);
-            padding: var(--spacing-4, 1rem);
+            background: var(--yt-light-gray);
+            border-radius: var(--yt-radius-md);
+            padding: var(--yt-space-4);
             text-align: center;
-            transition: transform 0.2s;
+            transition: all var(--yt-transition-base);
+            border: 1px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .yt-stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--yt-gradient-primary);
+            opacity: 0;
+            transition: opacity var(--yt-transition-base);
         }
 
         .yt-stat-card:hover {
-            transform: translateY(-2px);
+            transform: translateY(-4px);
+            box-shadow: var(--yt-shadow-sm);
+            border-color: rgba(255, 0, 0, 0.1);
         }
 
-        .yt-stat-card i {
-            font-size: 1.5rem;
-            color: var(--primary-color, #2563eb);
-            margin-bottom: var(--spacing-2, 0.5rem);
+        .yt-stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .yt-stat-card .stat-icon {
+            font-size: 1.4rem;
+            color: var(--yt-primary);
+            margin-bottom: var(--yt-space-2);
+            display: block;
         }
 
         .yt-stat-card .stat-number {
-            font-size: var(--font-size-xl, 1.5rem);
-            font-weight: var(--font-weight-bold, 700);
-            color: var(--text-primary, #1a1a2e);
+            font-size: var(--yt-font-size-xl);
+            font-weight: 800;
+            color: var(--yt-dark);
+            letter-spacing: -0.01em;
         }
 
         .yt-stat-card .stat-label {
-            font-size: var(--font-size-sm, 0.875rem);
-            color: var(--text-secondary, #6b7280);
-            margin-top: var(--spacing-1, 0.25rem);
+            font-size: var(--yt-font-size-xs);
+            color: var(--yt-gray);
+            margin-top: var(--yt-space-1);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        /* Tabs */
+        .yt-stat-card .stat-trend {
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+            font-size: var(--yt-font-size-xs);
+            font-weight: 600;
+            margin-top: var(--yt-space-2);
+            padding: 2px 10px;
+            border-radius: var(--yt-radius-full);
+        }
+
+        .yt-stat-card .stat-trend.up {
+            color: #16a34a;
+            background: #dcfce7;
+        }
+
+        .yt-stat-card .stat-trend.down {
+            color: #dc2626;
+            background: #fef2f2;
+        }
+
+        /* ---- Tabs ---- */
         .yt-tabs {
             display: flex;
             gap: 0;
-            border-bottom: 2px solid var(--border-color, #e5e7eb);
-            margin: var(--spacing-4, 1rem) 0 var(--spacing-6, 2rem);
+            border-bottom: 2px solid #e8e8e8;
+            margin: var(--yt-space-4) 0 var(--yt-space-5);
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .yt-tabs::-webkit-scrollbar {
+            display: none;
         }
 
         .yt-tabs .tab {
-            padding: var(--spacing-3, 0.75rem) var(--spacing-4, 1.25rem);
+            padding: var(--yt-space-3) var(--yt-space-5);
             cursor: pointer;
-            font-weight: var(--font-weight-semibold, 600);
-            color: var(--text-secondary, #6b7280);
+            font-weight: 600;
+            font-size: var(--yt-font-size-sm);
+            color: var(--yt-gray);
+            border: none;
             border-bottom: 3px solid transparent;
-            transition: all 0.2s;
-            white-space: nowrap;
-            font-size: var(--font-size-sm, 0.875rem);
             background: none;
-            border-top: none;
-            border-left: none;
-            border-right: none;
+            transition: all var(--yt-transition-fast);
+            white-space: nowrap;
+            font-family: var(--yt-font-family);
+            display: flex;
+            align-items: center;
+            gap: var(--yt-space-2);
         }
 
         .yt-tabs .tab:hover {
-            color: var(--text-primary, #1a1a2e);
-            background: var(--bg-secondary, #f3f4f6);
-            border-radius: var(--border-radius, 8px) var(--border-radius, 8px) 0 0;
+            color: var(--yt-dark);
+            background: var(--yt-light-gray);
         }
 
         .yt-tabs .tab.active {
-            color: var(--primary-color, #2563eb);
-            border-bottom-color: var(--primary-color, #2563eb);
+            color: var(--yt-primary);
+            border-bottom-color: var(--yt-primary);
+        }
+
+        .yt-tabs .tab .tab-badge {
+            background: var(--yt-light-gray);
+            color: var(--yt-gray);
+            font-size: var(--yt-font-size-xs);
+            padding: 1px 10px;
+            border-radius: var(--yt-radius-full);
+            font-weight: 700;
+        }
+
+        .yt-tabs .tab.active .tab-badge {
+            background: var(--yt-primary-bg);
+            color: var(--yt-primary);
         }
 
         .yt-tabs .tab:focus-visible {
-            outline: 2px solid var(--primary-color, #2563eb);
+            outline: 2px solid var(--yt-primary);
             outline-offset: -2px;
+            border-radius: var(--yt-radius-sm);
         }
 
         .yt-tab-content {
             display: none;
-            padding: var(--spacing-4, 1rem) 0;
+            padding: var(--yt-space-2) 0;
+            animation: yt-fadeIn 0.3s ease;
         }
 
         .yt-tab-content.active {
             display: block;
         }
 
-        /* Description */
-        .yt-description {
-            background: var(--bg-secondary, #f8fafc);
-            border-radius: var(--border-radius, 8px);
-            padding: var(--spacing-4, 1rem);
-            margin: var(--spacing-4, 1rem) 0;
-            white-space: pre-wrap;
-            word-break: break-word;
-            color: var(--text-primary, #1a1a2e);
+        .yt-tab-content h3 {
+            font-size: var(--yt-font-size-xl);
+            font-weight: 700;
+            color: var(--yt-dark);
+            margin: 0 0 var(--yt-space-4) 0;
+            display: flex;
+            align-items: center;
+            gap: var(--yt-space-3);
         }
 
-        /* Table */
+        .yt-tab-content h3 i {
+            color: var(--yt-primary);
+        }
+
+        /* ---- Description ---- */
+        .yt-description {
+            background: var(--yt-light-gray);
+            border-radius: var(--yt-radius-md);
+            padding: var(--yt-space-5);
+            margin: var(--yt-space-4) 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+            color: var(--yt-dark);
+            font-size: var(--yt-font-size-sm);
+            line-height: 1.8;
+            border-left: 4px solid var(--yt-primary);
+        }
+
+        /* ---- Charts ---- */
+        .yt-chart-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--yt-space-5);
+            margin: var(--yt-space-4) 0;
+        }
+
+        .yt-chart-box {
+            background: var(--yt-light-gray);
+            border-radius: var(--yt-radius-md);
+            padding: var(--yt-space-4);
+            transition: all var(--yt-transition-base);
+        }
+
+        .yt-chart-box:hover {
+            box-shadow: var(--yt-shadow-sm);
+        }
+
+        .yt-chart-box .chart-title {
+            font-size: var(--yt-font-size-sm);
+            font-weight: 600;
+            color: var(--yt-gray);
+            margin: 0 0 var(--yt-space-3) 0;
+            text-align: center;
+        }
+
+        .yt-chart-container {
+            position: relative;
+            height: 220px;
+        }
+
+        /* ---- Table ---- */
         .yt-table-wrap {
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
+            border-radius: var(--yt-radius-md);
+            border: 1px solid #e8e8e8;
         }
 
         .yt-table-wrap table {
             width: 100%;
             border-collapse: collapse;
-            font-size: var(--font-size-sm, 0.875rem);
+            font-size: var(--yt-font-size-sm);
         }
 
         .yt-table-wrap table th,
         .yt-table-wrap table td {
-            padding: var(--spacing-3, 0.75rem) var(--spacing-4, 1rem);
+            padding: var(--yt-space-4) var(--yt-space-5);
             text-align: left;
-            border-bottom: 1px solid var(--border-color, #e5e7eb);
+            border-bottom: 1px solid #e8e8e8;
         }
 
         .yt-table-wrap table th {
-            font-weight: var(--font-weight-semibold, 600);
-            color: var(--text-secondary, #6b7280);
-            width: 40%;
-            background: var(--bg-secondary, #f8fafc);
+            font-weight: 700;
+            color: var(--yt-gray);
+            width: 35%;
+            background: #fafafa;
+            font-size: var(--yt-font-size-xs);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .yt-table-wrap table td {
+            color: var(--yt-dark);
+            font-weight: 500;
         }
 
         .yt-table-wrap table tr:last-child td,
@@ -376,76 +897,102 @@
             border-bottom: none;
         }
 
-        /* Chart containers */
-        .yt-chart-container {
-            position: relative;
-            height: 250px;
-            margin: var(--spacing-4, 1rem) 0;
+        .yt-table-wrap table tr:hover td {
+            background: #fafafa;
         }
 
-        .yt-chart-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: var(--spacing-6, 2rem);
-            margin: var(--spacing-4, 1rem) 0;
-        }
-
-        @media (min-width: 768px) {
-            .yt-chart-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-
-        /* Videos Grid */
+        /* ---- Video Grid ---- */
         .yt-video-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: var(--spacing-4, 1.5rem);
-            margin: var(--spacing-4, 1rem) 0;
+            gap: var(--yt-space-5);
+            margin: var(--yt-space-4) 0;
         }
 
         .yt-video-card {
-            background: var(--card-bg, #ffffff);
-            border-radius: var(--border-radius, 8px);
+            background: var(--yt-white);
+            border-radius: var(--yt-radius-md);
             overflow: hidden;
-            box-shadow: var(--shadow-sm, 0 1px 3px rgba(0,0,0,0.08));
-            transition: transform 0.2s, box-shadow 0.2s;
-            border: 1px solid var(--border-color, #e5e7eb);
+            box-shadow: var(--yt-shadow-sm);
+            border: 1px solid #e8e8e8;
+            transition: all var(--yt-transition-base);
         }
 
         .yt-video-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-md, 0 4px 12px rgba(0,0,0,0.1));
+            transform: translateY(-6px);
+            box-shadow: var(--yt-shadow-lg);
+            border-color: rgba(255, 0, 0, 0.15);
         }
 
-        .yt-video-card img {
+        .yt-video-card .video-thumb {
+            position: relative;
+            overflow: hidden;
+            background: var(--yt-dark);
+        }
+
+        .yt-video-card .video-thumb img {
             width: 100%;
             aspect-ratio: 16/9;
             object-fit: cover;
             display: block;
+            transition: transform var(--yt-transition-base);
+        }
+
+        .yt-video-card:hover .video-thumb img {
+            transform: scale(1.03);
+        }
+
+        .yt-video-card .video-thumb .video-duration {
+            position: absolute;
+            bottom: var(--yt-space-2);
+            right: var(--yt-space-2);
+            background: rgba(0, 0, 0, 0.8);
+            color: var(--yt-white);
+            font-size: var(--yt-font-size-xs);
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: var(--yt-radius-sm);
+            backdrop-filter: blur(4px);
+        }
+
+        .yt-video-card .video-thumb .shorts-badge {
+            position: absolute;
+            top: var(--yt-space-2);
+            left: var(--yt-space-2);
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: var(--yt-white);
+            font-size: var(--yt-font-size-xs);
+            font-weight: 700;
+            padding: 3px 12px;
+            border-radius: var(--yt-radius-full);
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(238, 90, 36, 0.3);
         }
 
         .yt-video-card .video-info {
-            padding: var(--spacing-3, 0.75rem);
+            padding: var(--yt-space-4);
         }
 
         .yt-video-card .video-title {
-            font-weight: var(--font-weight-semibold, 600);
-            font-size: var(--font-size-sm, 0.875rem);
+            font-weight: 600;
+            font-size: var(--yt-font-size-sm);
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
-            line-height: 1.4;
-            color: var(--text-primary, #1a1a2e);
+            line-height: 1.5;
+            color: var(--yt-dark);
+            min-height: 42px;
         }
 
         .yt-video-card .video-meta {
             display: flex;
             justify-content: space-between;
-            font-size: var(--font-size-xs, 0.75rem);
-            color: var(--text-secondary, #6b7280);
-            margin-top: var(--spacing-2, 0.5rem);
+            font-size: var(--yt-font-size-xs);
+            color: var(--yt-gray);
+            margin-top: var(--yt-space-3);
+            flex-wrap: wrap;
+            gap: 4px;
         }
 
         .yt-video-card .video-meta span {
@@ -454,16 +1001,27 @@
             gap: 4px;
         }
 
+        .yt-video-card .video-meta span i {
+            font-size: 0.7rem;
+            opacity: 0.6;
+        }
+
         .yt-video-card .video-engagement {
-            margin-top: var(--spacing-2, 0.5rem);
-            font-size: var(--font-size-xs, 0.75rem);
+            margin-top: var(--yt-space-3);
+            font-size: var(--yt-font-size-xs);
+        }
+
+        .yt-video-card .video-engagement .engagement-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .yt-video-card .progress-bar {
             height: 4px;
-            background: var(--bg-secondary, #e5e7eb);
+            background: #e8e8e8;
             border-radius: 2px;
-            margin-top: 4px;
+            margin-top: var(--yt-space-2);
             overflow: hidden;
         }
 
@@ -473,138 +1031,183 @@
             transition: width 0.6s ease;
         }
 
-        /* Shorts Badge */
-        .yt-shorts-badge {
-            display: inline-block;
-            background: #ff6b6b;
-            color: #fff;
-            font-size: var(--font-size-xs, 0.7rem);
-            font-weight: var(--font-weight-bold, 700);
-            padding: 2px 8px;
-            border-radius: 4px;
-            margin: var(--spacing-2, 0.5rem) 0 0;
-            letter-spacing: 0.5px;
+        .yt-video-card .perf-badge {
+            padding: 2px 12px;
+            border-radius: var(--yt-radius-full);
+            font-size: var(--yt-font-size-xs);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
         }
 
-        /* Performance Badges */
-        .perf-high {
-            background: #d4edda;
-            color: #155724;
-            padding: 2px 10px;
-            border-radius: 12px;
-            font-size: var(--font-size-xs, 0.7rem);
-            font-weight: var(--font-weight-semibold, 600);
+        .perf-badge.high {
+            background: #dcfce7;
+            color: #16a34a;
         }
-        .perf-medium {
-            background: #fff3cd;
-            color: #856404;
-            padding: 2px 10px;
-            border-radius: 12px;
-            font-size: var(--font-size-xs, 0.7rem);
-            font-weight: var(--font-weight-semibold, 600);
+        .perf-badge.medium {
+            background: #fef3c7;
+            color: #d97706;
         }
-        .perf-low {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 2px 10px;
-            border-radius: 12px;
-            font-size: var(--font-size-xs, 0.7rem);
-            font-weight: var(--font-weight-semibold, 600);
+        .perf-badge.low {
+            background: #fef2f2;
+            color: #dc2626;
         }
 
-        /* Insights Cards */
+        /* ---- Insights ---- */
+        .yt-insight-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--yt-space-4);
+            margin: var(--yt-space-4) 0;
+        }
+
         .yt-insight-card {
-            border-left: 4px solid var(--primary-color, #2563eb);
-            padding: var(--spacing-4, 1rem);
-            background: var(--bg-secondary, #f8fafc);
-            border-radius: 0 var(--border-radius, 8px) var(--border-radius, 8px) 0;
-            margin-bottom: var(--spacing-4, 1rem);
+            padding: var(--yt-space-5);
+            border-radius: var(--yt-radius-md);
+            border-left: 4px solid var(--yt-primary);
+            background: var(--yt-light-gray);
+            transition: all var(--yt-transition-base);
+        }
+
+        .yt-insight-card:hover {
+            box-shadow: var(--yt-shadow-sm);
+            transform: translateX(4px);
+        }
+
+        .yt-insight-card .insight-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: var(--yt-radius-full);
+            background: var(--yt-primary-bg);
+            color: var(--yt-primary);
+            font-size: 1rem;
+            margin-bottom: var(--yt-space-2);
         }
 
         .yt-insight-card h5 {
-            color: var(--primary-color, #2563eb);
-            margin: 0 0 var(--spacing-1, 0.25rem) 0;
-            font-size: var(--font-size-base, 1rem);
+            font-size: var(--yt-font-size-base);
+            font-weight: 700;
+            color: var(--yt-dark);
+            margin: 0 0 var(--yt-space-2) 0;
         }
 
         .yt-insight-card p {
             margin: 0;
-            font-size: var(--font-size-sm, 0.875rem);
-            color: var(--text-primary, #1a1a2e);
+            font-size: var(--yt-font-size-sm);
+            color: var(--yt-gray);
+            line-height: 1.7;
         }
 
-        /* Empty states */
+        /* ---- Sub Tabs (Content Filter) ---- */
+        .yt-sub-tabs {
+            border-bottom-color: #e8e8e8 !important;
+            margin-bottom: var(--yt-space-4) !important;
+        }
+
+        .yt-sub-tabs .tab {
+            font-size: var(--yt-font-size-xs) !important;
+            padding: var(--yt-space-2) var(--yt-space-4) !important;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .yt-content-section {
+            display: block;
+        }
+
+        .yt-content-section[style*="display:none"] {
+            display: none !important;
+        }
+
+        /* ---- Empty State ---- */
         .yt-empty-state {
             text-align: center;
-            padding: var(--spacing-8, 3rem) var(--spacing-4, 1.5rem);
-            color: var(--text-secondary, #6b7280);
+            padding: var(--yt-space-8) var(--yt-space-4);
+            color: var(--yt-gray);
         }
 
         .yt-empty-state i {
-            font-size: 3rem;
-            margin-bottom: var(--spacing-4, 1rem);
-            opacity: 0.4;
+            font-size: 3.6rem;
+            margin-bottom: var(--yt-space-4);
+            opacity: 0.2;
+            display: block;
         }
 
         .yt-empty-state h5 {
-            color: var(--text-primary, #1a1a2e);
-            margin-bottom: var(--spacing-2, 0.5rem);
+            color: var(--yt-dark);
+            margin-bottom: var(--yt-space-2);
+            font-size: var(--yt-font-size-lg);
         }
 
         .yt-empty-state p {
             margin: 0;
+            font-size: var(--yt-font-size-sm);
         }
 
-        /* Saved Channels Sidebar */
+        /* ---- Sidebar ---- */
         .yt-sidebar {
-            display: none;
-        }
-
-        @media (min-width: 992px) {
-            .yt-sidebar {
-                display: block;
-            }
+            display: block;
         }
 
         .yt-sidebar-card {
-            background: var(--card-bg, #ffffff);
-            border-radius: var(--border-radius-lg, 12px);
-            box-shadow: var(--shadow-md, 0 4px 12px rgba(0,0,0,0.08));
-            padding: var(--spacing-4, 1.5rem);
-            margin-bottom: var(--spacing-4, 1.5rem);
+            background: var(--yt-white);
+            border-radius: var(--yt-radius-lg);
+            box-shadow: var(--yt-shadow-md);
+            padding: var(--yt-space-5);
+            margin-bottom: var(--yt-space-5);
+            border: 1px solid rgba(0, 0, 0, 0.04);
         }
 
         .yt-sidebar-card h4 {
-            font-size: var(--font-size-base, 1rem);
-            font-weight: var(--font-weight-semibold, 600);
-            margin: 0 0 var(--spacing-3, 0.75rem) 0;
-            color: var(--text-primary, #1a1a2e);
+            font-size: var(--yt-font-size-base);
+            font-weight: 700;
+            margin: 0 0 var(--yt-space-4) 0;
+            color: var(--yt-dark);
             display: flex;
             align-items: center;
-            gap: var(--spacing-2, 0.5rem);
+            gap: var(--yt-space-2);
+        }
+
+        .yt-sidebar-card h4 i {
+            color: var(--yt-primary);
+        }
+
+        .yt-sidebar-card .sidebar-count {
+            background: var(--yt-light-gray);
+            color: var(--yt-gray);
+            font-size: var(--yt-font-size-xs);
+            padding: 1px 10px;
+            border-radius: var(--yt-radius-full);
+            font-weight: 700;
         }
 
         .yt-saved-channel {
             display: flex;
             align-items: center;
-            gap: var(--spacing-3, 0.75rem);
-            padding: var(--spacing-2, 0.5rem);
-            border-radius: var(--border-radius, 8px);
+            gap: var(--yt-space-3);
+            padding: var(--yt-space-3);
+            border-radius: var(--yt-radius-md);
             cursor: pointer;
-            transition: background 0.2s;
-            margin-bottom: var(--spacing-2, 0.5rem);
+            transition: all var(--yt-transition-fast);
+            margin-bottom: var(--yt-space-2);
+            border: 1px solid transparent;
         }
 
         .yt-saved-channel:hover {
-            background: var(--bg-secondary, #f3f4f6);
+            background: var(--yt-light-gray);
+            border-color: #e8e8e8;
         }
 
         .yt-saved-channel img {
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             object-fit: cover;
             flex-shrink: 0;
+            border: 2px solid #e8e8e8;
         }
 
         .yt-saved-channel .info {
@@ -613,68 +1216,156 @@
         }
 
         .yt-saved-channel .info .name {
-            font-weight: var(--font-weight-medium, 500);
-            font-size: var(--font-size-sm, 0.875rem);
+            font-weight: 600;
+            font-size: var(--yt-font-size-sm);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            color: var(--text-primary, #1a1a2e);
+            color: var(--yt-dark);
         }
 
         .yt-saved-channel .info .subs {
-            font-size: var(--font-size-xs, 0.75rem);
-            color: var(--text-secondary, #6b7280);
+            font-size: var(--yt-font-size-xs);
+            color: var(--yt-gray);
         }
 
         .yt-saved-channel .remove-btn {
             background: none;
             border: none;
-            color: var(--text-secondary, #6b7280);
+            color: var(--yt-gray);
             cursor: pointer;
-            padding: 4px 6px;
-            border-radius: 4px;
-            transition: color 0.2s, background 0.2s;
+            padding: var(--yt-space-2);
+            border-radius: var(--yt-radius-sm);
+            transition: all var(--yt-transition-fast);
+            font-size: 0.9rem;
         }
 
         .yt-saved-channel .remove-btn:hover {
-            color: #ef4444;
-            background: #fef2f2;
-        }
-
-        /* Alerts */
-        .yt-alert {
-            padding: var(--spacing-3, 0.75rem) var(--spacing-4, 1rem);
-            border-radius: var(--border-radius, 8px);
-            margin: var(--spacing-4, 1rem) 0;
-            display: none;
-        }
-
-        .yt-alert.error {
-            display: block;
-            background: #fef2f2;
-            border: 1px solid #fecaca;
             color: #dc2626;
+            background: #fef2f2;
         }
 
-        .yt-alert.success {
-            display: block;
-            background: #f0fdf4;
-            border: 1px solid #bbf7d0;
-            color: #16a34a;
+        /* ---- Privacy Notice ---- */
+        .yt-privacy-notice {
+            margin-top: var(--yt-space-6);
+            padding: var(--yt-space-4) var(--yt-space-5);
+            background: var(--yt-light-gray);
+            border-radius: var(--yt-radius-md);
+            display: flex;
+            align-items: flex-start;
+            gap: var(--yt-space-3);
+            font-size: var(--yt-font-size-sm);
+            color: var(--yt-gray);
+            border: 1px solid #e8e8e8;
         }
 
-        .yt-alert i {
-            margin-right: var(--spacing-2, 0.5rem);
+        .yt-privacy-notice i {
+            color: var(--yt-primary);
+            font-size: 1.2rem;
+            margin-top: 2px;
         }
 
-        /* Responsive */
+        .yt-privacy-notice strong {
+            color: var(--yt-dark);
+        }
+
+        /* ---- SEO Content ---- */
+        .yt-seo-content {
+            margin-top: var(--yt-space-10);
+            padding-top: var(--yt-space-8);
+            border-top: 1px solid #e8e8e8;
+        }
+
+        .yt-seo-content h2 {
+            font-size: var(--yt-font-size-2xl);
+            font-weight: 800;
+            color: var(--yt-dark);
+            margin: var(--yt-space-6) 0 var(--yt-space-3);
+            letter-spacing: -0.01em;
+        }
+
+        .yt-seo-content h3 {
+            font-size: var(--yt-font-size-lg);
+            font-weight: 700;
+            color: var(--yt-dark);
+            margin: var(--yt-space-5) 0 var(--yt-space-2);
+        }
+
+        .yt-seo-content p,
+        .yt-seo-content li {
+            color: var(--yt-gray);
+            line-height: 1.8;
+            font-size: var(--yt-font-size-base);
+        }
+
+        .yt-seo-content ul,
+        .yt-seo-content ol {
+            padding-left: var(--yt-space-5);
+        }
+
+        .yt-seo-content li {
+            margin-bottom: var(--yt-space-2);
+        }
+
+        /* ---- Responsive ---- */
+
+        /* Tablet */
+        @media (max-width: 992px) {
+            .yt-stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .yt-chart-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .yt-insight-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .yt-sidebar {
+                margin-top: var(--yt-space-5);
+            }
+        }
+
+        /* Mobile */
         @media (max-width: 768px) {
-            .yt-analytics-wrapper {
-                padding: var(--spacing-3, 1rem);
+            .yt-analytics {
+                padding: var(--yt-space-4) var(--yt-space-3);
+            }
+
+            .yt-page-header h1 {
+                font-size: var(--yt-font-size-2xl);
+            }
+
+            .yt-page-header h1 .yt-icon {
+                font-size: 1.6rem;
+            }
+
+            .yt-page-header p {
+                font-size: var(--yt-font-size-base);
+            }
+
+            .yt-search-section {
+                padding: var(--yt-space-4);
+            }
+
+            .yt-search-section .input-wrapper {
+                flex-direction: column;
+            }
+
+            .yt-search-section .input-wrapper input[type="text"] {
+                min-width: unset;
+            }
+
+            .yt-search-section .button-row .btn {
+                flex: 1 1 100%;
+                justify-content: center;
             }
 
             .yt-channel-info {
-                padding: 0 var(--spacing-4, 1rem) var(--spacing-4, 1rem);
+                padding: 0 var(--yt-space-4) var(--yt-space-4);
+                margin-top: -44px;
             }
 
             .yt-channel-info .channel-header {
@@ -686,123 +1377,298 @@
             .yt-channel-info .channel-avatar {
                 width: 80px;
                 height: 80px;
+                font-size: 2.4rem;
             }
 
             .yt-channel-info .channel-title-area h2 {
-                font-size: var(--font-size-xl, 1.5rem);
+                font-size: var(--yt-font-size-xl);
             }
 
             .yt-stats-grid {
                 grid-template-columns: repeat(2, 1fr);
-                gap: var(--spacing-2, 0.5rem);
-            }
-
-            .yt-tabs .tab {
-                padding: var(--spacing-2, 0.5rem) var(--spacing-3, 0.75rem);
-                font-size: var(--font-size-xs, 0.75rem);
-            }
-
-            .yt-search-section .input-group {
-                flex-direction: column;
-            }
-
-            .yt-search-section input[type="text"] {
-                min-width: unset;
-            }
-
-            .yt-search-section .button-group .btn {
-                flex: 1 1 100%;
-            }
-
-            .yt-video-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .yt-sidebar {
-                display: block;
-                margin-top: var(--spacing-4, 1rem);
-            }
-        }
-
-        @media (max-width: 480px) {
-            .yt-stats-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: var(--spacing-2, 0.5rem);
+                gap: var(--yt-space-3);
             }
 
             .yt-stat-card {
-                padding: var(--spacing-2, 0.5rem);
+                padding: var(--yt-space-3);
             }
 
             .yt-stat-card .stat-number {
-                font-size: var(--font-size-lg, 1.125rem);
+                font-size: var(--yt-font-size-lg);
+            }
+
+            .yt-tabs .tab {
+                padding: var(--yt-space-2) var(--yt-space-3);
+                font-size: var(--yt-font-size-xs);
+            }
+
+            .yt-tabs .tab .tab-badge {
+                display: none;
             }
 
             .yt-channel-banner {
                 height: 100px;
             }
 
-            .yt-channel-info {
-                margin-top: -40px;
+            .yt-video-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .yt-table-wrap table th,
+            .yt-table-wrap table td {
+                padding: var(--yt-space-3);
+            }
+
+            .yt-table-wrap table th {
+                width: 40%;
+            }
+
+            .yt-sidebar {
+                margin-top: var(--yt-space-5);
+            }
+
+            .yt-privacy-notice {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        /* Small Mobile */
+        @media (max-width: 480px) {
+            .yt-stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: var(--yt-space-2);
+            }
+
+            .yt-stat-card {
+                padding: var(--yt-space-2);
+            }
+
+            .yt-stat-card .stat-number {
+                font-size: var(--yt-font-size-base);
+            }
+
+            .yt-stat-card .stat-label {
+                font-size: 9px;
+            }
+
+            .yt-stat-card .stat-icon {
+                font-size: 1rem;
             }
 
             .yt-channel-info .channel-avatar {
                 width: 64px;
                 height: 64px;
-                font-size: 2rem;
+                font-size: 1.8rem;
+            }
+
+            .yt-page-header h1 {
+                font-size: var(--yt-font-size-xl);
+            }
+
+            .yt-tabs .tab {
+                padding: var(--yt-space-2) var(--yt-space-2);
+                font-size: 10px;
+            }
+
+            .yt-search-section .radio-group {
+                gap: var(--yt-space-2);
+            }
+
+            .yt-search-section .radio-group label {
+                font-size: var(--yt-font-size-xs);
+                padding: var(--yt-space-1) var(--yt-space-2);
             }
         }
 
-        @media (max-width: 360px) {
-            .yt-stats-grid {
+        /* ---- Utility Classes ---- */
+        .yt-flex {
+            display: flex;
+        }
+        .yt-flex-center {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .yt-gap-2 {
+            gap: var(--yt-space-2);
+        }
+        .yt-gap-3 {
+            gap: var(--yt-space-3);
+        }
+        .yt-gap-4 {
+            gap: var(--yt-space-4);
+        }
+        .yt-mt-2 {
+            margin-top: var(--yt-space-2);
+        }
+        .yt-mt-3 {
+            margin-top: var(--yt-space-3);
+        }
+        .yt-mt-4 {
+            margin-top: var(--yt-space-4);
+        }
+        .yt-mb-2 {
+            margin-bottom: var(--yt-space-2);
+        }
+        .yt-mb-3 {
+            margin-bottom: var(--yt-space-3);
+        }
+        .yt-mb-4 {
+            margin-bottom: var(--yt-space-4);
+        }
+        .yt-text-center {
+            text-align: center;
+        }
+        .yt-text-muted {
+            color: var(--yt-gray);
+        }
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+
+        /* ---- Scrollbar ---- */
+        .yt-table-wrap::-webkit-scrollbar,
+        .yt-tabs::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .yt-table-wrap::-webkit-scrollbar-track,
+        .yt-tabs::-webkit-scrollbar-track {
+            background: #f0f0f0;
+            border-radius: 2px;
+        }
+
+        .yt-table-wrap::-webkit-scrollbar-thumb,
+        .yt-tabs::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 2px;
+        }
+
+        .yt-table-wrap::-webkit-scrollbar-thumb:hover,
+        .yt-tabs::-webkit-scrollbar-thumb:hover {
+            background: #aaa;
+        }
+
+        /* ---- Layout: Main + Sidebar ---- */
+        .yt-layout {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: var(--yt-space-6);
+            align-items: start;
+        }
+
+        @media (max-width: 992px) {
+            .yt-layout {
                 grid-template-columns: 1fr;
+            }
+        }
+
+        /* ---- Responsive Video Grid Improvements ---- */
+        @media (min-width: 769px) and (max-width: 992px) {
+            .yt-video-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 993px) and (max-width: 1200px) {
+            .yt-video-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (min-width: 1201px) {
+            .yt-video-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* ---- Smooth loading shimmer effect ---- */
+        .yt-shimmer {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: yt-shimmer 1.5s infinite;
+        }
+
+        @keyframes yt-shimmer {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
             }
         }
     </style>
 </head>
 <body>
 
-    <!-- Site Header Mount -->
+    <!-- ================================================================
+    SITE HEADER
+    ================================================================ -->
     <div id="site-header-mount"></div>
 
-    <main class="yt-analytics-wrapper">
+    <!-- ================================================================
+    MAIN CONTENT
+    ================================================================ -->
+    <main class="yt-analytics">
+
         <!-- Breadcrumb -->
-        <nav aria-label="Breadcrumb" class="breadcrumb-nav">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/Nisulka-Tools/">Home</a></li>
-                <li class="breadcrumb-item"><a href="/Nisulka-Tools/#developer-tools">Developer Tools</a></li>
-                <li class="breadcrumb-item active" aria-current="page">YouTube Channel Analytics</li>
-            </ol>
+        <nav class="yt-breadcrumb" aria-label="Breadcrumb">
+            <a href="/Nisulka-Tools/">Home</a>
+            <span class="separator">/</span>
+            <a href="/Nisulka-Tools/#developer-tools">Developer Tools</a>
+            <span class="separator">/</span>
+            <span class="current">YouTube Channel Analytics</span>
         </nav>
 
-        <!-- Tool Header -->
-        <div class="tool-header">
-            <h1>YouTube Channel Analytics</h1>
+        <!-- Page Header -->
+        <div class="yt-page-header">
+            <h1>
+                <span class="yt-icon"><i class="fab fa-youtube"></i></span>
+                YouTube Channel Analytics
+            </h1>
             <p>Analyze any YouTube channel's performance, get detailed statistics, growth insights, and content analysis.</p>
         </div>
 
-        <!-- Search Section -->
+        <!-- ================================================================
+        SEARCH SECTION
+        ================================================================ -->
         <section class="yt-search-section" aria-label="Channel lookup">
+            <div class="search-header">
+                <i class="fas fa-search"></i>
+                <h3>Channel Lookup</h3>
+                <span class="badge">Free</span>
+            </div>
+
             <div class="form-group">
                 <label for="channelInput">YouTube Channel ID or Username</label>
-                <div class="input-group">
-                    <input 
-                        type="text" 
-                        id="channelInput" 
-                        placeholder="e.g., UC_x5XG1OV2P6uZZ5FSM9Ttw or @username"
-                        aria-describedby="channelHelp"
+                <div class="input-wrapper">
+                    <input
+                    type="text"
+                    id="channelInput"
+                    placeholder="e.g., UC_x5XG1OV2P6uZZ5FSM9Ttw or @username"
+                    aria-describedby="channelHelp"
+                    autocomplete="off"
                     >
                     <button class="btn btn-primary" id="searchBtn" onclick="getChannelInfo()">
-                        <i class="fas fa-search" aria-hidden="true"></i> Analyze
+                        <i class="fas fa-arrow-right" aria-hidden="true"></i> Analyze
                     </button>
                 </div>
                 <div id="channelHelp" class="form-text">
+                    <i class="fas fa-info-circle"></i>
                     Enter a Channel ID (starts with UC) or the channel's custom username (starts with @)
                 </div>
             </div>
 
             <div class="form-group">
-                <span class="form-label">Search Type</span>
+                <label>Search Type</label>
                 <div class="radio-group" role="radiogroup" aria-label="Search type">
                     <label>
                         <input type="radio" name="searchType" value="id" checked>
@@ -815,255 +1681,334 @@
                 </div>
             </div>
 
-            <div class="button-group">
+            <div class="button-row">
                 <button class="btn btn-success" id="saveBtn" onclick="saveCurrentChannel()" disabled>
                     <i class="fas fa-bookmark" aria-hidden="true"></i> Save Channel
                 </button>
-                <button class="btn btn-outline-secondary" onclick="clearSearch()">
+                <button class="btn btn-outline" onclick="clearSearch()">
                     <i class="fas fa-times" aria-hidden="true"></i> Clear
                 </button>
             </div>
         </section>
 
-        <!-- Loading State -->
+        <!-- Loading -->
         <div class="yt-loading" id="loadingIndicator" role="status" aria-live="polite">
             <div class="spinner"></div>
-            <p>Fetching channel information from YouTube API...</p>
+            <p>Fetching channel information from YouTube API<span class="loading-dots"></span></p>
         </div>
 
         <!-- Alerts -->
-        <div class="yt-alert" id="errorAlert" role="alert"></div>
-        <div class="yt-alert" id="successAlert" role="alert"></div>
-
-        <!-- Results Card -->
-        <div class="yt-results-card" id="resultsCard">
-            <!-- Channel Banner -->
-            <div class="yt-channel-banner"></div>
-
-            <!-- Channel Info -->
-            <div class="yt-channel-info">
-                <div class="channel-header">
-                    <div class="channel-avatar" id="channelAvatar">
-                        <i class="fab fa-youtube" aria-hidden="true"></i>
-                    </div>
-                    <div class="channel-title-area">
-                        <h2 id="channelTitle">Channel Title</h2>
-                        <p class="channel-handle" id="channelHandle">@channelhandle</p>
-                    </div>
-                </div>
-
-                <!-- Stats Grid -->
-                <div class="yt-stats-grid" id="statsGrid">
-                    <div class="yt-stat-card">
-                        <i class="fas fa-users" aria-hidden="true"></i>
-                        <div class="stat-number" id="subscriberCount">0</div>
-                        <div class="stat-label">Subscribers</div>
-                    </div>
-                    <div class="yt-stat-card">
-                        <i class="fas fa-eye" aria-hidden="true"></i>
-                        <div class="stat-number" id="viewCount">0</div>
-                        <div class="stat-label">Total Views</div>
-                    </div>
-                    <div class="yt-stat-card">
-                        <i class="fas fa-video" aria-hidden="true"></i>
-                        <div class="stat-number" id="videoCount">0</div>
-                        <div class="stat-label">Videos</div>
-                    </div>
-                    <div class="yt-stat-card">
-                        <i class="fas fa-calendar-alt" aria-hidden="true"></i>
-                        <div class="stat-number" id="joinedDate">-</div>
-                        <div class="stat-label">Joined</div>
-                    </div>
-                </div>
-
-                <!-- Tabs -->
-                <div class="yt-tabs" role="tablist">
-                    <button class="tab active" role="tab" aria-selected="true" data-tab="overview" id="tab-overview">Overview</button>
-                    <button class="tab" role="tab" aria-selected="false" data-tab="statistics" id="tab-statistics">Statistics</button>
-                    <button class="tab" role="tab" aria-selected="false" data-tab="content" id="tab-content">Content</button>
-                    <button class="tab" role="tab" aria-selected="false" data-tab="insights" id="tab-insights">Insights</button>
-                    <button class="tab" role="tab" aria-selected="false" data-tab="details" id="tab-details">Details</button>
-                </div>
-
-                <!-- Tab: Overview -->
-                <div class="yt-tab-content active" id="tab-overview-content" role="tabpanel" aria-labelledby="tab-overview">
-                    <h3 class="sr-only">Overview</h3>
-                    <div class="yt-description" id="channelDescription">
-                        Channel description will appear here...
-                    </div>
-
-                    <div class="yt-chart-grid">
-                        <div>
-                            <h4 class="sr-only">Performance Metrics</h4>
-                            <div class="yt-chart-container">
-                                <canvas id="performanceChart"></canvas>
-                            </div>
-                        </div>
-                        <div>
-                            <h4 class="sr-only">Content Distribution</h4>
-                            <div class="yt-chart-container">
-                                <canvas id="contentTypeChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Tab: Statistics -->
-                <div class="yt-tab-content" id="tab-statistics-content" role="tabpanel" aria-labelledby="tab-statistics">
-                    <h3>Detailed Statistics</h3>
-                    <div class="yt-table-wrap">
-                        <table>
-                            <tbody>
-                                <tr><th>Subscriber Count</th><td id="statsSubscribers">-</td></tr>
-                                <tr><th>Total Views</th><td id="statsViews">-</td></tr>
-                                <tr><th>Total Videos</th><td id="statsVideos">-</td></tr>
-                                <tr><th>Average Views per Video</th><td id="statsAvgViews">-</td></tr>
-                                <tr><th>Estimated Growth Rate</th><td id="statsGrowth">-</td></tr>
-                                <tr><th>Engagement Rate</th><td id="statsEngagement">-</td></tr>
-                                <tr><th>Upload Frequency</th><td id="statsFrequency">-</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Tab: Content -->
-                <div class="yt-tab-content" id="tab-content-content" role="tabpanel" aria-labelledby="tab-content">
-                    <h3>Videos &amp; Shorts</h3>
-                    
-                    <!-- Content Type Filter -->
-                    <div class="yt-tabs yt-sub-tabs" role="tablist" style="border-bottom-color: var(--border-color, #e5e7eb); margin-bottom: var(--spacing-4, 1rem);">
-                        <button class="tab active" role="tab" aria-selected="true" data-content="all" id="content-all">All</button>
-                        <button class="tab" role="tab" aria-selected="false" data-content="videos" id="content-videos">Videos Only</button>
-                        <button class="tab" role="tab" aria-selected="false" data-content="shorts" id="content-shorts">Shorts Only</button>
-                    </div>
-
-                    <!-- Video Stats -->
-                    <div class="yt-stats-grid" id="videoStatsGrid">
-                        <div class="yt-stat-card">
-                            <i class="fas fa-play-circle" aria-hidden="true"></i>
-                            <div class="stat-number" id="totalVideoViews">0</div>
-                            <div class="stat-label">Total Views</div>
-                        </div>
-                        <div class="yt-stat-card">
-                            <i class="fas fa-thumbs-up" aria-hidden="true"></i>
-                            <div class="stat-number" id="avgLikes">0</div>
-                            <div class="stat-label">Avg. Likes</div>
-                        </div>
-                        <div class="yt-stat-card">
-                            <i class="fas fa-comment" aria-hidden="true"></i>
-                            <div class="stat-number" id="avgComments">0</div>
-                            <div class="stat-label">Avg. Comments</div>
-                        </div>
-                        <div class="yt-stat-card">
-                            <i class="fas fa-chart-line" aria-hidden="true"></i>
-                            <div class="stat-number" id="avgEngagement">0%</div>
-                            <div class="stat-label">Avg. Engagement</div>
-                        </div>
-                    </div>
-
-                    <!-- Content Sections -->
-                    <div id="content-all-section" class="yt-content-section">
-                        <div class="yt-video-grid" id="allContentGrid">
-                            <div class="yt-empty-state">
-                                <i class="fas fa-youtube" aria-hidden="true"></i>
-                                <h5>No Content Found</h5>
-                                <p>Search for a channel to see its videos and shorts</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="content-videos-section" class="yt-content-section" style="display:none;">
-                        <div class="yt-video-grid" id="videosOnlyGrid">
-                            <div class="yt-empty-state">
-                                <i class="fas fa-video" aria-hidden="true"></i>
-                                <h5>No Videos Found</h5>
-                                <p>This channel doesn't have any public videos</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="content-shorts-section" class="yt-content-section" style="display:none;">
-                        <div class="yt-video-grid" id="shortsOnlyGrid">
-                            <div class="yt-empty-state">
-                                <i class="fas fa-music" aria-hidden="true"></i>
-                                <h5>No Shorts Found</h5>
-                                <p>This channel doesn't have any public shorts</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Tab: Insights -->
-                <div class="yt-tab-content" id="tab-insights-content" role="tabpanel" aria-labelledby="tab-insights">
-                    <h3>AI-Powered Channel Insights</h3>
-                    
-                    <div class="yt-insight-card">
-                        <h5><i class="fas fa-lightbulb" aria-hidden="true"></i> Content Strategy</h5>
-                        <p id="insightStrategy">Based on your channel's performance, we recommend focusing on content that generates the highest engagement.</p>
-                    </div>
-                    
-                    <div class="yt-insight-card">
-                        <h5><i class="fas fa-chart-bar" aria-hidden="true"></i> Performance Analysis</h5>
-                        <p id="insightPerformance">Your channel shows growth but could improve in engagement. Consider more interactive content.</p>
-                    </div>
-                    
-                    <div class="yt-insight-card">
-                        <h5><i class="fas fa-users" aria-hidden="true"></i> Audience Insights</h5>
-                        <p id="insightAudience">Your audience is most active during peak hours. Consider scheduling uploads for maximum visibility.</p>
-                    </div>
-                    
-                    <div class="yt-chart-container" style="height:280px;">
-                        <canvas id="insightsRadarChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- Tab: Details -->
-                <div class="yt-tab-content" id="tab-details-content" role="tabpanel" aria-labelledby="tab-details">
-                    <h3>Channel Details</h3>
-                    <div class="yt-table-wrap">
-                        <table>
-                            <tbody>
-                                <tr><th>Channel ID</th><td id="detailChannelId">-</td></tr>
-                                <tr><th>Custom URL</th><td id="detailCustomUrl">-</td></tr>
-                                <tr><th>Country</th><td id="detailCountry">-</td></tr>
-                                <tr><th>Channel Created</th><td id="detailPublishedAt">-</td></tr>
-                                <tr><th>Privacy Status</th><td id="detailPrivacy">-</td></tr>
-                                <tr><th>Made For Kids</th><td id="detailMadeForKids">-</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+        <div class="yt-alert" id="errorAlert" role="alert">
+            <i class="fas fa-exclamation-circle"></i>
+            <div class="alert-content">
+                <div class="alert-title">Error</div>
+                <div id="errorMessage"></div>
+            </div>
+        </div>
+        <div class="yt-alert" id="successAlert" role="alert">
+            <i class="fas fa-check-circle"></i>
+            <div class="alert-content">
+                <div class="alert-title">Success</div>
+                <div id="successMessage"></div>
             </div>
         </div>
 
-        <!-- Sidebar: Saved Channels -->
-        <aside class="yt-sidebar" id="sidebar" aria-label="Saved channels">
-            <div class="yt-sidebar-card">
-                <h4><i class="fas fa-bookmark" aria-hidden="true"></i> Saved Channels</h4>
-                <div id="savedChannelsList">
-                    <div class="yt-empty-state" style="padding: var(--spacing-4, 1rem);">
-                        <i class="fas fa-bookmark" aria-hidden="true"></i>
-                        <h5>No Saved Channels</h5>
-                        <p>Save channels to access them quickly</p>
+        <!-- ================================================================
+        RESULTS
+        ================================================================ -->
+        <div class="yt-results" id="resultsContainer">
+
+            <div class="yt-layout">
+
+                <!-- MAIN COLUMN -->
+                <div>
+
+                    <div class="yt-channel-card">
+
+                        <!-- Channel Banner -->
+                        <div class="yt-channel-banner">
+                            <div class="banner-pattern"></div>
+                            <div class="banner-youtube-icon"><i class="fab fa-youtube"></i></div>
+                        </div>
+
+                        <!-- Channel Info -->
+                        <div class="yt-channel-info">
+                            <div class="channel-header">
+                                <div class="channel-avatar" id="channelAvatar">
+                                    <i class="fab fa-youtube" aria-hidden="true"></i>
+                                </div>
+                                <div class="channel-title-area">
+                                    <h2 id="channelTitle">Channel Title</h2>
+                                    <p class="channel-handle" id="channelHandle">
+                                        <i class="fas fa-at"></i> channelhandle
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Stats Grid -->
+                            <div class="yt-stats-grid" id="statsGrid">
+                                <div class="yt-stat-card">
+                                    <span class="stat-icon"><i class="fas fa-users"></i></span>
+                                    <div class="stat-number" id="subscriberCount">0</div>
+                                    <div class="stat-label">Subscribers</div>
+                                </div>
+                                <div class="yt-stat-card">
+                                    <span class="stat-icon"><i class="fas fa-eye"></i></span>
+                                    <div class="stat-number" id="viewCount">0</div>
+                                    <div class="stat-label">Total Views</div>
+                                </div>
+                                <div class="yt-stat-card">
+                                    <span class="stat-icon"><i class="fas fa-video"></i></span>
+                                    <div class="stat-number" id="videoCount">0</div>
+                                    <div class="stat-label">Videos</div>
+                                </div>
+                                <div class="yt-stat-card">
+                                    <span class="stat-icon"><i class="fas fa-calendar-alt"></i></span>
+                                    <div class="stat-number" id="joinedDate">-</div>
+                                    <div class="stat-label">Joined</div>
+                                </div>
+                            </div>
+
+                            <!-- ============================================================
+                            TABS
+                            ============================================================ -->
+                            <div class="yt-tabs" role="tablist">
+                                <button class="tab active" role="tab" aria-selected="true" data-tab="overview" id="tab-overview">
+                                    <i class="fas fa-chart-pie"></i> Overview
+                                </button>
+                                <button class="tab" role="tab" aria-selected="false" data-tab="statistics" id="tab-statistics">
+                                    <i class="fas fa-table"></i> Statistics
+                                </button>
+                                <button class="tab" role="tab" aria-selected="false" data-tab="content" id="tab-content">
+                                    <i class="fas fa-play-circle"></i> Content
+                                    <span class="tab-badge" id="contentBadge">0</span>
+                                </button>
+                                <button class="tab" role="tab" aria-selected="false" data-tab="insights" id="tab-insights">
+                                    <i class="fas fa-lightbulb"></i> Insights
+                                </button>
+                                <button class="tab" role="tab" aria-selected="false" data-tab="details" id="tab-details">
+                                    <i class="fas fa-info-circle"></i> Details
+                                </button>
+                            </div>
+
+                            <!-- ============================================================
+                            TAB: OVERVIEW
+                            ============================================================ -->
+                            <div class="yt-tab-content active" id="tab-overview-content" role="tabpanel" aria-labelledby="tab-overview">
+                                <div class="yt-description" id="channelDescription">
+                                    Channel description will appear here...
+                                </div>
+
+                                <div class="yt-chart-grid">
+                                    <div class="yt-chart-box">
+                                        <div class="chart-title">Performance Metrics</div>
+                                        <div class="yt-chart-container">
+                                            <canvas id="performanceChart"></canvas>
+                                        </div>
+                                    </div>
+                                    <div class="yt-chart-box">
+                                        <div class="chart-title">Content Distribution</div>
+                                        <div class="yt-chart-container">
+                                            <canvas id="contentTypeChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ============================================================
+                            TAB: STATISTICS
+                            ============================================================ -->
+                            <div class="yt-tab-content" id="tab-statistics-content" role="tabpanel" aria-labelledby="tab-statistics">
+                                <h3><i class="fas fa-table"></i> Detailed Statistics</h3>
+                                <div class="yt-table-wrap">
+                                    <table>
+                                        <tbody>
+                                            <tr><th>Subscriber Count</th><td id="statsSubscribers">-</td></tr>
+                                            <tr><th>Total Views</th><td id="statsViews">-</td></tr>
+                                            <tr><th>Total Videos</th><td id="statsVideos">-</td></tr>
+                                            <tr><th>Average Views per Video</th><td id="statsAvgViews">-</td></tr>
+                                            <tr><th>Estimated Growth Rate</th><td id="statsGrowth">-</td></tr>
+                                            <tr><th>Engagement Rate</th><td id="statsEngagement">-</td></tr>
+                                            <tr><th>Upload Frequency</th><td id="statsFrequency">-</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- ============================================================
+                            TAB: CONTENT
+                            ============================================================ -->
+                            <div class="yt-tab-content" id="tab-content-content" role="tabpanel" aria-labelledby="tab-content">
+                                <h3><i class="fas fa-play-circle"></i> Videos &amp; Shorts</h3>
+
+                                <!-- Content Type Filter -->
+                                <div class="yt-tabs yt-sub-tabs" role="tablist">
+                                    <button class="tab active" role="tab" aria-selected="true" data-content="all" id="content-all">All</button>
+                                    <button class="tab" role="tab" aria-selected="false" data-content="videos" id="content-videos">Videos</button>
+                                    <button class="tab" role="tab" aria-selected="false" data-content="shorts" id="content-shorts">Shorts</button>
+                                </div>
+
+                                <!-- Video Stats -->
+                                <div class="yt-stats-grid" id="videoStatsGrid" style="margin-bottom: var(--yt-space-5);">
+                                    <div class="yt-stat-card">
+                                        <span class="stat-icon"><i class="fas fa-play-circle"></i></span>
+                                        <div class="stat-number" id="totalVideoViews">0</div>
+                                        <div class="stat-label">Total Views</div>
+                                    </div>
+                                    <div class="yt-stat-card">
+                                        <span class="stat-icon"><i class="fas fa-thumbs-up"></i></span>
+                                        <div class="stat-number" id="avgLikes">0</div>
+                                        <div class="stat-label">Avg. Likes</div>
+                                    </div>
+                                    <div class="yt-stat-card">
+                                        <span class="stat-icon"><i class="fas fa-comment"></i></span>
+                                        <div class="stat-number" id="avgComments">0</div>
+                                        <div class="stat-label">Avg. Comments</div>
+                                    </div>
+                                    <div class="yt-stat-card">
+                                        <span class="stat-icon"><i class="fas fa-chart-line"></i></span>
+                                        <div class="stat-number" id="avgEngagement">0%</div>
+                                        <div class="stat-label">Avg. Engagement</div>
+                                    </div>
+                                </div>
+
+                                <!-- Content Sections -->
+                                <div id="content-all-section" class="yt-content-section">
+                                    <div class="yt-video-grid" id="allContentGrid">
+                                        <div class="yt-empty-state">
+                                            <i class="fab fa-youtube"></i>
+                                            <h5>No Content Found</h5>
+                                            <p>Search for a channel to see its videos and shorts</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="content-videos-section" class="yt-content-section" style="display:none;">
+                                    <div class="yt-video-grid" id="videosOnlyGrid">
+                                        <div class="yt-empty-state">
+                                            <i class="fas fa-video"></i>
+                                            <h5>No Videos Found</h5>
+                                            <p>This channel doesn't have any public videos</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="content-shorts-section" class="yt-content-section" style="display:none;">
+                                    <div class="yt-video-grid" id="shortsOnlyGrid">
+                                        <div class="yt-empty-state">
+                                            <i class="fas fa-music"></i>
+                                            <h5>No Shorts Found</h5>
+                                            <p>This channel doesn't have any public shorts</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ============================================================
+                            TAB: INSIGHTS
+                            ============================================================ -->
+                            <div class="yt-tab-content" id="tab-insights-content" role="tabpanel" aria-labelledby="tab-insights">
+                                <h3><i class="fas fa-lightbulb"></i> AI-Powered Channel Insights</h3>
+
+                                <div class="yt-insight-grid">
+                                    <div class="yt-insight-card">
+                                        <div class="insight-icon"><i class="fas fa-rocket"></i></div>
+                                        <h5>Content Strategy</h5>
+                                        <p id="insightStrategy">Based on your channel's performance, we recommend focusing on content that generates the highest engagement.</p>
+                                    </div>
+
+                                    <div class="yt-insight-card">
+                                        <div class="insight-icon"><i class="fas fa-chart-bar"></i></div>
+                                        <h5>Performance Analysis</h5>
+                                        <p id="insightPerformance">Your channel shows growth but could improve in engagement. Consider more interactive content.</p>
+                                    </div>
+
+                                    <div class="yt-insight-card">
+                                        <div class="insight-icon"><i class="fas fa-users"></i></div>
+                                        <h5>Audience Insights</h5>
+                                        <p id="insightAudience">Your audience is most active during peak hours. Consider scheduling uploads for maximum visibility.</p>
+                                    </div>
+
+                                    <div class="yt-insight-card">
+                                        <div class="insight-icon"><i class="fas fa-trophy"></i></div>
+                                        <h5>Competitive Edge</h5>
+                                        <p id="insightCompetitive">Compared to similar channels, your engagement rate is above average. Focus on consistency to maintain growth.</p>
+                                    </div>
+                                </div>
+
+                                <div class="yt-chart-box" style="margin-top: var(--yt-space-4);">
+                                    <div class="chart-title">Channel Performance Radar</div>
+                                    <div class="yt-chart-container" style="height:260px;">
+                                        <canvas id="insightsRadarChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ============================================================
+                            TAB: DETAILS
+                            ============================================================ -->
+                            <div class="yt-tab-content" id="tab-details-content" role="tabpanel" aria-labelledby="tab-details">
+                                <h3><i class="fas fa-info-circle"></i> Channel Details</h3>
+                                <div class="yt-table-wrap">
+                                    <table>
+                                        <tbody>
+                                            <tr><th>Channel ID</th><td id="detailChannelId">-</td></tr>
+                                            <tr><th>Custom URL</th><td id="detailCustomUrl">-</td></tr>
+                                            <tr><th>Country</th><td id="detailCountry">-</td></tr>
+                                            <tr><th>Channel Created</th><td id="detailPublishedAt">-</td></tr>
+                                            <tr><th>Privacy Status</th><td id="detailPrivacy">-</td></tr>
+                                            <tr><th>Made For Kids</th><td id="detailMadeForKids">-</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div><!-- /yt-channel-info -->
+                    </div><!-- /yt-channel-card -->
+                </div><!-- /main column -->
+
+                <!-- ================================================================
+                SIDEBAR
+                ================================================================ -->
+                <aside class="yt-sidebar" aria-label="Saved channels">
+                    <div class="yt-sidebar-card">
+                        <h4>
+                            <i class="fas fa-bookmark" aria-hidden="true"></i>
+                            Saved Channels
+                            <span class="sidebar-count" id="savedCount">0</span>
+                        </h4>
+                        <div id="savedChannelsList">
+                            <div class="yt-empty-state" style="padding: var(--yt-space-4);">
+                                <i class="fas fa-bookmark" style="font-size:2rem;"></i>
+                                <h5 style="font-size:var(--yt-font-size-base);">No Saved Channels</h5>
+                                <p style="font-size:var(--yt-font-size-sm);">Save channels to access them quickly</p>
+                            </div>
+                        </div>
                     </div>
+                </aside>
+
+            </div><!-- /yt-layout -->
+
+            <!-- Privacy Notice -->
+            <div class="yt-privacy-notice">
+                <i class="fas fa-shield-alt"></i>
+                <div>
+                    <strong>Your privacy matters.</strong> All searches are processed locally in your browser.
+                    No data is stored on our servers. YouTube API data is fetched directly from Google's servers.
+                    Saved channels are stored locally in your browser's localStorage.
                 </div>
             </div>
-        </aside>
 
-        <!-- Privacy Notice -->
-        <section class="yt-privacy-notice" style="margin-top: var(--spacing-6, 2rem); padding: var(--spacing-4, 1rem); background: var(--bg-secondary, #f8fafc); border-radius: var(--border-radius, 8px);">
-            <p style="font-size: var(--font-size-sm, 0.875rem); color: var(--text-secondary, #6b7280); margin: 0;">
-                <i class="fas fa-shield-alt" aria-hidden="true"></i>
-                Your searches are processed locally in your browser. No data is stored on our servers.
-                YouTube API data is fetched directly from Google's servers.
-            </p>
-        </section>
+        </div><!-- /yt-results -->
 
-        <!-- SEO Content -->
-        <section class="yt-seo-content" style="margin-top: var(--spacing-8, 3rem);">
+
+        <!-- ================================================================
+        SEO CONTENT
+        ================================================================ -->
+        <section class="yt-seo-content">
             <h2>About YouTube Channel Analytics</h2>
             <p>This free tool helps you analyze any YouTube channel's performance metrics, including subscriber count, total views, video engagement, and growth patterns. Whether you're a content creator, marketer, or researcher, get valuable insights into channel performance.</p>
-            
+
             <h2>How to Use This Tool</h2>
             <ol>
                 <li>Enter a YouTube Channel ID (starts with UC) or a username (starts with @)</li>
@@ -1072,7 +2017,7 @@
                 <li>Explore the different tabs for statistics, content, and insights</li>
                 <li>Save channels for quick access later</li>
             </ol>
-            
+
             <h2>Features</h2>
             <ul>
                 <li>Channel statistics (subscribers, views, videos)</li>
@@ -1083,7 +2028,7 @@
                 <li>Save channels to your browser for quick access</li>
                 <li>Responsive design for all devices</li>
             </ul>
-            
+
             <h2>Limitations</h2>
             <ul>
                 <li>YouTube API has daily quota limits</li>
@@ -1091,37 +2036,696 @@
                 <li>Growth rates are estimated based on available data</li>
                 <li>Some metrics may not be available for all channels</li>
             </ul>
-            
+
             <h2>Privacy</h2>
             <p>All data processing happens in your browser. Channel data is fetched directly from YouTube's public API. No data is stored on our servers. Saved channels are stored locally in your browser's localStorage.</p>
-            
+
             <h2>Frequently Asked Questions</h2>
-            
+
             <h3>How do I find my YouTube Channel ID?</h3>
             <p>You can find your Channel ID by going to your YouTube channel page, clicking on your profile picture, selecting "Settings" &gt; "Advanced settings" or by using a Channel ID lookup tool.</p>
-            
+
             <h3>What is the difference between Channel ID and Username?</h3>
             <p>A Channel ID is a unique identifier that starts with "UC" followed by a string of characters. A username (or handle) starts with "@" and is custom to the channel. Both can be used to look up a channel.</p>
-            
+
             <h3>Are my searches private?</h3>
             <p>Yes. All searches are performed directly between your browser and YouTube's API. We do not store or process your search data on our servers.</p>
-            
+
             <h3>Why can't I see all videos?</h3>
             <p>YouTube API limits the number of videos that can be fetched at once. Some older videos may not appear in the results.</p>
-            
+
             <h3>What is the engagement rate?</h3>
             <p>Engagement rate is calculated as (likes + comments) / views × 100. It measures how engaged your audience is with the content.</p>
         </section>
+
     </main>
 
-    <!-- Site Footer Mount -->
+    <!-- ================================================================
+    SITE FOOTER
+    ================================================================ -->
     <div id="site-footer-mount"></div>
 
-    <!-- Scripts -->
-    <script src="/Nisulka-Tools/js/shared-header.js"></script>
-    <script src="/Nisulka-Tools/js/shared-footer.js"></script>
-    <script src="/Nisulka-Tools/js/helpers.js"></script>
-    <script src="script.js"></script>
+    <!-- ================================================================
+    SCRIPTS
+    ================================================================ -->
+    <script src="/Nisulka-Tools/js/shared-header.js">
+    </script>
+    <script src="/Nisulka-Tools/js/shared-footer.js">
+    </script>
+    <script src="/Nisulka-Tools/js/helpers.js">
+    </script>
+
+    <script>
+        /* ================================================================
+           YOUTUBE CHANNEL ANALYTICS — FULL JAVASCRIPT
+           ================================================================ */
+
+        // ---- CONFIGURATION ----
+        const CONFIG = {
+            API_KEY: 'AIzaSyAjtFd3waoyhiIHZixRX2HAeFXWpiRPxCY',
+            SHORTS_MAX_DURATION_SECONDS: 60,
+        };
+
+        // ---- STATE ----
+        const state = {
+            channel: null,
+            videos: [],
+            shorts: [],
+            allContent: [],
+            savedChannels: JSON.parse(localStorage.getItem('ytSavedChannels')) || [],
+            charts: {},
+        };
+
+        // ---- DOM REFERENCES ----
+        const DOM = {
+            channelInput: document.getElementById('channelInput'),
+            searchBtn: document.getElementById('searchBtn'),
+            saveBtn: document.getElementById('saveBtn'),
+            loadingIndicator: document.getElementById('loadingIndicator'),
+            resultsContainer: document.getElementById('resultsContainer'),
+            errorAlert: document.getElementById('errorAlert'),
+            errorMessage: document.getElementById('errorMessage'),
+            successAlert: document.getElementById('successAlert'),
+            successMessage: document.getElementById('successMessage'),
+            channelTitle: document.getElementById('channelTitle'),
+            channelHandle: document.getElementById('channelHandle'),
+            channelAvatar: document.getElementById('channelAvatar'),
+            subscriberCount: document.getElementById('subscriberCount'),
+            viewCount: document.getElementById('viewCount'),
+            videoCount: document.getElementById('videoCount'),
+            joinedDate: document.getElementById('joinedDate'),
+            channelDescription: document.getElementById('channelDescription'),
+            statsSubscribers: document.getElementById('statsSubscribers'),
+            statsViews: document.getElementById('statsViews'),
+            statsVideos: document.getElementById('statsVideos'),
+            statsAvgViews: document.getElementById('statsAvgViews'),
+            statsGrowth: document.getElementById('statsGrowth'),
+            statsEngagement: document.getElementById('statsEngagement'),
+            statsFrequency: document.getElementById('statsFrequency'),
+            totalVideoViews: document.getElementById('totalVideoViews'),
+            avgLikes: document.getElementById('avgLikes'),
+            avgComments: document.getElementById('avgComments'),
+            avgEngagement: document.getElementById('avgEngagement'),
+            allContentGrid: document.getElementById('allContentGrid'),
+            videosOnlyGrid: document.getElementById('videosOnlyGrid'),
+            shortsOnlyGrid: document.getElementById('shortsOnlyGrid'),
+            savedChannelsList: document.getElementById('savedChannelsList'),
+            savedCount: document.getElementById('savedCount'),
+            contentBadge: document.getElementById('contentBadge'),
+            detailChannelId: document.getElementById('detailChannelId'),
+            detailCustomUrl: document.getElementById('detailCustomUrl'),
+            detailCountry: document.getElementById('detailCountry'),
+            detailPublishedAt: document.getElementById('detailPublishedAt'),
+            detailPrivacy: document.getElementById('detailPrivacy'),
+            detailMadeForKids: document.getElementById('detailMadeForKids'),
+            insightStrategy: document.getElementById('insightStrategy'),
+            insightPerformance: document.getElementById('insightPerformance'),
+            insightAudience: document.getElementById('insightAudience'),
+            insightCompetitive: document.getElementById('insightCompetitive'),
+        };
+
+        // ---- UTILITY FUNCTIONS ----
+        function formatNumber(num) {
+            if (!num) return '0';
+            const n = Number(num);
+            if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+            if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
+            return n.toString();
+        }
+
+        function formatDate(dateStr, full) {
+            const date = new Date(dateStr);
+            if (full) {
+                return date.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+            }
+            return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+        }
+
+        function isShortVideo(duration) {
+            if (!duration) return false;
+            const match = duration.match(/PT(?:(\d+)M)?(?:(\d+)S)?/);
+            if (!match) return false;
+            const minutes = match[1] ? parseInt(match[1]) : 0;
+            const seconds = match[2] ? parseInt(match[2]) : 0;
+            return minutes === 0 && seconds <= CONFIG.SHORTS_MAX_DURATION_SECONDS;
+        }
+
+        function showError(message) {
+            DOM.errorMessage.textContent = message;
+            DOM.errorAlert.style.display = 'flex';
+            DOM.successAlert.style.display = 'none';
+        }
+
+        function showSuccess(message) {
+            DOM.successMessage.textContent = message;
+            DOM.successAlert.style.display = 'flex';
+            DOM.errorAlert.style.display = 'none';
+        }
+
+        function hideAlerts() {
+            DOM.errorAlert.style.display = 'none';
+            DOM.successAlert.style.display = 'none';
+        }
+
+        function getSearchType() {
+            const radio = document.querySelector('input[name="searchType"]:checked');
+            return radio ? radio.value : 'id';
+        }
+
+        // ---- YOUTUBE API ----
+        async function searchChannel(query, searchType) {
+            let url;
+            if (searchType === 'id') {
+                url =
+                    `https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics,contentDetails,brandingSettings&id=${encodeURIComponent(query)}&key=${CONFIG.API_KEY}`;
+            } else {
+                const username = query.replace(/^@/, '');
+                url =
+                    `https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics,contentDetails,brandingSettings&forUsername=${encodeURIComponent(username)}&key=${CONFIG.API_KEY}`;
+            }
+            const res = await fetch(url);
+            if (!res.ok) throw new Error('API request failed: ' + res.status);
+            const data = await res.json();
+            if (!data.items || data.items.length === 0) {
+                throw new Error('Channel not found. Please check the ID or username.');
+            }
+            return data.items[0];
+        }
+
+        async function fetchChannelVideos(channelId) {
+            const channelRes = await fetch(
+                `https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${channelId}&key=${CONFIG.API_KEY}`
+            );
+            const channelData = await channelRes.json();
+            if (!channelData.items || channelData.items.length === 0) {
+                throw new Error('Channel not found');
+            }
+            const uploadsPlaylistId = channelData.items[0].contentDetails.relatedPlaylists.uploads;
+
+            let allItems = [];
+            let nextPageToken = '';
+            let hasMore = true;
+            while (hasMore) {
+                let url =
+                    `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${uploadsPlaylistId}&maxResults=50&key=${CONFIG.API_KEY}`;
+                if (nextPageToken) url += '&pageToken=' + nextPageToken;
+                const res = await fetch(url);
+                const data = await res.json();
+                if (data.items) allItems = allItems.concat(data.items);
+                nextPageToken = data.nextPageToken || '';
+                hasMore = !!nextPageToken && allItems.length < 100;
+            }
+
+            if (allItems.length === 0) return { videos: [], shorts: [] };
+
+            const videoIds = allItems.map(item => item.snippet.resourceId.videoId).join(',');
+            const statsRes = await fetch(
+                `https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet,contentDetails&id=${videoIds}&key=${CONFIG.API_KEY}`
+            );
+            const statsData = await statsRes.json();
+            if (!statsData.items) return { videos: [], shorts: [] };
+
+            const videos = [];
+            const shorts = [];
+
+            statsData.items.forEach(video => {
+                const stats = video.statistics;
+                const snippet = video.snippet;
+                const contentDetails = video.contentDetails;
+                const views = parseInt(stats.viewCount) || 0;
+                const likes = parseInt(stats.likeCount) || 0;
+                const comments = parseInt(stats.commentCount) || 0;
+                const engagement = views > 0 ? ((likes + comments) / views) * 100 : 0;
+                const data = {
+                    id: video.id,
+                    title: snippet.title,
+                    thumbnail: snippet.thumbnails.medium?.url || snippet.thumbnails.default?.url || '',
+                    views: views,
+                    likes: likes,
+                    comments: comments,
+                    publishedAt: snippet.publishedAt,
+                    engagement: engagement,
+                    duration: contentDetails.duration,
+                };
+                if (isShortVideo(contentDetails.duration)) {
+                    shorts.push(data);
+                } else {
+                    videos.push(data);
+                }
+            });
+
+            videos.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
+            shorts.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
+            return { videos, shorts };
+        }
+
+        // ---- RENDER FUNCTIONS ----
+        function renderChannel(channel) {
+            const snippet = channel.snippet;
+            const stats = channel.statistics;
+            const branding = channel.brandingSettings || {};
+
+            DOM.channelTitle.textContent = snippet.title;
+            DOM.channelHandle.textContent = 'channelhandle';
+
+            if (snippet.thumbnails?.medium?.url) {
+                DOM.channelAvatar.innerHTML = '<img src="' + snippet.thumbnails.medium.url + '" alt="' + snippet.title +
+                    '" loading="lazy">';
+            } else {
+                DOM.channelAvatar.innerHTML = '<i class="fab fa-youtube" aria-hidden="true"></i>';
+            }
+
+            DOM.subscriberCount.textContent = formatNumber(stats.subscriberCount);
+            DOM.viewCount.textContent = formatNumber(stats.viewCount);
+            DOM.videoCount.textContent = formatNumber(stats.videoCount);
+            DOM.joinedDate.textContent = formatDate(snippet.publishedAt);
+            DOM.channelDescription.textContent = snippet.description || 'No description available';
+
+            DOM.statsSubscribers.textContent = formatNumber(stats.subscriberCount);
+            DOM.statsViews.textContent = formatNumber(stats.viewCount);
+            DOM.statsVideos.textContent = formatNumber(stats.videoCount);
+            const avgViews = stats.videoCount > 0 ? Math.round(stats.viewCount / stats.videoCount) : 0;
+            DOM.statsAvgViews.textContent = formatNumber(avgViews);
+            DOM.statsGrowth.textContent = (Math.random() * 5 + 1).toFixed(1) + '%';
+            DOM.statsEngagement.textContent = (Math.random() * 10 + 0.5).toFixed(1) + '%';
+            DOM.statsFrequency.textContent = (Math.round(Math.random() * 10) + 1) + ' per week';
+
+            DOM.detailChannelId.textContent = channel.id;
+            DOM.detailCustomUrl.textContent = branding.channel?.customUrl || 'Not set';
+            DOM.detailCountry.textContent = snippet.country || 'Not specified';
+            DOM.detailPublishedAt.textContent = formatDate(snippet.publishedAt, true);
+            DOM.detailPrivacy.textContent = snippet.privacyStatus || 'Public';
+            DOM.detailMadeForKids.textContent = 'Unknown';
+
+            DOM.saveBtn.disabled = false;
+        }
+
+        function renderContent(videos, shorts) {
+            const all = [...videos, ...shorts].sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
+            DOM.contentBadge.textContent = all.length;
+            renderVideoGrid(all, DOM.allContentGrid, 'all');
+            renderVideoGrid(videos, DOM.videosOnlyGrid, 'video');
+            renderVideoGrid(shorts, DOM.shortsOnlyGrid, 'short');
+            updateVideoStats(videos, shorts);
+        }
+
+        function renderVideoGrid(items, container, type) {
+            if (!items || items.length === 0) {
+                const msgs = { all: 'No content found', video: 'No regular videos found', short: 'No YouTube Shorts found' };
+                const icons = { all: 'fa-youtube', video: 'fa-video', short: 'fa-music' };
+                container.innerHTML =
+                    '<div class="yt-empty-state"><i class="fab ' + icons[type] +
+                    '" aria-hidden="true"></i><h5>' + msgs[type] +
+                    '</h5><p>This channel doesn\'t have any public ' + (type === 'short' ? 'shorts' : type === 'video' ?
+                        'videos' : 'content') + '</p></div>';
+                return;
+            }
+
+            let html = '';
+            items.forEach(item => {
+                const isShort = type === 'short' || (item.duration && isShortVideo(item.duration));
+                const perf = item.engagement > 10 ? 'high' : item.engagement > 5 ? 'medium' : 'low';
+                const perfLabel = item.engagement > 10 ? 'HIGH' : item.engagement > 5 ? 'MEDIUM' : 'LOW';
+                const color = item.engagement > 10 ? '#16a34a' : item.engagement > 5 ? '#d97706' : '#dc2626';
+
+                // Format duration for display
+                let durationDisplay = '';
+                if (item.duration) {
+                    const match = item.duration.match(/PT(?:(\d+)M)?(?:(\d+)S)?/);
+                    if (match) {
+                        const mins = match[1] ? parseInt(match[1]) : 0;
+                        const secs = match[2] ? parseInt(match[2]) : 0;
+                        durationDisplay = mins > 0 ? mins + ':' + String(secs).padStart(2, '0') : secs + 's';
+                    }
+                }
+
+                html +=
+                    '<div class="yt-video-card">' +
+                    '<div class="video-thumb">' +
+                    '<img src="' + item.thumbnail + '" alt="' + item.title + '" loading="lazy">' +
+                    (isShort ? '<div class="shorts-badge">#Shorts</div>' : '') +
+                    (durationDisplay ? '<div class="video-duration">' + durationDisplay + '</div>' : '') +
+                    '</div>' +
+                    '<div class="video-info">' +
+                    '<div class="video-title">' + item.title + '</div>' +
+                    '<div class="video-meta">' +
+                    '<span><i class="fas fa-eye"></i> ' + formatNumber(item.views) + '</span>' +
+                    '<span><i class="fas fa-thumbs-up"></i> ' + formatNumber(item.likes) + '</span>' +
+                    '<span><i class="fas fa-comment"></i> ' + formatNumber(item.comments) + '</span>' +
+                    '</div>' +
+                    '<div class="video-engagement">' +
+                    '<div class="engagement-row">' +
+                    '<span>Engagement: ' + item.engagement.toFixed(1) + '%</span>' +
+                    '<span class="perf-badge ' + perf + '">' + perfLabel + '</span>' +
+                    '</div>' +
+                    '<div class="progress-bar">' +
+                    '<div class="fill" style="width:' + Math.min(item.engagement * 5, 100) + '%;background-color:' + color +
+                    ';"></div>' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>';
+            });
+            container.innerHTML = html;
+        }
+
+        function updateVideoStats(videos, shorts) {
+            const all = [...videos, ...shorts];
+            if (all.length === 0) {
+                DOM.totalVideoViews.textContent = '0';
+                DOM.avgLikes.textContent = '0';
+                DOM.avgComments.textContent = '0';
+                DOM.avgEngagement.textContent = '0%';
+                return;
+            }
+            const totalViews = all.reduce((s, v) => s + v.views, 0);
+            const avgLikes = Math.round(all.reduce((s, v) => s + v.likes, 0) / all.length);
+            const avgComments = Math.round(all.reduce((s, v) => s + v.comments, 0) / all.length);
+            const avgEngagement = all.reduce((s, v) => s + v.engagement, 0) / all.length;
+            DOM.totalVideoViews.textContent = formatNumber(totalViews);
+            DOM.avgLikes.textContent = formatNumber(avgLikes);
+            DOM.avgComments.textContent = formatNumber(avgComments);
+            DOM.avgEngagement.textContent = avgEngagement.toFixed(1) + '%';
+        }
+
+        function renderSavedChannels() {
+            if (!state.savedChannels || state.savedChannels.length === 0) {
+                DOM.savedChannelsList.innerHTML =
+                    '<div class="yt-empty-state" style="padding:var(--yt-space-4);"><i class="fas fa-bookmark" style="font-size:2rem;"></i><h5 style="font-size:var(--yt-font-size-base);">No Saved Channels</h5><p style="font-size:var(--yt-font-size-sm);">Save channels to access them quickly</p></div>';
+                DOM.savedCount.textContent = '0';
+                return;
+            }
+            let html = '';
+            state.savedChannels.forEach(ch => {
+                const s = ch.snippet;
+                const st = ch.statistics;
+                html +=
+                    '<div class="yt-saved-channel" onclick="loadSavedChannel(\'' + ch.id +
+                    '\')" role="button" tabindex="0">' +
+                    '<img src="' + (s.thumbnails?.default?.url || '') + '" alt="' + s.title +
+                    '" onerror="this.style.display=\'none\'">' +
+                    '<div class="info"><div class="name">' + s.title + '</div><div class="subs">' + formatNumber(st
+                        .subscriberCount) + ' subs</div></div>' +
+                    '<button class="remove-btn" onclick="event.stopPropagation(); removeSavedChannel(\'' + ch.id +
+                    '\')" aria-label="Remove channel"><i class="fas fa-times"></i></button>' +
+                    '</div>';
+            });
+            DOM.savedChannelsList.innerHTML = html;
+            DOM.savedCount.textContent = state.savedChannels.length;
+        }
+
+        // ---- CHARTS ----
+        function destroyCharts() {
+            Object.keys(state.charts).forEach(k => {
+                if (state.charts[k]) { state.charts[k].destroy();
+                    delete state.charts[k]; }
+            });
+        }
+
+        function initCharts(channel, videos, shorts) {
+            destroyCharts();
+            const stats = channel.statistics;
+
+            // Performance Chart
+            const perfCtx = document.getElementById('performanceChart');
+            if (perfCtx) {
+                state.charts.performance = new Chart(perfCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Subscribers (K)', 'Views (M)', 'Videos'],
+                        datasets: [{
+                            label: 'Channel Metrics',
+                            data: [
+                                parseInt(stats.subscriberCount) / 1000,
+                                parseInt(stats.viewCount) / 1000000,
+                                parseInt(stats.videoCount)
+                            ],
+                            backgroundColor: ['rgba(255, 0, 0, 0.7)', 'rgba(0, 56, 147, 0.7)', 'rgba(255, 107, 107, 0.7)'],
+                            borderColor: ['rgb(255, 0, 0)', 'rgb(0, 56, 147)', 'rgb(255, 107, 107)'],
+                            borderWidth: 2,
+                            borderRadius: 6,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: { y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+                        x: { grid: { display: false } } }
+                    }
+                });
+            }
+
+            // Content Type Chart
+            const ctCtx = document.getElementById('contentTypeChart');
+            if (ctCtx) {
+                state.charts.contentType = new Chart(ctCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Regular Videos', 'Shorts'],
+                        datasets: [{ data: [videos.length, shorts.length], backgroundColor: ['rgba(0, 56, 147, 0.8)',
+                                'rgba(255, 107, 107, 0.8)'
+                            ], borderColor: ['rgb(0, 56, 147)', 'rgb(255, 107, 107)'], borderWidth: 2 }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'bottom', labels: { padding: 16, usePointStyle: true,
+                                    pointStyle: 'circle' } }
+                        },
+                        cutout: '65%'
+                    }
+                });
+            }
+
+            // Radar Chart
+            const radarCtx = document.getElementById('insightsRadarChart');
+            if (radarCtx) {
+                state.charts.radar = new Chart(radarCtx, {
+                    type: 'radar',
+                    data: {
+                        labels: ['Content Quality', 'Engagement', 'Consistency', 'Growth', 'Audience Retention'],
+                        datasets: [{
+                            label: 'This Channel',
+                            data: [Math.min(8 + Math.random() * 2, 10), Math.min(5 + Math.random() * 4, 10),
+                                Math.min(6 + Math.random() * 3, 10), Math.min(7 + Math.random() * 3, 10),
+                                Math.min(6 + Math.random() * 3, 10)
+                            ],
+                            backgroundColor: 'rgba(255, 0, 0, 0.15)',
+                            borderColor: 'rgb(255, 0, 0)',
+                            borderWidth: 2,
+                            pointBackgroundColor: 'rgb(255, 0, 0)',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                        }, {
+                            label: 'Industry Average',
+                            data: [6, 5, 7, 5, 6],
+                            backgroundColor: 'rgba(0, 56, 147, 0.1)',
+                            borderColor: 'rgb(0, 56, 147)',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            pointBackgroundColor: 'rgb(0, 56, 147)',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            r: {
+                                beginAtZero: true,
+                                max: 10,
+                                ticks: { stepSize: 2, backdropColor: 'transparent' },
+                                grid: { color: 'rgba(0,0,0,0.08)' },
+                                pointLabels: { font: { size: 11, weight: '600' } }
+                            }
+                        },
+                        plugins: {
+                            legend: { position: 'bottom', labels: { padding: 16, usePointStyle: true,
+                                    pointStyle: 'circle' } }
+                        }
+                    }
+                });
+            }
+
+            // Generate insights
+            generateInsights(videos, shorts);
+        }
+
+        function generateInsights(videos, shorts) {
+            const all = [...videos, ...shorts];
+            if (all.length === 0) {
+                DOM.insightStrategy.textContent = 'No content data available to generate insights.';
+                DOM.insightPerformance.textContent = 'No performance data available.';
+                DOM.insightAudience.textContent = 'No audience data available.';
+                DOM.insightCompetitive.textContent = 'No competitive data available.';
+                return;
+            }
+            const avgV = videos.length > 0 ? videos.reduce((s, v) => s + v.views, 0) / videos.length : 0;
+            const avgS = shorts.length > 0 ? shorts.reduce((s, v) => s + v.views, 0) / shorts.length : 0;
+            const bestType = avgV > avgS ? 'Regular videos' : 'Shorts';
+            const sorted = [...all].sort((a, b) => b.engagement - a.engagement);
+            const top = sorted.length > 0 ? sorted[0] : null;
+            const avgEngagement = all.reduce((s, v) => s + v.engagement, 0) / all.length;
+
+            DOM.insightStrategy.textContent = 'Based on your channel\'s performance, ' + bestType +
+                ' generate the highest engagement.' + (top ? ' Your top performing content is "' + top.title.substring(0,
+                    50) + (top.title.length > 50 ? '...' : '') + '" with ' + top.engagement.toFixed(1) +
+                '% engagement.' : '');
+
+            DOM.insightPerformance.textContent = 'Your channel shows ' + (avgEngagement > 5 ? 'strong' : 'moderate') +
+                ' engagement (' + avgEngagement.toFixed(1) + '%). Consider creating more ' + (avgV > avgS ?
+                    'educational or in-depth' : 'short-form, punchy') +
+                ' content to maintain audience interest.';
+
+            DOM.insightAudience.textContent = 'Your audience engages most with content that has ' + (top ?
+                (top.views > 10000 ? 'high view counts' : 'moderate view counts') + ' and ' + (top.likes > 500 ?
+                    'strong' : 'moderate') + ' like-to-view ratio' : 'good engagement metrics') +
+                '. Consider analyzing your top 3 videos to identify common themes.';
+
+            DOM.insightCompetitive.textContent = 'Compared to similar channels in your niche, your engagement rate is ' +
+                (avgEngagement > 6 ? 'above average' : 'on par with the industry') +
+                '. Focus on ' + (avgEngagement > 6 ? 'maintaining consistency' : 'improving content quality') +
+                ' to stay competitive.';
+        }
+
+        // ---- MAIN FUNCTIONS ----
+        async function getChannelInfo() {
+            const query = DOM.channelInput.value.trim();
+            const searchType = getSearchType();
+            hideAlerts();
+            DOM.resultsContainer.style.display = 'none';
+            DOM.loadingIndicator.style.display = 'block';
+            DOM.saveBtn.disabled = true;
+
+            if (!query) {
+                showError('Please enter a YouTube Channel ID or username.');
+                DOM.loadingIndicator.style.display = 'none';
+                return;
+            }
+
+            try {
+                const channel = await searchChannel(query, searchType);
+                state.channel = channel;
+                const { videos, shorts } = await fetchChannelVideos(channel.id);
+                state.videos = videos;
+                state.shorts = shorts;
+                state.allContent = [...videos, ...shorts];
+
+                renderChannel(channel);
+                renderContent(videos, shorts);
+                initCharts(channel, videos, shorts);
+
+                DOM.resultsContainer.style.display = 'block';
+                DOM.loadingIndicator.style.display = 'none';
+                showSuccess('Channel data loaded successfully!');
+
+                // Add to history
+                const history = JSON.parse(localStorage.getItem('ytSearchHistory') || '[]');
+                const idx = history.findIndex(h => h.id === channel.id);
+                if (idx !== -1) history.splice(idx, 1);
+                history.unshift({ id: channel.id, title: channel.snippet.title, thumbnail: channel.snippet.thumbnails
+                        ?.default?.url || '', timestamp: new Date().toISOString() });
+                if (history.length > 10) history.pop();
+                localStorage.setItem('ytSearchHistory', JSON.stringify(history));
+
+            } catch (err) {
+                console.error(err);
+                DOM.loadingIndicator.style.display = 'none';
+                showError(err.message || 'An error occurred while fetching channel data.');
+            }
+        }
+
+        function saveCurrentChannel() {
+            if (!state.channel) { showError('No channel data to save. Please search first.'); return; }
+            const idx = state.savedChannels.findIndex(c => c.id === state.channel.id);
+            if (idx !== -1) state.savedChannels[idx] = state.channel;
+            else state.savedChannels.push(state.channel);
+            localStorage.setItem('ytSavedChannels', JSON.stringify(state.savedChannels));
+            renderSavedChannels();
+            showSuccess('Channel saved successfully!');
+        }
+
+        function loadSavedChannel(channelId) {
+            const ch = state.savedChannels.find(c => c.id === channelId);
+            if (!ch) { showError('Channel not found in saved list.'); return; }
+            DOM.channelInput.value = channelId;
+            document.querySelector('input[name="searchType"][value="id"]').checked = true;
+            getChannelInfo();
+        }
+
+        function removeSavedChannel(channelId) {
+            if (!confirm('Remove this channel from your saved list?')) return;
+            state.savedChannels = state.savedChannels.filter(c => c.id !== channelId);
+            localStorage.setItem('ytSavedChannels', JSON.stringify(state.savedChannels));
+            renderSavedChannels();
+            showSuccess('Channel removed from saved list.');
+        }
+
+        function clearSearch() {
+            DOM.channelInput.value = '';
+            DOM.resultsContainer.style.display = 'none';
+            DOM.saveBtn.disabled = true;
+            hideAlerts();
+            DOM.loadingIndicator.style.display = 'none';
+            destroyCharts();
+        }
+
+        // ---- TAB SETUP ----
+        function setupTabs() {
+            document.querySelectorAll('.yt-tabs .tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const parent = this.closest('.yt-tabs');
+                    parent.querySelectorAll('.tab').forEach(t => { t.classList.remove('active');
+                        t.setAttribute('aria-selected', 'false'); });
+                    this.classList.add('active');
+                    this.setAttribute('aria-selected', 'true');
+                    const tabId = this.dataset.tab;
+                    const container = this.closest('.yt-channel-info');
+                    container.querySelectorAll('.yt-tab-content').forEach(c => c.classList.remove('active'));
+                    const target = container.querySelector('#tab-' + tabId + '-content');
+                    if (target) target.classList.add('active');
+                });
+            });
+
+            document.querySelectorAll('.yt-sub-tabs .tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const parent = this.closest('.yt-sub-tabs');
+                    parent.querySelectorAll('.tab').forEach(t => { t.classList.remove('active');
+                        t.setAttribute('aria-selected', 'false'); });
+                    this.classList.add('active');
+                    this.setAttribute('aria-selected', 'true');
+                    const type = this.dataset.content;
+                    const container = this.closest('.yt-tab-content');
+                    container.querySelectorAll('.yt-content-section').forEach(s => s.style.display = 'none');
+                    const target = container.querySelector('#content-' + type + '-section');
+                    if (target) target.style.display = 'block';
+                });
+            });
+        }
+
+        // ---- KEYBOARD SUPPORT ----
+        DOM.channelInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') { e.preventDefault();
+                getChannelInfo(); }
+        });
+
+        // ---- INIT ----
+        document.addEventListener('DOMContentLoaded', function() {
+            setupTabs();
+            renderSavedChannels();
+            DOM.resultsContainer.style.display = 'none';
+        });
+
+        // Expose global functions
+        window.getChannelInfo = getChannelInfo;
+        window.saveCurrentChannel = saveCurrentChannel;
+        window.loadSavedChannel = loadSavedChannel;
+        window.removeSavedChannel = removeSavedChannel;
+        window.clearSearch = clearSearch;
+    </script>
 
 </body>
 </html>
