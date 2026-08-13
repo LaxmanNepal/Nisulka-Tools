@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-08-12T23:07:00.998471+00:00",
+  "generatedAt": "2026-08-13T19:32:42.492909+00:00",
   "totalTools": 3,
-  "averageScore": 67.7,
+  "averageScore": 83.7,
   "tools": [
     {
       "name": "Text To Handwriting",
@@ -41,6 +41,44 @@
       "rank": 1
     },
     {
+      "name": "Youtube Channel Extractor",
+      "slug": "YouTube-Channel-Extractor",
+      "url": "/Nisulka-Tools/tools/YouTube-Channel-Extractor/",
+      "score": 78,
+      "grade": "B",
+      "title": "YouTube Channel Analytics — Free Online Channel Insights | Nisulka Tools",
+      "description": "Analyze any YouTube channel's performance, get detailed statistics, growth insights, and content analysis for free with Nisulka Tools.",
+      "wordCount": 2953,
+      "h1Count": 1,
+      "h2Count": 7,
+      "images": 0,
+      "imagesWithoutAlt": 0,
+      "canonical": "https://apps.laxmannepal.com.np/Nisulka-Tools/tools/youtube-channel-analytics/",
+      "openGraph": {
+        "title": false,
+        "description": false
+      },
+      "passed": [
+        "Meta description length is good",
+        "Exactly one H1 found",
+        "H2 headings found",
+        "Canonical URL found",
+        "No images requiring alt text",
+        "Sufficient page content"
+      ],
+      "issues": [
+        "Title length should ideally be 30-65 characters (72)",
+        "Missing Open Graph title",
+        "Missing Open Graph description"
+      ],
+      "issueSummary": {
+        "total": 3,
+        "critical": 0,
+        "warning": 3
+      },
+      "rank": 2
+    },
+    {
       "name": "Remove Gemini Logo",
       "slug": "remove-gemini-logo",
       "url": "/Nisulka-Tools/tools/remove-gemini-logo/",
@@ -75,44 +113,6 @@
         "total": 3,
         "critical": 0,
         "warning": 3
-      },
-      "rank": 2
-    },
-    {
-      "name": "Youtube Channel Extractor",
-      "slug": "YouTube-Channel-Extractor",
-      "url": "/Nisulka-Tools/tools/YouTube-Channel-Extractor/",
-      "score": 30,
-      "grade": "F",
-      "title": "",
-      "description": "",
-      "wordCount": 4378,
-      "h1Count": 0,
-      "h2Count": 1,
-      "images": 0,
-      "imagesWithoutAlt": 0,
-      "canonical": "",
-      "openGraph": {
-        "title": false,
-        "description": false
-      },
-      "passed": [
-        "H2 headings found",
-        "No images requiring alt text",
-        "Sufficient page content"
-      ],
-      "issues": [
-        "Missing title",
-        "Missing meta description",
-        "Missing H1",
-        "Missing canonical URL",
-        "Missing Open Graph title",
-        "Missing Open Graph description"
-      ],
-      "issueSummary": {
-        "total": 6,
-        "critical": 0,
-        "warning": 6
       },
       "rank": 3
     }
