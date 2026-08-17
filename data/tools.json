@@ -1,5 +1,16 @@
 [
   {
+    "name": "Currency Converter",
+    "slug": "currency-converter",
+    "description": "Free online Currency Converter tool.",
+    "category": "Other Tools",
+    "logo": "/Nisulka-Tools/tools/currency-converter/logo.jpg",
+    "url": "/Nisulka-Tools/tools/currency-converter/",
+    "keywords": [],
+    "featured": false,
+    "status": "active"
+  },
+  {
     "name": "Draw App",
     "slug": "draw-app",
     "description": "Free online Draw App tool.",
