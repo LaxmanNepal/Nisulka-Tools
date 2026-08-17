@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-08-17T18:06:44.510271+00:00",
+  "generatedAt": "2026-08-17T18:19:37.800460+00:00",
   "totalTools": 4,
-  "averageScore": 87.2,
+  "averageScore": 82.2,
   "tools": [
     {
       "name": "Text To Handwriting",
@@ -79,44 +79,6 @@
       "rank": 2
     },
     {
-      "name": "Youtube Thumbnail Downloader",
-      "slug": "youtube-thumbnail-downloader",
-      "url": "/Nisulka-Tools/tools/youtube-thumbnail-downloader/",
-      "score": 88,
-      "grade": "A",
-      "title": "YouTube Thumbnail Generator - Extract High-Quality Thumbnails | Nisulka Tools",
-      "description": "Extract YouTube thumbnails in up to 4K quality. Enter any YouTube URL or video ID to preview and download thumbnails instantly. Free, fast, and privacy-first.",
-      "wordCount": 805,
-      "h1Count": 1,
-      "h2Count": 11,
-      "images": 1,
-      "imagesWithoutAlt": 0,
-      "canonical": "https://apps.laxmannepal.com.np/Nisulka-Tools/tools/youtube-thumbnail-generator/",
-      "openGraph": {
-        "title": true,
-        "description": true
-      },
-      "passed": [
-        "Meta description length is good",
-        "Exactly one H1 found",
-        "H2 headings found",
-        "Canonical URL found",
-        "Open Graph title found",
-        "Open Graph description found",
-        "All images have alt attributes",
-        "Sufficient page content"
-      ],
-      "issues": [
-        "Title length should ideally be 30-65 characters (77)"
-      ],
-      "issueSummary": {
-        "total": 1,
-        "critical": 0,
-        "warning": 1
-      },
-      "rank": 3
-    },
-    {
       "name": "Remove Gemini Logo",
       "slug": "remove-gemini-logo",
       "url": "/Nisulka-Tools/tools/remove-gemini-logo/",
@@ -151,6 +113,44 @@
         "total": 3,
         "critical": 0,
         "warning": 3
+      },
+      "rank": 3
+    },
+    {
+      "name": "Youtube Thumbnail Downloader",
+      "slug": "youtube-thumbnail-downloader",
+      "url": "/Nisulka-Tools/tools/youtube-thumbnail-downloader/",
+      "score": 68,
+      "grade": "C",
+      "title": "Nisulka Tools — YouTube Thumbnail Generator",
+      "description": "Free YouTube thumbnail generator. Extract high-quality thumbnails from any YouTube video URL or video ID.",
+      "wordCount": 3160,
+      "h1Count": 1,
+      "h2Count": 5,
+      "images": 1,
+      "imagesWithoutAlt": 0,
+      "canonical": "",
+      "openGraph": {
+        "title": false,
+        "description": false
+      },
+      "passed": [
+        "Title length is good",
+        "Exactly one H1 found",
+        "H2 headings found",
+        "All images have alt attributes",
+        "Sufficient page content"
+      ],
+      "issues": [
+        "Meta description should ideally be 120-170 characters (105)",
+        "Missing canonical URL",
+        "Missing Open Graph title",
+        "Missing Open Graph description"
+      ],
+      "issueSummary": {
+        "total": 4,
+        "critical": 0,
+        "warning": 4
       },
       "rank": 4
     }
