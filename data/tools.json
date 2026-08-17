@@ -1,5 +1,16 @@
 [
   {
+    "name": "Draw App",
+    "slug": "draw-app",
+    "description": "Free online Draw App tool.",
+    "category": "Other Tools",
+    "logo": "/Nisulka-Tools/tools/draw-app/logo.jpg",
+    "url": "/Nisulka-Tools/tools/draw-app/",
+    "keywords": [],
+    "featured": false,
+    "status": "active"
+  },
+  {
     "name": "Text to Handwriting Converter",
     "slug": "text-to-handwriting",
     "description": "Convert typed text into a handwritten-style image online for free. Customize handwriting, ink color, paper style, spacing and alignment.",
