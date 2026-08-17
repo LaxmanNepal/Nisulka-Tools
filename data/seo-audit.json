@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-08-17T17:42:04.792617+00:00",
-  "totalTools": 4,
-  "averageScore": 89.0,
+  "generatedAt": "2026-08-17T17:54:47.994145+00:00",
+  "totalTools": 5,
+  "averageScore": 88.8,
   "tools": [
     {
       "name": "Text To Handwriting",
@@ -116,6 +116,44 @@
       "rank": 3
     },
     {
+      "name": "Youtube Thumbnail Downloader",
+      "slug": "youtube-thumbnail-downloader",
+      "url": "/Nisulka-Tools/tools/youtube-thumbnail-downloader/",
+      "score": 88,
+      "grade": "A",
+      "title": "YouTube Thumbnail Generator - Extract High-Quality Thumbnails | Nisulka Tools",
+      "description": "Extract YouTube thumbnails in up to 4K quality. Enter any YouTube URL or video ID to preview and download thumbnails instantly. Free, fast, and privacy-first.",
+      "wordCount": 805,
+      "h1Count": 1,
+      "h2Count": 11,
+      "images": 1,
+      "imagesWithoutAlt": 0,
+      "canonical": "https://apps.laxmannepal.com.np/Nisulka-Tools/tools/youtube-thumbnail-generator/",
+      "openGraph": {
+        "title": true,
+        "description": true
+      },
+      "passed": [
+        "Meta description length is good",
+        "Exactly one H1 found",
+        "H2 headings found",
+        "Canonical URL found",
+        "Open Graph title found",
+        "Open Graph description found",
+        "All images have alt attributes",
+        "Sufficient page content"
+      ],
+      "issues": [
+        "Title length should ideally be 30-65 characters (77)"
+      ],
+      "issueSummary": {
+        "total": 1,
+        "critical": 0,
+        "warning": 1
+      },
+      "rank": 4
+    },
+    {
       "name": "Remove Gemini Logo",
       "slug": "remove-gemini-logo",
       "url": "/Nisulka-Tools/tools/remove-gemini-logo/",
@@ -151,7 +189,7 @@
         "critical": 0,
         "warning": 3
       },
-      "rank": 4
+      "rank": 5
     }
   ]
 }
