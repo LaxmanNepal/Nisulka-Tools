@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-08-17T13:07:20.546346+00:00",
-  "totalTools": 5,
-  "averageScore": 77.2,
+  "generatedAt": "2026-08-17T13:08:43.390666+00:00",
+  "totalTools": 3,
+  "averageScore": 81.3,
   "tools": [
     {
       "name": "Text To Handwriting",
@@ -79,82 +79,6 @@
       "rank": 2
     },
     {
-      "name": "Youtube Channel Extractor",
-      "slug": "YouTube-Channel-Extractor",
-      "url": "/Nisulka-Tools/tools/YouTube-Channel-Extractor/",
-      "score": 71,
-      "grade": "B",
-      "title": "YouTube Channel Analytics — Deep Channel Insights & Audit | Nisulka Tools",
-      "description": "Deep YouTube channel analytics, engagement breakdown, monetization estimator, tag extractor, and upload schedule analyzer.",
-      "wordCount": 3713,
-      "h1Count": 2,
-      "h2Count": 2,
-      "images": 1,
-      "imagesWithoutAlt": 0,
-      "canonical": "https://apps.laxmannepal.com.np/Nisulka-Tools/tools/youtube-channel-analytics/",
-      "openGraph": {
-        "title": false,
-        "description": false
-      },
-      "passed": [
-        "Meta description length is good",
-        "H2 headings found",
-        "Canonical URL found",
-        "All images have alt attributes",
-        "Sufficient page content"
-      ],
-      "issues": [
-        "Title length should ideally be 30-65 characters (73)",
-        "Multiple H1 headings found (2)",
-        "Missing Open Graph title",
-        "Missing Open Graph description"
-      ],
-      "issueSummary": {
-        "total": 4,
-        "critical": 0,
-        "warning": 4
-      },
-      "rank": 3
-    },
-    {
-      "name": "Youtube Channel Analysis",
-      "slug": "youtube channel analysis",
-      "url": "/Nisulka-Tools/tools/youtube channel analysis/",
-      "score": 71,
-      "grade": "B",
-      "title": "YouTube Channel Analytics — Deep Channel Insights & Audit | Nisulka Tools",
-      "description": "Deep YouTube channel analytics, engagement breakdown, monetization estimator, tag extractor, and upload schedule analyzer.",
-      "wordCount": 3713,
-      "h1Count": 2,
-      "h2Count": 2,
-      "images": 1,
-      "imagesWithoutAlt": 0,
-      "canonical": "https://apps.laxmannepal.com.np/Nisulka-Tools/tools/youtube-channel-analytics/",
-      "openGraph": {
-        "title": false,
-        "description": false
-      },
-      "passed": [
-        "Meta description length is good",
-        "H2 headings found",
-        "Canonical URL found",
-        "All images have alt attributes",
-        "Sufficient page content"
-      ],
-      "issues": [
-        "Title length should ideally be 30-65 characters (73)",
-        "Multiple H1 headings found (2)",
-        "Missing Open Graph title",
-        "Missing Open Graph description"
-      ],
-      "issueSummary": {
-        "total": 4,
-        "critical": 0,
-        "warning": 4
-      },
-      "rank": 4
-    },
-    {
       "name": "Youtube Channel Analysis",
       "slug": "youtube-channel-analysis",
       "url": "/Nisulka-Tools/tools/youtube-channel-analysis/",
@@ -190,7 +114,7 @@
         "critical": 0,
         "warning": 4
       },
-      "rank": 5
+      "rank": 3
     }
   ]
 }
