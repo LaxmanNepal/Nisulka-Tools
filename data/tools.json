@@ -58,5 +58,16 @@
     "keywords": [],
     "featured": false,
     "status": "active"
+  },
+  {
+    "name": "Youtube Title Generator",
+    "slug": "youtube-title-generator",
+    "description": "Free online Youtube Title Generator tool.",
+    "category": "Other Tools",
+    "logo": "/Nisulka-Tools/tools/youtube-title-generator/logo.jpg",
+    "url": "/Nisulka-Tools/tools/youtube-title-generator/",
+    "keywords": [],
+    "featured": false,
+    "status": "active"
   }
 ]
