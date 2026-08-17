@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Whiteboard Canvas - Nisulka Tools</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Shantell+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+    <!-- Nisulka Official CSS Stylesheets -->
+    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/variables.css">
+    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/global.css">
+    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/components.css">
+    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/header.css">
+    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/footer.css">
+    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/tool.css">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+
+        .handwritten {
+            font-family: 'Shantell Sans', cursive;
+        }
+
+        /* Tool Workspace Canvas styling */
+        .whiteboard-container {
+            position: relative;
+            width: 100%;
+            height: 620px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e2e8f0;
+            touch-action: none;
+        }
+
+        .canvas-grid {
+            background-image: radial-gradient(#cbd5e1 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
+        }
+
+        /* Toolbar active tool styling */
+        .tool-btn {
+            transition: all 0.2s ease;
+        }
+
+        .tool-btn.active {
+            background-color: #3b82f6;
+            color: #ffffff;
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+        }
+
+        .color-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.15s ease;
+            border: 2px solid white;
+            box-shadow: 0 0 0 1px #cbd5e1;
+        }
+
+        .color-dot:hover, .color-dot.active {
+            transform: scale(1.2);
+            box-shadow: 0 0 0 2px #3b82f6;
+        }
+
+        /* Sticky Notes styling on Canvas */
+        .sticky-note-element {
+            position: absolute;
+            width: 160px;
+            min-height: 140px;
+            padding: 12px;
+            border-radius: 8px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            font-family: 'Shantell Sans', cursive;
+            cursor: move;
+            user-select: none;
+        }
+
+        .sticky-note-element textarea {
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            resize: none;
+            font-family: inherit;
+            color: #1e293b;
+        }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            background-color: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(4px);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- OFFICIAL NISULKA HEADER MOUNT -->
+    <div id="site-header-mount"></div>
+
+    <!-- MAIN TOOL CONTENT AREA -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+        
+        <!-- Breadcrumbs -->
+        <nav class="flex text-sm text-gray-500 mb-4" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                <li class="inline-flex items-center">
+                    <a href="https://apps.laxmannepal.com.np/Nisulka-Tools/" class="hover:text-blue-600 transition">
+                        <i class="fa-solid fa-house mr-2"></i>Home
+                    </a>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <i class="fa-solid fa-chevron-right text-xs text-gray-400 mx-2"></i>
+                        <a href="#" class="hover:text-blue-600 transition">Design & Productivity</a>
+                    </div>
+                </li>
+                <li aria-current="page">
+                    <div class="flex items-center">
+                        <i class="fa-solid fa-chevron-right text-xs text-gray-400 mx-2"></i>
+                        <span class="text-gray-900 font-medium">Whiteboard Canvas</span>
+                    </div>
+                </li>
+            </ol>
+        </nav>
+
+        <!-- Tool Header -->
+        <div class="mb-6">
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight mb-2">
+                Nisulka Interactive Whiteboard Canvas
+            </h1>
+            <p class="text-gray-600 text-lg max-w-3xl">
+                A fast, lightweight, and versatile digital whiteboard for sketching, diagramming, taking handwritten notes, and wireframing. No login required.
+            </p>
+        </div>
+
+        <!-- TOOL WORKSPACE -->
+        <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-200 mb-8">
+            
+            <!-- Whiteboard Control Toolbar Top -->
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-4 p-2 bg-gray-50 rounded-xl border border-gray-200">
+                
+                <!-- Main Drawing Tools -->
+                <div class="flex items-center gap-1 sm:gap-2 overflow-x-auto py-1">
+                    <button id="tool-select" class="tool-btn active p-2.5 rounded-lg text-gray-700 hover:bg-gray-200" title="Select / Move">
+                        <i class="fa-solid fa-mouse-pointer text-base"></i>
+                    </button>
+                    <button id="tool-draw" class="tool-btn p-2.5 rounded-lg text-gray-700 hover:bg-gray-200" title="Freehand Draw">
+                        <i class="fa-solid fa-pen-nib text-base"></i>
+                    </button>
+                    <button id="tool-rectangle" class="tool-btn p-2.5 rounded-lg text-gray-700 hover:bg-gray-200" title="Rectangle">
+                        <i class="fa-regular fa-square text-base"></i>
+                    </button>
+                    <button id="tool-circle" class="tool-btn p-2.5 rounded-lg text-gray-700 hover:bg-gray-200" title="Circle">
+                        <i class="fa-regular fa-circle text-base"></i>
+                    </button>
+                    <button id="tool-arrow" class="tool-btn p-2.5 rounded-lg text-gray-700 hover:bg-gray-200" title="Arrow">
+                        <i class="fa-solid fa-arrow-right text-base"></i>
+                    </button>
+                    <button id="tool-text" class="tool-btn p-2.5 rounded-lg text-gray-700 hover:bg-gray-200" title="Text Note">
+                        <i class="fa-solid fa-font text-base"></i>
+                    </button>
+                    <button id="tool-sticky" class="tool-btn p-2.5 rounded-lg text-gray-700 hover:bg-gray-200" title="Sticky Note">
+                        <i class="fa-solid fa-note-sticky text-base"></i>
+                    </button>
+                    <button id="tool-eraser" class="tool-btn p-2.5 rounded-lg text-gray-700 hover:bg-gray-200" title="Eraser">
+                        <i class="fa-solid fa-eraser text-base"></i>
+                    </button>
+                </div>
+
+                <!-- Customization (Colors, Stroke Width) -->
+                <div class="flex items-center gap-3">
+                    <!-- Color Swatches -->
+                    <div class="flex items-center gap-1.5 border-r border-gray-300 pr-3">
+                        <div class="color-dot active bg-slate-900" data-color="#0f172a"></div>
+                        <div class="color-dot bg-blue-600" data-color="#2563eb"></div>
+                        <div class="color-dot bg-red-500" data-color="#ef4444"></div>
+                        <div class="color-dot bg-emerald-500" data-color="#10b981"></div>
+                        <div class="color-dot bg-amber-500" data-color="#f59e0b"></div>
+                        <div class="color-dot bg-purple-600" data-color="#9333ea"></div>
+                    </div>
+
+                    <!-- Stroke Thickness -->
+                    <div class="flex items-center gap-1 text-xs font-semibold text-gray-600">
+                        <button id="stroke-thin" class="stroke-btn px-2 py-1 rounded bg-blue-100 text-blue-700 border border-blue-300">2px</button>
+                        <button id="stroke-medium" class="stroke-btn px-2 py-1 rounded bg-gray-100 text-gray-700 hover:bg-gray-200">4px</button>
+                        <button id="stroke-thick" class="stroke-btn px-2 py-1 rounded bg-gray-100 text-gray-700 hover:bg-gray-200">8px</button>
+                    </div>
+                </div>
+
+                <!-- Action Controls (Undo, Redo, Clear, Export) -->
+                <div class="flex items-center gap-2">
+                    <button id="btn-undo" class="p-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition" title="Undo (Ctrl+Z)">
+                        <i class="fa-solid fa-rotate-left"></i>
+                    </button>
+                    <button id="btn-redo" class="p-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition" title="Redo (Ctrl+Y)">
+                        <i class="fa-solid fa-rotate-right"></i>
+                    </button>
+                    <button id="btn-grid" class="p-2 rounded-lg bg-blue-50 text-blue-600 border border-blue-200 hover:bg-blue-100 transition" title="Toggle Grid Background">
+                        <i class="fa-solid fa-border-all"></i>
+                    </button>
+                    <button id="btn-clear" class="px-3 py-1.5 rounded-lg text-sm bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 transition font-medium">
+                        Clear
+                    </button>
+                    <button id="btn-export" class="px-3 py-1.5 rounded-lg text-sm bg-blue-600 text-white hover:bg-blue-700 shadow-sm transition font-medium flex items-center gap-1.5">
+                        <i class="fa-solid fa-download"></i> Export
+                    </button>
+                </div>
+            </div>
+
+            <!-- Canvas Container -->
+            <div id="whiteboard-container" class="whiteboard-container canvas-grid flex items-center justify-center">
+                <canvas id="whiteboard-canvas" class="w-full h-full block cursor-crosshair"></canvas>
+                
+                <!-- Dynamic text input overlay for text tool -->
+                <input type="text" id="canvas-text-input" class="hidden absolute bg-transparent border-2 border-blue-500 rounded px-2 py-1 outline-none text-gray-900 font-sans" style="z-index: 10;">
+            </div>
+
+            <!-- Canvas Info & Zoom Bar -->
+            <div class="flex justify-between items-center text-xs text-gray-500 mt-3 px-1">
+                <div class="flex items-center gap-4">
+                    <span><i class="fa-regular fa-circle-question mr-1"></i> Hint: Drag to draw, double-click text to edit.</span>
+                    <span id="canvas-elements-count">Objects: 0</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button id="btn-zoom-out" class="p-1 text-gray-600 hover:text-black"><i class="fa-solid fa-minus"></i></button>
+                    <span id="zoom-percentage" class="font-medium">100%</span>
+                    <button id="btn-zoom-in" class="p-1 text-gray-600 hover:text-black"><i class="fa-solid fa-plus"></i></button>
+                    <button id="btn-zoom-reset" class="ml-2 text-blue-600 hover:underline">Reset</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- USEFUL CONTENT SECTION -->
+        <section class="grid md:grid-cols-3 gap-6 mb-12">
+            <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                <div class="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center text-xl mb-4">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                </div>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">Instant & Frictionless</h3>
+                <p class="text-gray-600 text-sm leading-relaxed">
+                    Start drawing immediately without any signup, registration, or paywalls. Perfect for quick brainstorming sessions or temporary diagrams.
+                </p>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                <div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center text-xl mb-4">
+                    <i class="fa-solid fa-shapes"></i>
+                </div>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">Rich Diagramming Tools</h3>
+                <p class="text-gray-600 text-sm leading-relaxed">
+                    Utilize freehand drawing, geometric shapes, directional arrows, sticky notes, and custom text options to bring your ideas to life visually.
+                </p>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                <div class="w-10 h-10 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center text-xl mb-4">
+                    <i class="fa-solid fa-file-export"></i>
+                </div>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">High-Res PNG Export</h3>
+                <p class="text-gray-600 text-sm leading-relaxed">
+                    Download your sketches, flowcharts, or notes as clean PNG image files directly to your machine to share with team members or embed in documents.
+                </p>
+            </div>
+        </section>
+
+        <!-- FAQ SECTION -->
+        <section class="bg-white p-6 sm:p-8 rounded-2xl border border-gray-200 shadow-sm mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                <i class="fa-solid fa-circle-question text-blue-600"></i> Frequently Asked Questions
+            </h2>
+            <div class="space-y-4">
+                <div class="border-b border-gray-100 pb-4">
+                    <h3 class="font-semibold text-gray-900 mb-1">Is this whiteboard tool free to use?</h3>
+                    <p class="text-gray-600 text-sm">Yes, Nisulka Whiteboard Canvas is 100% free for unlimited personal, educational, and commercial use.</p>
+                </div>
+                <div class="border-b border-gray-100 pb-4">
+                    <h3 class="font-semibold text-gray-900 mb-1">Are my drawings saved on a server?</h3>
+                    <p class="text-gray-600 text-sm">No, all drawings are processed locally on your browser. No drawing data is stored on remote servers, ensuring complete privacy.</p>
+                </div>
+                <div class="border-b border-gray-100 pb-4">
+                    <h3 class="font-semibold text-gray-900 mb-1">Can I export my whiteboard drawings?</h3>
+                    <p class="text-gray-600 text-sm">Yes! Click the <strong>Export</strong> button in the toolbar to save your current canvas layout as a PNG image.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Export Confirmation Modal -->
+    <div id="export-modal" class="fixed inset-0 modal-overlay hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-gray-200">
+            <h3 class="text-xl font-bold text-gray-900 mb-2">Export Canvas</h3>
+            <p class="text-sm text-gray-600 mb-4">Choose your preferred export format for your whiteboard drawing.</p>
+            
+            <div class="space-y-3 mb-6">
+                <button id="export-png-bg" class="w-full py-2.5 px-4 rounded-xl border border-gray-300 text-left hover:bg-gray-50 flex items-center justify-between">
+                    <div>
+                        <div class="font-semibold text-gray-900">PNG with Grid Background</div>
+                        <div class="text-xs text-gray-500">Standard image with visible grid</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-gray-400"></i>
+                </button>
+                <button id="export-png-white" class="w-full py-2.5 px-4 rounded-xl border border-gray-300 text-left hover:bg-gray-50 flex items-center justify-between">
+                    <div>
+                        <div class="font-semibold text-gray-900">PNG with Solid White Background</div>
+                        <div class="text-xs text-gray-500">Clean white background</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-gray-400"></i>
+                </button>
+            </div>
+
+            <div class="flex justify-end">
+                <button id="btn-close-modal" class="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 font-medium">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- OFFICIAL NISULKA FOOTER MOUNT -->
+    <div id="site-footer-mount"></div>
+
+    <!-- Whiteboard Application Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('whiteboard-container');
+            const canvas = document.getElementById('whiteboard-canvas');
+            const ctx = canvas.getContext('2d');
+            const textInput = document.getElementById('canvas-text-input');
+            const objCountDisplay = document.getElementById('canvas-elements-count');
+
+            // Canvas dimensions
+            function resizeCanvas() {
+                const rect = container.getBoundingClientRect();
+                canvas.width = rect.width;
+                canvas.height = rect.height;
+                redrawCanvas();
+            }
+
+            // State variables
+            let currentTool = 'select'; // select, draw, rectangle, circle, arrow, text, sticky, eraser
+            let currentColor = '#0f172a';
+            let strokeWidth = 2;
+            let showGrid = true;
+            let isDrawing = false;
+            let startX = 0, startY = 0;
+
+            // Canvas Elements Storage
+            let shapes = [];
+            let undoStack = [];
+            let redoStack = [];
+            let currentPath = [];
+
+            // Zoom State
+            let zoomLevel = 1.0;
+
+            // DOM Controls
+            const toolsBtns = document.querySelectorAll('.tool-btn');
+            const colorDots = document.querySelectorAll('.color-dot');
+            const strokeBtns = document.querySelectorAll('.stroke-btn');
+
+            // Tool Switcher
+            toolsBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    toolsBtns.forEach(b => b.classList.remove('active'));
+                    const target = e.currentTarget;
+                    target.classList.add('active');
+                    currentTool = target.id.replace('tool-', '');
+                });
+            });
+
+            // Color Selector
+            colorDots.forEach(dot => {
+                dot.addEventListener('click', (e) => {
+                    colorDots.forEach(d => d.classList.remove('active'));
+                    e.currentTarget.classList.add('active');
+                    currentColor = e.currentTarget.getAttribute('data-color');
+                });
+            });
+
+            // Stroke Width Selector
+            document.getElementById('stroke-thin').addEventListener('click', (e) => setStroke(2, e.target));
+            document.getElementById('stroke-medium').addEventListener('click', (e) => setStroke(4, e.target));
+            document.getElementById('stroke-thick').addEventListener('click', (e) => setStroke(8, e.target));
+
+            function setStroke(width, element) {
+                strokeWidth = width;
+                strokeBtns.forEach(btn => {
+                    btn.className = 'stroke-btn px-2 py-1 rounded bg-gray-100 text-gray-700 hover:bg-gray-200';
+                });
+                element.className = 'stroke-btn px-2 py-1 rounded bg-blue-100 text-blue-700 border border-blue-300';
+            }
+
+            // Toggle Grid
+            document.getElementById('btn-grid').addEventListener('click', () => {
+                showGrid = !showGrid;
+                if (showGrid) {
+                    container.classList.add('canvas-grid');
+                } else {
+                    container.classList.remove('canvas-grid');
+                }
+            });
+
+            // Save state for Undo/Redo
+            function saveState() {
+                undoStack.push(JSON.stringify(shapes));
+                redoStack = []; // clear redo on new action
+                updateCount();
+            }
+
+            function updateCount() {
+                objCountDisplay.textContent = `Objects: ${shapes.length}`;
+            }
+
+            // Drawing logic
+            function getPos(e) {
+                const rect = canvas.getBoundingClientRect();
+                return {
+                    x: (e.clientX - rect.left) / zoomLevel,
+                    y: (e.clientY - rect.top) / zoomLevel
+                };
+            }
+
+            canvas.addEventListener('mousedown', (e) => {
+                const pos = getPos(e);
+                startX = pos.x;
+                startY = pos.y;
+                isDrawing = true;
+
+                if (currentTool === 'draw') {
+                    currentPath = [{ x: pos.x, y: pos.y }];
+                } else if (currentTool === 'text') {
+                    handleTextCreation(pos.x, pos.y);
+                    isDrawing = false;
+                } else if (currentTool === 'sticky') {
+                    createStickyNote(pos.x, pos.y);
+                    isDrawing = false;
+                } else if (currentTool === 'eraser') {
+                    eraseAt(pos.x, pos.y);
+                }
+            });
+
+            canvas.addEventListener('mousemove', (e) => {
+                if (!isDrawing) return;
+                const pos = getPos(e);
+
+                if (currentTool === 'draw') {
+                    currentPath.push({ x: pos.x, y: pos.y });
+                    redrawCanvas();
+                    // Draw live path
+                    ctx.beginPath();
+                    ctx.strokeStyle = currentColor;
+                    ctx.lineWidth = strokeWidth;
+                    ctx.lineCap = 'round';
+                    ctx.lineJoin = 'round';
+                    ctx.moveTo(currentPath[0].x, currentPath[0].y);
+                    for (let i = 1; i < currentPath.length; i++) {
+                        ctx.lineTo(currentPath[i].x, currentPath[i].y);
+                    }
+                    ctx.stroke();
+                } else if (currentTool === 'rectangle' || currentTool === 'circle' || currentTool === 'arrow') {
+                    redrawCanvas();
+                    drawPreviewShape(currentTool, startX, startY, pos.x, pos.y);
+                } else if (currentTool === 'eraser') {
+                    eraseAt(pos.x, pos.y);
+                }
+            });
+
+            canvas.addEventListener('mouseup', (e) => {
+                if (!isDrawing) return;
+                isDrawing = false;
+                const pos = getPos(e);
+
+                if (currentTool === 'draw' && currentPath.length > 0) {
+                    shapes.push({
+                        type: 'draw',
+                        points: currentPath,
+                        color: currentColor,
+                        width: strokeWidth
+                    });
+                    saveState();
+                } else if (currentTool === 'rectangle') {
+                    shapes.push({
+                        type: 'rectangle',
+                        x: Math.min(startX, pos.x),
+                        y: Math.min(startY, pos.y),
+                        w: Math.abs(pos.x - startX),
+                        h: Math.abs(pos.y - startY),
+                        color: currentColor,
+                        width: strokeWidth
+                    });
+                    saveState();
+                } else if (currentTool === 'circle') {
+                    const radius = Math.hypot(pos.x - startX, pos.y - startY);
+                    shapes.push({
+                        type: 'circle',
+                        cx: startX,
+                        cy: startY,
+                        r: radius,
+                        color: currentColor,
+                        width: strokeWidth
+                    });
+                    saveState();
+                } else if (currentTool === 'arrow') {
+                    shapes.push({
+                        type: 'arrow',
+                        x1: startX,
+                        y1: startY,
+                        x2: pos.x,
+                        y2: pos.y,
+                        color: currentColor,
+                        width: strokeWidth
+                    });
+                    saveState();
+                }
+
+                redrawCanvas();
+            });
+
+            function drawPreviewShape(type, x1, y1, x2, y2) {
+                ctx.strokeStyle = currentColor;
+                ctx.lineWidth = strokeWidth;
+                ctx.beginPath();
+
+                if (type === 'rectangle') {
+                    ctx.strokeRect(x1, y1, x2 - x1, y2 - y1);
+                } else if (type === 'circle') {
+                    const radius = Math.hypot(x2 - x1, y2 - y1);
+                    ctx.arc(x1, y1, radius, 0, Math.PI * 2);
+                    ctx.stroke();
+                } else if (type === 'arrow') {
+                    drawArrowhead(x1, y1, x2, y2);
+                }
+            }
+
+            function drawArrowhead(x1, y1, x2, y2) {
+                const headlen = 12;
+                const angle = Math.atan2(y2 - y1, x2 - x1);
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.lineTo(x2 - headlen * Math.cos(angle - Math.PI / 6), y2 - headlen * Math.sin(angle - Math.PI / 6));
+                ctx.moveTo(x2, y2);
+                ctx.lineTo(x2 - headlen * Math.cos(angle + Math.PI / 6), y2 - headlen * Math.sin(angle + Math.PI / 6));
+                ctx.stroke();
+            }
+
+            function redrawCanvas() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                shapes.forEach(shape => {
+                    ctx.strokeStyle = shape.color;
+                    ctx.fillStyle = shape.color;
+                    ctx.lineWidth = shape.width;
+                    ctx.beginPath();
+
+                    if (shape.type === 'draw') {
+                        ctx.lineCap = 'round';
+                        ctx.lineJoin = 'round';
+                        if (shape.points.length > 0) {
+                            ctx.moveTo(shape.points[0].x, shape.points[0].y);
+                            for (let i = 1; i < shape.points.length; i++) {
+                                ctx.lineTo(shape.points[i].x, shape.points[i].y);
+                            }
+                            ctx.stroke();
+                        }
+                    } else if (shape.type === 'rectangle') {
+                        ctx.strokeRect(shape.x, shape.y, shape.w, shape.h);
+                    } else if (shape.type === 'circle') {
+                        ctx.arc(shape.cx, shape.cy, shape.r, 0, Math.PI * 2);
+                        ctx.stroke();
+                    } else if (shape.type === 'arrow') {
+                        drawArrowhead(shape.x1, shape.y1, shape.x2, shape.y2);
+                    } else if (shape.type === 'text') {
+                        ctx.font = `${shape.size || 18}px Inter, sans-serif`;
+                        ctx.fillText(shape.text, shape.x, shape.y);
+                    }
+                });
+            }
+
+            // Erasing Logic
+            function eraseAt(x, y) {
+                const eraseRadius = 15;
+                const initialLength = shapes.length;
+                shapes = shapes.filter(shape => {
+                    if (shape.type === 'rectangle') {
+                        return !(x >= shape.x && x <= shape.x + shape.w && y >= shape.y && y <= shape.y + shape.h);
+                    } else if (shape.type === 'circle') {
+                        const dist = Math.hypot(x - shape.cx, y - shape.cy);
+                        return dist > shape.r;
+                    }
+                    return true;
+                });
+
+                if (shapes.length !== initialLength) {
+                    saveState();
+                    redrawCanvas();
+                }
+            }
+
+            // Text Tool Logic
+            function handleTextCreation(x, y) {
+                textInput.style.left = `${x}px`;
+                textInput.style.top = `${y}px`;
+                textInput.style.color = currentColor;
+                textInput.value = '';
+                textInput.classList.remove('hidden');
+                textInput.focus();
+
+                function saveText() {
+                    const text = textInput.value.trim();
+                    if (text) {
+                        shapes.push({
+                            type: 'text',
+                            text: text,
+                            x: x,
+                            y: y + 16,
+                            color: currentColor,
+                            size: 18
+                        });
+                        saveState();
+                        redrawCanvas();
+                    }
+                    textInput.classList.add('hidden');
+                    textInput.removeEventListener('blur', saveText);
+                }
+
+                textInput.addEventListener('blur', saveText);
+            }
+
+            // Sticky Note Creation
+            function createStickyNote(x, y) {
+                const note = document.createElement('div');
+                note.className = 'sticky-note-element bg-yellow-200 border border-yellow-300';
+                note.style.left = `${x}px`;
+                note.style.top = `${y}px`;
+
+                const textarea = document.createElement('textarea');
+                textarea.placeholder = 'Type note here...';
+                note.appendChild(textarea);
+
+                container.appendChild(note);
+
+                // Dragging sticky notes
+                let isDraggingNote = false;
+                let offset = { x: 0, y: 0 };
+
+                note.addEventListener('mousedown', (e) => {
+                    if (e.target === textarea) return;
+                    isDraggingNote = true;
+                    offset.x = e.clientX - note.offsetLeft;
+                    offset.y = e.clientY - note.offsetTop;
+                });
+
+                window.addEventListener('mousemove', (e) => {
+                    if (!isDraggingNote) return;
+                    note.style.left = `${e.clientX - offset.x}px`;
+                    note.style.top = `${e.clientY - offset.y}px`;
+                });
+
+                window.addEventListener('mouseup', () => {
+                    isDraggingNote = false;
+                });
+            }
+
+            // Undo / Redo
+            document.getElementById('btn-undo').addEventListener('click', () => {
+                if (undoStack.length > 0) {
+                    redoStack.push(JSON.stringify(shapes));
+                    const previous = undoStack.pop();
+                    shapes = JSON.parse(previous);
+                    redrawCanvas();
+                    updateCount();
+                }
+            });
+
+            document.getElementById('btn-redo').addEventListener('click', () => {
+                if (redoStack.length > 0) {
+                    undoStack.push(JSON.stringify(shapes));
+                    const next = redoStack.pop();
+                    shapes = JSON.parse(next);
+                    redrawCanvas();
+                    updateCount();
+                }
+            });
+
+            // Clear Canvas
+            document.getElementById('btn-clear').addEventListener('click', () => {
+                if (confirm('Are you sure you want to clear the whiteboard?')) {
+                    shapes = [];
+                    // remove stickies
+                    document.querySelectorAll('.sticky-note-element').forEach(n => n.remove());
+                    saveState();
+                    redrawCanvas();
+                }
+            });
+
+            // Zoom Controls
+            document.getElementById('btn-zoom-in').addEventListener('click', () => {
+                zoomLevel = Math.min(zoomLevel + 0.1, 2.0);
+                updateZoom();
+            });
+
+            document.getElementById('btn-zoom-out').addEventListener('click', () => {
+                zoomLevel = Math.max(zoomLevel - 0.1, 0.5);
+                updateZoom();
+            });
+
+            document.getElementById('btn-zoom-reset').addEventListener('click', () => {
+                zoomLevel = 1.0;
+                updateZoom();
+            });
+
+            function updateZoom() {
+                canvas.style.transform = `scale(${zoomLevel})`;
+                canvas.style.transformOrigin = '0 0';
+                document.getElementById('zoom-percentage').textContent = `${Math.round(zoomLevel * 100)}%`;
+            }
+
+            // Export Modal
+            const modal = document.getElementById('export-modal');
+            document.getElementById('btn-export').addEventListener('click', () => modal.classList.remove('hidden'));
+            document.getElementById('btn-close-modal').addEventListener('click', () => modal.classList.add('hidden'));
+
+            document.getElementById('export-png-white').addEventListener('click', () => {
+                exportCanvas(false);
+                modal.classList.add('hidden');
+            });
+
+            document.getElementById('export-png-bg').addEventListener('click', () => {
+                exportCanvas(true);
+                modal.classList.add('hidden');
+            });
+
+            function exportCanvas(withGrid) {
+                const tempCanvas = document.createElement('canvas');
+                tempCanvas.width = canvas.width;
+                tempCanvas.height = canvas.height;
+                const tempCtx = tempCanvas.getContext('2d');
+
+                // Fill background
+                tempCtx.fillStyle = '#ffffff';
+                tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+
+                if (withGrid) {
+                    tempCtx.fillStyle = '#cbd5e1';
+                    for (let x = 0; x < tempCanvas.width; x += 24) {
+                        for (let y = 0; y < tempCanvas.height; y += 24) {
+                            tempCtx.beginPath();
+                            tempCtx.arc(x, y, 1.5, 0, Math.PI * 2);
+                            tempCtx.fill();
+                        }
+                    }
+                }
+
+                // Draw existing canvas content
+                tempCtx.drawImage(canvas, 0, 0);
+
+                const link = document.createElement('a');
+                link.download = 'nisulka-whiteboard.png';
+                link.href = tempCanvas.toDataURL('image/png');
+                link.click();
+            }
+
+            // Window resize handler
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+        });
+    </script>
+
+    <!-- OFFICIAL NISULKA HEADER & FOOTER JAVASCRIPT -->
+    <script src="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/js/header.js"></script>
+    <script src="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/js/footer.js"></script>
+</body>
+</html>
