@@ -21,7 +21,7 @@
     "name": "YouTube Channel Analytics",
     "slug": "youtube-channel-analysis",
     "description": "Deep YouTube channel analytics, engagement breakdown, monetization estimator, tag extractor, and upload schedule analyzer.",
-    "category": "YouTube Tools",
+    "category": "Analytics",
     "logo": "/Nisulka-Tools/tools/youtube-channel-analysis/logo.jpg",
     "url": "/Nisulka-Tools/tools/youtube-channel-analysis/",
     "keywords": [
@@ -31,7 +31,8 @@
       "monetization estimator",
       "tag extractor",
       "upload schedule",
-      "competitor analysis"
+      "youtube insights",
+      "video analytics"
     ],
     "featured": false,
     "status": "active"
