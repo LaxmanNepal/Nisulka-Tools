@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-08-17T19:11:04.583725+00:00",
-  "totalTools": 6,
-  "averageScore": 80.2,
+  "generatedAt": "2026-08-17T19:23:28.325778+00:00",
+  "totalTools": 7,
+  "averageScore": 77.6,
   "tools": [
     {
       "name": "Text To Handwriting",
@@ -193,6 +193,44 @@
       "rank": 5
     },
     {
+      "name": "Instagram Image Downloader",
+      "slug": "instagram-image-downloader",
+      "url": "/Nisulka-Tools/tools/instagram-image-downloader/",
+      "score": 62,
+      "grade": "C",
+      "title": "Instagram Photo Downloader",
+      "description": "Download Instagram photos with ease. Free, Clean & Simple Instagram Photo Downloader for you.",
+      "wordCount": 252,
+      "h1Count": 1,
+      "h2Count": 0,
+      "images": 2,
+      "imagesWithoutAlt": 0,
+      "canonical": "",
+      "openGraph": {
+        "title": true,
+        "description": true
+      },
+      "passed": [
+        "Exactly one H1 found",
+        "Open Graph title found",
+        "Open Graph description found",
+        "All images have alt attributes"
+      ],
+      "issues": [
+        "Title length should ideally be 30-65 characters (26)",
+        "Meta description should ideally be 120-170 characters (93)",
+        "No H2 headings found",
+        "Missing canonical URL",
+        "Content is relatively short (252 words)"
+      ],
+      "issueSummary": {
+        "total": 5,
+        "critical": 0,
+        "warning": 5
+      },
+      "rank": 6
+    },
+    {
       "name": "Draw App",
       "slug": "draw-app",
       "url": "/Nisulka-Tools/tools/draw-app/",
@@ -228,7 +266,7 @@
         "critical": 0,
         "warning": 4
       },
-      "rank": 6
+      "rank": 7
     }
   ]
 }
