@@ -36,5 +36,16 @@
     ],
     "featured": false,
     "status": "active"
+  },
+  {
+    "name": "Youtube Thumbnail Downloader",
+    "slug": "youtube-thumbnail-downloader",
+    "description": "Free online Youtube Thumbnail Downloader tool.",
+    "category": "Other Tools",
+    "logo": "/Nisulka-Tools/tools/youtube-thumbnail-downloader/logo.jpg",
+    "url": "/Nisulka-Tools/tools/youtube-thumbnail-downloader/",
+    "keywords": [],
+    "featured": false,
+    "status": "active"
   }
 ]
