@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-08-17T22:52:54.137299+00:00",
-  "totalTools": 7,
-  "averageScore": 77.6,
+  "generatedAt": "2026-08-17T23:28:31.477689+00:00",
+  "totalTools": 8,
+  "averageScore": 78.5,
   "tools": [
     {
       "name": "Text To Handwriting",
@@ -79,6 +79,44 @@
       "rank": 2
     },
     {
+      "name": "Currency Converter",
+      "slug": "currency-converter",
+      "url": "/Nisulka-Tools/tools/currency-converter/",
+      "score": 85,
+      "grade": "A",
+      "title": "Currency Converter - Nisulka Tools",
+      "description": "Free, real-time currency converter tool with live exchange rates, persistent cached user preferences, interactive historical trend charts, and popular conversion tables.",
+      "wordCount": 2343,
+      "h1Count": 1,
+      "h2Count": 2,
+      "images": 0,
+      "imagesWithoutAlt": 0,
+      "canonical": "",
+      "openGraph": {
+        "title": true,
+        "description": true
+      },
+      "passed": [
+        "Title length is good",
+        "Meta description length is good",
+        "Exactly one H1 found",
+        "H2 headings found",
+        "Open Graph title found",
+        "Open Graph description found",
+        "No images requiring alt text",
+        "Sufficient page content"
+      ],
+      "issues": [
+        "Missing canonical URL"
+      ],
+      "issueSummary": {
+        "total": 1,
+        "critical": 0,
+        "warning": 1
+      },
+      "rank": 3
+    },
+    {
       "name": "Youtube Thumbnail Downloader",
       "slug": "youtube-thumbnail-downloader",
       "url": "/Nisulka-Tools/tools/youtube-thumbnail-downloader/",
@@ -114,7 +152,7 @@
         "critical": 0,
         "warning": 2
       },
-      "rank": 3
+      "rank": 4
     },
     {
       "name": "Remove Gemini Logo",
@@ -152,7 +190,7 @@
         "critical": 0,
         "warning": 3
       },
-      "rank": 4
+      "rank": 5
     },
     {
       "name": "Youtube Title Generator",
@@ -190,7 +228,7 @@
         "critical": 0,
         "warning": 3
       },
-      "rank": 5
+      "rank": 6
     },
     {
       "name": "Instagram Image Downloader",
@@ -228,7 +266,7 @@
         "critical": 0,
         "warning": 5
       },
-      "rank": 6
+      "rank": 7
     },
     {
       "name": "Draw App",
@@ -266,7 +304,7 @@
         "critical": 0,
         "warning": 4
       },
-      "rank": 7
+      "rank": 8
     }
   ]
 }
