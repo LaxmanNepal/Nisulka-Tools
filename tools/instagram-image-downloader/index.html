@@ -1,262 +1,687 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <title>Instagram Photo Downloader</title>
-    <!-- Suppress third-party extension error logs in the console -->
-    <script>
-        window.addEventListener('error', function (e) {
-            if (e.filename && (e.filename.includes('chrome-extension://') || e.filename.includes('Grammarly-check.js') || e.filename.includes('Grammarly.js'))) {
-                e.stopImmediatePropagation();
-                e.preventDefault();
-                return;
-            }
-            if (e.message && (e.message.includes('envOverride') || e.message.includes('tabs:outgoing.message.ready') || e.message.includes('No Listener'))) {
-                e.stopImmediatePropagation();
-                e.preventDefault();
-            }
-        }, true);
-
-        window.addEventListener('unhandledrejection', function (e) {
-            const reason = e.reason;
-            if (reason) {
-                const msg = reason.message || String(reason);
-                if (msg.includes('tabs:outgoing.message.ready') || msg.includes('envOverride') || msg.includes('No Listener')) {
-                    e.stopImmediatePropagation();
-                    e.preventDefault();
-                }
-            }
-        }, true);
-    </script>
-    <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Instagram Photo Downloader - Free & High Quality | Nisulka Tools</title>
 
-    <!-- Common Tags -->
-    <meta content='#1c1c1e' name='theme-color' />
+    <!-- Meta Tags -->
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="description" content="Download high-resolution photos and images from public Instagram posts easily with Nisulka Instagram Photo Downloader. Free, fast, and no registration required.">
+    <meta name="keywords" content="Instagram Photo Downloader, Insta Photo Downloader, Download Instagram Photos, IG Photo Downloader HD, Free Instagram Downloader, Nisulka Tools">
 
-    <meta name="keywords"
-        content="Instagram Photo Downloader, Insta Photo Downloader, Download Instagram Photos, Download Insta Photos, Insta Public Pic Downloader, Instagram Photo Downloader, IG, IG Photo Downloader, Instagram Photo Downloader HD, Instagram Photo Downloader Online, Clean and Simple Instagram Photo Downloader, CLean and Simple, Instagram Photos, Instagram HD Photo Downloader, High Definition Photo Downoader, IG Photo Research, Download Instagram Photos, Download Instagram Photos Easily, Harsh Trivedi">
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Instagram Photo Downloader - Nisulka Tools">
+    <meta property="og:description" content="Download Instagram photos in high quality easily and quickly. Free online tool.">
+    <meta property="og:site_name" content="Nisulka Tools">
 
-    <!-- Open Graph general (Facebook, Pinterest & Google+) -->
-    <meta property="og:title" content="Instagram Photo Downloader" />
-    <meta property="og:description"
-        content="Download Instagram photos with ease. Free, Clean & Simple Instagram Photo Downloader for you." />
-    <meta property="og:image"
-        content="https://raw.github.com/harsh98trivedi/Instagram-Photo-Downloader/master/images/meta.jpg" />
-    <meta property="og:url" content="https://harsh98trivedi.github.io/Instagram-Photo-Downloader/" />
-    <meta property="og:site_name" content="Instagram Photo Downloader" />
-    <meta property="og:locale" content="en_US" />
-    <meta property="fb:admins" content="245221532650178" />
-    <meta property="og:type" content="website" />
-    <meta content='https://www.facebook.com/TheHarshTrivedi' property='article:author' />
-    <!-- Search Engine -->
-    <meta name="description"
-        content="Download Instagram photos with ease. Free, Clean & Simple Instagram Photo Downloader for you." />
-    <meta name="image"
-        content="https://raw.github.com/harsh98trivedi/Instagram-Photo-Downloader/master/images/meta.jpg" />
-    <!-- Schema.org for Google -->
-    <meta itemprop="name" content="Instagram Photo Downloader" />
-    <meta itemprop="description"
-        content="Download Instagram photos with ease. Free, Clean & Simple Instagram Photo Downloader for you." />
-    <meta itemprop="image"
-        content="https://raw.github.com/harsh98trivedi/Instagram-Photo-Downloader/master/images/meta.jpg" />
     <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:title" content="Instagram Photo Downloader" />
-    <meta property="twitter:description"
-        content="Download Instagram photos with ease. Free, Clean & Simple Instagram Photo Downloader for you." />
-    <meta property="twitter:creator" content="@harsh98trivedi" />
-    <meta property="twitter:creator:id" content="@harsh98trivedi" />
-    <meta property="twitter:image:src"
-        content="https://raw.github.com/harsh98trivedi/Instagram-Photo-Downloader/master/images/meta.jpg" />
-    <meta property="twitter:image" content="Instagram Photo Downloader | Download Instagram photos with ease." />
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Instagram Photo Downloader - Nisulka Tools">
+    <meta name="twitter:description" content="Download Instagram photos in high quality easily and quickly. Free online tool.">
 
-    <link rel='icon' type='image/x-icon' href='images/favicon.png' />
+    <!-- Official Nisulka Style Sheets -->
+    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/variables.css">
+    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/global.css">
+    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/components.css">
+    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/header.css">
+    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/footer.css">
+    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/tool.css">
 
-    <!-- Google Fonts: Outfit -->
+    <!-- Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <!-- Tailwind CSS -->
-    <link rel="stylesheet" href="css/tailwind.min.css">
-
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-45C37D3GB5"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-45C37D3GB5');
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'insta-pink': '#E1306C',
+                        'insta-purple': '#833AB4',
+                        'insta-orange': '#F56040',
+                        'insta-yellow': '#FCAF45',
+                    },
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    }
+                }
+            }
+        }
     </script>
+
+    <style>
+        /* Custom White Theme Tool Specific Styles */
+        .gradient-btn {
+            background: linear-gradient(135deg, #833AB4 0%, #E1306C 50%, #F56040 100%);
+        }
+        .gradient-btn:hover {
+            opacity: 0.96;
+            box-shadow: 0 10px 20px -5px rgba(225, 48, 108, 0.35);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #833AB4, #E1306C, #F56040);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, padding 0.3s ease;
+        }
+        .faq-answer.open {
+            max-height: 300px;
+        }
+    </style>
 </head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col antialiased selection:bg-insta-pink selection:text-white">
 
-<body class="bg-instagram-bg min-h-screen text-white font-sans flex flex-col justify-between antialiased selection:bg-instagram-magenta selection:text-white">
-    <!-- Navbar / Header -->
-    <nav class="bg-instagram-dark shadow-md border-b border-instagram-border py-5 text-center">
-        <a href="https://harsh98trivedi.github.io/Instagram-Photo-Downloader/" class="inline-flex items-center space-x-3 group justify-center">
-            <img src="images/favicon.png" alt="Logo" class="w-8 h-8 rounded-lg object-contain group-hover:scale-110 transition-transform duration-300" />
-            <h1 class="text-xl sm:text-2xl font-bold tracking-tight select-none bg-clip-text text-transparent bg-gradient-to-r from-purple-500 via-instagram-magenta to-orange-400">
-                INSTAGRAM PHOTO DOWNLOADER
+    <!-- OFFICIAL NISULKA HEADER MOUNT -->
+    <div id="site-header-mount"></div>
+
+    <!-- MAIN TOOL CONTENT WRAPPER -->
+    <main class="flex-grow max-w-5xl mx-auto w-full px-4 py-8">
+
+        <!-- Breadcrumb -->
+        <nav class="text-sm mb-6 text-slate-500 flex items-center space-x-2" aria-label="Breadcrumb">
+            <a href="/" class="hover:text-slate-900 transition-colors"><i class="fa-solid fa-house mr-1 text-slate-400"></i> Home</a>
+            <span class="text-slate-300">/</span>
+            <a href="/tools" class="hover:text-slate-900 transition-colors">Tools</a>
+            <span class="text-slate-300">/</span>
+            <span class="text-slate-900 font-medium">Instagram Photo Downloader</span>
+        </nav>
+
+        <!-- Tool Title & Description -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 mb-3">
+                Instagram Photo <span class="gradient-text">Downloader</span>
             </h1>
-        </a>
-    </nav>
+            <p class="text-slate-600 max-w-2xl mx-auto text-base sm:text-lg">
+                Download original high-quality photos from public Instagram posts instantly. Free, simple, and works on all devices without installation.
+            </p>
+        </div>
 
-    <!-- Main Container -->
-    <main class="flex-grow flex items-center justify-center px-4 py-8 bg-instagram-bg">
-        <div class="rounded-2xl shadow-2xl bg-instagram-light border border-instagram-border w-full max-w-md p-6 flex flex-col items-center hover:border-gray-500 transition-all duration-300">
-
-
-            <!-- Input Form -->
-            <div id="form-container" class="w-full space-y-4">
-                <div class="relative w-full">
-                    <input id="instalink" autofocus type="text"
-                        class="px-6 py-3.5 rounded-xl bg-instagram-bg border-2 border-instagram-border text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-instagram-magenta text-base tracking-wide transition w-full text-center font-medium"
-                        placeholder="PASTE INSTAGRAM POST URL HERE" spellcheck="false" autocomplete="off"
-                        data-gramm="false" data-gramm_editor="false" data-enable-grammarly="false" />
-                    <button id="clear-btn" onclick="document.getElementById('instalink').value = '';" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors duration-200">
-                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
+        <!-- Tool Workspace Card (White Theme) -->
+        <div class="bg-white border border-slate-200/80 rounded-2xl p-6 md:p-8 shadow-xl shadow-slate-200/60 mb-12 max-w-2xl mx-auto">
+            
+            <!-- Link Input Form -->
+            <div id="form-container" class="space-y-4">
+                <label for="instalink" class="block text-sm font-semibold text-slate-700 mb-1">
+                    Enter Instagram Post Link
+                </label>
+                <div class="relative">
+                    <input id="instalink" type="url" autofocus
+                        class="w-full px-4 py-3.5 pr-12 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-insta-pink focus:ring-2 focus:ring-insta-pink/20 text-base font-medium transition duration-200"
+                        placeholder="https://www.instagram.com/p/C..." spellcheck="false" autocomplete="off">
+                    <button type="button" id="clear-btn" onclick="clearInput()" title="Clear input"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-2 transition duration-150">
+                        <i class="fa-solid fa-xmark text-lg"></i>
                     </button>
                 </div>
 
-                <button id="fetch-btn" onclick="fetchInstaPhoto()"
-                    class="rounded-xl w-full py-3.5 font-bold bg-gradient-to-r from-purple-600 via-instagram-magenta to-orange-400 hover:brightness-110 active:scale-[0.98] shadow transition text-white tracking-wide text-lg focus:outline-none">
-                    FETCH
-                </button>
-            </div>
-
-            <!-- Loader (hidden by default) -->
-            <div id="loader" class="hidden flex flex-col items-center justify-center py-8 space-y-3">
-                <svg class="animate-spin h-10 w-10 text-instagram-magenta" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                <span class="text-sm font-medium text-gray-300">Retrieving post content...</span>
-            </div>
-
-            <!-- Error Message (hidden by default) -->
-            <div id="error-message" class="hidden mt-6 bg-red-500/20 border-l-4 border-red-500 rounded-xl p-4 text-red-200 text-sm flex items-start space-x-2 w-full">
-                <svg class="h-5 w-5 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
-                <span>The URL you entered appears to be incorrect. Please make sure it is correct and the post is public.</span>
-            </div>
-
-            <!-- Result Section (hidden by default) -->
-            <div id="result-section" class="hidden mt-4 w-full flex flex-col items-center">
-                <!-- Image Preview Container -->
-                <div id="image-container" class="relative overflow-hidden rounded-xl border-2 border-instagram-border shadow-md w-full max-w-sm mb-7 bg-instagram-dark flex items-center justify-center min-h-[300px]">
-                    <!-- Direct img preview (shown when CDN URL resolved) -->
-                    <img id="imgpreview" class="hidden w-full h-auto object-contain rounded-xl max-h-[480px]" src="" alt="Instagram Image Preview" />
-                    <!-- Iframe embed preview (shown immediately as reliable fallback, no CORS needed) -->
-                    <iframe id="embed-iframe"
-                        class="hidden w-full rounded-xl"
-                        style="min-height:420px; border:none;"
-                        scrolling="no"
-                        allowtransparency="true">
-                    </iframe>
-                    <!-- Loading placeholder inside preview (hidden by default) -->
-                    <div id="preview-loader" class="hidden absolute inset-0 bg-instagram-dark/80 flex flex-col items-center justify-center space-y-2">
-                        <svg class="animate-spin h-8 w-8 text-instagram-magenta" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        <span class="text-xs text-gray-300 font-medium">Loading preview image...</span>
-                    </div>
+                <div class="flex gap-3">
+                    <button type="button" onclick="pasteFromClipboard()" class="px-5 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 rounded-xl font-medium text-sm flex items-center justify-center transition gap-2 shrink-0">
+                        <i class="fa-regular fa-clipboard text-slate-500"></i>
+                        <span>Paste</span>
+                    </button>
+                    <button type="button" id="fetch-btn" onclick="fetchInstaPhoto()"
+                        class="flex-1 gradient-btn rounded-xl py-3.5 px-6 font-bold text-white shadow-md tracking-wide text-base transition duration-200 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <span>Fetch Photo</span>
+                    </button>
                 </div>
+            </div>
+
+            <!-- Loader State -->
+            <div id="loader" class="hidden flex flex-col items-center justify-center py-10 space-y-3 text-center">
+                <div class="w-12 h-12 border-4 border-slate-200 border-t-insta-pink rounded-full animate-spin"></div>
+                <p id="loader-text" class="text-slate-600 font-medium text-sm">Processing post details...</p>
+            </div>
+
+            <!-- Error State -->
+            <div id="error-message" class="hidden mt-6 bg-red-50 border border-red-200 rounded-xl p-4 text-red-700 text-sm flex items-start gap-3">
+                <i class="fa-solid fa-triangle-exclamation text-red-500 text-lg shrink-0 mt-0.5"></i>
+                <div class="flex-1">
+                    <span class="font-semibold block mb-0.5">Unable to fetch image</span>
+                    <span id="error-text">Please verify the URL is correct and belongs to a public Instagram post.</span>
+                </div>
+            </div>
+
+            <!-- Success / Result Section -->
+            <div id="result-section" class="hidden mt-6 flex flex-col items-center space-y-6">
+                
+                <!-- Carousel / Multi-image Navigation Header -->
+                <div id="carousel-controls" class="hidden w-full flex items-center justify-between bg-slate-100 p-2.5 rounded-xl border border-slate-200">
+                    <button type="button" onclick="prevCarouselImage()" id="prev-img-btn" class="px-3 py-1.5 bg-white shadow-sm border border-slate-200 rounded-lg text-slate-700 text-xs font-semibold hover:bg-slate-50 transition flex items-center gap-1">
+                        <i class="fa-solid fa-chevron-left"></i> Previous
+                    </button>
+                    <span id="carousel-indicator" class="text-xs font-bold text-slate-600">Photo 1 of 1</span>
+                    <button type="button" onclick="nextCarouselImage()" id="next-img-btn" class="px-3 py-1.5 bg-white shadow-sm border border-slate-200 rounded-lg text-slate-700 text-xs font-semibold hover:bg-slate-50 transition flex items-center gap-1">
+                        Next <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+
+                <!-- Image Container -->
+                <div class="relative w-full rounded-xl overflow-hidden bg-slate-100 border border-slate-200 flex flex-col items-center justify-center min-h-[280px] p-2">
+                    <!-- Direct Image Preview -->
+                    <img id="imgpreview" crossorigin="anonymous" referrerpolicy="no-referrer" class="hidden w-full h-auto max-h-[550px] object-contain rounded-xl shadow-sm" src="" alt="Instagram High Resolution Photo" />
+                    
+                    <!-- Fallback Embed -->
+                    <iframe id="embed-iframe" class="hidden w-full min-h-[450px] border-none rounded-xl" scrolling="no"></iframe>
+
+                    <!-- Hidden Canvas for high-res export -->
+                    <canvas id="download-canvas" class="hidden"></canvas>
+                </div>
+
+                <!-- Thumbnail Strip (when multiple images found) -->
+                <div id="thumbnail-strip" class="hidden w-full flex items-center justify-center gap-2 overflow-x-auto py-1"></div>
 
                 <!-- Action Buttons -->
                 <div class="w-full space-y-3">
                     <button id="download-btn" onclick="downloadPhoto()"
-                        class="rounded-xl w-full py-3.5 font-bold bg-gradient-to-r from-purple-600 via-instagram-magenta to-orange-400 hover:brightness-110 active:scale-[0.98] shadow transition text-white tracking-wide text-lg focus:outline-none flex justify-center items-center space-x-2">
-                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                        </svg>
-                        <span>DOWNLOAD PHOTO</span>
+                        class="gradient-btn rounded-xl w-full py-3.5 px-6 font-bold text-white shadow-md transition text-base flex justify-center items-center gap-2 cursor-pointer">
+                        <i class="fa-solid fa-download"></i>
+                        <span id="download-btn-text">Download High-Res Photo</span>
                     </button>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <button type="button" onclick="copyImageUrl()" class="py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition">
+                            <i class="fa-regular fa-copy"></i>
+                            <span>Copy Image Link</span>
+                        </button>
+                        <a id="direct-hd-link" target="_blank" rel="noopener noreferrer" class="py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                            <span>Open Direct Source</span>
+                        </a>
+                    </div>
+
                     <button id="reload-btn" onclick="resetApp()"
-                        class="w-full py-3.5 rounded-xl font-semibold border-2 border-instagram-border hover:border-white hover:bg-instagram-bg transition text-white text-lg focus:outline-none bg-instagram-light">
-                        START OVER
+                        class="w-full py-3 rounded-xl font-medium bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200 transition text-sm flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-rotate-left"></i>
+                        <span>Fetch Another URL</span>
                     </button>
                 </div>
             </div>
         </div>
+
+        <!-- How to Use / Useful Content Section -->
+        <section class="bg-white border border-slate-200/80 shadow-sm rounded-2xl p-6 md:p-8 mb-10">
+            <h2 class="text-xl sm:text-2xl font-bold mb-6 text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-circle-info text-insta-pink"></i> How to Download Instagram Photos
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                    <div class="w-8 h-8 rounded-full bg-purple-100 text-insta-purple font-bold flex items-center justify-center mb-3">1</div>
+                    <h3 class="font-semibold text-slate-900 mb-1">Copy Link</h3>
+                    <p class="text-sm text-slate-600">Open Instagram, navigate to the photo post you wish to save, tap the menu (3 dots) or share button, and select <strong>Copy Link</strong>.</p>
+                </div>
+                <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                    <div class="w-8 h-8 rounded-full bg-pink-100 text-insta-pink font-bold flex items-center justify-center mb-3">2</div>
+                    <h3 class="font-semibold text-slate-900 mb-1">Paste Link</h3>
+                    <p class="text-sm text-slate-600">Paste the copied URL into the box above and click the <strong>Fetch Photo</strong> button to load the preview.</p>
+                </div>
+                <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                    <div class="w-8 h-8 rounded-full bg-orange-100 text-insta-orange font-bold flex items-center justify-center mb-3">3</div>
+                    <h3 class="font-semibold text-slate-900 mb-1">Download</h3>
+                    <p class="text-sm text-slate-600">Click the <strong>Download Photo</strong> button to instantly save the high-resolution image file to your device storage.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="bg-white border border-slate-200/80 shadow-sm rounded-2xl p-6 md:p-8 mb-10">
+            <h2 class="text-xl sm:text-2xl font-bold mb-6 text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-star text-amber-500"></i> Features & Benefits
+            </h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-slate-600">
+                <div class="flex items-start gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <i class="fa-solid fa-bolt text-amber-500 text-lg mt-0.5"></i>
+                    <div>
+                        <h4 class="font-semibold text-slate-900 mb-0.5">Lightning Fast</h4>
+                        <p>Fetches post image metadata directly for instantaneous downloads.</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <i class="fa-solid fa-shield-halved text-emerald-500 text-lg mt-0.5"></i>
+                    <div>
+                        <h4 class="font-semibold text-slate-900 mb-0.5">100% Safe & Anonymous</h4>
+                        <p>No login or personal credentials required. Safe client-side operation.</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <i class="fa-solid fa-mobile-screen-button text-sky-500 text-lg mt-0.5"></i>
+                    <div>
+                        <h4 class="font-semibold text-slate-900 mb-0.5">Fully Responsive</h4>
+                        <p>Works seamlessly on iOS, Android, PC, macOS, and Linux browsers.</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <i class="fa-solid fa-images text-indigo-500 text-lg mt-0.5"></i>
+                    <div>
+                        <h4 class="font-semibold text-slate-900 mb-0.5">Original Resolution</h4>
+                        <p>Extracts the highest quality available image source directly from the post.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="bg-white border border-slate-200/80 shadow-sm rounded-2xl p-6 md:p-8">
+            <h2 class="text-xl sm:text-2xl font-bold mb-6 text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-circle-question text-sky-500"></i> Frequently Asked Questions
+            </h2>
+            <div class="space-y-3">
+                <div class="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden">
+                    <button class="w-full p-4 text-left font-semibold text-slate-800 flex justify-between items-center focus:outline-none hover:bg-slate-100/80 transition" onclick="toggleFaq(this)">
+                        <span>Can I download photos from private Instagram accounts?</span>
+                        <i class="fa-solid fa-chevron-down text-slate-400 transition-transform duration-200"></i>
+                    </button>
+                    <div class="faq-answer px-4 text-slate-600 text-sm">
+                        <p class="pb-4">No, this downloader only supports public Instagram posts. Photos from private accounts cannot be accessed due to privacy restrictions.</p>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden">
+                    <button class="w-full p-4 text-left font-semibold text-slate-800 flex justify-between items-center focus:outline-none hover:bg-slate-100/80 transition" onclick="toggleFaq(this)">
+                        <span>Is there any limit on the number of photos I can download?</span>
+                        <i class="fa-solid fa-chevron-down text-slate-400 transition-transform duration-200"></i>
+                    </button>
+                    <div class="faq-answer px-4 text-slate-600 text-sm">
+                        <p class="pb-4">No, Nisulka Instagram Photo Downloader is completely free with unlimited downloads.</p>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden">
+                    <button class="w-full p-4 text-left font-semibold text-slate-800 flex justify-between items-center focus:outline-none hover:bg-slate-100/80 transition" onclick="toggleFaq(this)">
+                        <span>Where are downloaded photos saved on my device?</span>
+                        <i class="fa-solid fa-chevron-down text-slate-400 transition-transform duration-200"></i>
+                    </button>
+                    <div class="faq-answer px-4 text-slate-600 text-sm">
+                        <p class="pb-4">Downloaded photos are automatically saved to your browser's default 'Downloads' folder or gallery on mobile devices.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
     </main>
 
-    <!-- Footer -->
-    <footer class="py-5 text-center bg-instagram-dark border-t border-instagram-border text-white text-base">
-        <div class="flex flex-col items-center space-y-3">
-            <!-- Social Media Icons -->
-            <div class="flex justify-center items-center gap-4">
-                <a href="https://www.facebook.com/harsh98trivedi" target="_blank" class="hover:scale-110 active:scale-95 transition-transform duration-200" title="Facebook">
-                    <i class="fa-brands fa-facebook text-2xl text-gray-400 hover:text-[#1877f2] transition-colors duration-200"></i>
-                </a>
-                <a href="https://www.twitter.com/harsh98trivedi" target="_blank" class="hover:scale-110 active:scale-95 transition-transform duration-200" title="Twitter">
-                    <i class="fa-brands fa-x-twitter text-2xl text-gray-400 hover:text-white transition-colors duration-200"></i>
-                </a>
-                <a href="https://www.youtube.com/harsh98trivedi" target="_blank" class="hover:scale-110 active:scale-95 transition-transform duration-200" title="YouTube">
-                    <i class="fa-brands fa-youtube text-2xl text-gray-400 hover:text-[#ff0000] transition-colors duration-200"></i>
-                </a>
-                <a href="https://www.instagram.com/harsh98trivedi" target="_blank" class="hover:scale-110 active:scale-95 transition-transform duration-200" title="Instagram">
-                    <i class="fa-brands fa-instagram text-2xl text-gray-400 hover:text-[#e1306c] transition-colors duration-200"></i>
-                </a>
-                <a href="https://www.reddit.com/u/harshtrivedi" target="_blank" class="hover:scale-110 active:scale-95 transition-transform duration-200" title="Reddit">
-                    <i class="fa-brands fa-reddit text-2xl text-gray-400 hover:text-[#ff4500] transition-colors duration-200"></i>
-                </a>
-                <a href="https://www.github.com/harsh98trivedi" target="_blank" class="hover:scale-110 active:scale-95 transition-transform duration-200" title="Github">
-                    <i class="fa-brands fa-github text-2xl text-gray-400 hover:text-white transition-colors duration-200"></i>
-                </a>
-                <a href="mailto:harsh98trivedi@gmail.com" class="hover:scale-110 active:scale-95 transition-transform duration-200" title="Email">
-                    <i class="fa-solid fa-envelope text-2xl text-gray-400 hover:text-[#ea4335] transition-colors duration-200"></i>
-                </a>
-            </div>
-            <p class="text-sm text-gray-400 flex items-center space-x-1.5 pt-1">
-                <span>Made with</span>
-                <i class="fa-solid fa-heart text-red-500 animate-pulse text-xs"></i>
-                <span>by</span>
-                <a target="_blank" href="https://harsh98trivedi.github.io" class="hover:text-instagram-magenta font-semibold underline decoration-dotted transition-colors duration-200">Harsh Trivedi</a>
-            </p>
-        </div>
-    </footer>
+    <!-- OFFICIAL NISULKA FOOTER MOUNT -->
+    <div id="site-footer-mount"></div>
 
-    <!-- App Logic Scripts -->
-    <script src="js/instaimage.js?v=2.0.8"></script>
+    <!-- APP LOGIC & SCRIPT DIRECTIVES -->
     <script>
-        // Trigger fetch on Enter key inside URL input
+        let fetchedPhotos = [];
+        let currentPhotoIndex = 0;
+
+        function clearInput() {
+            document.getElementById('instalink').value = '';
+            document.getElementById('instalink').focus();
+        }
+
+        async function pasteFromClipboard() {
+            try {
+                const text = await navigator.clipboard.readText();
+                if (text) {
+                    document.getElementById('instalink').value = text.trim();
+                }
+            } catch (err) {
+                console.warn('Clipboard access denied:', err);
+            }
+        }
+
+        function toggleFaq(btn) {
+            const answer = btn.nextElementSibling;
+            const icon = btn.querySelector('i');
+            const isOpen = answer.classList.contains('open');
+
+            document.querySelectorAll('.faq-answer').forEach(el => el.classList.remove('open'));
+            document.querySelectorAll('.faq-answer').forEach(el => {
+                const parent = el.parentElement;
+                const ic = parent.querySelector('i');
+                if (ic) ic.style.transform = 'rotate(0deg)';
+            });
+
+            if (!isOpen) {
+                answer.classList.add('open');
+                icon.style.transform = 'rotate(180deg)';
+            }
+        }
+
+        function extractPostId(url) {
+            if (!url) return null;
+            const match = url.match(/\/(p|reel|reels|tv|share\/p)\/([A-Za-z0-9_-]+)/i);
+            return match ? match[2] : null;
+        }
+
+        function cleanUrl(url) {
+            if (!url) return '';
+            let cleaned = url.replace(/\\u0026/g, '&')
+                             .replace(/\\u0025/g, '%')
+                             .replace(/\\\/|\\\//g, '/')
+                             .replace(/&amp;/g, '&')
+                             .replace(/\\/g, '');
+            return cleaned.trim();
+        }
+
+        function getBypassedImageUrl(rawUrl) {
+            if (!rawUrl) return '';
+            // Use weserv.nl proxy to bypass Instagram hotlinking restrictions and allow CORS image fetching
+            const clean = cleanUrl(rawUrl);
+            if (clean.startsWith('data:') || clean.includes('weserv.nl')) return clean;
+            return `https://images.weserv.nl/?url=${encodeURIComponent(clean)}`;
+        }
+
+        async function fetchInstaPhoto() {
+            const urlInput = document.getElementById('instalink').value.trim();
+            const loader = document.getElementById('loader');
+            const loaderText = document.getElementById('loader-text');
+            const errorMsg = document.getElementById('error-message');
+            const resultSection = document.getElementById('result-section');
+            const imgPreview = document.getElementById('imgpreview');
+            const embedIframe = document.getElementById('embed-iframe');
+            const errorText = document.getElementById('error-text');
+
+            // Reset UI states
+            errorMsg.classList.add('hidden');
+            resultSection.classList.add('hidden');
+            imgPreview.classList.add('hidden');
+            embedIframe.classList.add('hidden');
+            fetchedPhotos = [];
+            currentPhotoIndex = 0;
+
+            if (!urlInput) {
+                errorText.textContent = 'Please enter a valid Instagram post URL.';
+                errorMsg.classList.remove('hidden');
+                return;
+            }
+
+            const postId = extractPostId(urlInput);
+            if (!postId) {
+                errorText.textContent = 'The link provided does not appear to be a valid Instagram post or reel link.';
+                errorMsg.classList.remove('hidden');
+                return;
+            }
+
+            loader.classList.remove('hidden');
+            loaderText.textContent = 'Contacting Instagram servers...';
+
+            let extractedList = [];
+
+            // Primary Proxy List for Instagram Embed Parsing
+            const proxies = [
+                `https://api.allorigins.win/get?url=${encodeURIComponent(`https://www.instagram.com/p/${postId}/embed/captioned/`)}`,
+                `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(`https://www.instagram.com/p/${postId}/embed/captioned/`)}`,
+                `https://corsproxy.io/?${encodeURIComponent(`https://www.instagram.com/p/${postId}/embed/captioned/`)}`
+            ];
+
+            for (const proxyUrl of proxies) {
+                try {
+                    loaderText.textContent = 'Extracting high-resolution media...';
+                    const res = await fetch(proxyUrl);
+                    if (res.ok) {
+                        let htmlContent = '';
+                        if (proxyUrl.includes('allorigins')) {
+                            const data = await res.json();
+                            htmlContent = data.contents || '';
+                        } else {
+                            htmlContent = await res.text();
+                        }
+
+                        if (htmlContent) {
+                            // Match EmbeddedMediaImage sources
+                            const imgRegex = /class="EmbeddedMediaImage"[^>]*src="([^"]+)"/gi;
+                            let match;
+                            while ((match = imgRegex.exec(htmlContent)) !== null) {
+                                if (match[1]) extractedList.push(cleanUrl(match[1]));
+                            }
+
+                            // Match og:image meta tags
+                            const ogMatches = htmlContent.matchAll(/<meta property="og:image" content="([^"]+)"/gi);
+                            for (const m of ogMatches) {
+                                if (m[1]) extractedList.push(cleanUrl(m[1]));
+                            }
+
+                            // Match JSON display_url fields
+                            const jsonMatches = htmlContent.matchAll(/"display_url":"([^"]+)"/gi);
+                            for (const m of jsonMatches) {
+                                if (m[1]) extractedList.push(cleanUrl(m[1]));
+                            }
+
+                            if (extractedList.length > 0) break;
+                        }
+                    }
+                } catch (err) {
+                    console.warn('Proxy fetch attempt failed:', err);
+                }
+            }
+
+            // Fallback via DDInstagram Metadata Proxy if primary proxies fail
+            if (extractedList.length === 0) {
+                try {
+                    loaderText.textContent = 'Checking mirror servers...';
+                    const ddUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(`https://ddinstagram.com/p/${postId}/`)}`;
+                    const res = await fetch(ddUrl);
+                    if (res.ok) {
+                        const data = await res.json();
+                        const htmlContent = data.contents || '';
+                        const ogMatches = htmlContent.matchAll(/<meta property="og:image" content="([^"]+)"/gi);
+                        for (const m of ogMatches) {
+                            if (m[1]) extractedList.push(cleanUrl(m[1]));
+                        }
+                    }
+                } catch (err) {
+                    console.warn('DDInstagram fetch failed:', err);
+                }
+            }
+
+            // De-duplicate array
+            fetchedPhotos = [...new Set(extractedList)].filter(url => url.length > 10);
+
+            if (fetchedPhotos.length > 0) {
+                displayPhoto(0);
+                return;
+            }
+
+            // Ultimate Fallback: Embed iFrame
+            loader.classList.add('hidden');
+            embedIframe.src = `https://www.instagram.com/p/${postId}/embed`;
+            embedIframe.classList.remove('hidden');
+            resultSection.classList.remove('hidden');
+            document.getElementById('download-btn').onclick = function() {
+                window.open(`https://ddinstagram.com/p/${postId}/`, '_blank');
+            };
+        }
+
+        function displayPhoto(index) {
+            if (index < 0 || index >= fetchedPhotos.length) return;
+            currentPhotoIndex = index;
+
+            const loader = document.getElementById('loader');
+            const resultSection = document.getElementById('result-section');
+            const imgPreview = document.getElementById('imgpreview');
+            const carouselControls = document.getElementById('carousel-controls');
+            const carouselIndicator = document.getElementById('carousel-indicator');
+            const thumbnailStrip = document.getElementById('thumbnail-strip');
+            const directHdLink = document.getElementById('direct-hd-link');
+
+            const rawSrc = fetchedPhotos[index];
+            const proxiedSrc = getBypassedImageUrl(rawSrc);
+
+            directHdLink.href = rawSrc;
+
+            if (fetchedPhotos.length > 1) {
+                carouselControls.classList.remove('hidden');
+                carouselIndicator.textContent = `Photo ${index + 1} of ${fetchedPhotos.length}`;
+                document.getElementById('prev-img-btn').disabled = index === 0;
+                document.getElementById('next-img-btn').disabled = index === fetchedPhotos.length - 1;
+
+                // Render thumbnails
+                thumbnailStrip.innerHTML = '';
+                thumbnailStrip.classList.remove('hidden');
+                fetchedPhotos.forEach((photoUrl, i) => {
+                    const thumb = document.createElement('img');
+                    thumb.src = getBypassedImageUrl(photoUrl);
+                    thumb.className = `w-14 h-14 object-cover rounded-lg border-2 cursor-pointer transition ${i === index ? 'border-insta-pink scale-105' : 'border-transparent opacity-60 hover:opacity-100'}`;
+                    thumb.onclick = () => displayPhoto(i);
+                    thumbnailStrip.appendChild(thumb);
+                });
+            } else {
+                carouselControls.classList.add('hidden');
+                thumbnailStrip.classList.add('hidden');
+            }
+
+            imgPreview.onload = function() {
+                loader.classList.add('hidden');
+                imgPreview.classList.remove('hidden');
+                resultSection.classList.remove('hidden');
+            };
+
+            imgPreview.onerror = function() {
+                // Fallback direct src if proxied fails
+                if (imgPreview.src !== rawSrc) {
+                    imgPreview.src = rawSrc;
+                } else {
+                    loader.classList.add('hidden');
+                    imgPreview.classList.remove('hidden');
+                    resultSection.classList.remove('hidden');
+                }
+            };
+
+            imgPreview.src = proxiedSrc;
+        }
+
+        function prevCarouselImage() {
+            if (currentPhotoIndex > 0) {
+                displayPhoto(currentPhotoIndex - 1);
+            }
+        }
+
+        function nextCarouselImage() {
+            if (currentPhotoIndex < fetchedPhotos.length - 1) {
+                displayPhoto(currentPhotoIndex + 1);
+            }
+        }
+
+        async function downloadPhoto() {
+            const downloadBtnText = document.getElementById('download-btn-text');
+            const originalText = downloadBtnText.textContent;
+
+            const rawUrl = fetchedPhotos[currentPhotoIndex];
+            if (!rawUrl) {
+                const urlInput = document.getElementById('instalink').value.trim();
+                const postId = extractPostId(urlInput);
+                if (postId) {
+                    window.open(`https://ddinstagram.com/p/${postId}/`, '_blank');
+                }
+                return;
+            }
+
+            downloadBtnText.textContent = 'Processing Download...';
+
+            const proxiedUrl = getBypassedImageUrl(rawUrl);
+
+            try {
+                // Attempt direct Blob download via proxied image URL
+                const response = await fetch(proxiedUrl);
+                if (response.ok) {
+                    const blob = await response.blob();
+                    if (blob && blob.size > 1000) {
+                        const blobUrl = URL.createObjectURL(blob);
+                        const link = document.createElement('a');
+                        link.href = blobUrl;
+                        link.download = `instagram-photo-${Date.now()}.jpg`;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        setTimeout(() => URL.revokeObjectURL(blobUrl), 3000);
+                        downloadBtnText.textContent = originalText;
+                        return;
+                    }
+                }
+            } catch (e) {
+                console.warn('Direct blob fetch failed, switching to Canvas export strategy:', e);
+            }
+
+            // Fallback: Canvas Drawing Download Strategy
+            const imgPreview = document.getElementById('imgpreview');
+            if (imgPreview && !imgPreview.classList.contains('hidden')) {
+                try {
+                    const canvas = document.getElementById('download-canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = imgPreview.naturalWidth || 1080;
+                    canvas.height = imgPreview.naturalHeight || 1080;
+                    ctx.drawImage(imgPreview, 0, 0, canvas.width, canvas.height);
+
+                    if (canvas.toBlob) {
+                        canvas.toBlob((blob) => {
+                            if (blob) {
+                                const blobUrl = URL.createObjectURL(blob);
+                                const link = document.createElement('a');
+                                link.href = blobUrl;
+                                link.download = `instagram-photo-${Date.now()}.jpg`;
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
+                                setTimeout(() => URL.revokeObjectURL(blobUrl), 3000);
+                            } else {
+                                window.open(rawUrl, '_blank');
+                            }
+                            downloadBtnText.textContent = originalText;
+                        }, 'image/jpeg', 0.95);
+                        return;
+                    }
+                } catch (canvasErr) {
+                    console.warn('Canvas export failed:', canvasErr);
+                }
+            }
+
+            // Final fallback: Open raw photo URL in new tab
+            window.open(rawUrl, '_blank');
+            downloadBtnText.textContent = originalText;
+        }
+
+        function copyImageUrl() {
+            const rawUrl = fetchedPhotos[currentPhotoIndex];
+            if (!rawUrl) return;
+            
+            const tempInput = document.createElement('textarea');
+            tempInput.value = rawUrl;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            try {
+                document.execCommand('copy');
+                alert('High-resolution photo link copied to clipboard!');
+            } catch (err) {
+                console.error('Copy failed', err);
+            }
+            document.body.removeChild(tempInput);
+        }
+
+        function resetApp() {
+            document.getElementById('instalink').value = '';
+            document.getElementById('result-section').classList.add('hidden');
+            document.getElementById('error-message').classList.add('hidden');
+            document.getElementById('loader').classList.add('hidden');
+            fetchedPhotos = [];
+            currentPhotoIndex = 0;
+            document.getElementById('instalink').focus();
+        }
+
+        // Trigger fetch on Enter key press
         document.getElementById('instalink').addEventListener('keydown', function (e) {
             if (e.key === 'Enter') {
                 fetchInstaPhoto();
             }
-            
         });
-
-        // Mock error dispatch for testing suppression of extension warnings
-        if (window.location.search.includes('test=true')) {
-            console.log('[Test] Running mock error tests...');
-            setTimeout(() => {
-                const p = Promise.reject(new Error('No Listener: tabs:outgoing.message.ready'));
-                window.dispatchEvent(new PromiseRejectionEvent('unhandledrejection', {
-                    promise: p,
-                    reason: p
-                }));
-            }, 500);
-            setTimeout(() => {
-                window.dispatchEvent(new ErrorEvent('error', {
-                    message: '[envOverride] Failed to read override, skipping: envOverride read timed out',
-                    filename: 'Grammarly-check.js',
-                    lineno: 1,
-                    colno: 1,
-                    error: new Error('[envOverride] Failed to read override, skipping: envOverride read timed out')
-                }));
-            }, 1000);
-        }
     </script>
-</body>
 
+    <!-- OFFICIAL NISULKA HEADER AND FOOTER SCRIPTS -->
+    <script src="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/js/header.js"></script>
+    <script src="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/js/footer.js"></script>
+</body>
 </html>
