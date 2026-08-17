@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-08-17T18:24:39.499513+00:00",
-  "totalTools": 4,
-  "averageScore": 86.5,
+  "generatedAt": "2026-08-17T18:59:21.867161+00:00",
+  "totalTools": 5,
+  "averageScore": 81.2,
   "tools": [
     {
       "name": "Text To Handwriting",
@@ -153,6 +153,44 @@
         "warning": 3
       },
       "rank": 4
+    },
+    {
+      "name": "Draw App",
+      "slug": "draw-app",
+      "url": "/Nisulka-Tools/tools/draw-app/",
+      "score": 60,
+      "grade": "C",
+      "title": "Online Whiteboard Canvas - Nisulka Tools",
+      "description": "",
+      "wordCount": 1648,
+      "h1Count": 1,
+      "h2Count": 1,
+      "images": 0,
+      "imagesWithoutAlt": 0,
+      "canonical": "",
+      "openGraph": {
+        "title": false,
+        "description": false
+      },
+      "passed": [
+        "Title length is good",
+        "Exactly one H1 found",
+        "H2 headings found",
+        "No images requiring alt text",
+        "Sufficient page content"
+      ],
+      "issues": [
+        "Missing meta description",
+        "Missing canonical URL",
+        "Missing Open Graph title",
+        "Missing Open Graph description"
+      ],
+      "issueSummary": {
+        "total": 4,
+        "critical": 0,
+        "warning": 4
+      },
+      "rank": 5
     }
   ]
 }
