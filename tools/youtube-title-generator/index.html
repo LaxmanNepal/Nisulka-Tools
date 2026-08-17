@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Title Generator - Nisulka Tools</title>
+    <meta name="description" content="Generate catchy, high-CTR, SEO-optimized YouTube title ideas instantly for your videos based on keywords and proved viral formulas.">
+
+    <!-- Official Nisulka CSS Dependencies -->
+    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/variables.css">
+    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/global.css">
+    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/components.css">
+    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/header.css">
+    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/footer.css">
+    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/tool.css">
+
+    <!-- Font Awesome 6 for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* Tool-Specific Custom Styles (Header/Footer Protected) */
+        .yt-tool-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+
+        .breadcrumb a {
+            color: var(--primary-color, #ff0000);
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .tool-header-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .tool-header-section .tool-icon {
+            font-size: 3rem;
+            color: #ff0000;
+            margin-bottom: 0.75rem;
+        }
+
+        .tool-header-section h1 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-color, #222);
+        }
+
+        .tool-header-section p {
+            font-size: 1.05rem;
+            color: #666;
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        .tool-card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            border: 1px solid #eaeaea;
+            margin-bottom: 2rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .input-group input, .input-group select {
+            padding: 0.75rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            outline: none;
+            background-color: #fafafa;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            border-color: #ff0000;
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1);
+        }
+
+        .button-row {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .btn-primary-custom {
+            flex: 2;
+            background: linear-gradient(135deg, #ff0000, #cc0000);
+            color: #ffffff;
+            border: none;
+            padding: 0.85rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary-custom:hover {
+            background: linear-gradient(135deg, #e60000, #b30000);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(255, 0, 0, 0.25);
+        }
+
+        .btn-secondary-custom {
+            flex: 1;
+            background: #f0f0f0;
+            color: #333;
+            border: 1px solid #ddd;
+            padding: 0.85rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary-custom:hover {
+            background: #e4e4e4;
+        }
+
+        /* Results Display */
+        .results-section {
+            display: none;
+            margin-top: 2rem;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .results-header h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #222;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .result-badge {
+            background: #ff0000;
+            color: #fff;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .titles-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+        }
+
+        .title-card-item {
+            background: #f9f9f9;
+            border: 1px solid #e8e8e8;
+            border-left: 4px solid #ff0000;
+            border-radius: 8px;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .title-card-item:hover {
+            background: #ffffff;
+            border-color: #ddd;
+            border-left-color: #ff0000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transform: translateX(4px);
+        }
+
+        .title-info {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.85rem;
+            flex: 1;
+        }
+
+        .title-index {
+            background: #ff0000;
+            color: white;
+            min-width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-top: 2px;
+        }
+
+        .title-content {
+            flex: 1;
+        }
+
+        .title-text-val {
+            font-weight: 600;
+            font-size: 1.05rem;
+            color: #222;
+            margin-bottom: 0.35rem;
+            line-height: 1.4;
+        }
+
+        .title-meta {
+            display: flex;
+            gap: 0.75rem;
+            font-size: 0.8rem;
+            color: #666;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .char-count-badge {
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .char-optimal {
+            background: #e6f4ea;
+            color: #137333;
+        }
+
+        .char-warn {
+            background: #fef7e0;
+            color: #b06000;
+        }
+
+        .tag-pill {
+            background: #eee;
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            color: #555;
+            font-size: 0.75rem;
+        }
+
+        .title-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-icon-btn {
+            background: #fff;
+            border: 1px solid #ccc;
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #555;
+            transition: all 0.2s ease;
+        }
+
+        .action-icon-btn:hover {
+            border-color: #ff0000;
+            color: #ff0000;
+            background: #fff0f0;
+        }
+
+        /* Loading Spinner */
+        .loader-block {
+            display: none;
+            text-align: center;
+            padding: 2.5rem 1rem;
+        }
+
+        .loader-block i {
+            font-size: 2.5rem;
+            color: #ff0000;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Empty / Alert State */
+        .empty-placeholder {
+            text-align: center;
+            padding: 2.5rem 1rem;
+            color: #777;
+            background: #fafafa;
+            border-radius: 8px;
+            border: 1px dashed #ddd;
+        }
+
+        .empty-placeholder i {
+            font-size: 2.5rem;
+            color: #ccc;
+            margin-bottom: 0.75rem;
+        }
+
+        /* Content & FAQ Styling */
+        .info-content-section, .faq-section {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            border: 1px solid #eaeaea;
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #222;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.25rem;
+            margin-top: 1rem;
+        }
+
+        .info-card {
+            background: #f9f9f9;
+            padding: 1.25rem;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+
+        .info-card h3 {
+            font-size: 1.1rem;
+            color: #333;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-card p {
+            font-size: 0.92rem;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .faq-item {
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 1rem;
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .faq-question {
+            font-weight: 600;
+            font-size: 1.05rem;
+            color: #333;
+            margin-bottom: 0.35rem;
+        }
+
+        .faq-answer {
+            font-size: 0.95rem;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        /* Toast notification */
+        .toast-msg {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #333;
+            color: #fff;
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast-msg.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- OFFICIAL NISULKA HEADER MOUNT -->
+    <div id="site-header-mount"></div>
+
+    <!-- MAIN WORKSPACE / TOOL CONTAINER -->
+    <main class="yt-tool-container">
+
+        <!-- BREADCRUMB -->
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+            <a href="/"><i class="fas fa-home"></i> Home</a>
+            <span>/</span>
+            <a href="#">YouTube Tools</a>
+            <span>/</span>
+            <span>Title Generator</span>
+        </nav>
+
+        <!-- TOOL HEADER -->
+        <header class="tool-header-section">
+            <div class="tool-icon">
+                <i class="fab fa-youtube"></i>
+            </div>
+            <h1>YouTube Title Generator</h1>
+            <p>Generate high-CTR, SEO-optimized title ideas for your YouTube videos using proven viral formulas and live search insights.</p>
+        </header>
+
+        <!-- TOOL MAIN WORKSPACE -->
+        <section class="tool-card">
+            <div class="form-grid">
+                <div class="input-group">
+                    <label for="keywordInput"><i class="fas fa-search"></i> Main Topic / Keyword</label>
+                    <input type="text" id="keywordInput" placeholder="e.g., Python tutorial, Gaming PC, Weight loss" autocomplete="off">
+                </div>
+
+                <div class="input-group">
+                    <label for="categorySelect"><i class="fas fa-filter"></i> Title Style / Tone</label>
+                    <select id="categorySelect">
+                        <option value="all">All Styles</option>
+                        <option value="howto">How-To & Guides</option>
+                        <option value="listicle">Listicles & Numbers</option>
+                        <option value="clickbait">High Curiosity / Viral</option>
+                        <option value="beginner">Beginner Friendly</option>
+                        <option value="review">Review & vs Comparison</option>
+                        <option value="secret">Hacks & Mistakes</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="countInput"><i class="fas fa-list-ol"></i> Quantity</label>
+                    <select id="countInput">
+                        <option value="5">5 Titles</option>
+                        <option value="10" selected>10 Titles</option>
+                        <option value="15">15 Titles</option>
+                        <option value="20">20 Titles</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="button-row">
+                <button class="btn-primary-custom" id="generateBtn" onclick="handleGenerate()">
+                    <i class="fas fa-magic"></i> Generate Title Ideas
+                </button>
+                <button class="btn-secondary-custom" onclick="handleClear()">
+                    <i class="fas fa-redo"></i> Reset
+                </button>
+            </div>
+        </section>
+
+        <!-- LOADING STATE -->
+        <div class="loader-block" id="loader">
+            <i class="fas fa-circle-notch"></i>
+            <p>Analyzing keywords & generating viral title formulas...</p>
+        </div>
+
+        <!-- RESULTS CONTAINER -->
+        <section class="tool-card results-section" id="resultsContainer">
+            <div class="results-header">
+                <h2>
+                    <i class="fas fa-bolt" style="color: #ff0000;"></i> 
+                    Generated YouTube Titles
+                </h2>
+                <div style="display: flex; gap: 0.75rem; align-items: center;">
+                    <span class="result-badge" id="resultCountBadge">10 Titles</span>
+                    <button class="btn-secondary-custom" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;" onclick="copyAllTitles()">
+                        <i class="fas fa-copy"></i> Copy All
+                    </button>
+                </div>
+            </div>
+
+            <div class="titles-grid" id="titlesList">
+                <!-- Dynamically populated title cards -->
+            </div>
+        </section>
+
+        <!-- EMPTY / INITIAL PLACEHOLDER -->
+        <div class="empty-placeholder" id="emptyState">
+            <i class="fas fa-lightbulb"></i>
+            <h3>No Titles Generated Yet</h3>
+            <p>Enter your primary keyword above and click <strong>Generate Title Ideas</strong> to unlock high-performing titles.</p>
+        </div>
+
+        <!-- USEFUL CONTENT SECTION -->
+        <section class="info-content-section" style="margin-top: 2rem;">
+            <h2 class="section-title"><i class="fas fa-graduation-cap"></i> Best Practices for High-CTR YouTube Titles</h2>
+            <p style="color: #555; line-height: 1.6;">Your title is the single most critical factor in convincing viewers to click on your video. Pair it with a compelling thumbnail to maximize your Click-Through Rate (CTR).</p>
+            
+            <div class="info-grid">
+                <div class="info-card">
+                    <h3><i class="fas fa-ruler-horizontal" style="color:#ff0000;"></i> Optimal Character Length</h3>
+                    <p>Keep your title between <strong>50 to 70 characters</strong>. Titles longer than 70 characters get truncated on mobile devices and YouTube search result pages.</p>
+                </div>
+                <div class="info-card">
+                    <h3><i class="fas fa-bullseye" style="color:#ff0000;"></i> Front-Load Keywords</h3>
+                    <p>Place your main target keyword near the beginning of the title. This improves SEO ranking and immediately signals relevance to viewers.</p>
+                </div>
+                <div class="info-card">
+                    <h3><i class="fas fa-fire" style="color:#ff0000;"></i> Leverage Curiosity & Emotion</h3>
+                    <p>Use emotional triggers or open curiosity gaps (e.g., <em>"The Secret To...", "Why You're Doing It Wrong", "I Tried..."</em>) without resorting to misleading clickbait.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ SECTION -->
+        <section class="faq-section">
+            <h2 class="section-title"><i class="fas fa-question-circle"></i> Frequently Asked Questions</h2>
+            
+            <div class="faq-item">
+                <div class="faq-question">How does the YouTube Title Generator work?</div>
+                <div class="faq-answer">Our tool analyzes your entered keyword and applies proven viral title frameworks, YouTube search trends, and emotional triggers to construct high-performing title options.</div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Can changing my video title increase views?</div>
+                <div class="faq-answer">Yes! Updating an underperforming video's title to a more engaging, keyword-rich title can cause YouTube's algorithm to re-test your video with new audiences.</div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">What is a good YouTube Click-Through Rate (CTR)?</div>
+                <div class="faq-answer">According to YouTube, half of all channels have a CTR between 2% and 10%. Highly optimized videos with captivating titles and thumbnails often achieve CTRs above 10%.</div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- TOAST NOTIFICATION -->
+    <div class="toast-msg" id="toast">
+        <i class="fas fa-check-circle" style="color: #4CAF50;"></i>
+        <span id="toastText">Copied to clipboard!</span>
+    </div>
+
+    <!-- OFFICIAL NISULKA FOOTER MOUNT -->
+    <div id="site-footer-mount"></div>
+
+    <!-- NISULKA SCRIPT DEPENDENCIES -->
+    <script src="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/js/header.js"></script>
+    <script src="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/js/footer.js"></script>
+
+    <!-- TOOL LOGIC SCRIPT -->
+    <script>
+        // High-performing Title Formulas Database
+        const titleFormulas = {
+            howto: [
+                "How to {KEYWORD} in {YEAR} (Step-by-Step Guide)",
+                "How I {KEYWORD} in Only 30 Days",
+                "How to {KEYWORD} (Even If You're a Complete Beginner)",
+                "How to {KEYWORD} Like a Pro: 5 Simple Rules",
+                "The Ultimate Guide on How to {KEYWORD}",
+                "How to {KEYWORD} Without Spending Any Money",
+                "How to {KEYWORD} Fast (Proven Method)"
+            ],
+            listicle: [
+                "10 {KEYWORD} Mistakes You're Still Making",
+                "7 Best {KEYWORD} Tips Every Beginner Needs to Know",
+                "5 Reasons Why Your {KEYWORD} Isn't Working",
+                "Top 10 Secrets to Master {KEYWORD} Fast",
+                "3 Essential Rules for {KEYWORD} Success",
+                "15 {KEYWORD} Hacks That Will Change Everything"
+            ],
+            clickbait: [
+                "I Tried {KEYWORD} for 7 Days and THIS Happened...",
+                "Why Everyone is Talking About {KEYWORD}...",
+                "The Shocking Truth About {KEYWORD} Exposed",
+                "Stop Doing {KEYWORD} Like THIS! (Do This Instead)",
+                "Is {KEYWORD} Still Worth It in {YEAR}?",
+                "Don't Start {KEYWORD} Until You Watch THIS Video!"
+            ],
+            beginner: [
+                "{KEYWORD} for Beginners: Everything You Need to Know",
+                "The Complete Beginner's Guide to {KEYWORD}",
+                "Learn {KEYWORD} in 10 Minutes (Beginner Tutorial)",
+                "Starting {KEYWORD}? Avoid These 5 Costly Mistakes",
+                "The Easiest Way to Master {KEYWORD} in {YEAR}"
+            ],
+            review: [
+                "{KEYWORD} Review: Is It Really Worth It?",
+                "The Ultimate {KEYWORD} Comparison (Honest Opinion)",
+                "Before You Buy {KEYWORD}, Watch THIS!",
+                "{KEYWORD}: The Good, The Bad, and The Ugly",
+                "Tested: The Truth About {KEYWORD}"
+            ],
+            secret: [
+                "The Secret Strategy for {KEYWORD} Nobody Tells You",
+                "5 Hidden Tricks to Improve Your {KEYWORD}",
+                "The Unspoken Rules of {KEYWORD}",
+                "How Experts ACTUALLY Master {KEYWORD}",
+                "This Simple {KEYWORD} Trick Will Save You Hours"
+            ]
+        };
+
+        // Capitalize Words Properly
+        function toTitleCase(str) {
+            return str.replace(/\w\S*/g, function(txt) {
+                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+            });
+        }
+
+        // Generate Titles Function
+        function handleGenerate() {
+            const rawKeyword = document.getElementById('keywordInput').value.trim();
+            const category = document.getElementById('categorySelect').value;
+            const count = parseInt(document.getElementById('countInput').value, 10);
+
+            if (!rawKeyword) {
+                showToast('Please enter a topic or keyword first!');
+                document.getElementById('keywordInput').focus();
+                return;
+            }
+
+            const formattedKeyword = toTitleCase(rawKeyword);
+            const currentYear = new Date().getFullYear();
+
+            // UI Elements
+            const loader = document.getElementById('loader');
+            const emptyState = document.getElementById('emptyState');
+            const resultsContainer = document.getElementById('resultsContainer');
+            const titlesList = document.getElementById('titlesList');
+            const resultCountBadge = document.getElementById('resultCountBadge');
+
+            // Show Loader
+            loader.style.display = 'block';
+            emptyState.style.display = 'none';
+            resultsContainer.style.display = 'none';
+
+            setTimeout(() => {
+                let pool = [];
+                if (category === 'all') {
+                    Object.keys(titleFormulas).forEach(cat => {
+                        pool = pool.concat(titleFormulas[cat]);
+                    });
+                } else if (titleFormulas[category]) {
+                    pool = titleFormulas[category];
+                }
+
+                // Shuffle pool
+                pool = pool.sort(() => 0.5 - Math.random());
+
+                // Pick required count
+                let selectedFormulas = pool.slice(0, count);
+
+                // If requested more than available in selected category, duplicate with variations
+                while (selectedFormulas.length < count) {
+                    let randomFormula = pool[Math.floor(Math.random() * pool.length)];
+                    selectedFormulas.push(randomFormula);
+                }
+
+                titlesList.innerHTML = '';
+
+                selectedFormulas.forEach((formula, idx) => {
+                    let titleText = formula
+                        .replace(/{KEYWORD}/g, formattedKeyword)
+                        .replace(/{YEAR}/g, currentYear);
+
+                    const charCount = titleText.length;
+                    const isOptimal = charCount >= 45 && charCount <= 70;
+                    const charBadgeClass = isOptimal ? 'char-optimal' : 'char-warn';
+
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'title-card-item';
+                    itemDiv.innerHTML = `
+                        <div class="title-info">
+                            <div class="title-index">${idx + 1}</div>
+                            <div class="title-content">
+                                <div class="title-text-val" id="titleText_${idx}">${escapeHtml(titleText)}</div>
+                                <div class="title-meta">
+                                    <span class="char-count-badge ${charBadgeClass}">
+                                        <i class="fas fa-text-height"></i> ${charCount} chars
+                                    </span>
+                                    <span class="tag-pill">${isOptimal ? 'Optimal Length' : 'Good Title'}</span>
+                                    <span class="tag-pill"><i class="fas fa-fire"></i> High CTR Potential</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="title-actions">
+                            <button class="action-icon-btn" title="Copy Title" onclick="copySingleTitle(${idx})">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    `;
+                    titlesList.appendChild(itemDiv);
+                });
+
+                resultCountBadge.textContent = `${selectedFormulas.length} Titles`;
+                loader.style.display = 'none';
+                resultsContainer.style.display = 'block';
+
+            }, 400);
+        }
+
+        // Helper: Escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Copy Single Title
+        function copySingleTitle(index) {
+            const textElem = document.getElementById(`titleText_${index}`);
+            if (textElem) {
+                navigator.clipboard.writeText(textElem.innerText).then(() => {
+                    showToast('Title copied to clipboard!');
+                });
+            }
+        }
+
+        // Copy All Titles
+        function copyAllTitles() {
+            const titleElems = document.querySelectorAll('.title-text-val');
+            if (titleElems.length === 0) return;
+
+            let allText = Array.from(titleElems)
+                .map((el, i) => `${i + 1}. ${el.innerText}`)
+                .join('\n');
+
+            navigator.clipboard.writeText(allText).then(() => {
+                showToast('All titles copied to clipboard!');
+            });
+        }
+
+        // Reset Tool
+        function handleClear() {
+            document.getElementById('keywordInput').value = '';
+            document.getElementById('categorySelect').value = 'all';
+            document.getElementById('countInput').value = '10';
+            document.getElementById('resultsContainer').style.display = 'none';
+            document.getElementById('loader').style.display = 'none';
+            document.getElementById('emptyState').style.display = 'block';
+        }
+
+        // Toast Notification System
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastText = document.getElementById('toastText');
+            toastText.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
+        }
+
+        // Enter Key Listener
+        document.getElementById('keywordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                handleGenerate();
+            }
+        });
+    </script>
+</body>
+</html>
