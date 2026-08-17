@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-08-17T18:59:21.867161+00:00",
-  "totalTools": 5,
-  "averageScore": 81.2,
+  "generatedAt": "2026-08-17T19:08:06.150338+00:00",
+  "totalTools": 6,
+  "averageScore": 80.2,
   "tools": [
     {
       "name": "Text To Handwriting",
@@ -155,6 +155,44 @@
       "rank": 4
     },
     {
+      "name": "Youtube Title Generator",
+      "slug": "youtube-title-generator",
+      "url": "/Nisulka-Tools/tools/youtube-title-generator/",
+      "score": 75,
+      "grade": "B",
+      "title": "YouTube Title Generator - Nisulka Tools",
+      "description": "Generate catchy, high-CTR, SEO-optimized YouTube title ideas instantly for your videos based on keywords and proved viral formulas.",
+      "wordCount": 1991,
+      "h1Count": 1,
+      "h2Count": 3,
+      "images": 0,
+      "imagesWithoutAlt": 0,
+      "canonical": "",
+      "openGraph": {
+        "title": false,
+        "description": false
+      },
+      "passed": [
+        "Title length is good",
+        "Meta description length is good",
+        "Exactly one H1 found",
+        "H2 headings found",
+        "No images requiring alt text",
+        "Sufficient page content"
+      ],
+      "issues": [
+        "Missing canonical URL",
+        "Missing Open Graph title",
+        "Missing Open Graph description"
+      ],
+      "issueSummary": {
+        "total": 3,
+        "critical": 0,
+        "warning": 3
+      },
+      "rank": 5
+    },
+    {
       "name": "Draw App",
       "slug": "draw-app",
       "url": "/Nisulka-Tools/tools/draw-app/",
@@ -190,7 +228,7 @@
         "critical": 0,
         "warning": 4
       },
-      "rank": 5
+      "rank": 6
     }
   ]
 }
