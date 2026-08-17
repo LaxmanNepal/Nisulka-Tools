@@ -1,753 +1,250 @@
-You are migrating an existing standalone HTML/CSS/JavaScript web tool into my existing Nisulka Tools repository.
+============================================================
+ABSOLUTE RULE — HEADER AND FOOTER
+============================================================
 
-IMPORTANT:
-Do NOT redesign the tool's core functionality unless necessary.
-Do NOT remove working JavaScript features.
-Do NOT change the tool's actual purpose.
-Your job is to make the existing tool fully compatible with the Nisulka Tools architecture, design system, SEO system, and automatic tool-data generator.
+THE NISULKA HEADER AND FOOTER ARE LOCKED.
 
-==================================================
-PROJECT
-==================================================
+DO NOT redesign them.
 
-Repository:
-Nisulka Tools
+DO NOT recreate them.
 
-Base URL:
-https://apps.laxmannepal.com.np/Nisulka-Tools/
+DO NOT rewrite them.
 
-Repository structure:
+DO NOT copy their HTML and create a new version.
 
-/
-├── index.html
-├── data/
-│   ├── tools.json
-│   └── seo-audit.json
-│
-├── assets/
-│   ├── css/
-│   │   ├── variables.css
-│   │   ├── global.css
-│   │   ├── components.css
-│   │   ├── header.css
-│   │   ├── footer.css
-│   │   └── tool.css
-│   │
-│   └── js/
-│       ├── header.js
-│       ├── footer.js
-│       ├── components.js
-│       └── home.js
-│
-├── tools/
-│   ├── text-to-handwriting/
-│   │   ├── index.html
-│   │   └── logo.jpg
-│   │
-│   └── other-tools/
-│       ├── index.html
-│       └── logo.jpg
-│
-├── categories/
-│   └── automatically generated category pages
-│
-└── seo/
-    └── seo_auditor.py
+DO NOT change their colors.
 
-==================================================
-EXISTING NISULKA DESIGN SYSTEM
-==================================================
+DO NOT change their typography.
 
-The tool MUST use the existing global Nisulka CSS.
+DO NOT change their spacing.
 
-From the tool directory, CSS paths must be:
+DO NOT change their navigation.
 
-../../assets/css/variables.css
-../../assets/css/global.css
-../../assets/css/components.css
-../../assets/css/header.css
-../../assets/css/footer.css
-../../assets/css/tool.css
+DO NOT change their buttons.
 
-Do NOT create duplicate versions of these files.
+DO NOT change their responsive behavior.
 
-Do NOT copy the global CSS into the tool.
+DO NOT create a "similar" header.
 
-Use existing variables/classes whenever possible.
+DO NOT create a "similar" footer.
 
-The visual style should be:
+The existing Nisulka repository header and footer are the ONLY
+source of truth.
 
-- clean
-- modern
-- minimal
-- responsive
-- professional
-- white/light interface
-- Poppins typography
-- blue primary accent
-- rounded cards
-- clear spacing
-- mobile friendly
-- accessible
-- fast
+============================================================
+OFFICIAL NISULKA HEADER
+============================================================
 
-==================================================
-TOOL DIRECTORY
-==================================================
+Use the exact production header from:
 
-Create the tool here:
+https://apps.laxmannepal.com.np/Nisulka-Tools/assets/js/header.js
 
-tools/TOOL-SLUG/
-
-Required files:
-
-tools/TOOL-SLUG/index.html
-tools/TOOL-SLUG/logo.jpg
-
-If the existing tool has separate CSS or JS files, organize them cleanly inside:
-
-tools/TOOL-SLUG/
-
-For example:
-
-tools/TOOL-SLUG/
-├── index.html
-├── logo.jpg
-├── tool.css
-└── tool.js
-
-Do NOT place tool-specific files inside the global assets directory unless they are genuinely shared by multiple tools.
-
-==================================================
-HEADER
-==================================================
-
-The tool MUST use the shared Nisulka header.
-
-HTML:
+Mount it using:
 
 <div id="site-header-mount"></div>
 
-Load:
+Load it using:
 
-<script src="../../assets/js/header.js"></script>
+<script
+    src="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/js/header.js"
+></script>
 
-Do NOT recreate the complete header manually.
+The header JavaScript is responsible for creating the official
+Nisulka header.
 
-Do NOT create a second header design.
+DO NOT create another header.
 
-==================================================
-FOOTER
-==================================================
+============================================================
+OFFICIAL NISULKA FOOTER
+============================================================
 
-The tool MUST use the shared Nisulka footer.
+Use the exact production footer from:
 
-HTML:
+https://apps.laxmannepal.com.np/Nisulka-Tools/assets/js/footer.js
+
+Mount it using:
 
 <div id="site-footer-mount"></div>
 
-Load:
+Load it using:
 
-<script src="../../assets/js/footer.js"></script>
+<script
+    src="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/js/footer.js"
+></script>
 
-Do NOT recreate the footer manually.
+The footer JavaScript is responsible for creating the official
+Nisulka footer.
 
-==================================================
-PAGE STRUCTURE
-==================================================
+DO NOT create another footer.
 
-Use this general structure:
+============================================================
+HEADER / FOOTER CSS
+============================================================
 
-<body>
+Use the official Nisulka CSS.
 
-    <div id="site-header-mount"></div>
+Header:
 
-    <main class="tool-page">
+https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/header.css
 
-        <div class="container">
+Footer:
 
-            <!-- Breadcrumb -->
+https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/footer.css
 
-            <!-- Tool Hero -->
+Global styles:
 
-            <!-- Tool Workspace -->
+https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/variables.css
 
-            <!-- Ad placeholder if appropriate -->
+https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/global.css
 
-            <!-- Information -->
+https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/components.css
 
-            <!-- FAQ -->
+Tool styles:
 
-        </div>
+https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/tool.css
 
-    </main>
+Load them directly.
 
-    <div id="site-footer-mount"></div>
+DO NOT recreate these styles.
 
-    <script src="../../assets/js/header.js"></script>
-    <script src="../../assets/js/footer.js"></script>
+DO NOT override header/footer styles from the tool-specific CSS.
 
-    <!-- tool-specific JavaScript -->
+============================================================
+HEADER / FOOTER PROTECTION
+============================================================
 
-</body>
+Your tool-specific CSS MUST NOT target:
 
-==================================================
-BREADCRUMB
-==================================================
+header
 
-Add a breadcrumb near the top:
+footer
 
-<nav
-    class="breadcrumb"
-    aria-label="Breadcrumb"
->
+.site-header
 
-    <a href="../../">
-        Home
-    </a>
+.site-footer
 
-    <span aria-hidden="true">
-        /
-    </span>
+#site-header-mount
 
-    <span>
-        CATEGORY NAME
-    </span>
+#site-footer-mount
 
-    <span aria-hidden="true">
-        /
-    </span>
+or any other header/footer selectors.
 
-    <span aria-current="page">
-        TOOL NAME
-    </span>
+Do not write rules such as:
 
-</nav>
-
-Make the category link point to the appropriate generated category page.
-
-Example:
-
-../../categories/text-tools/
-
-==================================================
-TOOL HERO
-==================================================
-
-Create a clean hero section containing:
-
-- small category badge
-- H1
-- short useful description
-
-Example:
-
-<section
-    class="tool-hero"
-    aria-labelledby="tool-title"
->
-
-    <span class="badge badge-primary">
-        Text Tool
-    </span>
-
-    <h1 id="tool-title">
-        TOOL NAME
-    </h1>
-
-    <p>
-        SHORT DESCRIPTION
-    </p>
-
-</section>
-
-Do NOT put unnecessary promotional text in the hero.
-
-==================================================
-TOOL WORKSPACE
-==================================================
-
-The actual existing tool must remain functional.
-
-Put the existing controls inside a clean:
-
-<section class="tool-workspace">
-
-    <div class="tool-panel">
-
-        <div class="tool-panel-header">
-            <h2 class="tool-panel-title">
-                TOOL ACTION
-            </h2>
-
-            <p class="tool-panel-description">
-                Short explanation.
-            </p>
-        </div>
-
-        <div class="tool-panel-body">
-
-            EXISTING TOOL UI
-
-        </div>
-
-    </div>
-
-</section>
-
-Use existing Nisulka classes where possible:
-
-.tool-panel
-.tool-panel-header
-.tool-panel-title
-.tool-panel-description
-.tool-panel-body
-.input
-.btn
-.btn-primary
-.tool-label
-.tool-help-text
-.tool-grid
-.card
-
-Do not invent dozens of unnecessary CSS classes.
-
-==================================================
-JAVASCRIPT
-==================================================
-
-Preserve all existing JavaScript functionality.
-
-Before modifying JavaScript:
-
-1. Understand what every function does.
-2. Identify DOM IDs/classes it depends on.
-3. Preserve those IDs unless there is a strong reason to change them.
-4. Make sure JavaScript loads after the required HTML exists.
-5. Avoid global variable pollution.
-6. Use strict mode.
-
-Start tool-specific JS with:
-
-"use strict";
-
-Do NOT use inline JavaScript such as:
-
-onclick="..."
-
-Instead use:
-
-addEventListener()
-
-Do NOT use external frameworks unless the original tool already requires one.
-
-Prefer vanilla JavaScript.
-
-==================================================
-FILE PROCESSING
-==================================================
-
-If the tool processes files:
-
-- Prefer browser-side processing where technically possible.
-- Do not upload files to a server unless the original functionality requires it.
-- Clearly tell users when processing happens locally.
-- Do not fake privacy claims.
-- Do not claim "100% private" unless technically guaranteed.
-
-Use a notice such as:
-
-<div class="local-processing-notice">
-
-    <span aria-hidden="true">🔒</span>
-
-    <div>
-        Files are processed locally in your browser
-        whenever supported.
-    </div>
-
-</div>
-
-==================================================
-RESPONSIVE UI
-==================================================
-
-The tool MUST work on:
-
-- mobile
-- tablet
-- desktop
-
-Avoid fixed widths.
-
-Use:
-
-width: 100%;
-max-width: ...;
-margin-inline: auto;
-
-Use CSS Grid/Flexbox.
-
-At mobile widths:
-
-- stack controls
-- make buttons usable
-- prevent horizontal scrolling
-- keep inputs readable
-- make tool workspace comfortable
-
-==================================================
-ACCESSIBILITY
-==================================================
-
-Every input must have a label.
-
-Buttons must have meaningful text.
-
-Images must have alt attributes.
-
-Do not use:
-
-<div onclick="...">
-
-Use real:
-
-<button>
-<a>
-<input>
-<select>
-<textarea>
-
-Use aria attributes where appropriate.
-
-==================================================
-SEO
-==================================================
-
-Create complete SEO metadata.
-
-Required:
-
-<title>
-<meta name="description">
-<meta name="robots" content="index, follow">
-<link rel="canonical">
-
-Canonical format:
-
-https://apps.laxmannepal.com.np/Nisulka-Tools/tools/TOOL-SLUG/
-
-Add Open Graph:
-
-<meta property="og:type" content="website">
-<meta property="og:title" content="...">
-<meta property="og:description" content="...">
-<meta property="og:url" content="...">
-
-Add:
-
-<meta name="theme-color" content="#2563eb">
-
-Do NOT keyword stuff.
-
-==================================================
-STRUCTURED DATA
-==================================================
-
-Add valid SoftwareApplication JSON-LD.
-
-Example:
-
-<script type="application/ld+json">
-{
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "name": "TOOL NAME",
-    "applicationCategory": "UtilitiesApplication",
-    "operatingSystem": "Web",
-    "description": "TOOL DESCRIPTION",
-    "url": "CANONICAL URL",
-    "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
-    }
+header {
+    ...
 }
-</script>
 
-Only add claims that are actually true.
+footer {
+    ...
+}
 
-==================================================
-CONTENT / ADSENSE VALUE
-==================================================
+.site-header {
+    ...
+}
 
-Do NOT make the page just a tool UI.
+.site-footer {
+    ...
+}
 
-Add genuinely useful explanatory content below the tool.
+unless you are specifically fixing a documented integration issue
+and the change is absolutely required.
 
-Include:
+In normal circumstances:
 
-1. What is this tool?
-2. How to use it
-3. Key features
-4. Common use cases
-5. Tips
-6. Privacy / processing explanation when relevant
-7. FAQ
+LEAVE THEM COMPLETELY ALONE.
 
-Do NOT generate meaningless SEO filler.
+============================================================
+WHAT YOU ARE ALLOWED TO DESIGN
+============================================================
 
-Do NOT repeat the same sentence with keywords.
+You are responsible ONLY for:
 
-Content should help a real user understand and use the tool.
+1. Breadcrumb
+2. Tool title
+3. Tool description
+4. Tool workspace
+5. Tool controls
+6. Inputs
+7. Buttons inside the tool
+8. Preview
+9. Result area
+10. Loading states
+11. Error states
+12. Success states
+13. Tool-specific content
+14. FAQ
+15. SEO
+16. Accessibility
+17. Responsive behavior of the TOOL AREA
 
-Aim for useful, original content rather than arbitrary word count.
+The header and footer are NOT part of your redesign.
 
-==================================================
-FAQ
-==================================================
+============================================================
+PAGE STRUCTURE
+============================================================
 
-Add 3–6 useful FAQ questions.
+The final page should conceptually be:
 
-Use the existing Nisulka FAQ structure if available.
+┌─────────────────────────────────────────┐
+│                                         │
+│       EXACT NISULKA HEADER              │
+│       LOADED FROM REPOSITORY            │
+│                                         │
+└─────────────────────────────────────────┘
 
-Example:
+                 ↓
 
-<div class="tool-faq">
+        Breadcrumb
 
-    <article class="tool-faq-item">
+                 ↓
 
-        <h3>
+        Tool Title
+        Description
 
-            <button
-                type="button"
-                class="tool-faq-question"
-                aria-expanded="false"
-            >
+                 ↓
 
-                Question?
+┌─────────────────────────────────────────┐
+│                                         │
+│          TOOL-SPECIFIC UI               │
+│                                         │
+│     Designed by you                     │
+│     Based on original tool              │
+│     Compatible with Nisulka             │
+│                                         │
+└─────────────────────────────────────────┘
 
-                <span aria-hidden="true">
-                    +
-                </span>
+                 ↓
 
-            </button>
+        Useful Content
 
-        </h3>
+                 ↓
 
-        <div
-            class="tool-faq-answer"
-            hidden
-        >
+        FAQ
 
-            Answer.
+                 ↓
 
-        </div>
+┌─────────────────────────────────────────┐
+│                                         │
+│       EXACT NISULKA FOOTER              │
+│       LOADED FROM REPOSITORY            │
+│                                         │
+└─────────────────────────────────────────┘
 
-    </article>
+============================================================
+IMPORTANT
+============================================================
 
-</div>
+The header and footer must look EXACTLY like they do on the
+current Nisulka Tools website.
 
-The FAQ must work with JavaScript.
+If your generated page looks different from:
 
-==================================================
-TOOL METADATA FOR AUTOMATIC TOOLS.JSON
-==================================================
+https://apps.laxmannepal.com.np/Nisulka-Tools/
 
-IMPORTANT.
+DO NOT redesign the header/footer to compensate.
 
-The repository's Generate Tools Data GitHub Action reads metadata from index.html.
+Instead, fix the integration so the exact official components
+are being loaded correctly.
 
-Therefore ALWAYS include:
-
-<meta
-    name="tool:name"
-    content="TOOL NAME"
->
-
-<meta
-    name="tool:description"
-    content="SHORT TOOL DESCRIPTION"
->
-
-<meta
-    name="tool:category"
-    content="CATEGORY NAME"
->
-
-<meta
-    name="tool:featured"
-    content="false"
->
-
-<meta
-    name="tool:keywords"
-    content="keyword1, keyword2, keyword3"
->
-
-<meta
-    name="tool:status"
-    content="active"
->
-
-DO NOT add:
-
-<meta name="tool:icon">
-
-The repository no longer uses the icon field.
-
-==================================================
-LOGO
-==================================================
-
-The tool requires:
-
-tools/TOOL-SLUG/logo.jpg
-
-If a logo does not exist, create a suitable 1:1 tool logo concept.
-
-The logo should:
-
-- represent the tool clearly
-- work at small sizes
-- have clean modern design
-- match Nisulka Tools branding
-- avoid unnecessary text
-
-==================================================
-IMPORTANT: URL PATHS
-==================================================
-
-Because the tool is inside:
-
-tools/TOOL-SLUG/
-
-Use:
-
-../../assets/...
-
-for shared assets.
-
-Use:
-
-../../
-
-for homepage.
-
-Do NOT accidentally use:
-
-/assets/...
-
-because the website is hosted under:
-
-/Nisulka-Tools/
-
-==================================================
-CSS
-==================================================
-
-First inspect the existing tool CSS.
-
-Remove:
-
-- old website header styles
-- old website footer styles
-- obsolete global styles
-- conflicting body styles
-- unnecessary resets
-- duplicate font imports
-- obsolete navigation styles
-
-Keep tool-specific styles.
-
-Prefer existing Nisulka variables such as:
-
-var(--text-primary)
-var(--text-secondary)
-var(--text-muted)
-var(--bg-surface)
-var(--bg-surface-secondary)
-var(--border-color)
-var(--radius-md)
-var(--radius-lg)
-var(--font-size-sm)
-var(--font-size-base)
-
-Do not hardcode an entirely separate design system.
-
-==================================================
-PERFORMANCE
-==================================================
-
-Keep the page lightweight.
-
-Avoid unnecessary libraries.
-
-Use lazy loading for non-critical images.
-
-Do not load JavaScript libraries if vanilla JS can perform the same job.
-
-Avoid blocking scripts where possible.
-
-==================================================
-FINAL VALIDATION
-==================================================
-
-After migration, verify:
-
-1. index.html opens without errors.
-2. Header appears.
-3. Footer appears.
-4. Breadcrumb works.
-5. Tool functionality works.
-6. All buttons work.
-7. File uploads work if applicable.
-8. Downloads work if applicable.
-9. Mobile layout works.
-10. No horizontal overflow.
-11. No JavaScript console errors.
-12. Canonical URL is correct.
-13. Open Graph metadata exists.
-14. SoftwareApplication schema exists.
-15. tool:name exists.
-16. tool:description exists.
-17. tool:category exists.
-18. tool:featured exists.
-19. tool:keywords exists.
-20. tool:status exists.
-21. No tool:icon metadata is used.
-22. logo.jpg exists.
-23. Shared header.js is loaded.
-24. Shared footer.js is loaded.
-25. Shared Nisulka CSS is loaded.
-26. All relative paths are correct.
-
-==================================================
-OUTPUT
-==================================================
-
-Return the migrated tool as:
-
-tools/TOOL-SLUG/
-├── index.html
-├── logo.jpg
-├── tool.css        (only if needed)
-└── tool.js         (only if needed)
-
-Also provide:
-
-1. A short summary of what was changed.
-2. Any functionality that could not be preserved.
-3. Any dependencies the tool still requires.
-4. The exact category assigned.
-5. The exact slug.
-6. The SEO title.
-7. The meta description.
-
-MOST IMPORTANT:
-
-Do not merely wrap the old HTML in a new header.
-
-Actually integrate the tool into the Nisulka Tools architecture.
-
-The final result must look like it belongs to the same product as the existing "Text to Handwriting" tool while preserving the original tool's functionality.
+============================================================
