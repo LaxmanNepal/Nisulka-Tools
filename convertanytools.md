@@ -248,3 +248,49 @@ Instead, fix the integration so the exact official components
 are being loaded correctly.
 
 ============================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FINAL RESPONSIBILITY SPLIT
+
+NISULKA REPOSITORY
+        │
+        ├── Header → LOCKED
+        ├── Footer → LOCKED
+        ├── Global CSS → USE
+        ├── Global Components → USE
+        └── Brand System → FOLLOW
+                │
+                ▼
+          YOUR JOB
+                │
+                ├── Analyze original tool
+                ├── Preserve functionality
+                ├── Improve UX
+                ├── Improve tool UI
+                ├── Make buttons consistent
+                ├── Make inputs consistent
+                ├── Make responsive
+                ├── Improve accessibility
+                ├── Improve SEO
+                ├── Improve performance
+                └── Fix bugs
