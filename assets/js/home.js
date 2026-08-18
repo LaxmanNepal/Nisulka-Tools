@@ -1,10 +1,5 @@
 "use strict";
 
-/* =========================================================
-   NISULKA TOOLS HOMEPAGE
-   Categories are generated automatically from tools.json.
-   ========================================================= */
-
 const TOOLS_DATA_URL = "data/tools.json";
 
 let allTools = [];
@@ -47,51 +42,28 @@ async function initializeHomepage() {
 }
 
 async function loadTools() {
-    const response = await fetch(`${TOOLS_DATA_URL}?v=${Date.now()}`, {
-        cache: "no-store"
-    });
-
-    if (!response.ok) {
-        throw new Error(`Unable to load tools.json: ${response.status}`);
-    }
+    const response = await fetch(`${TOOLS_DATA_URL}?v=${Date.now()}`, { cache: "no-store" });
+    if (!response.ok) throw new Error(`Unable to load tools.json: ${response.status}`);
 
     const data = await response.json();
+    if (!Array.isArray(data)) throw new Error("tools.json must contain an array.");
 
-    if (!Array.isArray(data)) {
-        throw new Error("tools.json must contain an array.");
-    }
-
-    allTools = data
-        .filter(tool => tool && tool.status !== "hidden")
-        .map(normalizeTool);
+    allTools = data.filter(tool => tool && tool.status !== "hidden").map(normalizeTool);
 }
 
 function normalizeTool(tool) {
     const suppliedCategory = String(tool.category || "").trim();
-    const inferredCategory = inferCategory(tool);
-
     return {
         ...tool,
-        category: suppliedCategory && suppliedCategory !== "Other Tools"
-            ? suppliedCategory
-            : inferredCategory
+        category: suppliedCategory && suppliedCategory !== "Other Tools" ? suppliedCategory : inferCategory(tool)
     };
 }
 
 function inferCategory(tool) {
-    const text = [
-        tool.name || "",
-        tool.description || "",
-        tool.slug || "",
-        ...(Array.isArray(tool.keywords) ? tool.keywords : [])
-    ].join(" ").toLowerCase();
-
+    const text = [tool.name || "", tool.description || "", tool.slug || "", ...(Array.isArray(tool.keywords) ? tool.keywords : [])].join(" ").toLowerCase();
     for (const rule of CATEGORY_RULES) {
-        if (rule.words.some(word => text.includes(word))) {
-            return rule.name;
-        }
+        if (rule.words.some(word => text.includes(word))) return rule.name;
     }
-
     return "Other Tools";
 }
 
@@ -107,9 +79,7 @@ function setupSearch() {
     searchInput.addEventListener("input", update);
     searchInput.addEventListener("search", update);
 
-    const params = new URLSearchParams(window.location.search);
-    const query = params.get("q");
-
+    const query = new URLSearchParams(window.location.search).get("q");
     if (query) {
         searchInput.value = query;
         searchQuery = query.trim().toLowerCase();
@@ -123,11 +93,7 @@ document.addEventListener("keydown", event => {
     }
 
     if (event.key === "Escape" && document.activeElement === searchInput) {
-        searchInput.value = "";
-        searchQuery = "";
-        activeCategory = "All";
-        renderCategories();
-        renderCategorySections();
+        clearFilters();
         searchInput.blur();
     }
 });
@@ -141,55 +107,47 @@ function isTypingTarget(element) {
 function getSearchFilteredTools() {
     return allTools.filter(tool => {
         if (!searchQuery) return true;
-
-        const searchableText = [
-            tool.name || "",
-            tool.description || "",
-            tool.category || "",
-            tool.slug || "",
-            ...(Array.isArray(tool.keywords) ? tool.keywords : [])
-        ].join(" ").toLowerCase();
-
+        const searchableText = [tool.name || "", tool.description || "", tool.category || "", tool.slug || "", ...(Array.isArray(tool.keywords) ? tool.keywords : [])].join(" ").toLowerCase();
         return searchableText.includes(searchQuery);
     });
 }
 
 function getVisibleTools() {
-    return getSearchFilteredTools().filter(tool => {
-        return activeCategory === "All" || tool.category === activeCategory;
-    });
+    return getSearchFilteredTools().filter(tool => activeCategory === "All" || tool.category === activeCategory);
 }
 
 function getCategories() {
     const counts = new Map();
-
     allTools.forEach(tool => {
         const category = tool.category || "Other Tools";
         counts.set(category, (counts.get(category) || 0) + 1);
     });
 
-    return [...counts.entries()]
-        .sort((a, b) => {
-            if (a[0] === "Other Tools") return 1;
-            if (b[0] === "Other Tools") return -1;
-            return a[0].localeCompare(b[0]);
-        });
+    return [...counts.entries()].sort((a, b) => {
+        if (a[0] === "Other Tools") return 1;
+        if (b[0] === "Other Tools") return -1;
+        return a[0].localeCompare(b[0]);
+    });
 }
 
 function renderCategories() {
     if (!categoryList) return;
 
     const categories = getCategories();
+    const filtered = getSearchFilteredTools();
 
     categoryList.innerHTML = `
         <button type="button" class="category-button ${activeCategory === "All" ? "is-active" : ""}" data-category="All" aria-pressed="${activeCategory === "All"}">
-            All Tools <span class="category-count">${getSearchFilteredTools().length}</span>
+            All Tools <span class="category-count">${filtered.length}</span>
         </button>
-        ${categories.map(([category, count]) => `
-            <button type="button" class="category-button ${activeCategory === category ? "is-active" : ""}" data-category="${escapeAttribute(category)}" aria-pressed="${activeCategory === category}">
-                ${escapeHTML(category)} <span class="category-count">${searchQuery ? getSearchFilteredTools().filter(tool => tool.category === category).length : count}</span>
-            </button>
-        `).join("")}
+        ${categories.map(([category, count]) => {
+            const visibleCount = searchQuery ? filtered.filter(tool => tool.category === category).length : count;
+            return `
+                <button type="button" class="category-button ${activeCategory === category ? "is-active" : ""}" data-category="${escapeAttribute(category)}" aria-pressed="${activeCategory === category}">
+                    ${escapeHTML(category)} <span class="category-count">${visibleCount}</span>
+                </button>
+            `;
+        }).join("")}
     `;
 
     categoryList.querySelectorAll(".category-button").forEach(button => {
@@ -205,7 +163,6 @@ function renderCategorySections() {
     if (!allToolsContainer) return;
 
     const filtered = getVisibleTools();
-
     if (!filtered.length) {
         showNoResults();
         updateToolCount(0);
@@ -213,7 +170,6 @@ function renderCategorySections() {
     }
 
     const groups = new Map();
-
     filtered.forEach(tool => {
         const category = tool.category || "Other Tools";
         if (!groups.has(category)) groups.set(category, []);
@@ -236,18 +192,16 @@ function renderCategorySections() {
                     <div>
                         <span class="section-label">CATEGORY</span>
                         <h3>${escapeHTML(category)}</h3>
-                        <p>${tools.length} ${tools.length === 1 ? "tool" : "tools"} available</p>
+                        <p>${tools.length} ${tools.length === 1 ? "tool" : "tools"}</p>
                     </div>
                     <button type="button" class="category-view-all" data-view-category="${escapeAttribute(category)}">
                         View all <span aria-hidden="true">→</span>
                     </button>
                 </div>
-
                 <div class="tools-grid">
                     ${visibleTools.map(createToolCard).join("")}
                 </div>
-
-                ${remaining > 0 ? `<div class="category-more">+${remaining} more ${escapeHTML(category)} tools</div>` : ""}
+                ${remaining > 0 ? `<div class="category-more">+${remaining} more</div>` : ""}
             </section>
         `;
     }).join("");
@@ -266,23 +220,19 @@ function renderCategorySections() {
 
 function createToolCard(tool) {
     const name = escapeHTML(tool.name || "Unnamed Tool");
-    const description = escapeHTML(tool.description || "Useful online tool.");
     const url = safeURL(tool.url || "#");
     const logo = safeURL(tool.logo || "");
 
-    const logoHTML = logo ? `
-        <img class="tool-card-logo" src="${logo}" alt="${name} logo" loading="lazy" width="88" height="88" onerror="this.style.display='none';this.nextElementSibling.hidden=false;">
-        <span class="tool-card-logo-fallback" aria-hidden="true" hidden>◇</span>
-    ` : `
-        <span class="tool-card-logo-fallback" aria-hidden="true">◇</span>
-    `;
+    const logoHTML = logo
+        ? `<img class="tool-card-logo" src="${logo}" alt="${name} logo" loading="lazy" width="88" height="88" onerror="this.style.display='none';this.nextElementSibling.hidden=false;">
+           <span class="tool-card-logo-fallback" aria-hidden="true" hidden>◇</span>`
+        : `<span class="tool-card-logo-fallback" aria-hidden="true">◇</span>`;
 
     return `
         <article class="tool-card">
             <a class="tool-card-link" href="${url}" aria-label="Open ${name}">
                 <div class="tool-card-icon-wrapper">${logoHTML}</div>
                 <h4 class="tool-card-title">${name}</h4>
-                <p class="tool-card-description">${description}</p>
             </a>
         </article>
     `;
@@ -291,24 +241,17 @@ function createToolCard(tool) {
 function safeURL(value) {
     const stringValue = String(value || "").trim();
     if (!stringValue) return "#";
-
-    if (stringValue.startsWith("/") || stringValue.startsWith("./") || stringValue.startsWith("../")) {
-        return escapeAttribute(stringValue);
-    }
+    if (stringValue.startsWith("/") || stringValue.startsWith("./") || stringValue.startsWith("../")) return escapeAttribute(stringValue);
 
     try {
         const url = new URL(stringValue, window.location.origin);
         if (url.protocol === "http:" || url.protocol === "https:") return escapeAttribute(url.href);
-    } catch (_) {
-        return "#";
-    }
-
+    } catch (_) {}
     return "#";
 }
 
 function updateToolCount(count) {
-    if (!toolCount) return;
-    toolCount.textContent = `${count} ${count === 1 ? "tool" : "tools"}`;
+    if (toolCount) toolCount.textContent = `${count} ${count === 1 ? "tool" : "tools"}`;
 }
 
 function showNoResults() {
@@ -322,10 +265,10 @@ function showNoResults() {
         </div>
     `;
 
-    document.getElementById("clear-search")?.addEventListener("click", clearSearch);
+    document.getElementById("clear-search")?.addEventListener("click", clearFilters);
 }
 
-function clearSearch() {
+function clearFilters() {
     if (searchInput) searchInput.value = "";
     searchQuery = "";
     activeCategory = "All";
@@ -339,15 +282,14 @@ function showLoadingState() {
 }
 
 function showErrorState() {
-    if (allToolsContainer) {
-        allToolsContainer.innerHTML = `
-            <div class="tools-empty">
-                <h3>Tools couldn't be loaded</h3>
-                <p>Something went wrong while loading the tool collection.</p>
-                <button type="button" class="btn btn-primary" onclick="location.reload()">Try again</button>
-            </div>
-        `;
-    }
+    if (!allToolsContainer) return;
+    allToolsContainer.innerHTML = `
+        <div class="tools-empty">
+            <h3>Tools couldn't be loaded</h3>
+            <p>Something went wrong while loading the tool collection.</p>
+            <button type="button" class="btn btn-primary" onclick="location.reload()">Try again</button>
+        </div>
+    `;
 }
 
 function setupFAQ() {
