@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-08-17T23:35:30.488895+00:00",
+  "generatedAt": "2026-08-18T12:05:59.147712+00:00",
   "totalTools": 8,
-  "averageScore": 78.5,
+  "averageScore": 80.5,
   "tools": [
     {
       "name": "Text To Handwriting",
@@ -155,6 +155,44 @@
       "rank": 4
     },
     {
+      "name": "Instagram Image Downloader",
+      "slug": "instagram-image-downloader",
+      "url": "/Nisulka-Tools/tools/instagram-image-downloader/",
+      "score": 78,
+      "grade": "B",
+      "title": "Instagram Photo Downloader - Nisulka Tools",
+      "description": "Download high-quality Instagram photos and carousel images quickly and easily without logging in. Free, fast, and secure tool.",
+      "wordCount": 1216,
+      "h1Count": 2,
+      "h2Count": 3,
+      "images": 1,
+      "imagesWithoutAlt": 0,
+      "canonical": "",
+      "openGraph": {
+        "title": true,
+        "description": true
+      },
+      "passed": [
+        "Title length is good",
+        "Meta description length is good",
+        "H2 headings found",
+        "Open Graph title found",
+        "Open Graph description found",
+        "All images have alt attributes",
+        "Sufficient page content"
+      ],
+      "issues": [
+        "Multiple H1 headings found (2)",
+        "Missing canonical URL"
+      ],
+      "issueSummary": {
+        "total": 2,
+        "critical": 0,
+        "warning": 2
+      },
+      "rank": 5
+    },
+    {
       "name": "Remove Gemini Logo",
       "slug": "remove-gemini-logo",
       "url": "/Nisulka-Tools/tools/remove-gemini-logo/",
@@ -190,7 +228,7 @@
         "critical": 0,
         "warning": 3
       },
-      "rank": 5
+      "rank": 6
     },
     {
       "name": "Youtube Title Generator",
@@ -227,44 +265,6 @@
         "total": 3,
         "critical": 0,
         "warning": 3
-      },
-      "rank": 6
-    },
-    {
-      "name": "Instagram Image Downloader",
-      "slug": "instagram-image-downloader",
-      "url": "/Nisulka-Tools/tools/instagram-image-downloader/",
-      "score": 62,
-      "grade": "C",
-      "title": "Instagram Photo Downloader",
-      "description": "Download Instagram photos with ease. Free, Clean & Simple Instagram Photo Downloader for you.",
-      "wordCount": 252,
-      "h1Count": 1,
-      "h2Count": 0,
-      "images": 2,
-      "imagesWithoutAlt": 0,
-      "canonical": "",
-      "openGraph": {
-        "title": true,
-        "description": true
-      },
-      "passed": [
-        "Exactly one H1 found",
-        "Open Graph title found",
-        "Open Graph description found",
-        "All images have alt attributes"
-      ],
-      "issues": [
-        "Title length should ideally be 30-65 characters (26)",
-        "Meta description should ideally be 120-170 characters (93)",
-        "No H2 headings found",
-        "Missing canonical URL",
-        "Content is relatively short (252 words)"
-      ],
-      "issueSummary": {
-        "total": 5,
-        "critical": 0,
-        "warning": 5
       },
       "rank": 7
     },
