@@ -5,18 +5,21 @@
  * NISULKA TOOLS HOMEPAGE
  * =========================================================
  *
- * Data source:
+ * Homepage data source:
  *
- *     data/tools.json
+ * data/tools.json
  *
- * Generated automatically by GitHub Actions.
+ * The homepage automatically discovers:
  *
- * Tool logos:
+ * - tools
+ * - categories
+ * - featured tools
+ * - descriptions
+ * - logos
+ * - keywords
+ * - URLs
  *
- *     /Nisulka-Tools/tools/{slug}/logo.jpg
- *
- * The "icon" property is NOT required.
- *
+ * No "icon" property is required.
  * =========================================================
  */
 
@@ -36,39 +39,19 @@ let searchQuery = "";
    ========================================================= */
 
 const searchInput =
-    document.getElementById(
-        "tool-search"
-    );
-
+    document.getElementById("tool-search");
 
 const categoryList =
-    document.getElementById(
-        "category-list"
-    );
-
+    document.getElementById("category-list");
 
 const featuredToolsContainer =
-    document.getElementById(
-        "featured-tools"
-    );
-
+    document.getElementById("featured-tools");
 
 const allToolsContainer =
-    document.getElementById(
-        "all-tools"
-    );
-
+    document.getElementById("all-tools");
 
 const toolCount =
-    document.getElementById(
-        "tool-count"
-    );
-
-
-const searchStatus =
-    document.getElementById(
-        "hero-search-status"
-    );
+    document.getElementById("tool-count");
 
 
 /* =========================================================
@@ -83,13 +66,11 @@ document.addEventListener(
 
 async function initializeHomepage() {
 
+    showLoadingState();
+
     try {
 
-        showLoadingState();
-
         await loadTools();
-
-        readURLSearch();
 
         setupSearch();
 
@@ -101,12 +82,10 @@ async function initializeHomepage() {
 
         setupFAQ();
 
-        setupKeyboardSearch();
-
     } catch (error) {
 
         console.error(
-            "Nisulka Tools initialization failed:",
+            "Nisulka Tools homepage error:",
             error
         );
 
@@ -165,10 +144,51 @@ async function loadTools() {
 
 
 /* =========================================================
-   URL SEARCH
+   SEARCH
    ========================================================= */
 
-function readURLSearch() {
+function setupSearch() {
+
+    if (!searchInput) {
+        return;
+    }
+
+
+    searchInput.addEventListener(
+        "input",
+        event => {
+
+            searchQuery =
+                event.target.value
+                    .trim()
+                    .toLowerCase();
+
+
+            renderFeaturedTools();
+
+            renderAllTools();
+
+        }
+    );
+
+
+    searchInput.addEventListener(
+        "search",
+        event => {
+
+            searchQuery =
+                event.target.value
+                    .trim()
+                    .toLowerCase();
+
+
+            renderFeaturedTools();
+
+            renderAllTools();
+
+        }
+    );
+
 
     const params =
         new URLSearchParams(
@@ -180,157 +200,65 @@ function readURLSearch() {
         params.get("q");
 
 
-    if (!query) {
-
-        return;
-
-    }
-
-
-    searchQuery =
-        query
-            .trim()
-            .toLowerCase();
-
-
-    if (searchInput) {
+    if (query) {
 
         searchInput.value =
             query;
 
+        searchQuery =
+            query
+                .trim()
+                .toLowerCase();
+
     }
 
 }
 
 
 /* =========================================================
-   SEARCH
+   KEYBOARD SEARCH SHORTCUT
    ========================================================= */
 
-function setupSearch() {
+document.addEventListener(
+    "keydown",
+    event => {
 
-    if (!searchInput) {
+        if (
+            event.key === "/" &&
+            !isTypingTarget(event.target)
+        ) {
 
-        return;
+            event.preventDefault();
 
-    }
-
-
-    searchInput.addEventListener(
-        "input",
-        handleSearch
-    );
-
-
-    searchInput.addEventListener(
-        "search",
-        handleSearch
-    );
-
-
-    if (searchQuery) {
-
-        updateSearchURL();
-
-    }
-
-}
-
-
-function handleSearch(event) {
-
-    searchQuery =
-        event.target.value
-            .trim()
-            .toLowerCase();
-
-
-    activeCategory =
-        "All";
-
-
-    updateSearchURL();
-
-    renderCategories();
-
-    renderFeaturedTools();
-
-    renderAllTools();
-
-    updateSearchStatus();
-
-}
-
-
-function updateSearchURL() {
-
-    const url =
-        new URL(
-            window.location.href
-        );
-
-
-    if (searchQuery) {
-
-        url.searchParams.set(
-            "q",
-            searchQuery
-        );
-
-    } else {
-
-        url.searchParams.delete(
-            "q"
-        );
-
-    }
-
-
-    window.history.replaceState(
-        {},
-        "",
-        url
-    );
-
-}
-
-
-/* =========================================================
-   KEYBOARD SEARCH
-   ========================================================= */
-
-function setupKeyboardSearch() {
-
-    document.addEventListener(
-        "keydown",
-        event => {
-
-            if (
-                event.key === "/" &&
-                document.activeElement !== searchInput &&
-                !isTypingElement(
-                    document.activeElement
-                )
-            ) {
-
-                event.preventDefault();
-
-                searchInput?.focus();
-
-            }
+            searchInput?.focus();
 
         }
-    );
 
-}
+        if (
+            event.key === "Escape" &&
+            document.activeElement === searchInput
+        ) {
+
+            searchInput.value = "";
+
+            searchQuery = "";
+
+            renderFeaturedTools();
+
+            renderAllTools();
+
+            searchInput.blur();
+
+        }
+
+    }
+);
 
 
-function isTypingElement(element) {
+function isTypingTarget(element) {
 
     if (!element) {
-
         return false;
-
     }
 
 
@@ -341,14 +269,15 @@ function isTypingElement(element) {
     return (
         tag === "input" ||
         tag === "textarea" ||
-        tag === "select"
+        tag === "select" ||
+        element.isContentEditable
     );
 
 }
 
 
 /* =========================================================
-   FILTERING
+   FILTER
    ========================================================= */
 
 function getFilteredTools() {
@@ -356,49 +285,40 @@ function getFilteredTools() {
     return allTools.filter(
         tool => {
 
-            const matchesCategory =
+            const categoryMatch =
                 activeCategory === "All" ||
                 tool.category === activeCategory;
 
 
-            if (!searchQuery) {
-
-                return matchesCategory;
-
+            if (!categoryMatch) {
+                return false;
             }
 
 
-            const keywords =
-                Array.isArray(
-                    tool.keywords
-                )
-                    ? tool.keywords
-                    : [];
+            if (!searchQuery) {
+                return true;
+            }
 
 
             const searchableText = [
 
-                tool.name,
+                tool.name || "",
 
-                tool.description,
+                tool.description || "",
 
-                tool.category,
+                tool.category || "",
 
-                tool.slug,
-
-                ...keywords
+                ...(Array.isArray(tool.keywords)
+                    ? tool.keywords
+                    : [])
 
             ]
-                .filter(Boolean)
                 .join(" ")
                 .toLowerCase();
 
 
-            return (
-                matchesCategory &&
-                searchableText.includes(
-                    searchQuery
-                )
+            return searchableText.includes(
+                searchQuery
             );
 
         }
@@ -414,40 +334,25 @@ function getFilteredTools() {
 function renderCategories() {
 
     if (!categoryList) {
-
         return;
-
     }
-
-
-    const categorySet =
-        new Set();
-
-
-    allTools.forEach(
-        tool => {
-
-            if (tool.category) {
-
-                categorySet.add(
-                    tool.category
-                );
-
-            }
-
-        }
-    );
 
 
     const categories = [
 
         "All",
 
-        ...Array.from(
-            categorySet
-        ).sort(
-            (a, b) =>
-                a.localeCompare(b)
+        ...new Set(
+
+            allTools
+
+                .map(
+                    tool =>
+                        tool.category?.trim()
+                )
+
+                .filter(Boolean)
+
         )
 
     ];
@@ -465,24 +370,15 @@ function renderCategories() {
                 );
 
 
-            button.type =
-                "button";
-
+            button.type = "button";
 
             button.className =
                 "category-button";
 
 
-            button.textContent =
-                category;
-
-
-            const active =
-                category ===
-                activeCategory;
-
-
-            if (active) {
+            if (
+                category === activeCategory
+            ) {
 
                 button.classList.add(
                     "is-active"
@@ -491,9 +387,13 @@ function renderCategories() {
             }
 
 
+            button.textContent =
+                category;
+
+
             button.setAttribute(
                 "aria-pressed",
-                active
+                category === activeCategory
                     ? "true"
                     : "false"
             );
@@ -506,14 +406,11 @@ function renderCategories() {
                     activeCategory =
                         category;
 
-
                     renderCategories();
 
                     renderFeaturedTools();
 
                     renderAllTools();
-
-                    updateSearchStatus();
 
                 }
             );
@@ -536,9 +433,7 @@ function renderCategories() {
 function renderFeaturedTools() {
 
     if (!featuredToolsContainer) {
-
         return;
-
     }
 
 
@@ -548,32 +443,27 @@ function renderFeaturedTools() {
         );
 
 
-    const filteredTools =
+    const filtered =
         getFilteredTools();
 
 
-    const featuredTools =
-        filteredTools.filter(
+    const featured =
+        filtered.filter(
             tool =>
                 tool.featured === true
         );
 
 
     if (
-        featuredTools.length === 0
+        featured.length === 0
     ) {
 
         featuredToolsContainer.innerHTML =
             "";
 
-
         if (section) {
-
-            section.hidden =
-                true;
-
+            section.hidden = true;
         }
-
 
         return;
 
@@ -581,19 +471,14 @@ function renderFeaturedTools() {
 
 
     if (section) {
-
-        section.hidden =
-            false;
-
+        section.hidden = false;
     }
 
 
     featuredToolsContainer.innerHTML =
-        featuredTools
+        featured
             .slice(0, 8)
-            .map(
-                createToolCard
-            )
+            .map(createToolCard)
             .join("");
 
 }
@@ -606,18 +491,16 @@ function renderFeaturedTools() {
 function renderAllTools() {
 
     if (!allToolsContainer) {
-
         return;
-
     }
 
 
-    const filteredTools =
+    const filtered =
         getFilteredTools();
 
 
     if (
-        filteredTools.length === 0
+        filtered.length === 0
     ) {
 
         showNoResults();
@@ -630,15 +513,13 @@ function renderAllTools() {
 
 
     allToolsContainer.innerHTML =
-        filteredTools
-            .map(
-                createToolCard
-            )
+        filtered
+            .map(createToolCard)
             .join("");
 
 
     updateToolCount(
-        filteredTools.length
+        filtered.length
     );
 
 }
@@ -659,43 +540,22 @@ function createToolCard(tool) {
 
     const description =
         escapeHTML(
-            createShortDescription(
-                tool.description
-            )
-        );
-
-
-    const slug =
-        escapeAttribute(
-            tool.slug ||
-            ""
+            tool.description ||
+            "Useful online tool."
         );
 
 
     const url =
-        escapeAttribute(
+        safeURL(
             tool.url ||
-            `tools/${slug}/`
+            "#"
         );
 
 
     const logo =
-        tool.logo
-            ? escapeAttribute(
-                tool.logo
-            )
-            : "";
-
-
-    const fallbackLetter =
-        escapeHTML(
-            (
-                tool.name ||
-                "T"
-            )
-                .trim()
-                .charAt(0)
-                .toUpperCase()
+        safeURL(
+            tool.logo ||
+            ""
         );
 
 
@@ -703,81 +563,60 @@ function createToolCard(tool) {
         logo
 
             ? `
-
                 <img
-                    class="home-tool-logo"
+                    class="tool-card-logo"
                     src="${logo}"
                     alt="${name} logo"
                     loading="lazy"
-                    width="240"
-                    height="210"
-                    onerror="handleToolLogoError(this)"
+                    width="82"
+                    height="82"
+                    onerror="this.style.display='none'; this.nextElementSibling.hidden=false;"
                 >
 
-                <div
-                    class="home-tool-logo-fallback"
+                <span
+                    class="tool-card-logo-fallback"
                     aria-hidden="true"
                     hidden
                 >
-                    ${fallbackLetter}
-                </div>
-
+                    ◇
+                </span>
             `
 
             : `
-
-                <div
-                    class="home-tool-logo-fallback"
+                <span
+                    class="tool-card-logo-fallback"
                     aria-hidden="true"
                 >
-                    ${fallbackLetter}
-                </div>
-
+                    ◇
+                </span>
             `;
 
 
     return `
 
-        <article
-            class="home-tool-card"
-        >
+        <article class="tool-card">
 
             <a
-                class="home-tool-card-link"
+                class="tool-card-link"
                 href="${url}"
                 aria-label="Open ${name}"
             >
 
-
-                <div
-                    class="home-tool-logo-area"
-                >
+                <div class="tool-card-icon-wrapper">
 
                     ${logoHTML}
 
                 </div>
 
 
-                <div
-                    class="home-tool-content"
-                >
-
-                    <h3
-                        class="home-tool-name"
-                        title="${name}"
-                    >
-                        ${name}
-                    </h3>
+                <h3 class="tool-card-title">
+                    ${name}
+                </h3>
 
 
-                    <p
-                        class="home-tool-description"
-                    >
-                        ${description}
-                    </p>
-
-                </div>
-
+                <p class="tool-card-description">
+                    ${description}
+                </p>
 
             </a>
 
@@ -789,82 +628,64 @@ function createToolCard(tool) {
 
 
 /* =========================================================
-   LOGO ERROR
+   SAFE URL
    ========================================================= */
 
-window.handleToolLogoError =
-    function(image) {
+function safeURL(value) {
 
-        if (!image) {
-
-            return;
-
-        }
-
-
-        image.hidden =
-            true;
-
-
-        const fallback =
-            image.parentElement
-                ?.querySelector(
-                    ".home-tool-logo-fallback"
-                );
-
-
-        if (fallback) {
-
-            fallback.hidden =
-                false;
-
-        }
-
-    };
-
-
-/* =========================================================
-   DESCRIPTION
-   ========================================================= */
-
-function createShortDescription(
-    description
-) {
-
-    if (!description) {
-
-        return "Useful online tool.";
-
-    }
-
-
-    const clean =
-        String(description)
-            .replace(
-                /\s+/g,
-                " "
-            )
+    const stringValue =
+        String(value || "")
             .trim();
 
 
+    if (!stringValue) {
+        return "#";
+    }
+
+
+    /*
+     * Allow relative URLs used by Nisulka.
+     */
+
     if (
-        clean.length <= 105
+        stringValue.startsWith("/") ||
+        stringValue.startsWith("./") ||
+        stringValue.startsWith("../")
     ) {
 
-        return clean;
+        return escapeAttribute(
+            stringValue
+        );
 
     }
 
 
-    return (
-        clean
-            .substring(
-                0,
-                102
-            )
-            .trimEnd() +
-        "..."
-    );
+    try {
+
+        const url =
+            new URL(
+                stringValue,
+                window.location.origin
+            );
+
+
+        if (
+            url.protocol === "http:" ||
+            url.protocol === "https:"
+        ) {
+
+            return escapeAttribute(
+                url.href
+            );
+
+        }
+
+    } catch {
+        return "#";
+    }
+
+
+    return "#";
 
 }
 
@@ -873,14 +694,10 @@ function createShortDescription(
    TOOL COUNT
    ========================================================= */
 
-function updateToolCount(
-    count
-) {
+function updateToolCount(count) {
 
     if (!toolCount) {
-
         return;
-
     }
 
 
@@ -895,83 +712,27 @@ function updateToolCount(
 
 
 /* =========================================================
-   SEARCH STATUS
-   ========================================================= */
-
-function updateSearchStatus() {
-
-    if (!searchStatus) {
-
-        return;
-
-    }
-
-
-    if (!searchQuery) {
-
-        searchStatus.textContent =
-            "";
-
-        return;
-
-    }
-
-
-    const count =
-        getFilteredTools()
-            .length;
-
-
-    searchStatus.textContent =
-        `${count} ${
-            count === 1
-                ? "tool"
-                : "tools"
-        } found for "${searchQuery}"`;
-
-}
-
-
-/* =========================================================
    NO RESULTS
    ========================================================= */
 
 function showNoResults() {
 
     if (!allToolsContainer) {
-
         return;
-
     }
 
 
     allToolsContainer.innerHTML = `
 
-        <div
-            class="home-tools-empty"
-        >
-
-            <div
-                class="home-tools-empty-icon"
-                aria-hidden="true"
-            >
-                🔎
-            </div>
-
+        <div class="tools-empty">
 
             <h3>
                 No tools found
             </h3>
 
-
             <p>
-                Try another search term
-                or choose a different category.
+                Try another search or browse a different category.
             </p>
-
-
-            <br>
-
 
             <button
                 type="button"
@@ -1006,29 +767,20 @@ function clearSearch() {
 
     if (searchInput) {
 
-        searchInput.value =
-            "";
+        searchInput.value = "";
 
     }
 
 
-    searchQuery =
-        "";
+    searchQuery = "";
 
-
-    activeCategory =
-        "All";
-
-
-    updateSearchURL();
+    activeCategory = "All";
 
     renderCategories();
 
     renderFeaturedTools();
 
     renderAllTools();
-
-    updateSearchStatus();
 
 }
 
@@ -1039,21 +791,19 @@ function clearSearch() {
 
 function showLoadingState() {
 
-    const loading = `
-
-        <div
-            class="home-tools-loading"
-        >
-            Loading tools...
-        </div>
-
-    `;
+    const skeletons =
+        Array.from(
+            { length: 4 },
+            () =>
+                `<div class="tool-skeleton"></div>`
+        )
+        .join("");
 
 
     if (featuredToolsContainer) {
 
         featuredToolsContainer.innerHTML =
-            loading;
+            skeletons;
 
     }
 
@@ -1061,7 +811,7 @@ function showLoadingState() {
     if (allToolsContainer) {
 
         allToolsContainer.innerHTML =
-            loading;
+            skeletons;
 
     }
 
@@ -1074,80 +824,41 @@ function showLoadingState() {
 
 function showErrorState() {
 
-    const popular =
-        document.getElementById(
-            "popular"
-        );
+    if (featuredToolsContainer) {
 
-
-    if (popular) {
-
-        popular.hidden =
-            true;
+        featuredToolsContainer.innerHTML =
+            "";
 
     }
 
 
-    if (!allToolsContainer) {
+    if (allToolsContainer) {
 
-        return;
+        allToolsContainer.innerHTML = `
 
-    }
+            <div class="tools-empty">
 
+                <h3>
+                    Tools couldn't be loaded
+                </h3>
 
-    allToolsContainer.innerHTML = `
+                <p>
+                    Something went wrong while loading the tool collection.
+                </p>
 
-        <div
-            class="home-tools-empty"
-        >
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    onclick="location.reload()"
+                >
+                    Try again
+                </button>
 
-            <div
-                class="home-tools-empty-icon"
-                aria-hidden="true"
-            >
-                ⚠️
             </div>
 
+        `;
 
-            <h3>
-                Tools couldn't be loaded
-            </h3>
-
-
-            <p>
-                The tools data could not be loaded.
-                Please refresh the page and try again.
-            </p>
-
-
-            <br>
-
-
-            <button
-                type="button"
-                class="btn btn-primary"
-                id="retry-tools"
-            >
-                Try again
-            </button>
-
-        </div>
-
-    `;
-
-
-    document
-        .getElementById(
-            "retry-tools"
-        )
-        ?.addEventListener(
-            "click",
-            () => {
-
-                window.location.reload();
-
-            }
-        );
+    }
 
 }
 
@@ -1160,7 +871,7 @@ function setupFAQ() {
 
     const questions =
         document.querySelectorAll(
-            ".home-faq-question"
+            ".tool-faq-question"
         );
 
 
@@ -1188,10 +899,10 @@ function setupFAQ() {
                     const answer =
                         question
                             .closest(
-                                ".home-faq-item"
+                                ".tool-faq-item"
                             )
                             ?.querySelector(
-                                ".home-faq-answer"
+                                ".tool-faq-answer"
                             );
 
 
@@ -1212,7 +923,7 @@ function setupFAQ() {
 
 
 /* =========================================================
-   SECURITY
+   SECURITY HELPERS
    ========================================================= */
 
 function escapeHTML(value) {
@@ -1249,8 +960,6 @@ function escapeHTML(value) {
 
 function escapeAttribute(value) {
 
-    return escapeHTML(
-        value
-    );
+    return escapeHTML(value);
 
 }
