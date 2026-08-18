@@ -1,0 +1,66 @@
+name: Nisulka Browser E2E
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  browser-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Playwright
+        run: |
+          npx --yes playwright@1.55.0 install --with-deps chromium
+
+      - name: Start local static server
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 --directory . > /tmp/nisulka-server.log 2>&1 &
+          echo $! > /tmp/nisulka-server.pid
+          for i in {1..20}; do
+            if curl --silent --fail http://127.0.0.1:4173/Nisulka-Tools/ >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/nisulka-server.log
+          exit 1
+
+      - name: Run browser smoke tests
+        run: |
+          npx --yes playwright@1.55.0 test tests/e2e/site.spec.mjs \
+            --reporter=html,line \
+            --output=test-results
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nisulka-browser-e2e-report
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
+
+      - name: Add test summary
+        if: always()
+        run: |
+          if [ -f /tmp/nisulka-server.log ]; then
+            echo '### Static server log' >> "$GITHUB_STEP_SUMMARY"
+            tail -n 50 /tmp/nisulka-server.log >> "$GITHUB_STEP_SUMMARY" || true
+          fi
