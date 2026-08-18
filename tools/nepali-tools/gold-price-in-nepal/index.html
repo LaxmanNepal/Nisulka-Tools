@@ -47,7 +47,6 @@
             }
         }
     </script>
-
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -130,7 +129,7 @@
                     <span class="text-slate-400">Financial Tools</span>
                 </li>
                 <li><i class="fa-solid fa-chevron-right text-xs text-slate-400"></i></li>
-                <li class="text-amber-700 font-medium">Gold & Silver Price Calculator</li>
+                <li class="text-amber-700 font-medium">Gold & Silver Price Calculator (NPR)</li>
             </ol>
         </nav>
 
@@ -141,13 +140,13 @@
             </div>
             <div class="relative z-10 max-w-3xl">
                 <div class="inline-flex items-center gap-2 bg-amber-400/30 text-amber-100 text-xs font-semibold px-3 py-1 rounded-full backdrop-blur-sm mb-3">
-                    <span class="live-dot"></span> Real-Time Spot Market Engine
+                    <span class="live-dot"></span> Live Nepal Gold & Silver Rates (NPR)
                 </div>
                 <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight mb-2">
-                    Gold & Silver Price Calculator & Live Tracker
+                    Gold & Silver Price Calculator (Nepali Rupees - NPR)
                 </h1>
                 <p class="text-amber-100 text-sm sm:text-base leading-relaxed">
-                    Calculate live market value for gold, silver, and platinum across various purities (24K to 10K, Sterling 925), currencies, weight units, and custom making charges.
+                    Calculate gold, silver, and platinum rates in <strong>Nepali Rupees (NRs.)</strong> for Tola, Grams, and Karat purities (24K Fine Gold, 22K Tejabi Gold, Sterling 925) with custom making charges and tax adjustments.
                 </p>
             </div>
         </div>
@@ -155,19 +154,22 @@
         <!-- Global Market Controls Bar -->
         <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-200 mb-6 flex flex-wrap items-center justify-between gap-4">
             <div class="flex flex-wrap items-center gap-3">
-                <div class="flex items-center gap-2">
-                    <label for="currencySelect" class="text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                        <i class="fa-solid fa-globe text-amber-600 mr-1"></i> Currency
-                    </label>
-                    <select id="currencySelect" onchange="updateAllPrices()" class="bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-lg focus:ring-amber-500 focus:border-amber-500 p-2 font-medium">
-                        <option value="USD" selected>USD ($) - US Dollar</option>
-                        <option value="EUR">EUR (€) - Euro</option>
-                        <option value="GBP">GBP (£) - British Pound</option>
-                        <option value="INR">INR (₹) - Indian Rupee</option>
-                        <option value="NPR">NPR (NRs) - Nepalese Rupee</option>
-                        <option value="CAD">CAD ($) - Canadian Dollar</option>
-                        <option value="AUD">AUD ($) - Australian Dollar</option>
-                        <option value="AED">AED (AED) - UAE Dirham</option>
+                <div class="flex items-center gap-2 bg-amber-50 border border-amber-200 px-3 py-2 rounded-lg">
+                    <i class="fa-solid fa-money-bill-wave text-amber-600"></i>
+                    <label for="currencySelect" class="text-xs font-bold text-amber-900 uppercase tracking-wider">Currency:</label>
+                    <select id="currencySelect" onchange="updateAllPrices()" class="bg-white border border-amber-300 text-amber-950 text-xs font-bold rounded-md px-2 py-1 focus:ring-amber-500 focus:border-amber-500 cursor-pointer">
+                        <option value="NPR" selected>NPR (NRs. - Nepali Rupee)</option>
+                        <option value="USD">USD ($ - US Dollar)</option>
+                        <option value="INR">INR (₹ - Indian Rupee)</option>
+                        <option value="EUR">EUR (€ - Euro)</option>
+                        <option value="GBP">GBP (£ - British Pound)</option>
+                        <option value="AED">AED (AED - UAE Dirham)</option>
+                        <option value="QAR">QAR (QAR - Qatari Riyal)</option>
+                        <option value="SAR">SAR (SAR - Saudi Riyal)</option>
+                        <option value="MYR">MYR (RM - Malaysian Ringgit)</option>
+                        <option value="CAD">CAD (CA$ - Canadian Dollar)</option>
+                        <option value="AUD">AUD (A$ - Australian Dollar)</option>
+                        <option value="JPY">JPY (¥ - Japanese Yen)</option>
                     </select>
                 </div>
 
@@ -177,7 +179,7 @@
                     </label>
                     <select id="priceModeSelect" onchange="updateAllPrices()" class="bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-lg focus:ring-amber-500 focus:border-amber-500 p-2 font-medium">
                         <option value="live">Live Auto-Update</option>
-                        <option value="custom">Custom Spot Price</option>
+                        <option value="custom">Custom Rate Mode</option>
                     </select>
                 </div>
             </div>
@@ -202,8 +204,8 @@
                             Au
                         </div>
                         <div>
-                            <h2 class="font-bold text-slate-800 text-lg leading-tight">Gold Spot Rate</h2>
-                            <span class="text-xs text-slate-500">24K Pure (99.9%)</span>
+                            <h2 class="font-bold text-slate-800 text-lg leading-tight">Gold Rate (<span class="currencyCodeLabel">NPR</span>)</h2>
+                            <span class="text-xs text-slate-500">24K Fine Gold (99.9%)</span>
                         </div>
                     </div>
                     <span id="goldChangeBadge" class="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200">
@@ -211,24 +213,25 @@
                     </span>
                 </div>
                 <div class="mb-4">
-                    <div class="text-2xl sm:text-3xl font-extrabold text-slate-900" id="goldSpotOunce">$4,394.00</div>
-                    <div class="text-xs text-slate-500 mt-1 flex justify-between">
-                        <span>Per Gram: <strong id="goldSpotGram" class="text-slate-700">$141.27</strong></span>
-                        <span>Per Tola: <strong id="goldSpotTola" class="text-slate-700">$1,647.74</strong></span>
+                    <div class="text-2xl sm:text-3xl font-extrabold text-slate-900" id="goldSpotTola">NRs. 0.00</div>
+                    <span class="text-xs text-amber-700 font-semibold block">Price per Tola (11.66g)</span>
+                    <div class="text-xs text-slate-500 mt-2 flex justify-between border-t border-slate-100 pt-2">
+                        <span>Per Gram: <strong id="goldSpotGram" class="text-slate-700">NRs. 0.00</strong></span>
+                        <span>Per Troy Oz: <strong id="goldSpotOunce" class="text-slate-700">NRs. 0.00</strong></span>
                     </div>
                 </div>
                 <div class="pt-3 border-t border-slate-100 grid grid-cols-3 text-center text-xs">
                     <div class="p-1 bg-amber-50/50 rounded">
-                        <span class="text-slate-400 block">22K</span>
-                        <span id="gold22kRate" class="font-semibold text-amber-900">$129.50/g</span>
+                        <span class="text-slate-400 block">22K Tejabi</span>
+                        <span id="gold22kRate" class="font-semibold text-amber-900">NRs. 0/g</span>
                     </div>
                     <div class="p-1 bg-amber-50/50 rounded">
-                        <span class="text-slate-400 block">18K</span>
-                        <span id="gold18kRate" class="font-semibold text-amber-900">$105.95/g</span>
+                        <span class="text-slate-400 block">18K Gold</span>
+                        <span id="gold18kRate" class="font-semibold text-amber-900">NRs. 0/g</span>
                     </div>
                     <div class="p-1 bg-amber-50/50 rounded">
-                        <span class="text-slate-400 block">14K</span>
-                        <span id="gold14kRate" class="font-semibold text-amber-900">$82.40/g</span>
+                        <span class="text-slate-400 block">14K Gold</span>
+                        <span id="gold14kRate" class="font-semibold text-amber-900">NRs. 0/g</span>
                     </div>
                 </div>
             </div>
@@ -242,8 +245,8 @@
                             Ag
                         </div>
                         <div>
-                            <h2 class="font-bold text-slate-800 text-lg leading-tight">Silver Spot Rate</h2>
-                            <span class="text-xs text-slate-500">Fine 999 (99.9%)</span>
+                            <h2 class="font-bold text-slate-800 text-lg leading-tight">Silver Rate (<span class="currencyCodeLabel">NPR</span>)</h2>
+                            <span class="text-xs text-slate-500">Fine Silver 999 (99.9%)</span>
                         </div>
                     </div>
                     <span id="silverChangeBadge" class="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200">
@@ -251,24 +254,25 @@
                     </span>
                 </div>
                 <div class="mb-4">
-                    <div class="text-2xl sm:text-3xl font-extrabold text-slate-900" id="silverSpotOunce">$65.87</div>
-                    <div class="text-xs text-slate-500 mt-1 flex justify-between">
-                        <span>Per Gram: <strong id="silverSpotGram" class="text-slate-700">$2.12</strong></span>
-                        <span>Per Tola: <strong id="silverSpotTola" class="text-slate-700">$24.70</strong></span>
+                    <div class="text-2xl sm:text-3xl font-extrabold text-slate-900" id="silverSpotTola">NRs. 0.00</div>
+                    <span class="text-xs text-slate-600 font-semibold block">Price per Tola (11.66g)</span>
+                    <div class="text-xs text-slate-500 mt-2 flex justify-between border-t border-slate-100 pt-2">
+                        <span>Per Gram: <strong id="silverSpotGram" class="text-slate-700">NRs. 0.00</strong></span>
+                        <span>Per Troy Oz: <strong id="silverSpotOunce" class="text-slate-700">NRs. 0.00</strong></span>
                     </div>
                 </div>
                 <div class="pt-3 border-t border-slate-100 grid grid-cols-3 text-center text-xs">
                     <div class="p-1 bg-slate-50 rounded">
                         <span class="text-slate-400 block">999 Fine</span>
-                        <span id="silver999Rate" class="font-semibold text-slate-800">$2.12/g</span>
+                        <span id="silver999Rate" class="font-semibold text-slate-800">NRs. 0/g</span>
                     </div>
                     <div class="p-1 bg-slate-50 rounded">
                         <span class="text-slate-400 block">925 Sterling</span>
-                        <span id="silver925Rate" class="font-semibold text-slate-800">$1.96/g</span>
+                        <span id="silver925Rate" class="font-semibold text-slate-800">NRs. 0/g</span>
                     </div>
                     <div class="p-1 bg-slate-50 rounded">
                         <span class="text-slate-400 block">800 Coin</span>
-                        <span id="silver800Rate" class="font-semibold text-slate-800">$1.69/g</span>
+                        <span id="silver800Rate" class="font-semibold text-slate-800">NRs. 0/g</span>
                     </div>
                 </div>
             </div>
@@ -282,8 +286,8 @@
                             Pt
                         </div>
                         <div>
-                            <h2 class="font-bold text-slate-800 text-lg leading-tight">Platinum Spot</h2>
-                            <span class="text-xs text-slate-500">Pure 995 (99.5%)</span>
+                            <h2 class="font-bold text-slate-800 text-lg leading-tight">Platinum Rate (<span class="currencyCodeLabel">NPR</span>)</h2>
+                            <span class="text-xs text-slate-500">Pure Platinum 995 (99.5%)</span>
                         </div>
                     </div>
                     <span id="platinumChangeBadge" class="text-xs font-semibold px-2.5 py-1 rounded-full bg-rose-50 text-rose-600 border border-rose-200">
@@ -291,10 +295,11 @@
                     </span>
                 </div>
                 <div class="mb-4">
-                    <div class="text-2xl sm:text-3xl font-extrabold text-slate-900" id="platinumSpotOunce">$1,761.90</div>
-                    <div class="text-xs text-slate-500 mt-1 flex justify-between">
-                        <span>Per Gram: <strong id="platinumSpotGram" class="text-slate-700">$56.65</strong></span>
-                        <span>Per Tola: <strong id="platinumSpotTola" class="text-slate-700">$660.75</strong></span>
+                    <div class="text-2xl sm:text-3xl font-extrabold text-slate-900" id="platinumSpotTola">NRs. 0.00</div>
+                    <span class="text-xs text-indigo-700 font-semibold block">Price per Tola (11.66g)</span>
+                    <div class="text-xs text-slate-500 mt-2 flex justify-between border-t border-slate-100 pt-2">
+                        <span>Per Gram: <strong id="platinumSpotGram" class="text-slate-700">NRs. 0.00</strong></span>
+                        <span>Per Troy Oz: <strong id="platinumSpotOunce" class="text-slate-700">NRs. 0.00</strong></span>
                     </div>
                 </div>
                 <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
@@ -310,16 +315,16 @@
             <div class="border-b border-slate-200 bg-slate-50/50 px-4 pt-2">
                 <div class="flex flex-wrap -mb-px gap-2 sm:gap-6 text-sm font-medium">
                     <button id="tabCalcBtn" onclick="switchTab('calc')" class="tab-active py-3 px-3 inline-flex items-center gap-2 border-b-2 font-semibold">
-                        <i class="fa-solid fa-calculator text-amber-600"></i> Metal Value Calculator
+                        <i class="fa-solid fa-calculator text-amber-600"></i> NPR Metal Calculator
                     </button>
                     <button id="tabPurityBtn" onclick="switchTab('purity')" class="text-slate-600 hover:text-amber-600 py-3 px-3 inline-flex items-center gap-2 border-b-2 border-transparent">
-                        <i class="fa-solid fa-scale-balanced text-slate-400"></i> Karat & Purity Converter
+                        <i class="fa-solid fa-scale-balanced text-slate-400"></i> Karat & Purity Matrix
                     </button>
                     <button id="tabScrapBtn" onclick="switchTab('scrap')" class="text-slate-600 hover:text-amber-600 py-3 px-3 inline-flex items-center gap-2 border-b-2 border-transparent">
                         <i class="fa-solid fa-gem text-slate-400"></i> Scrap & Jewelry Estimator
                     </button>
                     <button id="tabPortfolioBtn" onclick="switchTab('portfolio')" class="text-slate-600 hover:text-amber-600 py-3 px-3 inline-flex items-center gap-2 border-b-2 border-transparent">
-                        <i class="fa-solid fa-briefcase text-slate-400"></i> Holdings Tracker
+                        <i class="fa-solid fa-briefcase text-slate-400"></i> Holdings Tracker (NPR)
                     </button>
                 </div>
             </div>
@@ -331,7 +336,7 @@
                     <!-- Form Controls -->
                     <div class="lg:col-span-7 space-y-5">
                         <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2 border-b pb-3">
-                            <i class="fa-solid fa-sliders text-amber-600"></i> Calculation Parameters
+                            <i class="fa-solid fa-sliders text-amber-600"></i> Calculation Parameters (Nepali Rupees)
                         </h3>
 
                         <!-- Metal Type Selector -->
@@ -374,18 +379,18 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label for="weightInput" class="block text-xs font-semibold text-slate-600 uppercase mb-1">Enter Weight Amount</label>
-                                <input type="number" id="weightInput" value="10" min="0" step="any" oninput="updateCalculator()" class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-lg p-3 font-medium focus:ring-amber-500 focus:border-amber-500">
+                                <input type="number" id="weightInput" value="1" min="0" step="any" oninput="updateCalculator()" class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-lg p-3 font-medium focus:ring-amber-500 focus:border-amber-500">
                             </div>
                             <div>
-                                <label for="unitSelect" class="block text-xs font-semibold text-slate-600 uppercase mb-1">Weight Measurement Unit</label>
+                                <label for="unitSelect" class="block text-xs font-semibold text-slate-600 uppercase mb-1">Weight Unit</label>
                                 <select id="unitSelect" onchange="updateCalculator()" class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-lg p-3 font-medium focus:ring-amber-500 focus:border-amber-500">
+                                    <option value="tola" selected>Tola (11.6638g)</option>
                                     <option value="gram">Grams (g)</option>
-                                    <option value="troy_oz">Troy Ounces (t oz)</option>
-                                    <option value="tola" selected>Tolas (11.66g)</option>
-                                    <option value="kg">Kilograms (kg)</option>
+                                    <option value="lal">Lal / Ratti (0.1166g)</option>
+                                    <option value="aana">Aana (0.729g)</option>
                                     <option value="sovereign">Sovereign / Pawan (8g)</option>
-                                    <option value="dwt">Pennyweight (dwt)</option>
-                                    <option value="grain">Grains (gr)</option>
+                                    <option value="troy_oz">Troy Ounces (31.10g)</option>
+                                    <option value="kg">Kilograms (kg)</option>
                                 </select>
                             </div>
                         </div>
@@ -395,17 +400,17 @@
                             <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Additional Retail Adjustments (Optional)</h4>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
-                                    <label for="makingChargeInput" class="block text-xs text-slate-600 mb-1">Making Charge / Wastage (% or Flat)</label>
+                                    <label for="makingChargeInput" class="block text-xs text-slate-600 mb-1">Making Charge / Jyala (% or Flat)</label>
                                     <div class="flex">
                                         <input type="number" id="makingChargeInput" value="5" min="0" step="any" oninput="updateCalculator()" class="w-full bg-white border border-slate-300 rounded-l-lg p-2.5 text-sm">
                                         <select id="makingChargeType" onchange="updateCalculator()" class="bg-slate-200 border border-l-0 border-slate-300 rounded-r-lg p-2.5 text-xs font-semibold">
                                             <option value="percent">%</option>
-                                            <option value="flat">Flat</option>
+                                            <option value="flat" id="makingChargeFlatOpt">NRs.</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div>
-                                    <label for="taxRateInput" class="block text-xs text-slate-600 mb-1">Sales Tax / VAT (%)</label>
+                                    <label for="taxRateInput" class="block text-xs text-slate-600 mb-1">Tax / VAT (%)</label>
                                     <input type="number" id="taxRateInput" value="3" min="0" step="any" oninput="updateCalculator()" class="w-full bg-white border border-slate-300 rounded-lg p-2.5 text-sm">
                                 </div>
                             </div>
@@ -419,33 +424,33 @@
                             <div class="flex justify-between items-center border-b border-slate-700 pb-4 mb-4">
                                 <div>
                                     <span class="text-xs text-amber-400 font-semibold uppercase tracking-wider block">Estimated Metal Valuation</span>
-                                    <h4 class="text-xl font-bold text-white" id="calcMetalSummaryTitle">10 Tola 24K Gold</h4>
+                                    <h4 class="text-xl font-bold text-white" id="calcMetalSummaryTitle">1 Tola 24K Gold</h4>
                                 </div>
                                 <i class="fa-solid fa-receipt text-3xl text-amber-500/40"></i>
                             </div>
 
                             <div class="mb-6">
-                                <div class="text-xs text-slate-400 mb-1">Total Estimated Cost</div>
-                                <div class="text-3xl sm:text-4xl font-extrabold text-amber-400" id="totalValuationDisplay">$17,761.54</div>
-                                <div class="text-xs text-slate-400 mt-1" id="ratePerGramSubtitle">Effective rate: $152.33 / gram</div>
+                                <div class="text-xs text-slate-400 mb-1">Total Estimated Price in Nepali Rupees</div>
+                                <div class="text-3xl sm:text-4xl font-extrabold text-amber-400" id="totalValuationDisplay">NRs. 0.00</div>
+                                <div class="text-xs text-slate-400 mt-1" id="ratePerGramSubtitle">Effective rate: NRs. 0.00 / gram</div>
                             </div>
 
                             <div class="space-y-2 text-sm border-t border-slate-700/80 pt-4">
                                 <div class="flex justify-between text-slate-300">
                                     <span>Base Melt Value:</span>
-                                    <span class="font-medium" id="baseMeltValDisplay">$16,472.22</span>
+                                    <span class="font-medium" id="baseMeltValDisplay">NRs. 0.00</span>
                                 </div>
                                 <div class="flex justify-between text-slate-300">
-                                    <span>Making / Premium:</span>
-                                    <span class="font-medium" id="makingValDisplay">+$823.61</span>
+                                    <span>Making Charge (Jyala):</span>
+                                    <span class="font-medium" id="makingValDisplay">+NRs. 0.00</span>
                                 </div>
                                 <div class="flex justify-between text-slate-300">
                                     <span>Tax / VAT:</span>
-                                    <span class="font-medium" id="taxValDisplay">+$518.87</span>
+                                    <span class="font-medium" id="taxValDisplay">+NRs. 0.00</span>
                                 </div>
                                 <div class="flex justify-between text-slate-300 border-t border-slate-700 pt-2 font-semibold text-amber-300">
-                                    <span>Pure Metal Weight:</span>
-                                    <span id="fineWeightDisplay">116.52 g</span>
+                                    <span>Pure Fine Weight:</span>
+                                    <span id="fineWeightDisplay">11.65 g</span>
                                 </div>
                             </div>
                         </div>
@@ -466,20 +471,20 @@
             <!-- TAB 2: Karat & Purity Matrix Converter -->
             <div id="tabPurityContent" class="p-6 hidden">
                 <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-                    <i class="fa-solid fa-scale-balanced text-amber-600"></i> Karat Purity Breakdown & Fine Metal Converter
+                    <i class="fa-solid fa-scale-balanced text-amber-600"></i> Karat Purity Breakdown in Nepali Rupees (NRs.)
                 </h3>
-                <p class="text-sm text-slate-600 mb-6">Enter a total jewelry weight to quickly view the exact fine gold pure weight content and price value across all gold karat standards.</p>
+                <p class="text-sm text-slate-600 mb-6">Enter a total jewelry weight in grams to calculate the pure gold content and estimated price across all Karats in Nepali Rupees.</p>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                     <div class="md:col-span-2 bg-slate-50 p-4 rounded-xl border border-slate-200 flex items-center gap-4">
                         <div class="w-full">
                             <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Total Gross Weight (Grams)</label>
-                            <input type="number" id="purityGrossWeight" value="50" min="0" oninput="renderPurityMatrix()" class="w-full bg-white border border-slate-300 rounded-lg p-2.5 text-sm font-semibold text-slate-800">
+                            <input type="number" id="purityGrossWeight" value="11.66" min="0" oninput="renderPurityMatrix()" class="w-full bg-white border border-slate-300 rounded-lg p-2.5 text-sm font-semibold text-slate-800">
                         </div>
                     </div>
                     <div class="bg-amber-50 p-4 rounded-xl border border-amber-200 flex flex-col justify-center">
-                        <span class="text-xs text-amber-800 font-semibold uppercase">Selected Currency Spot</span>
-                        <span class="text-xl font-bold text-amber-900" id="matrixSpotRef">$141.27 / gram</span>
+                        <span class="text-xs text-amber-800 font-semibold uppercase">24K Pure Gold Spot</span>
+                        <span class="text-xl font-bold text-amber-900" id="matrixSpotRef">NRs. 0.00 / gram</span>
                     </div>
                 </div>
 
@@ -487,11 +492,11 @@
                     <table class="w-full text-sm text-left text-slate-600">
                         <thead class="text-xs uppercase bg-slate-100 text-slate-700">
                             <tr>
-                                <th class="px-4 py-3">Karat Grade</th>
-                                <th class="px-4 py-3">Gold Purity (%)</th>
+                                <th class="px-4 py-3">Karat / Standard Grade</th>
+                                <th class="px-4 py-3">Purity (%)</th>
                                 <th class="px-4 py-3">Pure Gold Content</th>
                                 <th class="px-4 py-3">Alloy Weight</th>
-                                <th class="px-4 py-3 text-right">Raw Melt Value</th>
+                                <th class="px-4 py-3 text-right">Raw Value (NRs.)</th>
                             </tr>
                         </thead>
                         <tbody id="purityMatrixBody" class="divide-y divide-slate-200 bg-white">
@@ -504,15 +509,15 @@
             <!-- TAB 3: Scrap & Jewelry Estimator -->
             <div id="tabScrapContent" class="p-6 hidden">
                 <h3 class="text-lg font-bold text-slate-800 mb-2 flex items-center gap-2">
-                    <i class="fa-solid fa-gem text-amber-600"></i> Scrap Jewelry Melt Value & Refiner Payout Estimator
+                    <i class="fa-solid fa-gem text-amber-600"></i> Scrap Jewelry Melt Value & Refiner Payout (NRs.)
                 </h3>
-                <p class="text-sm text-slate-600 mb-6">Estimate what pawnshops, gold buyers, or metal refiners will pay for old scrap jewelry after applying typical refining margins.</p>
+                <p class="text-sm text-slate-600 mb-6">Estimate what local gold buyers or refiners in Nepal will pay for old scrap jewelry in NPR.</p>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div class="space-y-4 bg-slate-50 p-5 rounded-xl border border-slate-200">
                         <div>
                             <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Item Title / Description</label>
-                            <input type="text" id="scrapItemTitle" value="Old Broken Gold Chain" class="w-full bg-white border border-slate-300 rounded-lg p-2.5 text-sm">
+                            <input type="text" id="scrapItemTitle" value="Old Gold Ornament" class="w-full bg-white border border-slate-300 rounded-lg p-2.5 text-sm">
                         </div>
                         <div class="grid grid-cols-2 gap-3">
                             <div>
@@ -526,10 +531,10 @@
                             <div>
                                 <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Purity Grade</label>
                                 <select id="scrapPurity" onchange="calculateScrap()" class="w-full bg-white border border-slate-300 rounded-lg p-2.5 text-sm">
-                                    <option value="0.750">18K (75% Pure)</option>
-                                    <option value="0.9167">22K (91.67% Pure)</option>
-                                    <option value="0.5833" selected>14K (58.33% Pure)</option>
-                                    <option value="0.4167">10K (41.67% Pure)</option>
+                                    <option value="0.9167" selected>22K Tejabi (91.67%)</option>
+                                    <option value="0.999">24K Fine Gold (99.9%)</option>
+                                    <option value="0.750">18K (75.0%)</option>
+                                    <option value="0.5833">14K (58.33%)</option>
                                     <option value="0.925">Sterling Silver (92.5%)</option>
                                 </select>
                             </div>
@@ -537,11 +542,11 @@
                         <div class="grid grid-cols-2 gap-3">
                             <div>
                                 <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Weight (Grams)</label>
-                                <input type="number" id="scrapWeight" value="28.5" step="any" oninput="calculateScrap()" class="w-full bg-white border border-slate-300 rounded-lg p-2.5 text-sm">
+                                <input type="number" id="scrapWeight" value="11.66" step="any" oninput="calculateScrap()" class="w-full bg-white border border-slate-300 rounded-lg p-2.5 text-sm">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Refiner Buyer Payout %</label>
-                                <input type="number" id="scrapPayoutPercent" value="80" max="100" min="1" oninput="calculateScrap()" class="w-full bg-white border border-slate-300 rounded-lg p-2.5 text-sm">
+                                <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Buyer Payout %</label>
+                                <input type="number" id="scrapPayoutPercent" value="85" max="100" min="1" oninput="calculateScrap()" class="w-full bg-white border border-slate-300 rounded-lg p-2.5 text-sm">
                             </div>
                         </div>
                     </div>
@@ -549,28 +554,28 @@
                     <!-- Scrap Payout Breakdown Card -->
                     <div class="lg:col-span-2 bg-slate-900 text-white p-6 rounded-xl flex flex-col justify-between">
                         <div>
-                            <span class="text-xs text-amber-400 font-semibold uppercase">Refiner Cash Offer Estimate</span>
-                            <div class="text-3xl sm:text-4xl font-extrabold text-amber-400 mt-2" id="scrapCashOfferDisplay">$1,894.20</div>
-                            <p class="text-xs text-slate-400 mt-1" id="scrapPayoutSubtitle">Based on 80% payout of full market melt value.</p>
+                            <span class="text-xs text-amber-400 font-semibold uppercase">Estimated Cash Offer (Nepali Rupees)</span>
+                            <div class="text-3xl sm:text-4xl font-extrabold text-amber-400 mt-2" id="scrapCashOfferDisplay">NRs. 0.00</div>
+                            <p class="text-xs text-slate-400 mt-1" id="scrapPayoutSubtitle">Based on 85% payout of full market melt value.</p>
 
                             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6 pt-6 border-t border-slate-800 text-center">
                                 <div class="bg-slate-800/80 p-3 rounded-lg">
                                     <span class="text-xs text-slate-400 block">100% Full Melt Value</span>
-                                    <span class="font-bold text-white text-base" id="scrapFullMeltVal">$2,367.75</span>
+                                    <span class="font-bold text-white text-base" id="scrapFullMeltVal">NRs. 0.00</span>
                                 </div>
                                 <div class="bg-slate-800/80 p-3 rounded-lg">
                                     <span class="text-xs text-slate-400 block">Pure Fine Weight</span>
-                                    <span class="font-bold text-white text-base" id="scrapFineWeight">16.62 g</span>
+                                    <span class="font-bold text-white text-base" id="scrapFineWeight">10.69 g</span>
                                 </div>
                                 <div class="bg-slate-800/80 p-3 rounded-lg">
-                                    <span class="text-xs text-slate-400 block">Buyer Fee / Deduction</span>
-                                    <span class="font-bold text-rose-400 text-base" id="scrapDeductionVal">-$473.55</span>
+                                    <span class="text-xs text-slate-400 block">Deduction / Margin</span>
+                                    <span class="font-bold text-rose-400 text-base" id="scrapDeductionVal">-NRs. 0.00</span>
                                 </div>
                             </div>
                         </div>
 
                         <div class="mt-6 text-xs text-slate-400 flex items-center gap-2">
-                            <i class="fa-solid fa-circle-info text-amber-400"></i> Note: Jewelers and pawnshops typically pay between 70% to 85% of full melt value to cover melting, assaying, and profit margins.
+                            <i class="fa-solid fa-circle-info text-amber-400"></i> Note: Local jewelry shops in Nepal usually pay 80%–90% of raw melt value to cover melting loss and refining costs.
                         </div>
                     </div>
                 </div>
@@ -581,9 +586,9 @@
                 <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
                     <div>
                         <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
-                            <i class="fa-solid fa-briefcase text-amber-600"></i> Precious Metals Holdings Tracker
+                            <i class="fa-solid fa-briefcase text-amber-600"></i> Precious Metals Holdings Tracker (NPR)
                         </h3>
-                        <p class="text-sm text-slate-600">Track your coins, bars, and jewelry holdings against live market spot rates.</p>
+                        <p class="text-sm text-slate-600">Track your gold and silver coins, bars, and jewelry in Nepali Rupees.</p>
                     </div>
                     <button onclick="showAddAssetModal()" class="bg-amber-600 hover:bg-amber-700 text-white font-semibold text-xs px-4 py-2.5 rounded-lg transition-colors flex items-center gap-1.5 shadow-sm">
                         <i class="fa-solid fa-plus"></i> Add Item to Portfolio
@@ -593,15 +598,15 @@
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
                     <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
                         <span class="text-xs text-slate-500 block uppercase font-semibold">Total Portfolio Value</span>
-                        <span class="text-2xl font-extrabold text-slate-800" id="portTotalVal">$0.00</span>
+                        <span class="text-2xl font-extrabold text-slate-800" id="portTotalVal">NRs. 0.00</span>
                     </div>
                     <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
                         <span class="text-xs text-slate-500 block uppercase font-semibold">Total Original Cost</span>
-                        <span class="text-2xl font-extrabold text-slate-800" id="portTotalCost">$0.00</span>
+                        <span class="text-2xl font-extrabold text-slate-800" id="portTotalCost">NRs. 0.00</span>
                     </div>
                     <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
                         <span class="text-xs text-slate-500 block uppercase font-semibold">Unrealized Gain / Loss</span>
-                        <span class="text-2xl font-extrabold text-slate-800" id="portTotalGain">$0.00 (0.00%)</span>
+                        <span class="text-2xl font-extrabold text-slate-800" id="portTotalGain">NRs. 0.00 (0.00%)</span>
                     </div>
                 </div>
 
@@ -612,8 +617,8 @@
                                 <th class="px-4 py-3">Asset Item</th>
                                 <th class="px-4 py-3">Metal / Karat</th>
                                 <th class="px-4 py-3">Weight</th>
-                                <th class="px-4 py-3">Buy Price</th>
-                                <th class="px-4 py-3">Current Value</th>
+                                <th class="px-4 py-3">Buy Price (NRs.)</th>
+                                <th class="px-4 py-3">Current Value (NRs.)</th>
                                 <th class="px-4 py-3">Gain / Loss</th>
                                 <th class="px-4 py-3 text-right">Actions</th>
                             </tr>
@@ -631,51 +636,51 @@
         <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200 mb-8 space-y-8">
             <div>
                 <h2 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
-                    <i class="fa-solid fa-book-open text-amber-600"></i> Gold Karat & Purity Reference Guide
+                    <i class="fa-solid fa-book-open text-amber-600"></i> Nepal Gold Standard & Karat Guide
                 </h2>
                 <p class="text-slate-600 text-sm leading-relaxed mb-4">
-                    The purity of gold is measured in <strong>Karats (K)</strong>, which denotes the ratio of pure gold to other metal alloys (such as copper, silver, or zinc) out of 24 parts.
+                    In Nepal, gold is traditionally measured in <strong>Tola (11.6638 grams)</strong> and classified under two major standards: <strong>Fine Gold (24K / Chhapawal)</strong> and <strong>Tejabi Gold (22K)</strong>.
                 </p>
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div class="p-4 bg-amber-50/60 rounded-xl border border-amber-200/80">
-                        <span class="text-lg font-bold text-amber-900 block">24 Karat (24K)</span>
-                        <span class="text-xs text-amber-700 font-semibold block mb-2">99.9% Pure Gold</span>
-                        <p class="text-xs text-slate-600">Softest form, intense yellow luster. Used for investment bullion coins, bars, and high-purity minting.</p>
+                        <span class="text-lg font-bold text-amber-900 block">Fine Gold (24K)</span>
+                        <span class="text-xs text-amber-700 font-semibold block mb-2">99.9% Pure (Chhapawal)</span>
+                        <p class="text-xs text-slate-600">Purest gold standard used for bullion coins, minting bars, and high-purity investment.</p>
                     </div>
                     <div class="p-4 bg-amber-50/60 rounded-xl border border-amber-200/80">
-                        <span class="text-lg font-bold text-amber-900 block">22 Karat (22K)</span>
+                        <span class="text-lg font-bold text-amber-900 block">Tejabi Gold (22K)</span>
                         <span class="text-xs text-amber-700 font-semibold block mb-2">91.67% Pure Gold</span>
-                        <p class="text-xs text-slate-600">Standard across South Asia, Middle East, and Asia for fine handcrafted wedding jewelry.</p>
+                        <p class="text-xs text-slate-600">Widely used in Nepal for traditional handcrafted jewelry, wedding ornaments, and bangles.</p>
                     </div>
                     <div class="p-4 bg-amber-50/60 rounded-xl border border-amber-200/80">
                         <span class="text-lg font-bold text-amber-900 block">18 Karat (18K)</span>
                         <span class="text-xs text-amber-700 font-semibold block mb-2">75.0% Pure Gold</span>
-                        <p class="text-xs text-slate-600">Ideal balance of durability and purity. Popular for diamond rings, luxury watches, and fine Western jewelry.</p>
+                        <p class="text-xs text-slate-600">Popular for diamond-studded rings, modern delicate jewelry, and lightweight wear.</p>
                     </div>
                     <div class="p-4 bg-amber-50/60 rounded-xl border border-amber-200/80">
                         <span class="text-lg font-bold text-amber-900 block">14 Karat (14K)</span>
                         <span class="text-xs text-amber-700 font-semibold block mb-2">58.33% Pure Gold</span>
-                        <p class="text-xs text-slate-600">Most common in the US and Europe for everyday durable jewelry resistant to bending and scratching.</p>
+                        <p class="text-xs text-slate-600">Durable alloy resistant to daily wear and scratching, standard for daily accessories.</p>
                     </div>
                 </div>
             </div>
 
             <!-- Weight Units Quick Matrix -->
             <div class="border-t border-slate-200 pt-6">
-                <h3 class="text-lg font-bold text-slate-800 mb-3">Precious Weight Conversion Table</h3>
+                <h3 class="text-lg font-bold text-slate-800 mb-3">Nepal Precious Metal Weight Units</h3>
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs text-slate-700">
                     <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
-                        <strong>1 Troy Ounce (t oz)</strong> = 31.1035 Grams
+                        <strong>1 Tola</strong> = 11.6638 Grams (g)
                     </div>
                     <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
-                        <strong>1 Tola (South Asia)</strong> = 11.6638 Grams
+                        <strong>1 Aana</strong> = 0.729 Grams (1/16 Tola)
                     </div>
                     <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
-                        <strong>1 Sovereign / Pawan</strong> = 8.00 Grams
+                        <strong>1 Lal / Ratti</strong> = 0.1166 Grams (1/100 Tola)
                     </div>
                     <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
-                        <strong>1 Kilogram (kg)</strong> = 32.1507 Troy Oz
+                        <strong>1 Troy Ounce</strong> = 31.1035 Grams
                     </div>
                 </div>
             </div>
@@ -684,41 +689,40 @@
         <!-- FAQ Accordion -->
         <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200 mb-8">
             <h2 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
-                <i class="fa-solid fa-circle-question text-amber-600"></i> Frequently Asked Questions
+                <i class="fa-solid fa-circle-question text-amber-600"></i> Frequently Asked Questions (Nepal Market)
             </h2>
 
             <div class="space-y-4">
                 <div class="border border-slate-200 rounded-xl overflow-hidden">
                     <button onclick="toggleFaq('faq1')" class="w-full flex justify-between items-center p-4 text-left font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 transition-colors">
-                        <span>What is the difference between spot price and retail gold price?</span>
+                        <span>How is Gold price calculated per Tola in Nepali Rupees (NPR)?</span>
                         <i class="fa-solid fa-chevron-down text-slate-400 text-sm" id="faq1-icon"></i>
                     </button>
                     <div id="faq1" class="p-4 text-sm text-slate-600 border-t border-slate-200 hidden bg-white leading-relaxed">
-                        The <strong>spot price</strong> is the wholesale market price for raw, unprocessed metal traded on major global commodity exchanges (such as COMEX or LBMA). Retail prices include additional costs such as minting fees, wastage/making charges, transportation, insurance, dealer premiums, and local sales taxes.
+                        Gold price per Tola is calculated based on international spot market rates converted into USD/NPR exchange rate plus import duties set by the Nepal Rastra Bank (NRB) and the Federation of Nepal Gold and Silver Dealers' Association (FENEGOSIDA). <br>
+                        <code class="bg-slate-100 px-2 py-1 rounded text-amber-900 block my-2 font-mono text-xs">
+                            1 Tola Gold Price (NPR) = (International Spot USD/Oz ÷ 31.1035 × 11.6638 × USD to NPR Exchange Rate) + Duty & Charges
+                        </code>
                     </div>
                 </div>
 
                 <div class="border border-slate-200 rounded-xl overflow-hidden">
                     <button onclick="toggleFaq('faq2')" class="w-full flex justify-between items-center p-4 text-left font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 transition-colors">
-                        <span>How is gold jewelry value calculated?</span>
+                        <span>What is the difference between Fine Gold and Tejabi Gold in Nepal?</span>
                         <i class="fa-solid fa-chevron-down text-slate-400 text-sm" id="faq2-icon"></i>
                     </button>
                     <div id="faq2" class="p-4 text-sm text-slate-600 border-t border-slate-200 hidden bg-white leading-relaxed">
-                        Jewelry value is calculated using the formula: <br>
-                        <code class="bg-slate-100 px-2 py-1 rounded text-amber-900 block my-2 font-mono text-xs">
-                            Total Price = (Weight in Grams × Purity % × Live Rate per Gram) + Making Charges + Tax
-                        </code>
-                        Our calculator automates this calculation for all karats and currencies instantly.
+                        <strong>Fine Gold (24K - Chhapawal)</strong> has a purity of 99.9% and carries the highest market value. <strong>Tejabi Gold (22K)</strong> has a purity of 91.67% and is typically made from recycled or alloyed gold used widely in handcrafted ornaments.
                     </div>
                 </div>
 
                 <div class="border border-slate-200 rounded-xl overflow-hidden">
                     <button onclick="toggleFaq('faq3')" class="w-full flex justify-between items-center p-4 text-left font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 transition-colors">
-                        <span>Why are Troy Ounces used instead of standard avoirdupois ounces?</span>
+                        <span>What are Making Charges (Jyala) and Wastage (Jhar) in Nepal?</span>
                         <i class="fa-solid fa-chevron-down text-slate-400 text-sm" id="faq3-icon"></i>
                     </button>
                     <div id="faq3" class="p-4 text-sm text-slate-600 border-t border-slate-200 hidden bg-white leading-relaxed">
-                        Precious metals are measured in <strong>Troy Ounces (t oz)</strong>, an ancient weighing system dating back to Roman times. One troy ounce equals approximately <strong>31.1035 grams</strong>, whereas a standard kitchen ounce (avoirdupois) equals 28.3495 grams.
+                        <strong>Making Charges (Jyala)</strong> is the artisan fee for crafting the ornament, while <strong>Wastage (Jhar)</strong> accounts for gold loss during melting and shaping. In Nepal, jewelers usually quote these as a percentage (typically 3%–10%) or a fixed rupee amount per Tola.
                     </div>
                 </div>
             </div>
@@ -731,7 +735,7 @@
         <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 relative">
             <div class="flex justify-between items-center border-b pb-3 mb-4">
                 <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">
-                    <i class="fa-solid fa-plus-circle text-amber-600"></i> Add Asset to Portfolio
+                    <i class="fa-solid fa-plus-circle text-amber-600"></i> Add Asset to Portfolio (NPR)
                 </h3>
                 <button onclick="closeAddAssetModal()" class="text-slate-400 hover:text-slate-600 text-lg">
                     <i class="fa-solid fa-xmark"></i>
@@ -741,7 +745,7 @@
             <div class="space-y-4 text-sm">
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Item Title / Label</label>
-                    <input type="text" id="modalItemTitle" placeholder="e.g. 1 Oz Gold American Eagle" class="w-full border border-slate-300 rounded-lg p-2.5">
+                    <input type="text" id="modalItemTitle" placeholder="e.g. 1 Tola Gold Ring" class="w-full border border-slate-300 rounded-lg p-2.5">
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
@@ -753,10 +757,10 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Purity (%)</label>
+                        <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Purity Grade</label>
                         <select id="modalPuritySelect" class="w-full border border-slate-300 rounded-lg p-2.5">
-                            <option value="0.999">24K / Fine 999 (99.9%)</option>
-                            <option value="0.9167">22K (91.67%)</option>
+                            <option value="0.999">24K Fine Gold (99.9%)</option>
+                            <option value="0.9167">22K Tejabi Gold (91.67%)</option>
                             <option value="0.750">18K (75.0%)</option>
                             <option value="0.5833">14K (58.33%)</option>
                             <option value="0.925">Sterling Silver (92.5%)</option>
@@ -766,11 +770,11 @@
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Weight (Grams)</label>
-                        <input type="number" id="modalWeightInput" value="31.1" step="any" class="w-full border border-slate-300 rounded-lg p-2.5">
+                        <input type="number" id="modalWeightInput" value="11.66" step="any" class="w-full border border-slate-300 rounded-lg p-2.5">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Total Buy Cost ($)</label>
-                        <input type="number" id="modalBuyCostInput" value="4000" step="any" class="w-full border border-slate-300 rounded-lg p-2.5">
+                        <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Total Buy Cost (NRs.)</label>
+                        <input type="number" id="modalBuyCostInput" value="150000" step="any" class="w-full border border-slate-300 rounded-lg p-2.5">
                     </div>
                 </div>
             </div>
@@ -802,49 +806,62 @@
     <script>
         const GOLD_API_KEY = 'goldapi-de2750523205fc2612a60bbc689b2f82-io';
 
-        // Spot Rates in USD per Troy Ounce (Baseline)
+        // Base Spot Rates in USD per Troy Ounce
         let baseRatesUSD = {
-            gold: 4394.00,
-            silver: 65.87,
-            platinum: 1761.90
+            gold: 2650.00,
+            silver: 31.50,
+            platinum: 980.00
         };
 
-        // Live Currency Exchange Rates relative to 1 USD
+        // Multi-Currency Configuration (Default: NPR)
         let currencyRates = {
-            USD: { symbol: '$', rate: 1.0 },
-            EUR: { symbol: '€', rate: 0.91 },
-            GBP: { symbol: '£', rate: 0.77 },
-            INR: { symbol: '₹', rate: 86.85 },
-            NPR: { symbol: 'NRs ', rate: 139.20 },
-            CAD: { symbol: '$', rate: 1.36 },
-            AUD: { symbol: '$', rate: 1.50 },
-            AED: { symbol: 'AED ', rate: 3.67 }
+            NPR: { symbol: 'NRs. ', rate: 139.20, name: 'Nepali Rupee' },
+            USD: { symbol: '$', rate: 1.0, name: 'US Dollar' },
+            INR: { symbol: '₹', rate: 86.5, name: 'Indian Rupee' },
+            EUR: { symbol: '€', rate: 0.92, name: 'Euro' },
+            GBP: { symbol: '£', rate: 0.79, name: 'British Pound' },
+            AED: { symbol: 'AED ', rate: 3.67, name: 'UAE Dirham' },
+            QAR: { symbol: 'QAR ', rate: 3.64, name: 'Qatari Riyal' },
+            SAR: { symbol: 'SAR ', rate: 3.75, name: 'Saudi Riyal' },
+            MYR: { symbol: 'RM ', rate: 4.42, name: 'Malaysian Ringgit' },
+            CAD: { symbol: 'CA$ ', rate: 1.38, name: 'Canadian Dollar' },
+            AUD: { symbol: 'A$ ', rate: 1.54, name: 'Australian Dollar' },
+            JPY: { symbol: '¥', rate: 152.0, name: 'Japanese Yen' }
         };
 
-        // Weight Conversion relative to 1 Gram
+        function getSelectedCurrency() {
+            const select = document.getElementById('currencySelect');
+            const code = select ? select.value : 'NPR';
+            return { code, ...(currencyRates[code] || currencyRates.NPR) };
+        }
+
+        function formatCurrency(amount, curr = getSelectedCurrency()) {
+            return `${curr.symbol}${amount.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        }
+
+        // Weight Unit Conversion relative to 1 Gram
         const weightUnitsInGrams = {
             gram: 1,
-            troy_oz: 31.1034768,
             tola: 11.6638038,
+            aana: 0.7289877,
+            lal: 0.116638,
+            troy_oz: 31.1034768,
             kg: 1000,
-            sovereign: 8.0,
-            dwt: 1.55517384,
-            grain: 0.06479891
+            sovereign: 8.0
         };
 
-        // Metal Purity Definitions
+        // Metal Purity Definitions (Focused on Nepal Market)
         const purityOptions = {
             gold: [
-                { name: '24K (99.9% Fine Gold)', purity: 0.999 },
-                { name: '22K (91.67% Crown Gold)', purity: 0.9167 },
-                { name: '20K (83.33% Gold)', purity: 0.8333 },
-                { name: '18K (75.0% Gold)', purity: 0.75 },
-                { name: '14K (58.33% Gold)', purity: 0.5833 },
-                { name: '10K (41.67% Gold)', purity: 0.4167 }
+                { name: '24K Fine Gold / Chhapawal (99.9%)', purity: 0.999 },
+                { name: '22K Tejabi Gold (91.67%)', purity: 0.9167 },
+                { name: '20K Gold (83.33%)', purity: 0.8333 },
+                { name: '18K Gold (75.0%)', purity: 0.75 },
+                { name: '14K Gold (58.33%)', purity: 0.5833 },
+                { name: '10K Gold (41.67%)', purity: 0.4167 }
             ],
             silver: [
                 { name: 'Fine Silver 999 (99.9%)', purity: 0.999 },
-                { name: 'Britannia Silver 958 (95.8%)', purity: 0.958 },
                 { name: 'Sterling Silver 925 (92.5%)', purity: 0.925 },
                 { name: 'Coin Silver 900 (90.0%)', purity: 0.900 },
                 { name: '800 Silver (80.0%)', purity: 0.800 }
@@ -857,8 +874,8 @@
         };
 
         let portfolioItems = [
-            { title: "1 Oz Gold Eagle Coin", metal: "gold", purity: 0.9167, weight: 31.1, buyPrice: 3850 },
-            { title: "10 Tola Fine Bar", metal: "gold", purity: 0.999, weight: 116.63, buyPrice: 15200 }
+            { title: "1 Tola 24K Gold Bar", metal: "gold", purity: 0.999, weight: 11.66, buyPrice: 160000 },
+            { title: "22K Tejabi Gold Chain", metal: "gold", purity: 0.9167, weight: 23.32, buyPrice: 290000 }
         ];
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -869,7 +886,7 @@
             renderPortfolio();
         });
 
-        // Populate Purity Dropdown based on selected metal
+        // Populate Purity Dropdown
         function setupPurityOptions(metal = 'gold') {
             const puritySelect = document.getElementById('puritySelect');
             if (!puritySelect) return;
@@ -903,23 +920,22 @@
                 : '24K';
 
             const weightInput = parseFloat(document.getElementById('weightInput').value) || 0;
-            const unit = document.getElementById('unitSelect').value || 'gram';
+            const unit = document.getElementById('unitSelect').value || 'tola';
             const unitLabel = document.getElementById('unitSelect').options[document.getElementById('unitSelect').selectedIndex].text.split('(')[0].trim();
 
-            const currencyKey = document.getElementById('currencySelect').value || 'USD';
-            const currency = currencyRates[currencyKey] || currencyRates.USD;
+            const curr = getSelectedCurrency();
 
-            // Base rate calculation per gram in selected currency
+            // Rate per gram in selected currency
             const spotUsdPerOz = baseRatesUSD[metal] || baseRatesUSD.gold;
             const spotUsdPerGram = spotUsdPerOz / weightUnitsInGrams.troy_oz;
-            const spotCurrPerGram = spotUsdPerGram * currency.rate;
+            const spotCurrPerGram = spotUsdPerGram * curr.rate;
 
             const weightInGrams = weightInput * (weightUnitsInGrams[unit] || 1);
             const fineWeightGrams = weightInGrams * purity;
 
             const baseMeltVal = fineWeightGrams * spotCurrPerGram;
 
-            // Making charge
+            // Making charge (Jyala)
             const makingValInput = parseFloat(document.getElementById('makingChargeInput').value) || 0;
             const makingType = document.getElementById('makingChargeType').value;
             let makingVal = 0;
@@ -927,7 +943,7 @@
             if (makingType === 'percent') {
                 makingVal = baseMeltVal * (makingValInput / 100);
             } else {
-                makingVal = makingValInput * currency.rate;
+                makingVal = makingValInput;
             }
 
             // Tax calculation
@@ -939,50 +955,54 @@
 
             // Update UI elements
             document.getElementById('calcMetalSummaryTitle').innerText = `${weightInput} ${unitLabel} ${purityText} ${metal.charAt(0).toUpperCase() + metal.slice(1)}`;
-            document.getElementById('totalValuationDisplay').innerText = `${currency.symbol}${totalVal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-            document.getElementById('ratePerGramSubtitle').innerText = `Effective rate: ${currency.symbol}${ratePerGram.toFixed(2)} / gram`;
-            document.getElementById('baseMeltValDisplay').innerText = `${currency.symbol}${baseMeltVal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-            document.getElementById('makingValDisplay').innerText = `+${currency.symbol}${makingVal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-            document.getElementById('taxValDisplay').innerText = `+${currency.symbol}${taxVal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('totalValuationDisplay').innerText = formatCurrency(totalVal, curr);
+            document.getElementById('ratePerGramSubtitle').innerText = `Effective rate: ${formatCurrency(ratePerGram, curr)} / gram`;
+            document.getElementById('baseMeltValDisplay').innerText = formatCurrency(baseMeltVal, curr);
+            document.getElementById('makingValDisplay').innerText = `+${formatCurrency(makingVal, curr)}`;
+            document.getElementById('taxValDisplay').innerText = `+${formatCurrency(taxVal, curr)}`;
             document.getElementById('fineWeightDisplay').innerText = `${fineWeightGrams.toFixed(2)} g`;
         }
 
         function updateAllPrices() {
-            const currKey = document.getElementById('currencySelect').value || 'USD';
-            const curr = currencyRates[currKey] || currencyRates.USD;
+            const curr = getSelectedCurrency();
+
+            // Dynamic UI updates for currency labels
+            document.querySelectorAll('.currencyCodeLabel').forEach(el => el.innerText = curr.code);
+            const flatOpt = document.getElementById('makingChargeFlatOpt');
+            if (flatOpt) flatOpt.innerText = curr.symbol.trim();
 
             // Gold Spot Calculations
             const gOz = baseRatesUSD.gold * curr.rate;
             const gGram = gOz / weightUnitsInGrams.troy_oz;
             const gTola = gGram * weightUnitsInGrams.tola;
 
-            document.getElementById('goldSpotOunce').innerText = `${curr.symbol}${gOz.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-            document.getElementById('goldSpotGram').innerText = `${curr.symbol}${gGram.toFixed(2)}`;
-            document.getElementById('goldSpotTola').innerText = `${curr.symbol}${gTola.toFixed(2)}`;
-            document.getElementById('gold22kRate').innerText = `${curr.symbol}${(gGram * 0.9167).toFixed(2)}/g`;
-            document.getElementById('gold18kRate').innerText = `${curr.symbol}${(gGram * 0.75).toFixed(2)}/g`;
-            document.getElementById('gold14kRate').innerText = `${curr.symbol}${(gGram * 0.5833).toFixed(2)}/g`;
+            document.getElementById('goldSpotOunce').innerText = formatCurrency(gOz, curr);
+            document.getElementById('goldSpotGram').innerText = formatCurrency(gGram, curr);
+            document.getElementById('goldSpotTola').innerText = formatCurrency(gTola, curr);
+            document.getElementById('gold22kRate').innerText = `${formatCurrency(gGram * 0.9167, curr)}/g`;
+            document.getElementById('gold18kRate').innerText = `${formatCurrency(gGram * 0.75, curr)}/g`;
+            document.getElementById('gold14kRate').innerText = `${formatCurrency(gGram * 0.5833, curr)}/g`;
 
             // Silver Spot Calculations
             const sOz = baseRatesUSD.silver * curr.rate;
             const sGram = sOz / weightUnitsInGrams.troy_oz;
             const sTola = sGram * weightUnitsInGrams.tola;
 
-            document.getElementById('silverSpotOunce').innerText = `${curr.symbol}${sOz.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-            document.getElementById('silverSpotGram').innerText = `${curr.symbol}${sGram.toFixed(2)}`;
-            document.getElementById('silverSpotTola').innerText = `${curr.symbol}${sTola.toFixed(2)}`;
-            document.getElementById('silver999Rate').innerText = `${curr.symbol}${sGram.toFixed(2)}/g`;
-            document.getElementById('silver925Rate').innerText = `${curr.symbol}${(sGram * 0.925).toFixed(2)}/g`;
-            document.getElementById('silver800Rate').innerText = `${curr.symbol}${(sGram * 0.800).toFixed(2)}/g`;
+            document.getElementById('silverSpotOunce').innerText = formatCurrency(sOz, curr);
+            document.getElementById('silverSpotGram').innerText = formatCurrency(sGram, curr);
+            document.getElementById('silverSpotTola').innerText = formatCurrency(sTola, curr);
+            document.getElementById('silver999Rate').innerText = `${formatCurrency(sGram, curr)}/g`;
+            document.getElementById('silver925Rate').innerText = `${formatCurrency(sGram * 0.925, curr)}/g`;
+            document.getElementById('silver800Rate').innerText = `${formatCurrency(sGram * 0.800, curr)}/g`;
 
             // Platinum Spot Calculations
             const pOz = baseRatesUSD.platinum * curr.rate;
             const pGram = pOz / weightUnitsInGrams.troy_oz;
             const pTola = pGram * weightUnitsInGrams.tola;
 
-            document.getElementById('platinumSpotOunce').innerText = `${curr.symbol}${pOz.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-            document.getElementById('platinumSpotGram').innerText = `${curr.symbol}${pGram.toFixed(2)}`;
-            document.getElementById('platinumSpotTola').innerText = `${curr.symbol}${pTola.toFixed(2)}`;
+            document.getElementById('platinumSpotOunce').innerText = formatCurrency(pOz, curr);
+            document.getElementById('platinumSpotGram').innerText = formatCurrency(pGram, curr);
+            document.getElementById('platinumSpotTola').innerText = formatCurrency(pTola, curr);
 
             const ratio = baseRatesUSD.gold / baseRatesUSD.silver;
             document.getElementById('goldSilverRatio').innerText = ratio.toFixed(2);
@@ -1015,15 +1035,14 @@
             if (!tbody) return;
 
             const grossWeight = parseFloat(document.getElementById('purityGrossWeight').value) || 0;
-            const currKey = document.getElementById('currencySelect').value || 'USD';
-            const curr = currencyRates[currKey] || currencyRates.USD;
+            const curr = getSelectedCurrency();
 
             const pureGramRateCurr = (baseRatesUSD.gold / weightUnitsInGrams.troy_oz) * curr.rate;
-            document.getElementById('matrixSpotRef').innerText = `${curr.symbol}${pureGramRateCurr.toFixed(2)} / gram`;
+            document.getElementById('matrixSpotRef').innerText = `${formatCurrency(pureGramRateCurr, curr)} / gram`;
 
             const karats = [
-                { name: '24 Karat (Pure Gold)', purity: 0.999 },
-                { name: '22 Karat (Crown Gold)', purity: 0.9167 },
+                { name: '24 Karat Fine Gold (Chhapawal)', purity: 0.999 },
+                { name: '22 Karat Tejabi Gold', purity: 0.9167 },
                 { name: '20 Karat Gold', purity: 0.8333 },
                 { name: '18 Karat Gold', purity: 0.7500 },
                 { name: '14 Karat Gold', purity: 0.5833 },
@@ -1043,7 +1062,7 @@
                     <td class="px-4 py-3 text-slate-600">${(k.purity * 100).toFixed(2)}%</td>
                     <td class="px-4 py-3 font-semibold text-emerald-700">${fineWeight.toFixed(2)} g</td>
                     <td class="px-4 py-3 text-slate-400">${alloyWeight.toFixed(2)} g</td>
-                    <td class="px-4 py-3 font-extrabold text-right text-amber-900">${curr.symbol}${meltVal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td class="px-4 py-3 font-extrabold text-right text-amber-900">${formatCurrency(meltVal, curr)}</td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -1051,12 +1070,11 @@
 
         function calculateScrap() {
             const metal = document.getElementById('scrapMetal').value || 'gold';
-            const purity = parseFloat(document.getElementById('scrapPurity').value) || 0.5833;
+            const purity = parseFloat(document.getElementById('scrapPurity').value) || 0.9167;
             const weightGrams = parseFloat(document.getElementById('scrapWeight').value) || 0;
-            const payoutPct = parseFloat(document.getElementById('scrapPayoutPercent').value) || 80;
+            const payoutPct = parseFloat(document.getElementById('scrapPayoutPercent').value) || 85;
 
-            const currKey = document.getElementById('currencySelect').value || 'USD';
-            const curr = currencyRates[currKey] || currencyRates.USD;
+            const curr = getSelectedCurrency();
 
             const spotOz = baseRatesUSD[metal] || baseRatesUSD.gold;
             const spotGramCurr = (spotOz / weightUnitsInGrams.troy_oz) * curr.rate;
@@ -1066,19 +1084,18 @@
             const cashOffer = fullMeltVal * (payoutPct / 100);
             const deduction = fullMeltVal - cashOffer;
 
-            document.getElementById('scrapCashOfferDisplay').innerText = `${curr.symbol}${cashOffer.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-            document.getElementById('scrapPayoutSubtitle').innerText = `Based on ${payoutPct}% payout of full market melt value.`;
-            document.getElementById('scrapFullMeltVal').innerText = `${curr.symbol}${fullMeltVal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('scrapCashOfferDisplay').innerText = formatCurrency(cashOffer, curr);
+            document.getElementById('scrapPayoutSubtitle').innerText = `Based on ${payoutPct}% payout of full market melt value in ${curr.code}.`;
+            document.getElementById('scrapFullMeltVal').innerText = formatCurrency(fullMeltVal, curr);
             document.getElementById('scrapFineWeight').innerText = `${fineWeight.toFixed(2)} g`;
-            document.getElementById('scrapDeductionVal').innerText = `-${curr.symbol}${deduction.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('scrapDeductionVal').innerText = `-${formatCurrency(deduction, curr)}`;
         }
 
         function renderPortfolio() {
             const tbody = document.getElementById('portfolioTableBody');
             if (!tbody) return;
 
-            const currKey = document.getElementById('currencySelect').value || 'USD';
-            const curr = currencyRates[currKey] || currencyRates.USD;
+            const curr = getSelectedCurrency();
 
             tbody.innerHTML = '';
             let totalVal = 0;
@@ -1092,7 +1109,7 @@
                     const spotGramCurr = (spotOz / weightUnitsInGrams.troy_oz) * curr.rate;
                     const fineWeight = item.weight * item.purity;
                     const currentVal = fineWeight * spotGramCurr;
-                    const costCurr = item.buyPrice * curr.rate;
+                    const costCurr = item.buyPrice;
                     const gainLoss = currentVal - costCurr;
                     const gainPct = costCurr > 0 ? (gainLoss / costCurr) * 100 : 0;
 
@@ -1105,10 +1122,10 @@
                         <td class="px-4 py-3 font-semibold text-slate-800">${item.title}</td>
                         <td class="px-4 py-3 capitalize text-slate-600">${item.metal} (${(item.purity * 100).toFixed(1)}%)</td>
                         <td class="px-4 py-3 text-slate-600">${item.weight} g</td>
-                        <td class="px-4 py-3 text-slate-600">${curr.symbol}${costCurr.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                        <td class="px-4 py-3 font-bold text-slate-800">${curr.symbol}${currentVal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                        <td class="px-4 py-3 text-slate-600">${formatCurrency(costCurr, curr)}</td>
+                        <td class="px-4 py-3 font-bold text-slate-800">${formatCurrency(currentVal, curr)}</td>
                         <td class="px-4 py-3 font-bold ${gainLoss >= 0 ? 'text-emerald-600' : 'text-rose-600'}">
-                            ${gainLoss >= 0 ? '+' : ''}${curr.symbol}${gainLoss.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} (${gainPct.toFixed(2)}%)
+                            ${gainLoss >= 0 ? '+' : ''}${formatCurrency(gainLoss, curr)} (${gainPct.toFixed(2)}%)
                         </td>
                         <td class="px-4 py-3 text-right">
                             <button onclick="deletePortfolioItem(${index})" class="text-slate-400 hover:text-rose-600 p-1">
@@ -1123,11 +1140,11 @@
             const totalGain = totalVal - totalCost;
             const totalGainPct = totalCost > 0 ? (totalGain / totalCost) * 100 : 0;
 
-            document.getElementById('portTotalVal').innerText = `${curr.symbol}${totalVal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-            document.getElementById('portTotalCost').innerText = `${curr.symbol}${totalCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('portTotalVal').innerText = formatCurrency(totalVal, curr);
+            document.getElementById('portTotalCost').innerText = formatCurrency(totalCost, curr);
             
             const gainEl = document.getElementById('portTotalGain');
-            gainEl.innerText = `${totalGain >= 0 ? '+' : ''}${curr.symbol}${totalGain.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} (${totalGainPct.toFixed(2)}%)`;
+            gainEl.innerText = `${totalGain >= 0 ? '+' : ''}${formatCurrency(totalGain, curr)} (${totalGainPct.toFixed(2)}%)`;
             gainEl.className = `text-2xl font-extrabold ${totalGain >= 0 ? 'text-emerald-600' : 'text-rose-600'}`;
         }
 
@@ -1164,16 +1181,16 @@
             if (icon) icon.classList.add('fa-spin');
 
             try {
-                // Fetch live fiat exchange rates relative to USD
+                // Fetch USD exchange rates for all currencies
                 const exRes = await fetch('https://open.er-api.com/v6/latest/USD');
                 if (exRes.ok) {
                     const exData = await exRes.json();
                     if (exData && exData.rates) {
-                        for (let code in currencyRates) {
+                        Object.keys(currencyRates).forEach(code => {
                             if (exData.rates[code]) {
                                 currencyRates[code].rate = exData.rates[code];
                             }
-                        }
+                        });
                     }
                 }
 
@@ -1200,7 +1217,6 @@
                         console.warn(`GoldAPI fetch failed for ${symbol}, trying fallback...`, e);
                     }
 
-                    // Fallback to free public endpoint if needed
                     try {
                         const res = await fetch(`https://api.gold-api.com/price/${symbol}`);
                         if (res.ok) {
@@ -1234,13 +1250,13 @@
 
                 const now = new Date();
                 if (statusEl) {
-                    statusEl.innerHTML = `<span class="text-emerald-600 font-semibold"><i class="fa-solid fa-circle-check mr-1"></i>GoldAPI.io Live Sync</span> (${now.toLocaleTimeString()})`;
+                    statusEl.innerHTML = `<span class="text-emerald-600 font-semibold"><i class="fa-solid fa-circle-check mr-1"></i>Live NPR Sync</span> (${now.toLocaleTimeString()})`;
                 }
             } catch (err) {
                 console.warn('Live API sync fallback to benchmark market rates', err);
                 const now = new Date();
                 if (statusEl) {
-                    statusEl.innerHTML = `<span class="text-amber-600 font-semibold">Real Spot Benchmark</span> (${now.toLocaleTimeString()})`;
+                    statusEl.innerHTML = `<span class="text-amber-600 font-semibold">Nepal Market Benchmark</span> (${now.toLocaleTimeString()})`;
                 }
             } finally {
                 if (icon) icon.classList.remove('fa-spin');
@@ -1262,9 +1278,10 @@
         }
 
         function copyValuationSummary() {
+            const curr = getSelectedCurrency();
             const title = document.getElementById('calcMetalSummaryTitle').innerText;
             const total = document.getElementById('totalValuationDisplay').innerText;
-            const summary = `Nisulka Metal Quote:\nItem: ${title}\nTotal Valuation: ${total}\nGenerated via Nisulka Tools.`;
+            const summary = `Nisulka Metal Quote (${curr.code}):\nItem: ${title}\nTotal Valuation: ${total}\nGenerated via Nisulka Tools.`;
 
             const dummy = document.createElement('textarea');
             document.body.appendChild(dummy);
