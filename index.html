@@ -2,82 +2,27 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Nisulka Tools — Free Online Tools</title>
+    <meta name="description" content="Nisulka Tools provides free online tools for text, images, PDFs, conversions and everyday digital tasks.">
+    <meta name="robots" content="index, follow">
 
-    <meta
-        name="description"
-        content="Nisulka Tools provides free online tools for text, images, PDFs, conversions and everyday digital tasks."
-    >
+    <link rel="canonical" href="https://apps.laxmannepal.com.np/Nisulka-Tools/">
 
-    <meta
-        name="robots"
-        content="index, follow"
-    >
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Nisulka Tools — Free Online Tools">
+    <meta property="og:description" content="Simple, useful and free online tools for everyday digital tasks.">
+    <meta property="og:url" content="https://apps.laxmannepal.com.np/Nisulka-Tools/">
 
-    <link
-        rel="canonical"
-        href="https://apps.laxmannepal.com.np/Nisulka-Tools/"
-    >
+    <link rel="stylesheet" href="assets/css/variables.css">
+    <link rel="stylesheet" href="assets/css/global.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="assets/css/footer.css">
+    <link rel="stylesheet" href="assets/css/home.css">
 
-    <meta
-        property="og:type"
-        content="website"
-    >
-
-    <meta
-        property="og:title"
-        content="Nisulka Tools — Free Online Tools"
-    >
-
-    <meta
-        property="og:description"
-        content="Simple, useful and free online tools for everyday digital tasks."
-    >
-
-    <meta
-        property="og:url"
-        content="https://apps.laxmannepal.com.np/Nisulka-Tools/"
-    >
-
-    <link
-        rel="stylesheet"
-        href="assets/css/variables.css"
-    >
-
-    <link
-        rel="stylesheet"
-        href="assets/css/global.css"
-    >
-
-    <link
-        rel="stylesheet"
-        href="assets/css/components.css"
-    >
-
-    <link
-        rel="stylesheet"
-        href="assets/css/header.css"
-    >
-
-    <link
-        rel="stylesheet"
-        href="assets/css/footer.css"
-    >
-
-    <link
-        rel="stylesheet"
-        href="assets/css/home.css"
-    >
-
-    <script
-        type="application/ld+json"
-    >
+    <script type="application/ld+json">
     {
         "@context": "https://schema.org",
         "@type": "WebSite",
@@ -93,385 +38,136 @@
     <!-- EXACT NISULKA HEADER -->
     <div id="site-header-mount"></div>
 
-
     <main>
 
         <!-- HERO -->
         <section class="home-hero">
-
             <div class="home-container home-hero-inner">
-
                 <div class="hero-content">
-
-                    <span class="hero-eyebrow">
-                        FREE ONLINE TOOLS
-                    </span>
-
-                    <h1>
-                        Simple tools for
-                        <span>everyday tasks.</span>
-                    </h1>
-
+                    <span class="hero-eyebrow">FREE ONLINE TOOLS</span>
+                    <h1>Simple tools for <span>everyday tasks.</span></h1>
                     <p class="hero-description">
-                        Fast, useful and easy-to-use online tools
-                        for text, images, files, conversions and more.
+                        Fast, useful and easy-to-use online tools for text, images, files, conversions and more.
                     </p>
-
                 </div>
-
 
                 <!-- SEARCH -->
                 <div class="home-search-wrapper">
-
-                    <label
-                        for="tool-search"
-                        class="sr-only"
-                    >
-                        Search tools
-                    </label>
-
+                    <label for="tool-search" class="sr-only">Search tools</label>
                     <div class="home-search">
-
-                        <span
-                            class="search-icon"
-                            aria-hidden="true"
-                        >
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                            >
-                                <circle
-                                    cx="11"
-                                    cy="11"
-                                    r="7"
-                                ></circle>
-
-                                <path
-                                    d="m20 20-4-4"
-                                ></path>
+                        <span class="search-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="7"></circle>
+                                <path d="m20 20-4-4"></path>
                             </svg>
                         </span>
-
-                        <input
-                            type="search"
-                            id="tool-search"
-                            placeholder="Search tools..."
-                            autocomplete="off"
-                            spellcheck="false"
-                        >
-
-                        <kbd>
-                            /
-                        </kbd>
-
+                        <input type="search" id="tool-search" placeholder="Search tools..." autocomplete="off" spellcheck="false">
+                        <kbd>/</kbd>
                     </div>
-
                 </div>
-
             </div>
-
         </section>
-
 
         <!-- CATEGORY NAVIGATION -->
         <section class="categories-section">
-
             <div class="home-container">
-
                 <div class="section-heading compact">
-
                     <div>
-                        <span class="section-label">
-                            BROWSE
-                        </span>
-
-                        <h2>
-                            Explore categories
-                        </h2>
+                        <span class="section-label">BROWSE</span>
+                        <h2>Explore categories</h2>
                     </div>
-
                 </div>
 
-
-                <div
-                    id="category-list"
-                    class="category-list"
-                    aria-label="Tool categories"
-                >
+                <div id="category-list" class="category-list" aria-label="Tool categories">
                     <!-- Generated automatically -->
                 </div>
-
             </div>
-
         </section>
 
-
-        <!-- FEATURED -->
-        <section
-            id="popular"
-            class="tools-section featured-section"
-        >
-
+        <!-- ALL TOOLS / AUTOMATIC CATEGORY GROUPS -->
+        <section id="all-tools-section" class="tools-section all-tools-section">
             <div class="home-container">
-
                 <div class="section-heading">
-
                     <div>
-
-                        <span class="section-label">
-                            POPULAR
-                        </span>
-
-                        <h2>
-                            Popular tools
-                        </h2>
-
-                        <p>
-                            Tools people use most.
-                        </p>
-
+                        <span class="section-label">TOOLBOX</span>
+                        <h2>All tools</h2>
+                        <p>Explore everything available on Nisulka Tools.</p>
                     </div>
 
+                    <div id="tool-count" class="tool-count">0 tools</div>
                 </div>
 
-
-                <div
-                    id="featured-tools"
-                    class="tools-grid"
-                >
-                    <!-- Generated automatically -->
+                <div id="all-tools" class="tools-grid">
+                    <!-- Categories and tools generated automatically -->
                 </div>
-
             </div>
-
         </section>
-
-
-        <!-- ALL TOOLS -->
-        <section
-            id="all-tools-section"
-            class="tools-section all-tools-section"
-        >
-
-            <div class="home-container">
-
-                <div class="section-heading">
-
-                    <div>
-
-                        <span class="section-label">
-                            TOOLBOX
-                        </span>
-
-                        <h2>
-                            All tools
-                        </h2>
-
-                        <p>
-                            Explore everything available on Nisulka Tools.
-                        </p>
-
-                    </div>
-
-
-                    <div
-                        id="tool-count"
-                        class="tool-count"
-                    >
-                        0 tools
-                    </div>
-
-                </div>
-
-
-                <div
-                    id="all-tools"
-                    class="tools-grid"
-                >
-                    <!-- Generated automatically -->
-                </div>
-
-            </div>
-
-        </section>
-
 
         <!-- ABOUT -->
         <section class="about-section">
-
             <div class="home-container">
-
                 <div class="about-box">
-
                     <div class="about-content">
-
-                        <span class="section-label">
-                            ABOUT NISULKA TOOLS
-                        </span>
-
-                        <h2>
-                            Useful tools without unnecessary complexity.
-                        </h2>
-
+                        <span class="section-label">ABOUT NISULKA TOOLS</span>
+                        <h2>Useful tools without unnecessary complexity.</h2>
                         <p>
-                            Nisulka Tools is a growing collection of
-                            practical online utilities designed to make
-                            everyday digital tasks faster and easier.
+                            Nisulka Tools is a growing collection of practical online utilities designed to make everyday digital tasks faster and easier.
                         </p>
-
                     </div>
-
                 </div>
-
             </div>
-
         </section>
-
 
         <!-- FAQ -->
         <section class="faq-section">
-
             <div class="home-container faq-container">
-
                 <div class="section-heading faq-heading">
-
-                    <span class="section-label">
-                        FAQ
-                    </span>
-
-                    <h2>
-                        Frequently asked questions
-                    </h2>
-
+                    <span class="section-label">FAQ</span>
+                    <h2>Frequently asked questions</h2>
                 </div>
-
 
                 <div class="faq-list">
-
                     <article class="tool-faq-item">
-
-                        <button
-                            type="button"
-                            class="tool-faq-question"
-                            aria-expanded="false"
-                        >
-                            <span>
-                                What is Nisulka Tools?
-                            </span>
-
-                            <span
-                                class="faq-plus"
-                                aria-hidden="true"
-                            >
-                                +
-                            </span>
+                        <button type="button" class="tool-faq-question" aria-expanded="false">
+                            <span>What is Nisulka Tools?</span>
+                            <span class="faq-plus" aria-hidden="true">+</span>
                         </button>
-
-                        <div
-                            class="tool-faq-answer"
-                            hidden
-                        >
-                            <p>
-                                Nisulka Tools is a collection of free
-                                online utilities for common digital
-                                tasks such as working with text,
-                                images, files and conversions.
-                            </p>
+                        <div class="tool-faq-answer" hidden>
+                            <p>Nisulka Tools is a collection of free online utilities for common digital tasks such as working with text, images, files and conversions.</p>
                         </div>
-
                     </article>
 
-
                     <article class="tool-faq-item">
-
-                        <button
-                            type="button"
-                            class="tool-faq-question"
-                            aria-expanded="false"
-                        >
-                            <span>
-                                Are the tools free?
-                            </span>
-
-                            <span
-                                class="faq-plus"
-                                aria-hidden="true"
-                            >
-                                +
-                            </span>
+                        <button type="button" class="tool-faq-question" aria-expanded="false">
+                            <span>Are the tools free?</span>
+                            <span class="faq-plus" aria-hidden="true">+</span>
                         </button>
-
-                        <div
-                            class="tool-faq-answer"
-                            hidden
-                        >
-                            <p>
-                                Nisulka Tools is designed to provide
-                                useful online utilities without
-                                requiring users to install software.
-                            </p>
+                        <div class="tool-faq-answer" hidden>
+                            <p>Nisulka Tools is designed to provide useful online utilities without requiring users to install software.</p>
                         </div>
-
                     </article>
 
-
                     <article class="tool-faq-item">
-
-                        <button
-                            type="button"
-                            class="tool-faq-question"
-                            aria-expanded="false"
-                        >
-                            <span>
-                                Do I need to install anything?
-                            </span>
-
-                            <span
-                                class="faq-plus"
-                                aria-hidden="true"
-                            >
-                                +
-                            </span>
+                        <button type="button" class="tool-faq-question" aria-expanded="false">
+                            <span>Do I need to install anything?</span>
+                            <span class="faq-plus" aria-hidden="true">+</span>
                         </button>
-
-                        <div
-                            class="tool-faq-answer"
-                            hidden
-                        >
-                            <p>
-                                No. Nisulka Tools is designed to work
-                                directly in your web browser.
-                            </p>
+                        <div class="tool-faq-answer" hidden>
+                            <p>No. Nisulka Tools is designed to work directly in your web browser.</p>
                         </div>
-
                     </article>
-
                 </div>
-
             </div>
-
         </section>
 
     </main>
 
-
     <!-- EXACT NISULKA FOOTER -->
     <div id="site-footer-mount"></div>
 
-
-    <script
-        src="assets/js/header.js"
-    ></script>
-
-    <script
-        src="assets/js/footer.js"
-    ></script>
-
-    <script
-        src="assets/js/home.js"
-    ></script>
+    <script src="assets/js/header.js"></script>
+    <script src="assets/js/footer.js"></script>
+    <script src="assets/js/home.js"></script>
 
 </body>
 </html>
