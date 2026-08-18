@@ -62,7 +62,7 @@
 .tool-faq-question[aria-expanded="true"] .faq-plus { transform:rotate(45deg); }
 .tool-faq-answer { padding:0 40px 21px 0; }
 .tool-faq-answer p { margin:0; color:var(--text-secondary,#64748b); line-height:1.7; }
-.tools-empty,.tools-loading { grid-column:1/-1; padding:60px 20px; text-align:center; border:1px dashed var(--border-color,#cbd5e1); border-radius:20px; color:var(--text-secondary,#64748b); }
+.tools-empty { grid-column:1/-1; padding:60px 20px; text-align:center; border:1px dashed var(--border-color,#cbd5e1); border-radius:20px; color:var(--text-secondary,#64748b); }
 .tools-empty h3 { margin:10px 0 6px; color:var(--text-primary,#0f172a); }
 .tools-empty p { margin:0 0 20px; }
 .tool-skeleton { min-height:260px; border-radius:18px; background:linear-gradient(90deg,transparent,rgba(148,163,184,.12),transparent); background-size:200% 100%; animation:skeleton-loading 1.4s infinite; border:1px solid var(--border-color,#e2e8f0); }
