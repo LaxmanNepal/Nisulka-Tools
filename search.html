@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Search Tools — Nisulka Tools</title>
+  <meta name="description" content="Search all free online tools available on Nisulka Tools.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://apps.laxmannepal.com.np/Nisulka-Tools/search.html">
+  <link rel="stylesheet" href="assets/css/variables.css">
+  <link rel="stylesheet" href="assets/css/global.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/css/header.css">
+  <link rel="stylesheet" href="assets/css/footer.css">
+  <link rel="stylesheet" href="assets/css/home.css">
+  <style>
+    .search-page { padding: 58px 0 80px; min-height: 60vh; }
+    .search-page-head { max-width: 760px; margin: 0 auto 34px; text-align: center; }
+    .search-page-head h1 { margin: 10px 0; font-size: clamp(2rem, 5vw, 3.4rem); letter-spacing: -.045em; }
+    .search-page-head p { margin: 0; color: var(--text-secondary,#64748b); }
+    .search-page-box { max-width: 760px; margin: 28px auto 42px; }
+    .search-page-input { width: 100%; min-height: 60px; box-sizing: border-box; padding: 0 20px; border: 1px solid var(--border-color,#e2e8f0); border-radius: 16px; background: var(--bg-surface,#fff); color: var(--text-primary,#0f172a); font: inherit; font-size: 1rem; outline: none; box-shadow: 0 10px 30px rgba(15,23,42,.06); }
+    .search-page-input:focus { border-color: var(--primary-color,#2563eb); box-shadow: 0 10px 30px rgba(37,99,235,.10); }
+    .search-results-meta { margin-bottom: 18px; color: var(--text-secondary,#64748b); font-size: .9rem; }
+    .search-results { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:18px; }
+    .search-result-card { min-width:0; }
+    .search-result-card a { display:flex; min-height:190px; box-sizing:border-box; flex-direction:column; align-items:center; justify-content:flex-start; padding:22px 14px 18px; border:1px solid var(--border-color,#e2e8f0); border-radius:18px; background:var(--bg-surface,#fff); text-decoration:none; color:inherit; text-align:center; transition:.2s ease; }
+    .search-result-card a:hover { transform:translateY(-4px); border-color:var(--primary-color,#2563eb); box-shadow:0 14px 34px rgba(15,23,42,.10); }
+    .search-result-logo { width:92px; height:92px; object-fit:contain; border-radius:16px; margin-bottom:16px; }
+    .search-result-title { margin:0; font-size:.98rem; line-height:1.35; font-weight:700; overflow-wrap:anywhere; }
+    .search-empty { grid-column:1/-1; padding:60px 20px; text-align:center; border:1px dashed var(--border-color,#cbd5e1); border-radius:20px; color:var(--text-secondary,#64748b); }
+    @media (max-width:1100px){.search-results{grid-template-columns:repeat(4,minmax(0,1fr));}}
+    @media (max-width:900px){.search-results{grid-template-columns:repeat(3,minmax(0,1fr));}}
+    @media (max-width:680px){.search-page{padding:42px 0 60px}.search-results{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.search-result-card a{min-height:175px;padding:18px 10px}.search-result-logo{width:78px;height:78px;margin-bottom:13px}.search-result-title{font-size:.9rem;}}
+  </style>
+</head>
+<body>
+  <div id="site-header-mount"></div>
+
+  <main class="search-page">
+    <div class="home-container">
+      <header class="search-page-head">
+        <span class="section-label">NISULKA TOOLS</span>
+        <h1>Search all tools</h1>
+        <p>Find the tool you need from the complete Nisulka Tools collection.</p>
+      </header>
+
+      <div class="search-page-box">
+        <label class="sr-only" for="search-page-input">Search all tools</label>
+        <input id="search-page-input" class="search-page-input" type="search" placeholder="Search tools..." autocomplete="off" spellcheck="false">
+      </div>
+
+      <div id="search-results-meta" class="search-results-meta"></div>
+      <div id="search-results" class="search-results" aria-live="polite"></div>
+    </div>
+  </main>
+
+  <div id="site-footer-mount"></div>
+
+  <script src="assets/js/header.js"></script>
+  <script src="assets/js/footer.js"></script>
+  <script src="assets/js/search.js"></script>
+</body>
+</html>
