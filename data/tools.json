@@ -48,6 +48,19 @@
     "status": "active"
   },
   {
+    "name": "Nepali News",
+    "slug": "nepali-news",
+    "path": "nepali-tools/nepali-news",
+    "description": "Free online Nepali News tool.",
+    "category": "Nepali Tools",
+    "categorySlug": "nepali-tools",
+    "logo": "/Nisulka-Tools/tools/nepali-tools/nepali-news/logo.jpg",
+    "url": "/Nisulka-Tools/tools/nepali-tools/nepali-news/",
+    "keywords": [],
+    "featured": false,
+    "status": "active"
+  },
+  {
     "name": "Currency Converter",
     "slug": "currency-converter",
     "path": "currency-converter",
