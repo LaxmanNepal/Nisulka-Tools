@@ -60,28 +60,28 @@ function inferCategory(tool) {
 
 function setupSearch() {
     if (!searchInput) return;
-    const update = event => {
-        searchQuery = event.target.value.trim().toLowerCase();
-        renderCategories();
-        renderTools();
+
+    // The homepage search is a navigation entry point, not the search UI itself.
+    const openSearchPage = event => {
+        event.preventDefault();
+        const query = searchInput.value.trim();
+        const destination = query
+            ? `search.html?q=${encodeURIComponent(query)}`
+            : "search.html";
+        window.location.href = destination;
     };
-    searchInput.addEventListener("input", update);
-    searchInput.addEventListener("search", update);
-    const query = new URLSearchParams(location.search).get("q");
-    if (query) {
-        searchInput.value = query;
-        searchQuery = query.trim().toLowerCase();
-    }
+
+    searchInput.addEventListener("focus", openSearchPage, { once: true });
+    searchInput.addEventListener("click", openSearchPage, { once: true });
+    searchInput.addEventListener("keydown", event => {
+        if (event.key === "Enter") openSearchPage(event);
+    });
 }
 
 document.addEventListener("keydown", event => {
     if (event.key === "/" && !isTypingTarget(event.target)) {
         event.preventDefault();
-        searchInput?.focus();
-    }
-    if (event.key === "Escape" && document.activeElement === searchInput) {
-        clearFilters();
-        searchInput.blur();
+        window.location.href = "search.html";
     }
 });
 
@@ -137,7 +137,7 @@ function createToolCard(tool) {
     const name = escapeHTML(tool.name || "Unnamed Tool");
     const url = safeURL(tool.url || "#");
     const logo = safeURL(tool.logo || "");
-    return `<article class="tool-card"><a class="tool-card-link" href="${url}" aria-label="Open ${name}"><div class="tool-card-icon-wrapper">${logo ? `<img class="tool-card-logo" src="${logo}" alt="${name} logo" loading="lazy" width="92" height="92" onerror="this.onerror=null; this.src=''; this.classList.add('tool-logo-broken');">` : ""}<span class="tool-card-logo-fallback" aria-hidden="true">◇</span></div><h4 class="tool-card-title">${name}</h4></a></article>`;
+    return `<article class="tool-card"><a class="tool-card-link" href="${url}" aria-label="Open ${name}"><div class="tool-card-icon-wrapper">${logo ? `<img class="tool-card-logo" src="${logo}" alt="${name} logo" loading="lazy" width="92" height="92" onerror="this.onerror=null; this.classList.add('tool-logo-broken');">` : ""}<span class="tool-card-logo-fallback" aria-hidden="true">◇</span></div><h4 class="tool-card-title">${name}</h4></a></article>`;
 }
 
 function safeURL(value) {
@@ -187,5 +187,4 @@ function setupFAQ() {
 function escapeHTML(value) {
     return String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;").replace(/'/g, "&#039;");
 }
-
 function escapeAttribute(value) { return escapeHTML(value); }
