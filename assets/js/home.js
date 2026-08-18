@@ -3,7 +3,6 @@
 /* =========================================================
    NISULKA TOOLS HOMEPAGE
    Categories are generated automatically from tools.json.
-   The homepage does not require manually maintained category HTML.
    ========================================================= */
 
 const TOOLS_DATA_URL = "data/tools.json";
@@ -14,7 +13,6 @@ let searchQuery = "";
 
 const searchInput = document.getElementById("tool-search");
 const categoryList = document.getElementById("category-list");
-const featuredToolsContainer = document.getElementById("featured-tools");
 const allToolsContainer = document.getElementById("all-tools");
 const toolCount = document.getElementById("tool-count");
 
@@ -40,7 +38,6 @@ async function initializeHomepage() {
         await loadTools();
         setupSearch();
         renderCategories();
-        renderFeaturedTools();
         renderCategorySections();
         setupFAQ();
     } catch (error) {
@@ -103,7 +100,7 @@ function setupSearch() {
 
     const update = event => {
         searchQuery = event.target.value.trim().toLowerCase();
-        renderFeaturedTools();
+        renderCategories();
         renderCategorySections();
     };
 
@@ -130,7 +127,6 @@ document.addEventListener("keydown", event => {
         searchQuery = "";
         activeCategory = "All";
         renderCategories();
-        renderFeaturedTools();
         renderCategorySections();
         searchInput.blur();
     }
@@ -187,11 +183,11 @@ function renderCategories() {
 
     categoryList.innerHTML = `
         <button type="button" class="category-button ${activeCategory === "All" ? "is-active" : ""}" data-category="All" aria-pressed="${activeCategory === "All"}">
-            All Tools <span class="category-count">${allTools.length}</span>
+            All Tools <span class="category-count">${getSearchFilteredTools().length}</span>
         </button>
         ${categories.map(([category, count]) => `
             <button type="button" class="category-button ${activeCategory === category ? "is-active" : ""}" data-category="${escapeAttribute(category)}" aria-pressed="${activeCategory === category}">
-                ${escapeHTML(category)} <span class="category-count">${count}</span>
+                ${escapeHTML(category)} <span class="category-count">${searchQuery ? getSearchFilteredTools().filter(tool => tool.category === category).length : count}</span>
             </button>
         `).join("")}
     `;
@@ -200,26 +196,9 @@ function renderCategories() {
         button.addEventListener("click", () => {
             activeCategory = button.dataset.category || "All";
             renderCategories();
-            renderFeaturedTools();
             renderCategorySections();
         });
     });
-}
-
-function renderFeaturedTools() {
-    if (!featuredToolsContainer) return;
-
-    const section = document.getElementById("popular");
-    const featured = getVisibleTools().filter(tool => tool.featured === true).slice(0, 8);
-
-    if (!featured.length) {
-        featuredToolsContainer.innerHTML = "";
-        if (section) section.hidden = true;
-        return;
-    }
-
-    if (section) section.hidden = false;
-    featuredToolsContainer.innerHTML = featured.map(createToolCard).join("");
 }
 
 function renderCategorySections() {
@@ -263,9 +242,11 @@ function renderCategorySections() {
                         View all <span aria-hidden="true">→</span>
                     </button>
                 </div>
+
                 <div class="tools-grid">
                     ${visibleTools.map(createToolCard).join("")}
                 </div>
+
                 ${remaining > 0 ? `<div class="category-more">+${remaining} more ${escapeHTML(category)} tools</div>` : ""}
             </section>
         `;
@@ -275,7 +256,6 @@ function renderCategorySections() {
         button.addEventListener("click", () => {
             activeCategory = button.dataset.viewCategory || "All";
             renderCategories();
-            renderFeaturedTools();
             renderCategorySections();
             document.getElementById("all-tools-section")?.scrollIntoView({ behavior: "smooth", block: "start" });
         });
@@ -350,18 +330,15 @@ function clearSearch() {
     searchQuery = "";
     activeCategory = "All";
     renderCategories();
-    renderFeaturedTools();
     renderCategorySections();
 }
 
 function showLoadingState() {
     const skeletons = Array.from({ length: 4 }, () => `<div class="tool-skeleton"></div>`).join("");
-    if (featuredToolsContainer) featuredToolsContainer.innerHTML = skeletons;
     if (allToolsContainer) allToolsContainer.innerHTML = skeletons;
 }
 
 function showErrorState() {
-    if (featuredToolsContainer) featuredToolsContainer.innerHTML = "";
     if (allToolsContainer) {
         allToolsContainer.innerHTML = `
             <div class="tools-empty">
@@ -389,7 +366,7 @@ function escapeHTML(value) {
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
+        .replace(/\"/g, "&quot;")
         .replace(/'/g, "&#039;");
 }
 
