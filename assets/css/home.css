@@ -32,24 +32,17 @@
 .category-count { display:inline-flex; align-items:center; justify-content:center; min-width:22px; height:22px; padding:0 6px; border-radius:999px; font-size:.72rem; background:rgba(127,127,127,.12); }
 .category-button.is-active .category-count { background:rgba(255,255,255,.2); }
 
-/* Tool cards: intentionally minimal — logo + title only. */
-.tools-grid { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:18px; }
-.tool-card { min-width:0; }
-.tool-card-link { display:flex; flex-direction:column; align-items:center; justify-content:flex-start; min-height:210px; height:100%; padding:24px 16px 20px; text-align:center; text-decoration:none; background:var(--bg-surface,#fff); border:1px solid var(--border-color,#e2e8f0); border-radius:var(--home-card-radius); color:inherit; transition:transform .22s,box-shadow .22s,border-color .22s; }
-.tool-card-link:hover { transform:translateY(-4px); border-color:color-mix(in srgb,var(--primary-color,#2563eb) 35%,var(--border-color,#e2e8f0)); box-shadow:0 16px 38px rgba(15,23,42,.09); }
-.tool-card-link:focus-visible { outline:3px solid color-mix(in srgb,var(--primary-color,#2563eb) 30%,transparent); outline-offset:3px; }
-.tool-card-icon-wrapper { display:flex; align-items:center; justify-content:center; width:116px; height:116px; margin-bottom:18px; overflow:hidden; border-radius:24px; background:var(--bg-surface-secondary,#f8fafc); border:1px solid var(--border-color,#e2e8f0); }
-.tool-card-logo { display:block; width:92px; height:92px; object-fit:contain; border-radius:16px; }
-.tool-card-logo-fallback { display:flex; align-items:center; justify-content:center; width:92px; height:92px; font-size:2rem; color:var(--text-muted,#94a3b8); }
-.tool-card-title { width:100%; margin:0; font-size:1rem; font-weight:700; line-height:1.35; color:var(--text-primary,#0f172a); overflow:hidden; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; }
-.home-category-block { margin-bottom:56px; scroll-margin-top:90px; }
-.home-category-block:last-child { margin-bottom:0; }
-.home-category-heading { display:flex; align-items:flex-end; justify-content:space-between; gap:20px; margin-bottom:20px; }
-.home-category-heading h3 { margin:7px 0 0; font-size:clamp(1.4rem,2.5vw,1.9rem); letter-spacing:-.03em; }
-.home-category-heading p { margin:5px 0 0; font-size:.88rem; color:var(--text-secondary,#64748b); }
-.category-view-all { border:0; background:transparent; color:var(--primary-color,#2563eb); font:inherit; font-size:.88rem; font-weight:700; cursor:pointer; white-space:nowrap; }
-.category-view-all:hover { text-decoration:underline; }
-.category-more { margin-top:14px; text-align:center; font-size:.84rem; color:var(--text-secondary,#64748b); }
+/* One flat grid: homepage shows every tool together. */
+.tools-grid { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:18px; align-items:stretch; }
+.tool-card { min-width:0; display:flex; }
+.tool-card-link { display:flex; flex:1; flex-direction:column; align-items:center; justify-content:flex-start; min-width:0; min-height:190px; padding:22px 14px 18px; text-align:center; text-decoration:none; background:var(--bg-surface,#fff); border:1px solid var(--border-color,#e2e8f0); border-radius:var(--home-card-radius); color:inherit; transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease; overflow:hidden; }
+.tool-card-link:hover { transform:translateY(-4px); border-color:var(--primary-color,#2563eb); box-shadow:0 14px 34px rgba(15,23,42,.10); }
+.tool-card-link:focus-visible { outline:3px solid rgba(37,99,235,.28); outline-offset:3px; }
+.tool-card-icon-wrapper { display:flex; align-items:center; justify-content:center; flex:0 0 100px; width:100px; height:100px; margin-bottom:16px; overflow:hidden; border-radius:22px; background:var(--bg-surface-secondary,#f8fafc); border:1px solid var(--border-color,#e2e8f0); }
+.tool-card-logo { display:block; width:82px; height:82px; object-fit:contain; border-radius:14px; }
+.tool-card-logo-broken { display:none; }
+.tool-card-logo-fallback { display:flex; align-items:center; justify-content:center; width:82px; height:82px; font-size:1.8rem; color:var(--text-muted,#94a3b8); }
+.tool-card-title { width:100%; margin:0; font-size:.98rem; font-weight:700; line-height:1.35; color:var(--text-primary,#0f172a); overflow-wrap:anywhere; }
 .tool-count { flex:0 0 auto; padding:7px 12px; border-radius:999px; font-size:.8rem; font-weight:600; color:var(--text-secondary,#64748b); background:var(--bg-surface-secondary,#f8fafc); border:1px solid var(--border-color,#e2e8f0); }
 .about-box { padding:42px; border-radius:24px; background:var(--bg-surface-secondary,#f8fafc); border:1px solid var(--border-color,#e2e8f0); }
 .about-content { max-width:720px; }
@@ -67,11 +60,11 @@
 .tools-empty { grid-column:1/-1; padding:60px 20px; text-align:center; border:1px dashed var(--border-color,#cbd5e1); border-radius:20px; color:var(--text-secondary,#64748b); }
 .tools-empty h3 { margin:10px 0 6px; color:var(--text-primary,#0f172a); }
 .tools-empty p { margin:0 0 20px; }
-.tool-skeleton { min-height:210px; border-radius:18px; background:linear-gradient(90deg,transparent,rgba(148,163,184,.12),transparent); background-size:200% 100%; animation:skeleton-loading 1.4s infinite; border:1px solid var(--border-color,#e2e8f0); }
+.tool-skeleton { min-height:190px; border-radius:18px; background:linear-gradient(90deg,transparent,rgba(148,163,184,.12),transparent); background-size:200% 100%; animation:skeleton-loading 1.4s infinite; border:1px solid var(--border-color,#e2e8f0); }
 @keyframes skeleton-loading { from{background-position:200% 0} to{background-position:-200% 0} }
 .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
 @media (max-width:1100px){ .tools-grid{grid-template-columns:repeat(4,minmax(0,1fr));} }
 @media (max-width:900px){ .tools-grid{grid-template-columns:repeat(3,minmax(0,1fr));} }
-@media (max-width:780px){ .home-container{width:min(calc(100% - 28px),var(--home-max-width));}.home-hero{padding:54px 0 38px}.hero-content h1{font-size:clamp(2.25rem,10vw,3.5rem)}.hero-description{font-size:1rem}.tools-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.tool-card-link{min-height:190px;padding:20px 12px}.tool-card-icon-wrapper{width:96px;height:96px;border-radius:20px}.tool-card-logo{width:74px;height:74px}.section-heading,.home-category-heading{align-items:flex-start;flex-direction:column;gap:12px}.about-box{padding:28px 22px} }
-@media (max-width:480px){ .home-container{width:calc(100% - 24px)}.home-hero{padding-top:42px}.home-search{min-height:56px}.home-search kbd{display:none}.category-list{flex-wrap:nowrap;overflow-x:auto;padding-bottom:5px;scrollbar-width:none}.category-list::-webkit-scrollbar{display:none}.category-button{flex:0 0 auto}.tools-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.tool-card-link{min-height:170px;padding:18px 10px}.tool-card-icon-wrapper{width:82px;height:82px;margin-bottom:14px;border-radius:18px}.tool-card-logo{width:64px;height:64px;border-radius:12px}.tool-card-title{font-size:.9rem}.categories-section,.tools-section,.about-section,.faq-section{padding:42px 0} }
+@media (max-width:680px){ .home-container{width:min(calc(100% - 28px),var(--home-max-width));}.home-hero{padding:54px 0 38px}.hero-content h1{font-size:clamp(2.25rem,10vw,3.5rem)}.hero-description{font-size:1rem}.tools-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.tool-card-link{min-height:176px;padding:18px 10px}.tool-card-icon-wrapper{width:88px;height:88px;flex-basis:88px;border-radius:18px}.tool-card-logo,.tool-card-logo-fallback{width:70px;height:70px}.tool-card-title{font-size:.9rem}.section-heading{align-items:flex-start;flex-direction:column;gap:12px}.about-box{padding:28px 22px} }
+@media (max-width:480px){ .home-container{width:calc(100% - 24px)}.home-hero{padding-top:42px}.home-search{min-height:56px}.home-search kbd{display:none}.category-list{flex-wrap:nowrap;overflow-x:auto;padding-bottom:5px;scrollbar-width:none}.category-list::-webkit-scrollbar{display:none}.category-button{flex:0 0 auto}.tools-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.tool-card-link{min-height:160px;padding:15px 8px}.tool-card-icon-wrapper{width:76px;height:76px;flex-basis:76px;margin-bottom:12px;border-radius:16px}.tool-card-logo,.tool-card-logo-fallback{width:60px;height:60px}.tool-card-title{font-size:.86rem}.categories-section,.tools-section,.about-section,.faq-section{padding:42px 0} }
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;}}
