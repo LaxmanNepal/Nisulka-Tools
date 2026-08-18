@@ -19,6 +19,8 @@ Nisulka Tools
 ├── Quality layer
 │   ├── scripts/validate_tools.py
 │   └── seo/
+├── Browser QA layer
+│   └── tests/e2e/site.spec.mjs
 ├── Admin layer
 │   └── admin/
 └── Edge/backend layer
@@ -38,7 +40,8 @@ A tool is not complete because its HTML exists. A production-ready tool must:
 7. Use the shared header and footer.
 8. Be registered in `data/tools.json`.
 9. Pass automated architecture validation.
-10. Avoid secrets and unsafe execution.
+10. Pass browser smoke tests.
+11. Avoid secrets and unsafe execution.
 
 ## Automation pipeline
 
@@ -46,6 +49,8 @@ A tool is not complete because its HTML exists. A production-ready tool must:
 Commit / Pull Request
         ↓
 Tool Health Validator
+        ↓
+Browser E2E Smoke Tests
         ↓
 SEO Audit
         ↓
@@ -56,6 +61,23 @@ GitHub Actions Summary + Artifacts
 Deploy
 ```
 
+## Browser QA
+
+The Playwright smoke suite starts a local static server and opens the homepage plus every tool containing `tools/{slug}/index.html`.
+
+It checks:
+
+- page navigation succeeds
+- title exists
+- one visible H1 exists
+- shared header mount exists and actually mounts content
+- shared footer mount exists and actually mounts content
+- no horizontal overflow at the test viewport
+- no uncaught page errors
+- no failed local resource requests
+
+The suite is intentionally a smoke test, not a replacement for tool-specific functional tests. Tool-specific interactions should be added when a tool has meaningful inputs, uploads, downloads, or stateful behavior.
+
 ## Design rule
 
 Do not solve the same infrastructure problem separately inside every tool. Put reusable behavior in shared assets or automation.
@@ -64,7 +86,7 @@ Do not solve the same infrastructure problem separately inside every tool. Put r
 
 Planned modules can be added without changing the tool contract:
 
-- browser smoke tests
+- tool-specific functional browser tests
 - broken-link scanner
 - performance budget checks
 - accessibility checks
