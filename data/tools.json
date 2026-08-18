@@ -1,60 +1,11 @@
 [
   {
-    "name": "Currency Converter",
-    "slug": "currency-converter",
-    "description": "Free online Currency Converter tool.",
-    "category": "Other Tools",
-    "logo": "/Nisulka-Tools/tools/currency-converter/logo.jpg",
-    "url": "/Nisulka-Tools/tools/currency-converter/",
-    "keywords": [],
-    "featured": false,
-    "status": "active"
-  },
-  {
-    "name": "Draw App",
-    "slug": "draw-app",
-    "description": "Free online Draw App tool.",
-    "category": "Other Tools",
-    "logo": "/Nisulka-Tools/tools/draw-app/logo.jpg",
-    "url": "/Nisulka-Tools/tools/draw-app/",
-    "keywords": [],
-    "featured": false,
-    "status": "active"
-  },
-  {
-    "name": "Instagram Image Downloader",
-    "slug": "instagram-image-downloader",
-    "description": "Free online Instagram Image Downloader tool.",
-    "category": "Other Tools",
-    "logo": "/Nisulka-Tools/tools/instagram-image-downloader/logo.jpg",
-    "url": "/Nisulka-Tools/tools/instagram-image-downloader/",
-    "keywords": [],
-    "featured": false,
-    "status": "active"
-  },
-  {
-    "name": "Text to Handwriting Converter",
-    "slug": "text-to-handwriting",
-    "description": "Convert typed text into a handwritten-style image online for free. Customize handwriting, ink color, paper style, spacing and alignment.",
-    "category": "Text Tools",
-    "logo": "/Nisulka-Tools/tools/text-to-handwriting/logo.jpg",
-    "url": "/Nisulka-Tools/tools/text-to-handwriting/",
-    "keywords": [
-      "text to handwriting",
-      "handwriting generator",
-      "handwritten text",
-      "handwriting converter",
-      "handwritten notes",
-      "text to handwritten image"
-    ],
-    "featured": true,
-    "status": "active"
-  },
-  {
     "name": "YouTube Channel Analytics",
     "slug": "youtube-channel-analysis",
+    "path": "youtube-channel-analysis",
     "description": "Deep YouTube channel analytics, engagement breakdown, monetization estimator, tag extractor, and upload schedule analyzer.",
     "category": "Analytics",
+    "categorySlug": "analytics",
     "logo": "/Nisulka-Tools/tools/youtube-channel-analysis/logo.jpg",
     "url": "/Nisulka-Tools/tools/youtube-channel-analysis/",
     "keywords": [
@@ -71,10 +22,64 @@
     "status": "active"
   },
   {
+    "name": "Gold Price In Nepal",
+    "slug": "gold-price-in-nepal",
+    "path": "nepali-tools/gold-price-in-nepal",
+    "description": "Free online Gold Price In Nepal tool.",
+    "category": "Nepali Tools",
+    "categorySlug": "nepali-tools",
+    "logo": "/Nisulka-Tools/tools/nepali-tools/gold-price-in-nepal/logo.jpg",
+    "url": "/Nisulka-Tools/tools/nepali-tools/gold-price-in-nepal/",
+    "keywords": [],
+    "featured": false,
+    "status": "active"
+  },
+  {
+    "name": "Currency Converter",
+    "slug": "currency-converter",
+    "path": "currency-converter",
+    "description": "Free online Currency Converter tool.",
+    "category": "Other Tools",
+    "categorySlug": "other-tools",
+    "logo": "/Nisulka-Tools/tools/currency-converter/logo.jpg",
+    "url": "/Nisulka-Tools/tools/currency-converter/",
+    "keywords": [],
+    "featured": false,
+    "status": "active"
+  },
+  {
+    "name": "Draw App",
+    "slug": "draw-app",
+    "path": "draw-app",
+    "description": "Free online Draw App tool.",
+    "category": "Other Tools",
+    "categorySlug": "other-tools",
+    "logo": "/Nisulka-Tools/tools/draw-app/logo.jpg",
+    "url": "/Nisulka-Tools/tools/draw-app/",
+    "keywords": [],
+    "featured": false,
+    "status": "active"
+  },
+  {
+    "name": "Instagram Image Downloader",
+    "slug": "instagram-image-downloader",
+    "path": "instagram-image-downloader",
+    "description": "Free online Instagram Image Downloader tool.",
+    "category": "Other Tools",
+    "categorySlug": "other-tools",
+    "logo": "/Nisulka-Tools/tools/instagram-image-downloader/logo.jpg",
+    "url": "/Nisulka-Tools/tools/instagram-image-downloader/",
+    "keywords": [],
+    "featured": false,
+    "status": "active"
+  },
+  {
     "name": "Youtube Thumbnail Downloader",
     "slug": "youtube-thumbnail-downloader",
+    "path": "youtube-thumbnail-downloader",
     "description": "Free online Youtube Thumbnail Downloader tool.",
     "category": "Other Tools",
+    "categorySlug": "other-tools",
     "logo": "/Nisulka-Tools/tools/youtube-thumbnail-downloader/logo.jpg",
     "url": "/Nisulka-Tools/tools/youtube-thumbnail-downloader/",
     "keywords": [],
@@ -84,12 +89,34 @@
   {
     "name": "Youtube Title Generator",
     "slug": "youtube-title-generator",
+    "path": "youtube-title-generator",
     "description": "Free online Youtube Title Generator tool.",
     "category": "Other Tools",
+    "categorySlug": "other-tools",
     "logo": "/Nisulka-Tools/tools/youtube-title-generator/logo.jpg",
     "url": "/Nisulka-Tools/tools/youtube-title-generator/",
     "keywords": [],
     "featured": false,
+    "status": "active"
+  },
+  {
+    "name": "Text to Handwriting Converter",
+    "slug": "text-to-handwriting",
+    "path": "text-to-handwriting",
+    "description": "Convert typed text into a handwritten-style image online for free. Customize handwriting, ink color, paper style, spacing and alignment.",
+    "category": "Text Tools",
+    "categorySlug": "text-tools",
+    "logo": "/Nisulka-Tools/tools/text-to-handwriting/logo.jpg",
+    "url": "/Nisulka-Tools/tools/text-to-handwriting/",
+    "keywords": [
+      "text to handwriting",
+      "handwriting generator",
+      "handwritten text",
+      "handwriting converter",
+      "handwritten notes",
+      "text to handwritten image"
+    ],
+    "featured": true,
     "status": "active"
   }
 ]

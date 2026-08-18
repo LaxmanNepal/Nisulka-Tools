@@ -1,0 +1,46 @@
+[
+  {
+    "name": "Analytics",
+    "slug": "analytics",
+    "description": "Free online analytics for everyday tasks.",
+    "url": "/Nisulka-Tools/categories/analytics/",
+    "toolCount": 1,
+    "tools": [
+      "youtube-channel-analysis"
+    ]
+  },
+  {
+    "name": "Nepali Tools",
+    "slug": "nepali-tools",
+    "description": "Free online nepali tools for everyday tasks.",
+    "url": "/Nisulka-Tools/categories/nepali-tools/",
+    "toolCount": 1,
+    "tools": [
+      "gold-price-in-nepal"
+    ]
+  },
+  {
+    "name": "Other Tools",
+    "slug": "other-tools",
+    "description": "Free online other tools for everyday tasks.",
+    "url": "/Nisulka-Tools/categories/other-tools/",
+    "toolCount": 5,
+    "tools": [
+      "currency-converter",
+      "draw-app",
+      "instagram-image-downloader",
+      "youtube-thumbnail-downloader",
+      "youtube-title-generator"
+    ]
+  },
+  {
+    "name": "Text Tools",
+    "slug": "text-tools",
+    "description": "Free online text tools for everyday tasks.",
+    "url": "/Nisulka-Tools/categories/text-tools/",
+    "toolCount": 1,
+    "tools": [
+      "text-to-handwriting"
+    ]
+  }
+]
