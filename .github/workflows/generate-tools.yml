@@ -18,19 +18,49 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Generate tools.json
+      - name: Generate tools.json and categories.json
         run: |
           python3 <<'PY'
-          import os
           import json
+          import os
           import re
+          from collections import OrderedDict
 
           TOOLS_DIR = "tools"
-          OUTPUT_FILE = "data/tools.json"
+          TOOLS_OUTPUT = "data/tools.json"
+          CATEGORIES_OUTPUT = "data/categories.json"
+
+          def slugify(value):
+              value = str(value or "").strip().lower()
+              value = re.sub(r"[^a-z0-9]+", "-", value)
+              return value.strip("-") or "other-tools"
+
+          def get_meta(html, name):
+              patterns = [
+                  rf'<meta\s+name=["\']{re.escape(name)}["\']\s+content=["\'](.*?)["\']',
+                  rf'<meta\s+content=["\'](.*?)["\']\s+name=["\']{re.escape(name)}["\']'
+              ]
+
+              for pattern in patterns:
+                  match = re.search(pattern, html, re.IGNORECASE | re.DOTALL)
+                  if match:
+                      return match.group(1).strip()
+              return ""
+
+          def category_from_folder(tool_dir):
+              relative = os.path.relpath(tool_dir, TOOLS_DIR)
+              parts = relative.split(os.sep)
+
+              if len(parts) >= 2:
+                  folder = parts[0]
+                  words = folder.replace("_", " ").replace("-", " ").strip()
+                  if words:
+                      return words.title()
+
+              return ""
 
           tools = []
 
@@ -38,133 +68,153 @@ jobs:
               print("No tools directory found.")
               raise SystemExit(0)
 
-          for slug in sorted(os.listdir(TOOLS_DIR)):
+          for root, dirs, files in os.walk(TOOLS_DIR):
+              dirs.sort()
+              files.sort()
 
-              tool_dir = os.path.join(TOOLS_DIR, slug)
-
-              if not os.path.isdir(tool_dir):
+              if "index.html" not in files:
                   continue
 
-              index_file = os.path.join(tool_dir, "index.html")
-              logo_file = os.path.join(tool_dir, "logo.jpg")
+              index_file = os.path.join(root, "index.html")
+              logo_file = os.path.join(root, "logo.jpg")
 
-              if not os.path.isfile(index_file):
-                  print(f"Skipping {slug}: index.html not found")
-                  continue
+              relative = os.path.relpath(root, TOOLS_DIR)
+              parts = relative.split(os.sep)
+              slug = parts[-1]
 
               if not os.path.isfile(logo_file):
-                  print(f"Skipping {slug}: logo.jpg not found")
+                  print(f"Skipping {relative}: logo.jpg not found")
                   continue
 
               with open(index_file, "r", encoding="utf-8") as f:
                   html = f.read()
 
-              def get_meta(name):
-
-                  patterns = [
-                      rf'<meta\s+name=["\']{re.escape(name)}["\']\s+content=["\'](.*?)["\']',
-                      rf'<meta\s+content=["\'](.*?)["\']\s+name=["\']{re.escape(name)}["\']'
-                  ]
-
-                  for pattern in patterns:
-
-                      match = re.search(
-                          pattern,
-                          html,
-                          re.IGNORECASE | re.DOTALL
-                      )
-
-                      if match:
-                          return match.group(1).strip()
-
-                  return ""
-
-              name = get_meta("tool:name")
-              description = get_meta("tool:description")
-              category = get_meta("tool:category")
-              featured = get_meta("tool:featured").lower()
-              keywords = get_meta("tool:keywords")
-              status = get_meta("tool:status").lower()
+              name = get_meta(html, "tool:name")
+              description = get_meta(html, "tool:description")
+              category = get_meta(html, "tool:category")
+              featured = get_meta(html, "tool:featured").lower()
+              keywords = get_meta(html, "tool:keywords")
+              status = get_meta(html, "tool:status").lower()
 
               if not status:
                   status = "active"
 
               if status == "hidden":
-                  print(f"Skipping hidden tool: {slug}")
+                  print(f"Skipping hidden tool: {relative}")
                   continue
 
               if not name:
-                  name = slug.replace("-", " ").title()
+                  name = slug.replace("-", " ").replace("_", " ").title()
 
               if not description:
                   description = f"Free online {name} tool."
 
+              # Priority: explicit tool metadata > first-level folder category > Other Tools
+              if not category:
+                  category = category_from_folder(root)
+
               if not category:
                   category = "Other Tools"
 
-              featured_value = featured in [
-                  "true",
-                  "1",
-                  "yes"
-              ]
+              featured_value = featured in {"true", "1", "yes"}
 
-              keyword_list = []
+              keyword_list = [
+                  keyword.strip()
+                  for keyword in keywords.split(",")
+                  if keyword.strip()
+              ] if keywords else []
 
-              if keywords:
-                  keyword_list = [
-                      keyword.strip()
-                      for keyword in keywords.split(",")
-                      if keyword.strip()
-                  ]
+              web_path = "/".join(parts)
 
               tool = {
                   "name": name,
                   "slug": slug,
+                  "path": relative.replace(os.sep, "/"),
                   "description": description,
                   "category": category,
-                  "logo": f"/Nisulka-Tools/tools/{slug}/logo.jpg",
-                  "url": f"/Nisulka-Tools/tools/{slug}/",
+                  "categorySlug": slugify(category),
+                  "logo": f"/Nisulka-Tools/tools/{web_path}/logo.jpg",
+                  "url": f"/Nisulka-Tools/tools/{web_path}/",
                   "keywords": keyword_list,
                   "featured": featured_value,
                   "status": status
               }
 
               tools.append(tool)
+              print(f"Added: {name} [{category}] -> {relative}")
 
-              print(f"Added: {name}")
+          tools.sort(key=lambda item: (item["category"].lower(), item["name"].lower()))
+
+          categories_map = OrderedDict()
+
+          for tool in tools:
+              category = tool["category"]
+              category_slug = tool["categorySlug"]
+
+              if category not in categories_map:
+                  categories_map[category] = {
+                      "name": category,
+                      "slug": category_slug,
+                      "description": f"Free online {category.lower()} for everyday tasks.",
+                      "url": f"/Nisulka-Tools/categories/{category_slug}/",
+                      "toolCount": 0,
+                      "tools": []
+                  }
+
+              categories_map[category]["toolCount"] += 1
+              categories_map[category]["tools"].append(tool["slug"])
+
+          categories = list(categories_map.values())
 
           os.makedirs("data", exist_ok=True)
 
-          with open(
-              OUTPUT_FILE,
-              "w",
-              encoding="utf-8"
-          ) as f:
+          with open(TOOLS_OUTPUT, "w", encoding="utf-8") as f:
+              json.dump(tools, f, ensure_ascii=False, indent=2)
+              f.write("\n")
 
-              json.dump(
-                  tools,
-                  f,
-                  ensure_ascii=False,
-                  indent=2
-              )
-
+          with open(CATEGORIES_OUTPUT, "w", encoding="utf-8") as f:
+              json.dump(categories, f, ensure_ascii=False, indent=2)
               f.write("\n")
 
           print()
-          print(f"Generated {OUTPUT_FILE}")
+          print(f"Generated {TOOLS_OUTPUT}")
+          print(f"Generated {CATEGORIES_OUTPUT}")
           print(f"Total tools: {len(tools)}")
+          print(f"Total categories: {len(categories)}")
           PY
 
-      - name: Commit generated tools.json
+      - name: Show generated summary
+        run: |
+          python3 - <<'PY'
+          import json
+
+          with open("data/tools.json", encoding="utf-8") as f:
+              tools = json.load(f)
+
+          with open("data/categories.json", encoding="utf-8") as f:
+              categories = json.load(f)
+
+          print("======================================")
+          print("NISULKA TOOLS DATA")
+          print("======================================")
+          print(f"Tools: {len(tools)}")
+          print(f"Categories: {len(categories)}")
+          print()
+
+          for category in categories:
+              print(f"- {category['name']}: {category['toolCount']} tools")
+          PY
+
+      - name: Commit generated data
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add data/tools.json
+          git add data/tools.json data/categories.json
 
           if git diff --cached --quiet; then
-            echo "No changes to tools.json"
+            echo "No generated data changes"
           else
-            git commit -m "chore: update tools.json"
+            git commit -m "chore: update tools and categories data"
             git push
           fi
