@@ -1,0 +1,1184 @@
+<!-- Official Nisulka CSS Styles -->
+<link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/variables.css">
+<link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/global.css">
+<link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/components.css">
+<link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/header.css">
+<link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/footer.css">
+<link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/tool.css">
+
+<!-- Tailwind CSS CDN & Fonts -->
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+    /* Tool-specific Scoped Styles */
+    .nisulka-tool-container {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        overflow-x: hidden;
+    }
+
+    :root {
+        --primary-rose: #e11d48;
+        --primary-rose-hover: #be123c;
+    }
+
+    /* Mobile-optimized smooth touch scrolling */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { 
+        -ms-overflow-style: none; 
+        scrollbar-width: none; 
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .category-pill {
+        flex-shrink: 0;
+        padding: 10px 18px;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        transition: all 0.2s ease;
+        border: 1px solid #e2e8f0;
+        background: #ffffff;
+        color: #64748b;
+        white-space: nowrap;
+        cursor: pointer;
+        min-height: 42px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        touch-action: manipulation;
+    }
+
+    .category-pill:active {
+        transform: scale(0.96);
+    }
+
+    .category-pill.active {
+        background: var(--primary-rose);
+        color: white;
+        border-color: var(--primary-rose);
+        box-shadow: 0 4px 12px rgba(225, 29, 72, 0.3);
+    }
+
+    .reels-container {
+        height: 80vh;
+        max-height: 680px;
+        overflow-y: scroll;
+        scroll-snap-type: y mandatory;
+        scrollbar-width: none;
+        border-radius: 1.5rem;
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-y;
+    }
+
+    .reels-container::-webkit-scrollbar {
+        display: none;
+    }
+
+    .reel-card {
+        height: 100%;
+        scroll-snap-align: start;
+        position: relative;
+        overflow: hidden;
+        border-radius: 1.5rem;
+    }
+
+    .news-card-img-wrapper {
+        position: relative;
+        height: 180px;
+        overflow: hidden;
+        background-color: #0f172a;
+    }
+
+    @media (min-width: 640px) {
+        .news-card-img-wrapper {
+            height: 210px;
+        }
+    }
+
+    .news-card-img-wrapper img {
+        transition: transform 0.4s ease;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .news-card:hover img {
+        transform: scale(1.05);
+    }
+
+    /* Breaking Ticker Marquee */
+    @keyframes marquee {
+        0% { transform: translateX(0%); }
+        100% { transform: translateX(-50%); }
+    }
+
+    .ticker-wrapper {
+        display: flex;
+        width: max-content;
+        animation: marquee 28s linear infinite;
+    }
+
+    .ticker-wrapper:hover {
+        animation-play-state: paused;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-in {
+        animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .spinner-loader {
+        width: 28px;
+        height: 28px;
+        border: 3px solid #f1f5f9;
+        border-top: 3px solid var(--primary-rose);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+</style>
+
+<!-- OFFICIAL NISULKA HEADER MOUNT -->
+<div id="site-header-mount"></div>
+
+<!-- MAIN TOOL CONTENT WRAPPER -->
+<main class="nisulka-tool-container flex-grow max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 w-full">
+    
+    <!-- Breadcrumb Nav -->
+    <nav class="flex text-[11px] sm:text-xs font-bold text-slate-500 mb-3 sm:mb-4 overflow-x-auto no-scrollbar" aria-label="Breadcrumb">
+        <ol class="inline-flex items-center space-x-1 whitespace-nowrap">
+            <li class="inline-flex items-center">
+                <a href="https://apps.laxmannepal.com.np/Nisulka-Tools/" class="hover:text-rose-600 transition-colors">Home</a>
+            </li>
+            <li>
+                <div class="flex items-center">
+                    <svg class="w-3.5 h-3.5 text-slate-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
+                    <a href="#" class="ml-1 hover:text-rose-600 transition-colors">Tools</a>
+                </div>
+            </li>
+            <li aria-current="page">
+                <div class="flex items-center">
+                    <svg class="w-3.5 h-3.5 text-slate-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
+                    <span class="ml-1 text-slate-900 font-extrabold">Nepal News Hub Pro</span>
+                </div>
+            </li>
+        </ol>
+    </nav>
+
+    <!-- Breaking News Ticker Ribbon -->
+    <div class="mb-4 sm:mb-6 bg-slate-950 rounded-2xl p-2.5 sm:p-3 px-3 sm:px-4 text-white flex items-center gap-2.5 overflow-hidden shadow-lg border border-slate-800">
+        <div class="flex items-center gap-1.5 bg-rose-600 px-2.5 py-1 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-wider shrink-0 shadow-sm">
+            <span class="w-2 h-2 rounded-full bg-white animate-ping"></span>
+            LIVE
+        </div>
+        <div class="overflow-hidden relative flex-1 text-xs font-bold">
+            <div id="ticker-content" class="ticker-wrapper flex items-center gap-6">
+                <span class="text-slate-400 italic text-xs">Connecting to live Nepali news feeds...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tool Header Block -->
+    <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-2xl sm:rounded-3xl p-4 sm:p-8 border border-slate-800 shadow-xl mb-4 sm:mb-6 relative overflow-hidden text-white">
+        <div class="absolute -right-10 -top-10 w-48 sm:w-60 h-48 sm:h-60 bg-rose-600/20 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6 relative z-10">
+            <div>
+                <div class="flex flex-wrap items-center gap-2 mb-2 sm:mb-3">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-black bg-rose-600 text-white shadow-md">
+                        <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
+                        RSS AGGREGATOR
+                    </span>
+                    <span class="text-[10px] sm:text-xs font-bold text-slate-300 bg-slate-800/80 border border-slate-700 px-2.5 py-1 rounded-full" id="current-date-badge">Loading date...</span>
+                </div>
+                <h1 class="text-xl sm:text-3xl md:text-4xl font-black tracking-tight text-white">Nepal News Hub Pro</h1>
+                <p class="text-xs sm:text-sm text-slate-300 mt-1.5 sm:mt-2 max-w-2xl font-medium leading-relaxed">
+                    Real-time story aggregation, visual story reels, and seamless continuous scrolling across top Nepali news portals.
+                </p>
+            </div>
+            
+            <div class="flex items-center gap-2.5 sm:gap-3 shrink-0">
+                <button onclick="fetchAllNews(true)" class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-3 bg-rose-600 hover:bg-rose-500 text-white rounded-xl sm:rounded-2xl text-xs font-extrabold transition-all active:scale-95 shadow-lg shadow-rose-600/30 cursor-pointer min-h-[44px]">
+                    <svg class="w-4 h-4 shrink-0" id="refresh-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    <span>Sync News</span>
+                </button>
+                <div class="text-[11px] sm:text-xs font-black bg-slate-950 text-rose-400 border border-slate-800 px-3.5 py-3 rounded-xl sm:rounded-2xl shadow-inner whitespace-nowrap min-h-[44px] flex items-center justify-center" id="total-count-display">
+                    0 News Loaded
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Workspace Controls Bar -->
+    <div class="bg-white rounded-2xl p-3 sm:p-4 border border-slate-200/80 shadow-sm mb-4 sm:mb-6 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 sm:gap-4">
+        <!-- View Mode Switcher -->
+        <div class="flex items-center bg-slate-100 p-1.5 rounded-xl sm:rounded-2xl gap-1 overflow-x-auto no-scrollbar w-full lg:w-auto">
+            <button id="view-tab-home" onclick="switchView('home')" class="px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-xs font-black transition-all bg-white text-slate-900 shadow-sm flex items-center gap-1.5 whitespace-nowrap cursor-pointer min-h-[40px]">
+                📰 All Stories
+            </button>
+            <button id="view-tab-reels" onclick="switchView('reels')" class="px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-xs font-bold transition-all text-slate-600 hover:text-slate-900 flex items-center gap-1.5 whitespace-nowrap cursor-pointer min-h-[40px]">
+                🎬 Visual Reels
+            </button>
+            <button id="view-tab-bookmarks" onclick="switchView('bookmarks')" class="px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-xs font-bold transition-all text-slate-600 hover:text-slate-900 flex items-center gap-1.5 whitespace-nowrap cursor-pointer min-h-[40px]">
+                🔖 Saved (<span id="bookmark-count">0</span>)
+            </button>
+            <button id="view-tab-sources" onclick="switchView('sources')" class="px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-xs font-bold transition-all text-slate-600 hover:text-slate-900 flex items-center gap-1.5 whitespace-nowrap cursor-pointer min-h-[40px]">
+                🌐 Outlets
+            </button>
+            <button id="view-tab-alerts" onclick="switchView('alerts')" class="px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-xs font-bold transition-all text-slate-600 hover:text-slate-900 flex items-center gap-1.5 whitespace-nowrap cursor-pointer min-h-[40px]">
+                ⚡ Live Feed
+            </button>
+        </div>
+
+        <!-- Search, Sorting & Thumbnail Mode -->
+        <div class="flex flex-wrap items-center gap-2.5">
+            <div class="relative flex-1 min-w-[160px] sm:w-64">
+                <input type="text" id="search-input" placeholder="Search news..." class="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold focus:outline-none focus:border-rose-500 focus:bg-white transition-all min-h-[42px]">
+                <svg class="w-4 h-4 text-slate-400 absolute left-3 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            </div>
+
+            <select id="sort-select" onchange="handleSortChange(this.value)" class="bg-slate-50 border border-slate-200 rounded-xl text-xs font-extrabold text-slate-700 px-3 py-2.5 focus:outline-none focus:border-rose-500 cursor-pointer min-h-[42px]">
+                <option value="newest">⚡ Newest First</option>
+                <option value="oldest">⌛ Oldest First</option>
+                <option value="source">🏢 Sort by Source</option>
+            </select>
+
+            <div class="flex items-center gap-2 bg-slate-50 px-3 py-2 rounded-xl border border-slate-200 min-h-[42px]">
+                <span class="text-[11px] font-extrabold text-slate-700">Images</span>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="thumb-toggle" class="sr-only peer">
+                    <div class="w-8 h-4.5 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-rose-600"></div>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Filter Bar -->
+    <div id="category-bar-wrapper" class="mb-4 sm:mb-6 overflow-x-auto no-scrollbar pb-1">
+        <div class="flex items-center gap-2 min-w-max">
+            <button class="category-pill active" id="cat-all" onclick="setCategory('all')">🔥 All Categories</button>
+            <button class="category-pill" id="cat-news" onclick="setCategory('news')">🗞 Top News</button>
+            <button class="category-pill" id="cat-sports" onclick="setCategory('sports')">⚽ Sports</button>
+            <button class="category-pill" id="cat-finance" onclick="setCategory('finance')">📈 Markets</button>
+            <button class="category-pill" id="cat-tech" onclick="setCategory('tech')">💻 Tech</button>
+            <button class="category-pill" id="cat-entertainment" onclick="setCategory('entertainment')">🎬 Entertainment</button>
+        </div>
+    </div>
+
+    <!-- Workspace Output View Container -->
+    <div id="main-workspace-content" class="min-h-[380px]">
+        <!-- Rendered dynamically -->
+    </div>
+
+    <!-- Infinite Scroll Anchor & Load Trigger -->
+    <div id="infinite-scroll-anchor" class="py-8 sm:py-12 flex flex-col items-center justify-center">
+        <div class="spinner-loader mb-2.5"></div>
+        <span class="text-[11px] sm:text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-2" id="sync-status-text">Scroll to load more stories...</span>
+        <button id="manual-load-more-btn" onclick="triggerLoadMore()" class="hidden px-5 py-2.5 bg-slate-900 hover:bg-rose-600 text-white text-xs font-black rounded-xl transition-all shadow-md active:scale-95 cursor-pointer min-h-[42px]">
+            👇 Load More Articles
+        </button>
+    </div>
+
+    <!-- Useful Tool Info Section -->
+    <div class="mt-8 sm:mt-12 bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 border border-slate-200/80 shadow-sm">
+        <h2 class="text-sm sm:text-base font-black text-slate-900 mb-3 flex items-center gap-2">
+            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            Mobile-Friendly Agregator Engine
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 text-xs text-slate-600 leading-relaxed font-medium">
+            <div class="bg-slate-50 p-4 sm:p-5 rounded-xl sm:rounded-2xl border border-slate-100">
+                <h3 class="font-extrabold text-slate-900 text-xs sm:text-sm mb-1">🖼 Deep Image Parsing</h3>
+                <p>Scans feed attributes and inline `<img src>` HTML fragments with forced high-res fallbacks for news outlets.</p>
+            </div>
+            <div class="bg-slate-50 p-4 sm:p-5 rounded-xl sm:rounded-2xl border border-slate-100">
+                <h3 class="font-extrabold text-slate-900 text-xs sm:text-sm mb-1">⚡ Touch & Gesture Controls</h3>
+                <p>Swipe up or down on mobile screens to browse stories in Reels view, or scroll smoothly on feeds.</p>
+            </div>
+            <div class="bg-slate-50 p-4 sm:p-5 rounded-xl sm:rounded-2xl border border-slate-100">
+                <h3 class="font-extrabold text-slate-900 text-xs sm:text-sm mb-1">🔖 Offline Saved Articles</h3>
+                <p>Save favorite stories directly on your device with touch-friendly bookmarking.</p>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<!-- Floating Toast Notification -->
+<div id="toast-notification" class="fixed bottom-6 left-4 right-4 sm:left-auto sm:right-6 z-50 bg-slate-950 text-white text-xs font-bold px-4 py-3 rounded-2xl shadow-2xl border border-slate-800 flex items-center justify-center sm:justify-start gap-2.5 opacity-0 pointer-events-none translate-y-4">
+    <span id="toast-icon" class="text-base">✨</span>
+    <span id="toast-message">Notification message</span>
+</div>
+
+<!-- Back to Top Floating Button -->
+<button id="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="fixed bottom-6 right-4 sm:right-6 z-40 w-11 h-11 bg-rose-600 hover:bg-rose-700 text-white rounded-full shadow-xl hidden items-center justify-center transition-all active:scale-90 cursor-pointer">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 15l7-7 7 7"></path></svg>
+</button>
+
+<!-- OFFICIAL NISULKA FOOTER MOUNT -->
+<div id="site-footer-mount"></div>
+
+<!-- Official Header & Footer JavaScript Loaders -->
+<script src="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/js/header.js"></script>
+<script src="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/js/footer.js"></script>
+
+<script>
+    const RSS_PROXIES = [
+        "https://api.rss2json.com/v1/api.json?rss_url=",
+        "https://api.allorigins.win/raw?url=",
+        "https://corsproxy.io/?"
+    ];
+
+    const CACHE_KEY = "nisulka_nepal_hub_cache_v3";
+    const BOOKMARKS_KEY = "nisulka_nepal_hub_bookmarks_v2";
+    const THUMB_PREF_KEY = "nisulka_nepal_hub_thumb_pref";
+
+    const MASTER_FEEDS = {
+        news: [
+            "https://www.onlinekhabar.com/feed", 
+            "https://nagariknetwork.com/feed/", 
+            "https://ratopati.com/feed",
+            "https://www.setopati.com/feed", 
+            "https://gorkhapatraonline.com/rss", 
+            "http://feeds.bbci.co.uk/nepali/rss.xml",
+            "https://www.annapurnapost.com/rss", 
+            "https://rajdhanidaily.com/feed/", 
+            "https://ujyaaloonline.com/rss",
+            "https://nepallive.com/feed", 
+            "https://pahilopost.com/feed",
+            "https://khabarhub.com/feed/",
+            "https://deshsanchar.com/feed/"
+        ],
+        sports: [
+            "https://www.hamrokhelkud.com/feed", 
+            "https://www.khelpati.com/feed",
+            "https://www.cricnepal.com/feed"
+        ],
+        finance: [
+            "https://www.sharesansar.com/rss", 
+            "https://clickmandu.com/feed", 
+            "https://arthasarokar.com/feed",
+            "https://bankingkhabar.com/feed",
+            "https://bizshala.com/feed"
+        ],
+        tech: [
+            "https://www.techpana.com/feed", 
+            "https://techsathi.com/feed", 
+            "https://ictframe.com/feed"
+        ],
+        entertainment: [
+            "https://www.merofilm.com/feed", 
+            "https://www.lensnepal.com/feed",
+            "http://www.filmykhabar.com/feed"
+        ]
+    };
+
+    let allNews = [];
+    let bookmarkedNews = [];
+    let currentActiveView = 'home';
+    let activeCategory = 'all';
+    let itemsToShow = 12;
+    let isBatchLoading = false;
+    let searchQuery = "";
+    let currentSort = "newest";
+    let showThumbnails = localStorage.getItem(THUMB_PREF_KEY) !== 'false';
+
+    function initApp() {
+        updateDateBadge();
+        loadBookmarks();
+        loadCachedData();
+        setupThumbnailToggle();
+        setupSearchInput();
+        setupScrollObserver();
+        setupKeyboardAndTouchNav();
+        
+        fetchAllNews(false);
+        switchView('home');
+    }
+
+    function updateDateBadge() {
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+        const el = document.getElementById('current-date-badge');
+        if (el) el.innerText = dateStr;
+    }
+
+    function setupThumbnailToggle() {
+        const toggle = document.getElementById('thumb-toggle');
+        if (!toggle) return;
+        toggle.checked = showThumbnails;
+        toggle.onchange = (e) => {
+            showThumbnails = e.target.checked;
+            localStorage.setItem(THUMB_PREF_KEY, showThumbnails);
+            renderCurrentView();
+        };
+    }
+
+    function setupSearchInput() {
+        const input = document.getElementById('search-input');
+        if (!input) return;
+        input.oninput = (e) => {
+            searchQuery = e.target.value.trim().toLowerCase();
+            itemsToShow = 12;
+            renderCurrentView();
+        };
+    }
+
+    function handleSortChange(val) {
+        currentSort = val;
+        renderCurrentView();
+    }
+
+    function loadBookmarks() {
+        try {
+            const raw = localStorage.getItem(BOOKMARKS_KEY);
+            bookmarkedNews = raw ? JSON.parse(raw) : [];
+        } catch(e) {
+            bookmarkedNews = [];
+        }
+        updateBookmarkBadge();
+    }
+
+    function saveBookmarks() {
+        localStorage.setItem(BOOKMARKS_KEY, JSON.stringify(bookmarkedNews));
+        updateBookmarkBadge();
+    }
+
+    function updateBookmarkBadge() {
+        const countEl = document.getElementById('bookmark-count');
+        if (countEl) countEl.innerText = bookmarkedNews.length;
+    }
+
+    function toggleBookmark(link) {
+        const existingIdx = bookmarkedNews.findIndex(b => b.link === link);
+        if (existingIdx >= 0) {
+            bookmarkedNews.splice(existingIdx, 1);
+            showToast("🔖 Article removed from bookmarks", "info");
+        } else {
+            const item = allNews.find(n => n.link === link);
+            if (item) {
+                bookmarkedNews.push(item);
+                showToast("⭐ Article saved successfully!", "success");
+            }
+        }
+        saveBookmarks();
+        renderCurrentView();
+    }
+
+    function isBookmarked(link) {
+        return bookmarkedNews.some(b => b.link === link);
+    }
+
+    function loadCachedData() {
+        const cached = localStorage.getItem(CACHE_KEY);
+        if (cached) {
+            try {
+                allNews = JSON.parse(cached);
+                updateCountDisplay();
+                updateTicker();
+            } catch(e) {
+                allNews = [];
+            }
+        }
+    }
+
+    function saveCache() {
+        localStorage.setItem(CACHE_KEY, JSON.stringify(allNews.slice(0, 350)));
+    }
+
+    function updateCountDisplay() {
+        const el = document.getElementById('total-count-display');
+        if (el) el.innerText = `${allNews.length} News Items`;
+    }
+
+    async function fetchAllNews(forceRefresh = false) {
+        if (isBatchLoading) return;
+        isBatchLoading = true;
+        showLoadingSpinner(true, "Syncing real-time RSS streams...");
+
+        const icon = document.getElementById('refresh-icon');
+        if (icon) icon.classList.add('animate-spin');
+
+        let targetFeeds = [];
+        if (activeCategory === 'all') {
+            targetFeeds = Object.entries(MASTER_FEEDS).flatMap(([cat, urls]) => urls.map(u => ({ url: u, cat })));
+        } else {
+            const urls = MASTER_FEEDS[activeCategory] || MASTER_FEEDS.news;
+            targetFeeds = urls.map(u => ({ url: u, cat: activeCategory }));
+        }
+
+        const fetchPromises = targetFeeds.map(async ({ url, cat }) => {
+            try {
+                const res = await fetch(RSS_PROXIES[0] + encodeURIComponent(url));
+                const json = await res.json();
+                if (json.status === 'ok' && json.items) {
+                    return json.items.map(item => parseItem(item, url, cat));
+                }
+            } catch (e) {
+                try {
+                    const fallbackRes = await fetch(RSS_PROXIES[1] + encodeURIComponent(url));
+                    const text = await fallbackRes.text();
+                    const parser = new DOMParser();
+                    const xmlDoc = parser.parseFromString(text, "text/xml");
+                    const items = Array.from(xmlDoc.querySelectorAll("item"));
+                    return items.map(item => parseXmlItem(item, url, cat));
+                } catch (err) {
+                    return [];
+                }
+            }
+            return [];
+        });
+
+        const results = await Promise.all(fetchPromises);
+        const freshItems = results.flat().filter(Boolean);
+
+        if (freshItems.length > 0) {
+            const existingLinks = new Set(allNews.map(n => n.link));
+            const newUnique = freshItems.filter(i => !existingLinks.has(i.link));
+
+            allNews = [...newUnique, ...allNews].sort((a,b) => new Date(b.pubDate) - new Date(a.pubDate));
+            saveCache();
+        }
+
+        updateCountDisplay();
+        updateTicker();
+        isBatchLoading = false;
+        showLoadingSpinner(false);
+        if (icon) icon.classList.remove('animate-spin');
+        renderCurrentView();
+
+        if (forceRefresh) {
+            showToast("✅ All live Nepali feeds refreshed successfully!", "success");
+        }
+    }
+
+    function extractForcedThumbnail(itemRaw, description, category, sourceDomain) {
+        let thumb = null;
+
+        // 1. Direct fields from rss2json
+        if (itemRaw.thumbnail && typeof itemRaw.thumbnail === 'string' && itemRaw.thumbnail.length > 10) {
+            thumb = itemRaw.thumbnail;
+        } else if (itemRaw.enclosure) {
+            if (typeof itemRaw.enclosure === 'string') thumb = itemRaw.enclosure;
+            else if (itemRaw.enclosure.link) thumb = itemRaw.enclosure.link;
+            else if (itemRaw.enclosure.url) thumb = itemRaw.enclosure.url;
+        }
+
+        // 2. Scan HTML description or content for <img> src or data-src
+        if (!thumb || isTrackerOrLogo(thumb)) {
+            const rawContent = (itemRaw.content || "") + " " + (description || "") + " " + (itemRaw['content:encoded'] || "");
+            const unescaped = rawContent.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&amp;/g, '&');
+            const match = unescaped.match(/<img[^>]+(?:src|data-src|data-lazy-src)=["']([^"']+)["']/i);
+            if (match && match[1] && !isTrackerOrLogo(match[1])) {
+                thumb = match[1];
+            }
+        }
+
+        // 3. Forced high-quality category fallback image generator if missing
+        if (!thumb || isTrackerOrLogo(thumb)) {
+            thumb = getForcedFallbackImage(category, sourceDomain, itemRaw.title);
+        }
+
+        return thumb;
+    }
+
+    function isTrackerOrLogo(url) {
+        if (!url) return true;
+        const lower = url.toLowerCase();
+        return lower.includes('avatar') || 
+               lower.includes('gravatar') || 
+               lower.includes('1x1') || 
+               lower.includes('pixel') || 
+               lower.includes('logo') || 
+               lower.includes('icon') || 
+               lower.endsWith('.gif') || 
+               lower.includes('doubleclick');
+    }
+
+    function getForcedFallbackImage(category, source, title) {
+        const categoryMap = {
+            sports: [
+                'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=800&q=80',
+                'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=800&q=80'
+            ],
+            finance: [
+                'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&q=80',
+                'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=800&q=80'
+            ],
+            tech: [
+                'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80',
+                'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&q=80'
+            ],
+            entertainment: [
+                'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=800&q=80',
+                'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80'
+            ]
+        };
+
+        const defaultImgs = [
+            'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&q=80',
+            'https://images.unsplash.com/photo-1495020689067-958852a7765e?w=800&q=80',
+            'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800&q=80'
+        ];
+
+        const list = categoryMap[category] || defaultImgs;
+        const index = Math.abs((title || source || "").length) % list.length;
+        return list[index];
+    }
+
+    function parseItem(item, url, category) {
+        const sourceDomain = extractSourceDomain(url);
+        const descText = cleanText((item.description || item.content || "").replace(/<[^>]*>/g, ''));
+        const forcedThumb = extractForcedThumbnail(item, item.description, category, sourceDomain);
+
+        return {
+            title: item.title ? cleanText(item.title) : 'Untitled Story',
+            link: item.link,
+            pubDate: item.pubDate || new Date().toISOString(),
+            source: sourceDomain,
+            category: category,
+            thumb: forcedThumb,
+            desc: descText.substring(0, 150) + (descText.length > 150 ? '...' : '')
+        };
+    }
+
+    function parseXmlItem(xmlItem, url, category) {
+        const title = xmlItem.querySelector("title")?.textContent || "Untitled Story";
+        const link = xmlItem.querySelector("link")?.textContent || "#";
+        const pubDate = xmlItem.querySelector("pubDate")?.textContent || new Date().toISOString();
+        const description = xmlItem.querySelector("description")?.textContent || xmlItem.querySelector("content\\:encoded")?.textContent || "";
+        const sourceDomain = extractSourceDomain(url);
+
+        let thumb = xmlItem.querySelector("media\\:content")?.getAttribute("url") ||
+                    xmlItem.querySelector("media\\:thumbnail")?.getAttribute("url") ||
+                    xmlItem.querySelector("enclosure")?.getAttribute("url");
+
+        if (!thumb || isTrackerOrLogo(thumb)) {
+            const unescaped = description.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&amp;/g, '&');
+            const match = unescaped.match(/<img[^>]+(?:src|data-src)=["']([^"']+)["']/i);
+            if (match && match[1] && !isTrackerOrLogo(match[1])) {
+                thumb = match[1];
+            }
+        }
+
+        if (!thumb || isTrackerOrLogo(thumb)) {
+            thumb = getForcedFallbackImage(category, sourceDomain, title);
+        }
+
+        const descText = cleanText(description.replace(/<[^>]*>/g, ''));
+
+        return {
+            title: cleanText(title),
+            link: link,
+            pubDate: pubDate,
+            source: sourceDomain,
+            category: category,
+            thumb: thumb,
+            desc: descText.substring(0, 150) + (descText.length > 150 ? '...' : '')
+        };
+    }
+
+    function extractSourceDomain(url) {
+        return url.replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0].split('.')[0].toUpperCase();
+    }
+
+    function cleanText(text) {
+        return text ? text.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#8217;/g, "'").trim() : '';
+    }
+
+    function updateTicker() {
+        const tickerContainer = document.getElementById('ticker-content');
+        if (!tickerContainer || allNews.length === 0) return;
+
+        const topStories = allNews.slice(0, 10);
+        const marqueeHtml = topStories.map(item => `
+            <a href="${item.link}" target="_blank" class="inline-flex items-center gap-2 hover:text-rose-400 transition-colors shrink-0">
+                <span class="text-rose-500 font-black">[${item.source}]</span>
+                <span class="font-bold">${item.title}</span>
+                <span class="text-slate-700 font-normal">|</span>
+            </a>
+        `).join('');
+
+        tickerContainer.innerHTML = marqueeHtml + marqueeHtml;
+    }
+
+    function setCategory(cat) {
+        activeCategory = cat;
+        document.querySelectorAll('.category-pill').forEach(el => el.classList.remove('active'));
+        const activeEl = document.getElementById(`cat-${cat}`);
+        if (activeEl) activeEl.classList.add('active');
+
+        itemsToShow = 12;
+        fetchAllNews(false);
+    }
+
+    function switchView(view) {
+        currentActiveView = view;
+        
+        ['home', 'reels', 'bookmarks', 'sources', 'alerts'].forEach(v => {
+            const btn = document.getElementById(`view-tab-${v}`);
+            if (btn) {
+                if (v === view) {
+                    btn.className = "px-4 py-2.5 rounded-xl text-xs font-black transition-all bg-white text-slate-900 shadow-sm flex items-center gap-2 whitespace-nowrap cursor-pointer";
+                } else {
+                    btn.className = "px-4 py-2.5 rounded-xl text-xs font-bold transition-all text-slate-600 hover:text-slate-900 flex items-center gap-2 whitespace-nowrap cursor-pointer";
+                }
+            }
+        });
+
+        const catBar = document.getElementById('category-bar-wrapper');
+        if (catBar) catBar.style.display = (view === 'home') ? 'block' : 'none';
+
+        renderCurrentView();
+    }
+
+    function renderCurrentView() {
+        const container = document.getElementById('main-workspace-content');
+        if (!container) return;
+
+        let dataset = (currentActiveView === 'bookmarks') ? bookmarkedNews : allNews;
+
+        if (activeCategory !== 'all' && currentActiveView === 'home') {
+            dataset = dataset.filter(i => i.category === activeCategory);
+        }
+
+        if (searchQuery) {
+            dataset = dataset.filter(i => 
+                i.title.toLowerCase().includes(searchQuery) || 
+                i.source.toLowerCase().includes(searchQuery) ||
+                i.desc.toLowerCase().includes(searchQuery)
+            );
+        }
+
+        if (currentSort === 'oldest') {
+            dataset = [...dataset].sort((a,b) => new Date(a.pubDate) - new Date(b.pubDate));
+        } else if (currentSort === 'source') {
+            dataset = [...dataset].sort((a,b) => a.source.localeCompare(b.source));
+        } else {
+            dataset = [...dataset].sort((a,b) => new Date(b.pubDate) - new Date(a.pubDate));
+        }
+
+        switch(currentActiveView) {
+            case 'home':
+            case 'bookmarks':
+                if (dataset.length === 0) {
+                    container.innerHTML = renderEmptyState(currentActiveView === 'bookmarks' ? "No Saved Bookmarks" : "No Articles Found");
+                } else {
+                    const heroItem = (currentActiveView === 'home' && !searchQuery && activeCategory === 'all') ? dataset[0] : null;
+                    const listItems = heroItem ? dataset.slice(1, itemsToShow) : dataset.slice(0, itemsToShow);
+
+                    container.innerHTML = `
+                        ${heroItem ? renderHeroCard(heroItem) : ''}
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            ${listItems.map(item => renderNewsCard(item)).join('')}
+                        </div>
+                    `;
+                }
+                break;
+
+            case 'reels':
+                const reelItems = dataset.slice(0, 25);
+                container.innerHTML = `
+                    <div class="max-w-md mx-auto">
+                        <p class="text-center text-[11px] font-extrabold text-slate-400 mb-2">💡 Tip: Use ↑ ↓ Arrow keys or swipe to navigate visual reels</p>
+                        <div class="reels-container shadow-2xl border border-slate-800 bg-black" id="reels-wrapper">
+                            ${reelItems.length > 0 ? reelItems.map(item => renderReelCard(item)).join('') : renderEmptyState("No Visual Reels Available")}
+                        </div>
+                    </div>
+                `;
+                break;
+
+            case 'sources':
+                const allSources = Object.values(MASTER_FEEDS).flat().map(url => extractSourceDomain(url));
+                const uniqueSources = Array.from(new Set(allSources)).sort();
+
+                container.innerHTML = `
+                    <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-sm">
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-base font-black text-slate-900 flex items-center gap-2">
+                                <span class="w-2 h-5 bg-rose-600 rounded-full"></span>
+                                Connected News Outlets (${uniqueSources.length})
+                            </h2>
+                            <span class="text-xs font-extrabold text-slate-400">Click to filter news</span>
+                        </div>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                            ${uniqueSources.map(source => {
+                                const count = allNews.filter(n => n.source === source).length;
+                                return `
+                                    <div onclick="filterBySource('${source}')" class="source-grid-card animate-in">
+                                        <div class="w-12 h-12 bg-rose-50 rounded-2xl flex items-center justify-center mb-3 border border-rose-100 text-rose-600 font-black text-lg shadow-sm">
+                                            ${source.charAt(0)}
+                                        </div>
+                                        <span class="text-xs font-black text-slate-900 tracking-tight">${source}</span>
+                                        <span class="text-[10px] text-slate-400 font-bold mt-1 bg-slate-100 px-2 py-0.5 rounded-full">${count} stories</span>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+                break;
+
+            case 'alerts':
+                container.innerHTML = `
+                    <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-sm max-w-4xl mx-auto">
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-base font-black text-slate-900 flex items-center gap-2">
+                                <span class="w-2 h-5 bg-rose-600 rounded-full"></span>
+                                Live Real-Time Feed Timeline
+                            </h2>
+                            <span class="text-xs font-black text-rose-600 bg-rose-50 px-3 py-1 rounded-full border border-rose-100">Live Feeds</span>
+                        </div>
+                        <div class="space-y-3">
+                            ${dataset.slice(0, 30).map(item => `
+                                <div class="flex items-start gap-4 p-4 bg-slate-50 hover:bg-rose-50/40 rounded-2xl border border-slate-100 hover:border-rose-100 transition-colors animate-in">
+                                    <div class="shrink-0 w-3 h-3 mt-1.5 bg-rose-600 rounded-full shadow-[0_0_10px_rgba(225,29,72,0.6)]"></div>
+                                    <div class="flex-1">
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <span class="text-[10px] font-black text-rose-600 uppercase tracking-wider">${item.source}</span>
+                                            <span class="text-[10px] text-slate-400 font-bold">• ${formatTimeAgo(item.pubDate)}</span>
+                                            <span class="text-[9px] font-black bg-slate-200 text-slate-700 px-2 py-0.5 rounded uppercase">${item.category}</span>
+                                        </div>
+                                        <a href="${item.link}" target="_blank" class="font-black text-xs sm:text-sm text-slate-900 hover:text-rose-600 transition-colors leading-snug block">
+                                            ${item.title}
+                                        </a>
+                                    </div>
+                                    <button onclick="toggleBookmark('${item.link}')" class="shrink-0 p-2 text-slate-400 hover:text-rose-600 transition-colors cursor-pointer">
+                                        <svg class="w-4 h-4 ${isBookmarked(item.link) ? 'text-rose-600 fill-current' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                                    </button>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+                break;
+        }
+
+        updateScrollAnchorStatus(dataset.length);
+    }
+
+    function renderHeroCard(item) {
+        const bookmarked = isBookmarked(item.link);
+        return `
+            <div class="bg-slate-950 rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl mb-6 sm:mb-8 border border-slate-800 text-white animate-in relative group">
+                <div class="grid grid-cols-1 lg:grid-cols-12 items-center">
+                    <div class="lg:col-span-7 relative h-56 sm:h-80 lg:h-96 overflow-hidden">
+                        <img src="${item.thumb}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90" onerror="this.src='https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&q=80'">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent lg:bg-gradient-to-r lg:from-transparent lg:to-slate-950"></div>
+                        <span class="absolute top-3 left-3 sm:top-4 sm:left-4 px-2.5 py-1 bg-rose-600 text-white rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-wider shadow-lg">
+                            TOP HEADLINE
+                        </span>
+                    </div>
+                    <div class="lg:col-span-5 p-4 sm:p-8 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center gap-2 mb-2 sm:mb-3">
+                                <span class="text-[11px] sm:text-xs font-black text-rose-400 uppercase tracking-wider">${item.source}</span>
+                                <span class="text-slate-600">•</span>
+                                <span class="text-[11px] sm:text-xs font-bold text-slate-400">${formatTimeAgo(item.pubDate)}</span>
+                            </div>
+                            <h2 class="text-base sm:text-2xl font-black leading-snug mb-2 sm:mb-3 hover:text-rose-400 transition-colors">
+                                <a href="${item.link}" target="_blank">${item.title}</a>
+                            </h2>
+                            <p class="text-xs sm:text-sm text-slate-300 font-medium line-clamp-2 sm:line-clamp-3 leading-relaxed mb-4 sm:mb-6">
+                                ${item.desc}
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-2.5 sm:gap-3">
+                            <a href="${item.link}" target="_blank" class="flex-1 bg-rose-600 hover:bg-rose-500 text-white py-3 rounded-xl sm:rounded-2xl text-xs font-black flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg shadow-rose-600/30 cursor-pointer min-h-[44px]">
+                                Read Full Story
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7-7 7"></path></svg>
+                            </a>
+                            <button onclick="toggleBookmark('${item.link}')" class="p-3 bg-slate-800 hover:bg-slate-700 rounded-xl sm:rounded-2xl text-slate-300 hover:text-white transition-colors cursor-pointer min-h-[44px] min-w-[44px] flex items-center justify-center">
+                                <svg class="w-4 h-4 ${bookmarked ? 'text-rose-500 fill-current' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function renderNewsCard(item) {
+        const bookmarked = isBookmarked(item.link);
+        const imageMarkup = showThumbnails ? `
+            <div class="news-card-img-wrapper">
+                <img src="${item.thumb}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&q=80'">
+                <span class="absolute top-2.5 left-2.5 px-2 py-0.5 bg-white/95 backdrop-blur-md rounded-md text-[9px] sm:text-[10px] font-black uppercase text-rose-600 shadow-sm border border-slate-100">
+                    ${item.source}
+                </span>
+                <button onclick="toggleBookmark('${item.link}')" class="absolute top-2.5 right-2.5 p-2 bg-white/95 backdrop-blur-md rounded-lg text-slate-600 hover:text-rose-600 shadow-sm transition-colors cursor-pointer active:scale-90">
+                    <svg class="w-3.5 h-3.5 ${bookmarked ? 'text-rose-600 fill-current' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                </button>
+            </div>
+        ` : '';
+
+        return `
+            <div class="news-card bg-white rounded-xl sm:rounded-2xl overflow-hidden border border-slate-200/80 shadow-sm flex flex-col justify-between animate-in hover:shadow-md transition-all">
+                <div>
+                    ${imageMarkup}
+                    <div class="p-3.5 sm:p-5">
+                        <div class="flex items-center gap-1.5 mb-2">
+                            ${!showThumbnails ? `<span class="px-2 py-0.5 bg-rose-50 text-rose-600 rounded text-[9px] font-black uppercase">${item.source}</span>` : ''}
+                            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">${formatTimeAgo(item.pubDate)}</span>
+                            <span class="text-slate-300">•</span>
+                            <span class="text-[10px] font-bold text-slate-500 uppercase">${item.category}</span>
+                        </div>
+                        <h3 class="text-xs sm:text-sm font-black text-slate-900 mb-1.5 leading-snug line-clamp-2 hover:text-rose-600 transition-colors">
+                            <a href="${item.link}" target="_blank">${item.title}</a>
+                        </h3>
+                        <p class="text-[11px] sm:text-xs text-slate-500 font-medium line-clamp-2 sm:line-clamp-3 leading-relaxed mb-3">
+                            ${item.desc}
+                        </p>
+                    </div>
+                </div>
+                <div class="px-3.5 pb-3.5 sm:px-5 sm:pb-5 pt-0 flex items-center gap-2">
+                    <a href="${item.link}" target="_blank" class="flex-1 text-[11px] font-extrabold bg-slate-100 hover:bg-slate-900 text-slate-800 hover:text-white py-2.5 rounded-lg sm:rounded-xl flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer min-h-[40px]">
+                        Read Article
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7-7 7"></path></svg>
+                    </a>
+                    <button onclick="shareLink('${item.title}', '${item.link}')" class="p-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg sm:rounded-xl transition-colors cursor-pointer min-h-[40px] min-w-[40px] flex items-center justify-center" title="Share Article">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    function setupKeyboardAndTouchNav() {
+        let touchStartY = 0;
+        let touchEndY = 0;
+
+        window.addEventListener('keydown', (e) => {
+            if (currentActiveView === 'reels') {
+                const reels = document.getElementById('reels-wrapper');
+                if (!reels) return;
+                if (e.key === 'ArrowDown') {
+                    reels.scrollBy({ top: reels.clientHeight, behavior: 'smooth' });
+                } else if (e.key === 'ArrowUp') {
+                    reels.scrollBy({ top: -reels.clientHeight, behavior: 'smooth' });
+                }
+            }
+        });
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartY = e.changedTouches[0].screenY;
+        }, { passive: true });
+
+        document.addEventListener('touchend', (e) => {
+            touchEndY = e.changedTouches[0].screenY;
+            if (currentActiveView === 'reels') {
+                const reels = document.getElementById('reels-wrapper');
+                if (!reels) return;
+                const diff = touchStartY - touchEndY;
+                if (Math.abs(diff) > 50) {
+                    if (diff > 0) {
+                        reels.scrollBy({ top: reels.clientHeight, behavior: 'smooth' });
+                    } else {
+                        reels.scrollBy({ top: -reels.clientHeight, behavior: 'smooth' });
+                    }
+                }
+            }
+        }, { passive: true });
+    }
+
+    function showLoadingSpinner(show, text = "Loading...") {
+        const anchor = document.getElementById('infinite-scroll-anchor');
+        const statusText = document.getElementById('sync-status-text');
+        if (statusText) statusText.innerText = text;
+        if (anchor) {
+            const spinner = anchor.querySelector('.spinner-loader');
+            if (spinner) spinner.style.display = show ? 'block' : 'none';
+        }
+    }
+
+    function showToast(message, type = 'info') {
+        const toast = document.getElementById('toast-notification');
+        const toastMsg = document.getElementById('toast-message');
+        const toastIcon = document.getElementById('toast-icon');
+        if (!toast || !toastMsg) return;
+
+        toastMsg.innerText = message;
+        if (toastIcon) {
+            toastIcon.innerText = type === 'success' ? '✅' : type === 'error' ? '⚠️' : '✨';
+        }
+
+        toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
+        toast.classList.add('opacity-100', 'translate-y-0');
+
+        setTimeout(() => {
+            toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
+            toast.classList.remove('opacity-100', 'translate-y-0');
+        }, 3000);
+    }
+
+    function shareLink(title, url) {
+        if (navigator.share) {
+            navigator.share({ title: title, url: url }).catch(() => {});
+        } else {
+            const tempInput = document.createElement('input');
+            document.body.appendChild(tempInput);
+            tempInput.value = url;
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            showToast("📋 Link copied to clipboard!", "success");
+        }
+    }
+
+    function filterBySource(source) {
+        searchQuery = source.toLowerCase();
+        const searchInput = document.getElementById('search-input');
+        if (searchInput) searchInput.value = source;
+        switchView('home');
+    }
+
+    function triggerLoadMore() {
+        itemsToShow += 12;
+        renderCurrentView();
+    }
+
+    function setupScrollObserver() {
+        const anchor = document.getElementById('infinite-scroll-anchor');
+        const backToTop = document.getElementById('back-to-top');
+
+        window.addEventListener('scroll', () => {
+            if (backToTop) {
+                if (window.scrollY > 400) {
+                    backToTop.classList.remove('hidden');
+                    backToTop.classList.add('flex');
+                } else {
+                    backToTop.classList.add('hidden');
+                    backToTop.classList.remove('flex');
+                }
+            }
+
+            if (anchor && currentActiveView === 'home') {
+                const rect = anchor.getBoundingClientRect();
+                if (rect.top <= window.innerHeight + 200) {
+                    if (itemsToShow < allNews.length) {
+                        itemsToShow += 6;
+                        renderCurrentView();
+                    }
+                }
+            }
+        });
+    }
+
+    function updateScrollAnchorStatus(totalItems) {
+        const anchor = document.getElementById('infinite-scroll-anchor');
+        const loadBtn = document.getElementById('manual-load-more-btn');
+        const statusText = document.getElementById('sync-status-text');
+
+        if (!anchor) return;
+
+        if (currentActiveView !== 'home' && currentActiveView !== 'bookmarks') {
+            anchor.style.display = 'none';
+            return;
+        }
+
+        anchor.style.display = 'flex';
+
+        if (itemsToShow < totalItems) {
+            if (statusText) statusText.innerText = `Showing ${Math.min(itemsToShow, totalItems)} of ${totalItems} articles`;
+            if (loadBtn) loadBtn.classList.remove('hidden');
+        } else {
+            if (statusText) statusText.innerText = totalItems > 0 ? "You've reached the end of the feed." : "";
+            if (loadBtn) loadBtn.classList.add('hidden');
+        }
+    }
+
+    function renderEmptyState(message) {
+        return `
+            <div class="col-span-full py-16 flex flex-col items-center justify-center text-center bg-white rounded-3xl border border-slate-200/80 p-8 shadow-sm">
+                <div class="w-16 h-16 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center text-2xl mb-4 font-black">
+                    🗞️
+                </div>
+                <h3 class="text-base font-black text-slate-900 mb-1">${message}</h3>
+                <p class="text-xs text-slate-500 font-medium max-w-sm mb-4">Try refreshing the feed or changing your search filter to discover live stories.</p>
+                <button onclick="fetchAllNews(true)" class="px-5 py-2.5 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-xs font-extrabold transition-all cursor-pointer shadow-md">
+                    🔄 Sync Fresh Feeds
+                </button>
+            </div>
+        `;
+    }
+
+    function formatTimeAgo(dateStr) {
+        if (!dateStr) return 'Recently';
+        const date = new Date(dateStr);
+        if (isNaN(date.getTime())) return 'Recently';
+
+        const seconds = Math.floor((new Date() - date) / 1000);
+        if (seconds < 60) return 'Just now';
+        const minutes = Math.floor(seconds / 60);
+        if (minutes < 60) return `${minutes}m ago`;
+        const hours = Math.floor(minutes / 60);
+        if (hours < 24) return `${hours}h ago`;
+        const days = Math.floor(hours / 24);
+        if (days < 30) return `${days}d ago`;
+        const months = Math.floor(days / 30);
+        return `${months}mo ago`;
+    }
+
+    function renderReelCard(item) {
+        const bookmarked = isBookmarked(item.link);
+        return `
+            <div class="reel-card bg-slate-950 flex flex-col justify-between p-6 text-white relative">
+                <div class="absolute inset-0 z-0">
+                    <img src="${item.thumb}" class="w-full h-full object-cover opacity-40 blur-sm scale-105" onerror="this.src='https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&q=80'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent"></div>
+                </div>
+                
+                <div class="relative z-10 flex items-center justify-between">
+                    <span class="px-3 py-1 bg-rose-600 text-white rounded-full text-[10px] font-black uppercase tracking-wider shadow-md">
+                        ${item.source}
+                    </span>
+                    <span class="text-[11px] font-bold text-slate-300 bg-slate-900/80 px-2.5 py-1 rounded-full border border-slate-700">
+                        ${formatTimeAgo(item.pubDate)}
+                    </span>
+                </div>
+
+                <div class="relative z-10 my-auto py-6">
+                    <div class="w-full h-48 rounded-2xl overflow-hidden mb-4 shadow-2xl border border-slate-700/50">
+                        <img src="${item.thumb}" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&q=80'">
+                    </div>
+                    <h3 class="text-base sm:text-lg font-black leading-snug mb-2 text-white">
+                        ${item.title}
+                    </h3>
+                    <p class="text-xs text-slate-300 font-medium line-clamp-3 leading-relaxed">
+                        ${item.desc}
+                    </p>
+                </div>
+
+                <div class="relative z-10 flex items-center gap-3 pt-2">
+                    <a href="${item.link}" target="_blank" class="flex-1 bg-rose-600 hover:bg-rose-500 text-white py-3 rounded-xl text-xs font-black flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg shadow-rose-600/30 cursor-pointer min-h-[44px]">
+                        Read Story
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7-7 7"></path></svg>
+                    </a>
+                    <button onclick="toggleBookmark('${item.link}')" class="p-3 bg-slate-800 hover:bg-slate-700 rounded-xl text-slate-300 transition-colors cursor-pointer min-h-[44px] min-w-[44px] flex items-center justify-center">
+                        <svg class="w-4 h-4 ${bookmarked ? 'text-rose-500 fill-current' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                    </button>
+                    <button onclick="shareLink('${item.title}', '${item.link}')" class="p-3 bg-slate-800 hover:bg-slate-700 rounded-xl text-slate-300 transition-colors cursor-pointer min-h-[44px] min-w-[44px] flex items-center justify-center">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initApp);
+    } else {
+        initApp();
+    }
+</script>
