@@ -1,965 +1,398 @@
 "use strict";
 
-/*
- * =========================================================
- * NISULKA TOOLS HOMEPAGE
- * =========================================================
- *
- * Homepage data source:
- *
- * data/tools.json
- *
- * The homepage automatically discovers:
- *
- * - tools
- * - categories
- * - featured tools
- * - descriptions
- * - logos
- * - keywords
- * - URLs
- *
- * No "icon" property is required.
- * =========================================================
- */
-
+/* =========================================================
+   NISULKA TOOLS HOMEPAGE
+   Categories are generated automatically from tools.json.
+   The homepage does not require manually maintained category HTML.
+   ========================================================= */
 
 const TOOLS_DATA_URL = "data/tools.json";
 
-
 let allTools = [];
-
 let activeCategory = "All";
-
 let searchQuery = "";
 
+const searchInput = document.getElementById("tool-search");
+const categoryList = document.getElementById("category-list");
+const featuredToolsContainer = document.getElementById("featured-tools");
+const allToolsContainer = document.getElementById("all-tools");
+const toolCount = document.getElementById("tool-count");
 
-/* =========================================================
-   DOM
-   ========================================================= */
+const CATEGORY_RULES = [
+    { name: "Image Tools", words: ["image", "png", "jpg", "jpeg", "webp", "gif", "photo", "background", "watermark"] },
+    { name: "PDF Tools", words: ["pdf"] },
+    { name: "YouTube Tools", words: ["youtube", "youtube channel", "thumbnail", "video analytics", "channel analysis"] },
+    { name: "Nepali Tools", words: ["nepali", "nepal", "nepali date", "nepali calendar", "nepali unicode", "romanized nepali"] },
+    { name: "Text Tools", words: ["text", "handwriting", "word", "case converter", "text converter"] },
+    { name: "Converter Tools", words: ["converter", "conversion", "convert"] },
+    { name: "Developer Tools", words: ["json", "html", "css", "javascript", "developer", "code", "base64", "url encoder"] },
+    { name: "Calculator Tools", words: ["calculator", "calculate", "percentage", "age calculator"] },
+    { name: "Finance Tools", words: ["currency", "finance", "loan", "interest", "nepse", "gold price"] },
+    { name: "Social Media Tools", words: ["instagram", "facebook", "tiktok", "social media"] }
+];
 
-const searchInput =
-    document.getElementById("tool-search");
-
-const categoryList =
-    document.getElementById("category-list");
-
-const featuredToolsContainer =
-    document.getElementById("featured-tools");
-
-const allToolsContainer =
-    document.getElementById("all-tools");
-
-const toolCount =
-    document.getElementById("tool-count");
-
-
-/* =========================================================
-   INITIALIZE
-   ========================================================= */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    initializeHomepage
-);
-
+document.addEventListener("DOMContentLoaded", initializeHomepage);
 
 async function initializeHomepage() {
-
     showLoadingState();
 
     try {
-
         await loadTools();
-
         setupSearch();
-
         renderCategories();
-
         renderFeaturedTools();
-
-        renderAllTools();
-
+        renderCategorySections();
         setupFAQ();
-
     } catch (error) {
-
-        console.error(
-            "Nisulka Tools homepage error:",
-            error
-        );
-
+        console.error("Nisulka Tools homepage error:", error);
         showErrorState();
-
     }
-
 }
-
-
-/* =========================================================
-   LOAD TOOLS
-   ========================================================= */
 
 async function loadTools() {
-
-    const response =
-        await fetch(
-            `${TOOLS_DATA_URL}?v=${Date.now()}`,
-            {
-                cache: "no-store"
-            }
-        );
-
+    const response = await fetch(`${TOOLS_DATA_URL}?v=${Date.now()}`, {
+        cache: "no-store"
+    });
 
     if (!response.ok) {
-
-        throw new Error(
-            `Unable to load tools.json: ${response.status}`
-        );
-
+        throw new Error(`Unable to load tools.json: ${response.status}`);
     }
 
-
-    const data =
-        await response.json();
-
+    const data = await response.json();
 
     if (!Array.isArray(data)) {
-
-        throw new Error(
-            "tools.json must contain an array."
-        );
-
+        throw new Error("tools.json must contain an array.");
     }
 
-
-    allTools =
-        data.filter(
-            tool =>
-                tool &&
-                tool.status !== "hidden"
-        );
-
+    allTools = data
+        .filter(tool => tool && tool.status !== "hidden")
+        .map(normalizeTool);
 }
 
+function normalizeTool(tool) {
+    const suppliedCategory = String(tool.category || "").trim();
+    const inferredCategory = inferCategory(tool);
 
-/* =========================================================
-   SEARCH
-   ========================================================= */
+    return {
+        ...tool,
+        category: suppliedCategory && suppliedCategory !== "Other Tools"
+            ? suppliedCategory
+            : inferredCategory
+    };
+}
+
+function inferCategory(tool) {
+    const text = [
+        tool.name || "",
+        tool.description || "",
+        tool.slug || "",
+        ...(Array.isArray(tool.keywords) ? tool.keywords : [])
+    ].join(" ").toLowerCase();
+
+    for (const rule of CATEGORY_RULES) {
+        if (rule.words.some(word => text.includes(word))) {
+            return rule.name;
+        }
+    }
+
+    return "Other Tools";
+}
 
 function setupSearch() {
+    if (!searchInput) return;
 
-    if (!searchInput) {
-        return;
-    }
+    const update = event => {
+        searchQuery = event.target.value.trim().toLowerCase();
+        renderFeaturedTools();
+        renderCategorySections();
+    };
 
+    searchInput.addEventListener("input", update);
+    searchInput.addEventListener("search", update);
 
-    searchInput.addEventListener(
-        "input",
-        event => {
-
-            searchQuery =
-                event.target.value
-                    .trim()
-                    .toLowerCase();
-
-
-            renderFeaturedTools();
-
-            renderAllTools();
-
-        }
-    );
-
-
-    searchInput.addEventListener(
-        "search",
-        event => {
-
-            searchQuery =
-                event.target.value
-                    .trim()
-                    .toLowerCase();
-
-
-            renderFeaturedTools();
-
-            renderAllTools();
-
-        }
-    );
-
-
-    const params =
-        new URLSearchParams(
-            window.location.search
-        );
-
-
-    const query =
-        params.get("q");
-
+    const params = new URLSearchParams(window.location.search);
+    const query = params.get("q");
 
     if (query) {
-
-        searchInput.value =
-            query;
-
-        searchQuery =
-            query
-                .trim()
-                .toLowerCase();
-
+        searchInput.value = query;
+        searchQuery = query.trim().toLowerCase();
     }
-
 }
 
-
-/* =========================================================
-   KEYBOARD SEARCH SHORTCUT
-   ========================================================= */
-
-document.addEventListener(
-    "keydown",
-    event => {
-
-        if (
-            event.key === "/" &&
-            !isTypingTarget(event.target)
-        ) {
-
-            event.preventDefault();
-
-            searchInput?.focus();
-
-        }
-
-        if (
-            event.key === "Escape" &&
-            document.activeElement === searchInput
-        ) {
-
-            searchInput.value = "";
-
-            searchQuery = "";
-
-            renderFeaturedTools();
-
-            renderAllTools();
-
-            searchInput.blur();
-
-        }
-
+document.addEventListener("keydown", event => {
+    if (event.key === "/" && !isTypingTarget(event.target)) {
+        event.preventDefault();
+        searchInput?.focus();
     }
-);
 
+    if (event.key === "Escape" && document.activeElement === searchInput) {
+        searchInput.value = "";
+        searchQuery = "";
+        activeCategory = "All";
+        renderCategories();
+        renderFeaturedTools();
+        renderCategorySections();
+        searchInput.blur();
+    }
+});
 
 function isTypingTarget(element) {
-
-    if (!element) {
-        return false;
-    }
-
-
-    const tag =
-        element.tagName?.toLowerCase();
-
-
-    return (
-        tag === "input" ||
-        tag === "textarea" ||
-        tag === "select" ||
-        element.isContentEditable
-    );
-
+    if (!element) return false;
+    const tag = element.tagName?.toLowerCase();
+    return tag === "input" || tag === "textarea" || tag === "select" || element.isContentEditable;
 }
 
+function getSearchFilteredTools() {
+    return allTools.filter(tool => {
+        if (!searchQuery) return true;
 
-/* =========================================================
-   FILTER
-   ========================================================= */
+        const searchableText = [
+            tool.name || "",
+            tool.description || "",
+            tool.category || "",
+            tool.slug || "",
+            ...(Array.isArray(tool.keywords) ? tool.keywords : [])
+        ].join(" ").toLowerCase();
 
-function getFilteredTools() {
-
-    return allTools.filter(
-        tool => {
-
-            const categoryMatch =
-                activeCategory === "All" ||
-                tool.category === activeCategory;
-
-
-            if (!categoryMatch) {
-                return false;
-            }
-
-
-            if (!searchQuery) {
-                return true;
-            }
-
-
-            const searchableText = [
-
-                tool.name || "",
-
-                tool.description || "",
-
-                tool.category || "",
-
-                ...(Array.isArray(tool.keywords)
-                    ? tool.keywords
-                    : [])
-
-            ]
-                .join(" ")
-                .toLowerCase();
-
-
-            return searchableText.includes(
-                searchQuery
-            );
-
-        }
-    );
-
+        return searchableText.includes(searchQuery);
+    });
 }
 
+function getVisibleTools() {
+    return getSearchFilteredTools().filter(tool => {
+        return activeCategory === "All" || tool.category === activeCategory;
+    });
+}
 
-/* =========================================================
-   CATEGORIES
-   ========================================================= */
+function getCategories() {
+    const counts = new Map();
+
+    allTools.forEach(tool => {
+        const category = tool.category || "Other Tools";
+        counts.set(category, (counts.get(category) || 0) + 1);
+    });
+
+    return [...counts.entries()]
+        .sort((a, b) => {
+            if (a[0] === "Other Tools") return 1;
+            if (b[0] === "Other Tools") return -1;
+            return a[0].localeCompare(b[0]);
+        });
+}
 
 function renderCategories() {
+    if (!categoryList) return;
 
-    if (!categoryList) {
-        return;
-    }
+    const categories = getCategories();
 
+    categoryList.innerHTML = `
+        <button type="button" class="category-button ${activeCategory === "All" ? "is-active" : ""}" data-category="All" aria-pressed="${activeCategory === "All"}">
+            All Tools <span class="category-count">${allTools.length}</span>
+        </button>
+        ${categories.map(([category, count]) => `
+            <button type="button" class="category-button ${activeCategory === category ? "is-active" : ""}" data-category="${escapeAttribute(category)}" aria-pressed="${activeCategory === category}">
+                ${escapeHTML(category)} <span class="category-count">${count}</span>
+            </button>
+        `).join("")}
+    `;
 
-    const categories = [
-
-        "All",
-
-        ...new Set(
-
-            allTools
-
-                .map(
-                    tool =>
-                        tool.category?.trim()
-                )
-
-                .filter(Boolean)
-
-        )
-
-    ];
-
-
-    categoryList.innerHTML = "";
-
-
-    categories.forEach(
-        category => {
-
-            const button =
-                document.createElement(
-                    "button"
-                );
-
-
-            button.type = "button";
-
-            button.className =
-                "category-button";
-
-
-            if (
-                category === activeCategory
-            ) {
-
-                button.classList.add(
-                    "is-active"
-                );
-
-            }
-
-
-            button.textContent =
-                category;
-
-
-            button.setAttribute(
-                "aria-pressed",
-                category === activeCategory
-                    ? "true"
-                    : "false"
-            );
-
-
-            button.addEventListener(
-                "click",
-                () => {
-
-                    activeCategory =
-                        category;
-
-                    renderCategories();
-
-                    renderFeaturedTools();
-
-                    renderAllTools();
-
-                }
-            );
-
-
-            categoryList.appendChild(
-                button
-            );
-
-        }
-    );
-
+    categoryList.querySelectorAll(".category-button").forEach(button => {
+        button.addEventListener("click", () => {
+            activeCategory = button.dataset.category || "All";
+            renderCategories();
+            renderFeaturedTools();
+            renderCategorySections();
+        });
+    });
 }
-
-
-/* =========================================================
-   FEATURED
-   ========================================================= */
 
 function renderFeaturedTools() {
+    if (!featuredToolsContainer) return;
 
-    if (!featuredToolsContainer) {
+    const section = document.getElementById("popular");
+    const featured = getVisibleTools().filter(tool => tool.featured === true).slice(0, 8);
+
+    if (!featured.length) {
+        featuredToolsContainer.innerHTML = "";
+        if (section) section.hidden = true;
         return;
     }
 
-
-    const section =
-        document.getElementById(
-            "popular"
-        );
-
-
-    const filtered =
-        getFilteredTools();
-
-
-    const featured =
-        filtered.filter(
-            tool =>
-                tool.featured === true
-        );
-
-
-    if (
-        featured.length === 0
-    ) {
-
-        featuredToolsContainer.innerHTML =
-            "";
-
-        if (section) {
-            section.hidden = true;
-        }
-
-        return;
-
-    }
-
-
-    if (section) {
-        section.hidden = false;
-    }
-
-
-    featuredToolsContainer.innerHTML =
-        featured
-            .slice(0, 8)
-            .map(createToolCard)
-            .join("");
-
+    if (section) section.hidden = false;
+    featuredToolsContainer.innerHTML = featured.map(createToolCard).join("");
 }
 
+function renderCategorySections() {
+    if (!allToolsContainer) return;
 
-/* =========================================================
-   ALL TOOLS
-   ========================================================= */
+    const filtered = getVisibleTools();
 
-function renderAllTools() {
-
-    if (!allToolsContainer) {
-        return;
-    }
-
-
-    const filtered =
-        getFilteredTools();
-
-
-    if (
-        filtered.length === 0
-    ) {
-
+    if (!filtered.length) {
         showNoResults();
-
         updateToolCount(0);
-
         return;
-
     }
 
+    const groups = new Map();
 
-    allToolsContainer.innerHTML =
-        filtered
-            .map(createToolCard)
-            .join("");
+    filtered.forEach(tool => {
+        const category = tool.category || "Other Tools";
+        if (!groups.has(category)) groups.set(category, []);
+        groups.get(category).push(tool);
+    });
 
+    const orderedGroups = [...groups.entries()].sort((a, b) => {
+        if (a[0] === "Other Tools") return 1;
+        if (b[0] === "Other Tools") return -1;
+        return a[0].localeCompare(b[0]);
+    });
 
-    updateToolCount(
-        filtered.length
-    );
+    allToolsContainer.innerHTML = orderedGroups.map(([category, tools]) => {
+        const visibleTools = activeCategory === "All" ? tools.slice(0, 4) : tools;
+        const remaining = tools.length - visibleTools.length;
 
+        return `
+            <section class="home-category-block" data-category-section="${escapeAttribute(category)}">
+                <div class="home-category-heading">
+                    <div>
+                        <span class="section-label">CATEGORY</span>
+                        <h3>${escapeHTML(category)}</h3>
+                        <p>${tools.length} ${tools.length === 1 ? "tool" : "tools"} available</p>
+                    </div>
+                    <button type="button" class="category-view-all" data-view-category="${escapeAttribute(category)}">
+                        View all <span aria-hidden="true">→</span>
+                    </button>
+                </div>
+                <div class="tools-grid">
+                    ${visibleTools.map(createToolCard).join("")}
+                </div>
+                ${remaining > 0 ? `<div class="category-more">+${remaining} more ${escapeHTML(category)} tools</div>` : ""}
+            </section>
+        `;
+    }).join("");
+
+    allToolsContainer.querySelectorAll("[data-view-category]").forEach(button => {
+        button.addEventListener("click", () => {
+            activeCategory = button.dataset.viewCategory || "All";
+            renderCategories();
+            renderFeaturedTools();
+            renderCategorySections();
+            document.getElementById("all-tools-section")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+    });
+
+    updateToolCount(filtered.length);
 }
-
-
-/* =========================================================
-   TOOL CARD
-   ========================================================= */
 
 function createToolCard(tool) {
+    const name = escapeHTML(tool.name || "Unnamed Tool");
+    const description = escapeHTML(tool.description || "Useful online tool.");
+    const url = safeURL(tool.url || "#");
+    const logo = safeURL(tool.logo || "");
 
-    const name =
-        escapeHTML(
-            tool.name ||
-            "Unnamed Tool"
-        );
-
-
-    const description =
-        escapeHTML(
-            tool.description ||
-            "Useful online tool."
-        );
-
-
-    const url =
-        safeURL(
-            tool.url ||
-            "#"
-        );
-
-
-    const logo =
-        safeURL(
-            tool.logo ||
-            ""
-        );
-
-
-    const logoHTML =
-        logo
-
-            ? `
-                <img
-                    class="tool-card-logo"
-                    src="${logo}"
-                    alt="${name} logo"
-                    loading="lazy"
-                    width="82"
-                    height="82"
-                    onerror="this.style.display='none'; this.nextElementSibling.hidden=false;"
-                >
-
-                <span
-                    class="tool-card-logo-fallback"
-                    aria-hidden="true"
-                    hidden
-                >
-                    ◇
-                </span>
-            `
-
-            : `
-                <span
-                    class="tool-card-logo-fallback"
-                    aria-hidden="true"
-                >
-                    ◇
-                </span>
-            `;
-
+    const logoHTML = logo ? `
+        <img class="tool-card-logo" src="${logo}" alt="${name} logo" loading="lazy" width="88" height="88" onerror="this.style.display='none';this.nextElementSibling.hidden=false;">
+        <span class="tool-card-logo-fallback" aria-hidden="true" hidden>◇</span>
+    ` : `
+        <span class="tool-card-logo-fallback" aria-hidden="true">◇</span>
+    `;
 
     return `
-
         <article class="tool-card">
-
-            <a
-                class="tool-card-link"
-                href="${url}"
-                aria-label="Open ${name}"
-            >
-
-                <div class="tool-card-icon-wrapper">
-
-                    ${logoHTML}
-
-                </div>
-
-
-                <h3 class="tool-card-title">
-                    ${name}
-                </h3>
-
-
-                <p class="tool-card-description">
-                    ${description}
-                </p>
-
+            <a class="tool-card-link" href="${url}" aria-label="Open ${name}">
+                <div class="tool-card-icon-wrapper">${logoHTML}</div>
+                <h4 class="tool-card-title">${name}</h4>
+                <p class="tool-card-description">${description}</p>
             </a>
-
         </article>
-
     `;
-
 }
-
-
-/* =========================================================
-   SAFE URL
-   ========================================================= */
 
 function safeURL(value) {
+    const stringValue = String(value || "").trim();
+    if (!stringValue) return "#";
 
-    const stringValue =
-        String(value || "")
-            .trim();
-
-
-    if (!stringValue) {
-        return "#";
+    if (stringValue.startsWith("/") || stringValue.startsWith("./") || stringValue.startsWith("../")) {
+        return escapeAttribute(stringValue);
     }
-
-
-    /*
-     * Allow relative URLs used by Nisulka.
-     */
-
-    if (
-        stringValue.startsWith("/") ||
-        stringValue.startsWith("./") ||
-        stringValue.startsWith("../")
-    ) {
-
-        return escapeAttribute(
-            stringValue
-        );
-
-    }
-
 
     try {
-
-        const url =
-            new URL(
-                stringValue,
-                window.location.origin
-            );
-
-
-        if (
-            url.protocol === "http:" ||
-            url.protocol === "https:"
-        ) {
-
-            return escapeAttribute(
-                url.href
-            );
-
-        }
-
-    } catch {
+        const url = new URL(stringValue, window.location.origin);
+        if (url.protocol === "http:" || url.protocol === "https:") return escapeAttribute(url.href);
+    } catch (_) {
         return "#";
     }
 
-
     return "#";
-
 }
-
-
-/* =========================================================
-   TOOL COUNT
-   ========================================================= */
 
 function updateToolCount(count) {
-
-    if (!toolCount) {
-        return;
-    }
-
-
-    toolCount.textContent =
-        `${count} ${
-            count === 1
-                ? "tool"
-                : "tools"
-        }`;
-
+    if (!toolCount) return;
+    toolCount.textContent = `${count} ${count === 1 ? "tool" : "tools"}`;
 }
-
-
-/* =========================================================
-   NO RESULTS
-   ========================================================= */
 
 function showNoResults() {
-
-    if (!allToolsContainer) {
-        return;
-    }
-
+    if (!allToolsContainer) return;
 
     allToolsContainer.innerHTML = `
-
         <div class="tools-empty">
-
-            <h3>
-                No tools found
-            </h3>
-
-            <p>
-                Try another search or browse a different category.
-            </p>
-
-            <button
-                type="button"
-                class="btn btn-primary"
-                id="clear-search"
-            >
-                Clear search
-            </button>
-
+            <h3>No tools found</h3>
+            <p>Try another search or choose a different category.</p>
+            <button type="button" class="btn btn-primary" id="clear-search">Clear filters</button>
         </div>
-
     `;
 
-
-    document
-        .getElementById(
-            "clear-search"
-        )
-        ?.addEventListener(
-            "click",
-            clearSearch
-        );
-
+    document.getElementById("clear-search")?.addEventListener("click", clearSearch);
 }
-
-
-/* =========================================================
-   CLEAR SEARCH
-   ========================================================= */
 
 function clearSearch() {
-
-    if (searchInput) {
-
-        searchInput.value = "";
-
-    }
-
-
+    if (searchInput) searchInput.value = "";
     searchQuery = "";
-
     activeCategory = "All";
-
     renderCategories();
-
     renderFeaturedTools();
-
-    renderAllTools();
-
+    renderCategorySections();
 }
-
-
-/* =========================================================
-   LOADING
-   ========================================================= */
 
 function showLoadingState() {
-
-    const skeletons =
-        Array.from(
-            { length: 4 },
-            () =>
-                `<div class="tool-skeleton"></div>`
-        )
-        .join("");
-
-
-    if (featuredToolsContainer) {
-
-        featuredToolsContainer.innerHTML =
-            skeletons;
-
-    }
-
-
-    if (allToolsContainer) {
-
-        allToolsContainer.innerHTML =
-            skeletons;
-
-    }
-
+    const skeletons = Array.from({ length: 4 }, () => `<div class="tool-skeleton"></div>`).join("");
+    if (featuredToolsContainer) featuredToolsContainer.innerHTML = skeletons;
+    if (allToolsContainer) allToolsContainer.innerHTML = skeletons;
 }
-
-
-/* =========================================================
-   ERROR
-   ========================================================= */
 
 function showErrorState() {
-
-    if (featuredToolsContainer) {
-
-        featuredToolsContainer.innerHTML =
-            "";
-
-    }
-
-
+    if (featuredToolsContainer) featuredToolsContainer.innerHTML = "";
     if (allToolsContainer) {
-
         allToolsContainer.innerHTML = `
-
             <div class="tools-empty">
-
-                <h3>
-                    Tools couldn't be loaded
-                </h3>
-
-                <p>
-                    Something went wrong while loading the tool collection.
-                </p>
-
-                <button
-                    type="button"
-                    class="btn btn-primary"
-                    onclick="location.reload()"
-                >
-                    Try again
-                </button>
-
+                <h3>Tools couldn't be loaded</h3>
+                <p>Something went wrong while loading the tool collection.</p>
+                <button type="button" class="btn btn-primary" onclick="location.reload()">Try again</button>
             </div>
-
         `;
-
     }
-
 }
-
-
-/* =========================================================
-   FAQ
-   ========================================================= */
 
 function setupFAQ() {
-
-    const questions =
-        document.querySelectorAll(
-            ".tool-faq-question"
-        );
-
-
-    questions.forEach(
-        question => {
-
-            question.addEventListener(
-                "click",
-                () => {
-
-                    const expanded =
-                        question.getAttribute(
-                            "aria-expanded"
-                        ) === "true";
-
-
-                    question.setAttribute(
-                        "aria-expanded",
-                        expanded
-                            ? "false"
-                            : "true"
-                    );
-
-
-                    const answer =
-                        question
-                            .closest(
-                                ".tool-faq-item"
-                            )
-                            ?.querySelector(
-                                ".tool-faq-answer"
-                            );
-
-
-                    if (answer) {
-
-                        answer.hidden =
-                            expanded;
-
-                    }
-
-                }
-            );
-
-        }
-    );
-
+    document.querySelectorAll(".tool-faq-question").forEach(question => {
+        question.addEventListener("click", () => {
+            const expanded = question.getAttribute("aria-expanded") === "true";
+            question.setAttribute("aria-expanded", expanded ? "false" : "true");
+            const answer = question.closest(".tool-faq-item")?.querySelector(".tool-faq-answer");
+            if (answer) answer.hidden = expanded;
+        });
+    });
 }
-
-
-/* =========================================================
-   SECURITY HELPERS
-   ========================================================= */
 
 function escapeHTML(value) {
-
     return String(value)
-
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-
-        .replace(
-            /</g,
-            "&lt;"
-        )
-
-        .replace(
-            />/g,
-            "&gt;"
-        )
-
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-
-        .replace(
-            /'/g,
-            "&#039;"
-        );
-
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
-
 function escapeAttribute(value) {
-
     return escapeHTML(value);
-
 }
