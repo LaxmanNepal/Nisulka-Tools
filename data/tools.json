@@ -22,6 +22,19 @@
     "status": "active"
   },
   {
+    "name": "Image Compressor",
+    "slug": "image-compressor",
+    "path": "image-tools/image-compressor",
+    "description": "Free online Image Compressor tool.",
+    "category": "Image Tools",
+    "categorySlug": "image-tools",
+    "logo": "/Nisulka-Tools/tools/image-tools/image-compressor/logo.jpg",
+    "url": "/Nisulka-Tools/tools/image-tools/image-compressor/",
+    "keywords": [],
+    "featured": false,
+    "status": "active"
+  },
+  {
     "name": "Gold Price In Nepal",
     "slug": "gold-price-in-nepal",
     "path": "nepali-tools/gold-price-in-nepal",

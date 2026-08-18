@@ -10,6 +10,16 @@
     ]
   },
   {
+    "name": "Image Tools",
+    "slug": "image-tools",
+    "description": "Free online image tools for everyday tasks.",
+    "url": "/Nisulka-Tools/categories/image-tools/",
+    "toolCount": 1,
+    "tools": [
+      "image-compressor"
+    ]
+  },
+  {
     "name": "Nepali Tools",
     "slug": "nepali-tools",
     "description": "Free online nepali tools for everyday tasks.",
