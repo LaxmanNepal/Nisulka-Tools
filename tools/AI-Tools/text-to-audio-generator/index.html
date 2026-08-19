@@ -152,6 +152,35 @@
             border-color: #1e40af;
         }
 
+        .tag-badge {
+            font-size: 0.72rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.5rem;
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tag-badge:hover {
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+
+        body.dark .tag-badge,
+        html[data-theme="dark"] .tag-badge {
+            background: #334155;
+            color: #cbd5e1;
+            border-color: #475569;
+        }
+
+        body.dark .tag-badge:hover,
+        html[data-theme="dark"] .tag-badge:hover {
+            background: #475569;
+            color: #f8fafc;
+        }
+
         .input-wrapper {
             position: relative;
             margin-bottom: 1.25rem;
@@ -159,8 +188,8 @@
 
         textarea.tool-input {
             width: 100%;
-            height: 160px;
-            padding: 1rem 1rem 2.5rem 1rem;
+            height: 170px;
+            padding: 1rem 1rem 2.75rem 1rem;
             border-radius: 0.85rem;
             border: 1.5px solid #e2e8f0;
             background: #f8fafc;
@@ -182,6 +211,14 @@
             outline: none;
             border-color: #2563eb;
             box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+        }
+
+        .input-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
         }
 
         .input-actions {
@@ -207,23 +244,34 @@
             color: #94a3b8;
         }
 
-        .copy-btn {
+        .icon-btn {
             background: none;
             border: none;
             cursor: pointer;
             color: #64748b;
             transition: color 0.2s;
-            padding: 0.1rem;
+            padding: 0.2rem;
             display: flex;
             align-items: center;
+            border-radius: 0.25rem;
         }
 
-        .copy-btn:hover {
+        .icon-btn:hover {
             color: #2563eb;
         }
 
+        .icon-btn.recording {
+            color: #ef4444;
+            animation: pulse 1s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { opacity: 1; }
+            to { opacity: 0.4; }
+        }
+
         .control-group {
-            margin: 1.25rem 0;
+            margin: 1rem 0;
         }
 
         .control-label {
@@ -333,7 +381,7 @@
             gap: 0.6rem;
             cursor: pointer;
             transition: background 0.2s, transform 0.1s;
-            margin-top: 1rem;
+            margin-top: 1.25rem;
         }
 
         .btn-generate:hover {
@@ -414,7 +462,7 @@
 
         .visualizer-container {
             width: 100%;
-            height: 80px;
+            height: 90px;
             background: #0f172a;
             border-radius: 0.75rem;
             margin-bottom: 1rem;
@@ -428,21 +476,42 @@
             display: block;
         }
 
-        .btn-download {
+        .btn-action-sm {
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            margin-top: 0.85rem;
-            padding: 0.65rem 1.25rem;
+            gap: 0.4rem;
+            padding: 0.55rem 1rem;
+            border-radius: 0.6rem;
+            font-weight: 500;
+            font-size: 0.85rem;
+            border: 1px solid #cbd5e1;
+            background: #ffffff;
+            color: #1e293b;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .btn-action-sm:hover {
+            background: #f1f5f9;
+        }
+
+        body.dark .btn-action-sm,
+        html[data-theme="dark"] .btn-action-sm {
+            background: #1e293b;
+            border-color: #475569;
+            color: #f1f5f9;
+        }
+
+        body.dark .btn-action-sm:hover,
+        html[data-theme="dark"] .btn-action-sm:hover {
+            background: #334155;
+        }
+
+        .btn-download {
             background: #16a34a;
             color: white;
-            border-radius: 0.75rem;
-            font-weight: 500;
-            font-size: 0.9rem;
             border: none;
-            cursor: pointer;
-            transition: background 0.2s;
-            text-decoration: none;
         }
 
         .btn-download:hover {
@@ -572,21 +641,42 @@
                 </button>
             </div>
 
-            <!-- Sample Presets -->
-            <div class="flex flex-wrap gap-2 mb-3 items-center">
-                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Try Sample:</span>
-                <button type="button" class="preset-badge" data-preset="narration">📖 Story Narration</button>
-                <button type="button" class="preset-badge" data-preset="announcement">📢 News Speech</button>
-                <button type="button" class="preset-badge" data-preset="bengali">🇧🇩 Bengali Speech</button>
-                <button type="button" class="preset-badge" data-preset="whisper">🤫 Soft Whisper</button>
+            <!-- Sample Presets Grid -->
+            <div class="mb-3">
+                <div class="flex flex-wrap gap-2 items-center">
+                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Try Samples:</span>
+                    <button type="button" class="preset-badge" data-preset="narration">📖 Story Narration</button>
+                    <button type="button" class="preset-badge" data-preset="announcement">📢 News Speech</button>
+                    <button type="button" class="preset-badge" data-preset="bengali">🇧🇩 Bengali</button>
+                    <button type="button" class="preset-badge" data-preset="hindi">🇮🇳 Hindi</button>
+                    <button type="button" class="preset-badge" data-preset="spanish">🇪🇸 Spanish</button>
+                    <button type="button" class="preset-badge" data-preset="whisper">🤫 Soft Whisper</button>
+                </div>
             </div>
 
-            <!-- Text Input -->
+            <!-- Quick Formatting & SSML Tag Inserters -->
+            <div class="flex flex-wrap gap-2 items-center mb-2">
+                <span class="text-xs font-medium text-slate-500">Insert Expression Tags:</span>
+                <button type="button" class="tag-badge" data-tag="[pause]">⏸️ Pause 1s</button>
+                <button type="button" class="tag-badge" data-tag="[emphasis]">✨ Emphasis</button>
+                <button type="button" class="tag-badge" data-tag="[whisper]">🤫 Whisper</button>
+                <button type="button" class="tag-badge" data-tag="[loud]">🔊 Loud</button>
+            </div>
+
+            <!-- Text Input Wrapper -->
             <div class="input-wrapper">
                 <textarea id="textInput" class="tool-input" placeholder="Type or paste your text here to convert into voice..." maxlength="10000"></textarea>
                 <div class="input-actions">
+                    <button id="dictateBtn" class="icon-btn" title="Speak to dictate text (Voice Input)" type="button">
+                        <i data-feather="mic" class="w-4 h-4"></i>
+                    </button>
+                    <button id="clearBtn" class="icon-btn" title="Clear text" type="button">
+                        <i data-feather="trash-2" class="w-4 h-4"></i>
+                    </button>
+                    <span id="wordCount" class="hidden md:inline border-r pr-2 border-slate-300 dark:border-slate-700">0 words</span>
+                    <span id="estDuration" class="hidden md:inline border-r pr-2 border-slate-300 dark:border-slate-700">~0s</span>
                     <span id="charCount">0 / 10000</span>
-                    <button id="copyBtn" class="copy-btn" title="Copy text" type="button">
+                    <button id="copyBtn" class="icon-btn" title="Copy text" type="button">
                         <i data-feather="copy" class="w-4 h-4"></i>
                     </button>
                 </div>
@@ -594,7 +684,7 @@
 
             <!-- Voice Controls Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Voice Select -->
+                <!-- Voice Avatar Select -->
                 <div class="control-group">
                     <label for="voiceSelect" class="control-label">Voice Avatar</label>
                     <select id="voiceSelect" class="tool-select">
@@ -618,16 +708,40 @@
                         <option value="Say in an excited tone">Excited & Energetic</option>
                         <option value="Say in a calm, soothing voice">Calm & Soothing</option>
                         <option value="Say in a professional news broadcast voice">News Broadcast</option>
-                        <option value="Say in a spooky whisper">Soft Whisper</option>
+                        <option value="Say in a soft whisper">Soft Whisper</option>
+                        <option value="Say in a deep dramatic narrative tone">Dramatic Narrator</option>
                     </select>
                 </div>
             </div>
 
-            <!-- Speed Slider -->
-            <div class="control-group">
-                <label for="speedSlider" class="control-label">Playback Speed: <span id="speedValue" class="range-value">1.0x</span></label>
-                <div class="range-wrapper">
-                    <input type="range" id="speedSlider" class="tool-range" min="0.5" max="2.0" step="0.1" value="1.0" />
+            <!-- Advanced Audio Effects & Sliders -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Speed Slider -->
+                <div class="control-group">
+                    <label for="speedSlider" class="control-label">Playback Speed: <span id="speedValue" class="range-value">1.0x</span></label>
+                    <div class="range-wrapper">
+                        <input type="range" id="speedSlider" class="tool-range" min="0.5" max="2.0" step="0.1" value="1.0" />
+                    </div>
+                </div>
+
+                <!-- Volume / Gain Slider -->
+                <div class="control-group">
+                    <label for="volumeSlider" class="control-label">Volume Level: <span id="volumeValue" class="range-value">100%</span></label>
+                    <div class="range-wrapper">
+                        <input type="range" id="volumeSlider" class="tool-range" min="0" max="100" step="5" value="100" />
+                    </div>
+                </div>
+
+                <!-- Web Audio Effect Preset -->
+                <div class="control-group">
+                    <label for="fxSelect" class="control-label">Audio Filter FX</label>
+                    <select id="fxSelect" class="tool-select">
+                        <option value="normal">Normal Studio</option>
+                        <option value="radio">Radio Broadcast Filter</option>
+                        <option value="telephone">Vintage Telephone</option>
+                        <option value="reverb">Concert Hall Reverb</option>
+                        <option value="bass">Bass Boost</option>
+                    </select>
                 </div>
             </div>
 
@@ -652,10 +766,16 @@
 
                 <audio id="audioPlayer" controls class="w-full"></audio>
 
-                <div class="flex flex-wrap gap-3 items-center mt-3">
-                    <a id="downloadLink" href="#" download="ai-voice.wav" class="btn-download">
-                        <i data-feather="download" class="w-4 h-4"></i> Download Audio (.wav)
+                <div class="flex flex-wrap gap-2 items-center mt-3">
+                    <a id="downloadLink" href="#" download="ai-voice.wav" class="btn-action-sm btn-download">
+                        <i data-feather="download" class="w-4 h-4"></i> Download WAV
                     </a>
+                    <button id="downloadSrtBtn" type="button" class="btn-action-sm">
+                        <i data-feather="file-text" class="w-4 h-4"></i> Export Subtitles (.SRT)
+                    </button>
+                    <button id="downloadTxtBtn" type="button" class="btn-action-sm">
+                        <i data-feather="file" class="w-4 h-4"></i> Export Transcript
+                    </button>
                 </div>
             </div>
 
@@ -671,15 +791,19 @@
             <h2>Frequently Asked Questions</h2>
             <div class="faq-item">
                 <div class="faq-question">What languages does this AI Voice Generator support?</div>
-                <div class="faq-answer">It supports English, Bengali, Hindi, Spanish, French, German, Japanese, and over 20 global languages automatically based on text input.</div>
+                <div class="faq-answer">It supports English, Bengali, Hindi, Spanish, French, German, Japanese, Arabic, and over 20 global languages automatically based on text input.</div>
             </div>
             <div class="faq-item">
-                <div class="faq-question">How do tone and style options work?</div>
-                <div class="faq-answer">You can select natural expression modifiers like Cheerful, Soft Whisper, or News Broadcast to customize the voice inflection.</div>
+                <div class="faq-question">How do tone and expression tags work?</div>
+                <div class="faq-answer">You can select expression modifiers like Cheerful or Soft Whisper, or insert inline tags like [Pause 1s] to add natural inflection and pauses.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">How do audio filters (Radio, Reverb, Bass Boost) work?</div>
+                <div class="faq-answer">Our built-in Web Audio DSP engine applies real-time acoustic equalization and reverberation filters directly inside your browser.</div>
             </div>
             <div class="faq-item">
                 <div class="faq-question">Is the generated audio royalty-free?</div>
-                <div class="faq-answer">Yes, all generated audio WAV files can be freely downloaded and used for videos, podcasts, presentations, or personal projects.</div>
+                <div class="faq-answer">Yes, all generated audio WAV files and subtitle tracks can be freely downloaded and used for videos, podcasts, presentations, or personal projects.</div>
             </div>
         </section>
 
@@ -701,11 +825,18 @@
             // DOM Elements
             const textInput = document.getElementById('textInput');
             const charCount = document.getElementById('charCount');
+            const wordCount = document.getElementById('wordCount');
+            const estDuration = document.getElementById('estDuration');
             const copyBtn = document.getElementById('copyBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const dictateBtn = document.getElementById('dictateBtn');
             const voiceSelect = document.getElementById('voiceSelect');
             const styleSelect = document.getElementById('styleSelect');
             const speedSlider = document.getElementById('speedSlider');
             const speedValue = document.getElementById('speedValue');
+            const volumeSlider = document.getElementById('volumeSlider');
+            const volumeValue = document.getElementById('volumeValue');
+            const fxSelect = document.getElementById('fxSelect');
             const generateBtn = document.getElementById('generateBtn');
             const btnText = document.getElementById('btnText');
             const errorMsg = document.getElementById('errorMsg');
@@ -713,6 +844,8 @@
             const audioOutput = document.getElementById('audioOutput');
             const audioPlayer = document.getElementById('audioPlayer');
             const downloadLink = document.getElementById('downloadLink');
+            const downloadSrtBtn = document.getElementById('downloadSrtBtn');
+            const downloadTxtBtn = document.getElementById('downloadTxtBtn');
             const themeToggle = document.getElementById('themeToggle');
             const themeIcon = document.getElementById('themeIcon');
             const canvas = document.getElementById('audioVisualizer');
@@ -720,12 +853,16 @@
             const historyContainer = document.getElementById('historyContainer');
             const historyList = document.getElementById('historyList');
 
+            let currentGeneratedText = '';
+
             // Sample Presets Data
             const presets = {
                 narration: "Once upon a time in a vibrant digital kingdom, creators built tools that gave human speech to imagination.",
                 announcement: "Good evening. Welcome to tonight's bulletin. Top story: Breakthrough advancements in AI technology offer instant speech rendering worldwide.",
                 bengali: "নমস্কার! এই এআই ভয়েস জেনারেটরের মাধ্যমে আপনি যেকোনো লেখাকে স্বাভাবিক কণ্ঠে রূপান্তর করতে পারবেন।",
-                whisper: "Listen closely... the secret to extraordinary voice generation lies right here in your hands."
+                hindi: "नमस्ते! इस एआई वॉइस जनरेटर की मदद से आप किसी भी टेक्स्ट को प्राकृतिक आवाज में बदल सकते हैं।",
+                spanish: "¡Hola! Bienvenidos a nuestro generador de voz por IA, diseñado para transformar texto en voz natural de alta calidad.",
+                whisper: "Listen closely... [pause] the secret to extraordinary voice generation lies right here in your hands."
             };
 
             // Preset Click Handlers
@@ -734,8 +871,28 @@
                     const key = this.getAttribute('data-preset');
                     if (presets[key]) {
                         textInput.value = presets[key];
-                        charCount.textContent = textInput.value.length + ' / 10000';
+                        updateTextStats();
                     }
+                });
+            });
+
+            // Tag Click Handlers
+            document.querySelectorAll('.tag-badge').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tag = this.getAttribute('data-tag');
+                    let insertText = '';
+                    if (tag === '[pause]') insertText = '... [pause 1s] ';
+                    else if (tag === '[emphasis]') insertText = ' *emphasis* ';
+                    else if (tag === '[whisper]') insertText = ' [in soft whisper] ';
+                    else if (tag === '[loud]') insertText = ' [loudly] ';
+
+                    const start = textInput.selectionStart;
+                    const end = textInput.selectionEnd;
+                    const text = textInput.value;
+                    textInput.value = text.substring(0, start) + insertText + text.substring(end);
+                    textInput.focus();
+                    textInput.selectionStart = textInput.selectionEnd = start + insertText.length;
+                    updateTextStats();
                 });
             });
 
@@ -763,10 +920,56 @@
                 setTheme(isDark);
             });
 
-            // Character counter
-            textInput.addEventListener('input', function() {
-                charCount.textContent = this.value.length + ' / 10000';
+            function updateTextStats() {
+                const val = textInput.value;
+                charCount.textContent = val.length + ' / 10000';
+                
+                const words = val.trim() ? val.trim().split(/\s+/).length : 0;
+                wordCount.textContent = words + (words === 1 ? ' word' : ' words');
+
+                // Average reading speed: ~150 words per minute -> 2.5 words/sec
+                const estSecs = Math.round(words / 2.5 / (parseFloat(speedSlider.value) || 1.0));
+                estDuration.textContent = '~' + estSecs + 's';
+            }
+
+            textInput.addEventListener('input', updateTextStats);
+
+            clearBtn.addEventListener('click', function() {
+                textInput.value = '';
+                updateTextStats();
             });
+
+            let recognition = null;
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = false;
+
+                recognition.onstart = function() {
+                    dictateBtn.classList.add('recording');
+                };
+
+                recognition.onend = function() {
+                    dictateBtn.classList.remove('recording');
+                };
+
+                recognition.onresult = function(event) {
+                    const transcript = event.results[0][0].transcript;
+                    textInput.value += (textInput.value ? ' ' : '') + transcript;
+                    updateTextStats();
+                };
+
+                dictateBtn.addEventListener('click', function() {
+                    if (dictateBtn.classList.contains('recording')) {
+                        recognition.stop();
+                    } else {
+                        recognition.start();
+                    }
+                });
+            } else {
+                dictateBtn.style.display = 'none';
+            }
 
             // Copy Action
             copyBtn.addEventListener('click', function() {
@@ -794,6 +997,16 @@
                 speedValue.textContent = val + 'x';
                 if (audioPlayer) {
                     audioPlayer.playbackRate = parseFloat(val);
+                }
+                updateTextStats();
+            });
+
+            // Volume Slider adjustment
+            volumeSlider.addEventListener('input', function() {
+                const val = parseInt(this.value, 10);
+                volumeValue.textContent = val + '%';
+                if (audioPlayer) {
+                    audioPlayer.volume = val / 100;
                 }
             });
 
@@ -837,7 +1050,7 @@
                 return new Blob([buffer], { type: 'audio/wav' });
             }
 
-            let audioCtx, analyser, sourceNode;
+            let audioCtx, analyser, sourceNode, filterNode;
 
             function initVisualizer() {
                 if (audioCtx) return;
@@ -846,13 +1059,41 @@
                     analyser = audioCtx.createAnalyser();
                     analyser.fftSize = 64;
                     sourceNode = audioCtx.createMediaElementSource(audioPlayer);
-                    sourceNode.connect(analyser);
+                    
+                    filterNode = audioCtx.createBiquadFilter();
+                    applyAudioFilter(fxSelect.value);
+
+                    sourceNode.connect(filterNode);
+                    filterNode.connect(analyser);
                     analyser.connect(audioCtx.destination);
+
                     drawVisualizer();
                 } catch (e) {
-                    console.warn('AudioContext visualization setup skipped:', e);
+                    console.warn('AudioContext setup skipped:', e);
                 }
             }
+
+            function applyAudioFilter(fx) {
+                if (!filterNode) return;
+                if (fx === 'radio') {
+                    filterNode.type = 'bandpass';
+                    filterNode.frequency.value = 1500;
+                    filterNode.Q.value = 2.0;
+                } else if (fx === 'telephone') {
+                    filterNode.type = 'highpass';
+                    filterNode.frequency.value = 800;
+                } else if (fx === 'bass') {
+                    filterNode.type = 'lowshelf';
+                    filterNode.frequency.value = 200;
+                    filterNode.gain.value = 12;
+                } else {
+                    filterNode.type = 'allpass';
+                }
+            }
+
+            fxSelect.addEventListener('change', function() {
+                applyAudioFilter(this.value);
+            });
 
             function drawVisualizer() {
                 requestAnimationFrame(drawVisualizer);
@@ -912,7 +1153,7 @@
                 historyClips.unshift({ text, voice, url: wavBlobUrl, time: new Date().toLocaleTimeString() });
                 historyContainer.classList.remove('hidden');
 
-                historyList.innerHTML = historyClips.slice(0, 5).map((item, idx) => `
+                historyList.innerHTML = historyClips.slice(0, 5).map((item) => `
                     <div class="history-item">
                         <div class="truncate mr-3">
                             <p class="font-medium text-sm text-slate-800 dark:text-slate-200 truncate">${item.text}</p>
@@ -937,6 +1178,46 @@
                 audioPlayer.play();
             };
 
+            // Export SRT Subtitles
+            downloadSrtBtn.addEventListener('click', function() {
+                if (!currentGeneratedText) return;
+                const lines = currentGeneratedText.split(/(?<=[.?!])\s+/);
+                let srtContent = '';
+                let currentTime = 0;
+
+                lines.forEach((line, index) => {
+                    const duration = Math.max(2, Math.round(line.split(/\s+/).length / 2.5));
+                    const startTimeStr = formatSrtTime(currentTime);
+                    const endTimeStr = formatSrtTime(currentTime + duration);
+
+                    srtContent += `${index + 1}\n${startTimeStr} --> ${endTimeStr}\n${line}\n\n`;
+                    currentTime += duration;
+                });
+
+                downloadFile(srtContent, 'transcript.srt', 'text/plain');
+            });
+
+            // Export TXT Transcript
+            downloadTxtBtn.addEventListener('click', function() {
+                if (!currentGeneratedText) return;
+                downloadFile(currentGeneratedText, 'transcript.txt', 'text/plain');
+            });
+
+            function formatSrtTime(seconds) {
+                const hrs = Math.floor(seconds / 3600).toString().padStart(2, '0');
+                const mins = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
+                const secs = Math.floor(seconds % 60).toString().padStart(2, '0');
+                return `${hrs}:${mins}:${secs},000`;
+            }
+
+            function downloadFile(content, fileName, contentType) {
+                const blob = new Blob([content], { type: contentType });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = fileName;
+                a.click();
+            }
+
             generateBtn.addEventListener('click', async function() {
                 const text = textInput.value.trim();
                 errorMsg.style.display = 'none';
@@ -946,6 +1227,8 @@
                     errorMsg.style.display = 'block';
                     return;
                 }
+
+                currentGeneratedText = text;
 
                 generateBtn.disabled = true;
                 btnText.textContent = 'Generating Speech...';
@@ -995,6 +1278,7 @@
                         const speed = parseFloat(speedSlider.value);
                         audioPlayer.src = audioUrl;
                         audioPlayer.playbackRate = speed;
+                        audioPlayer.volume = parseInt(volumeSlider.value, 10) / 100;
                         downloadLink.href = audioUrl;
                         audioOutput.classList.add('show');
 
@@ -1012,6 +1296,9 @@
                     if (window.feather) feather.replace();
                 }
             });
+
+            // Initial stats update
+            updateTextStats();
         });
     </script>
 </body>
