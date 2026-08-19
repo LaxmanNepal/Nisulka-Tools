@@ -4,9 +4,10 @@
     "slug": "ai-tools",
     "description": "Free online ai tools for everyday tasks.",
     "url": "/Nisulka-Tools/categories/ai-tools/",
-    "toolCount": 2,
+    "toolCount": 3,
     "tools": [
       "Ai-Text-To-Audio",
+      "image-background-remover",
       "text-to-audio-generator"
     ]
   },

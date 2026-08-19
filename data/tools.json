@@ -13,6 +13,19 @@
     "status": "active"
   },
   {
+    "name": "Image Background Remover",
+    "slug": "image-background-remover",
+    "path": "AI-Tools/image-background-remover",
+    "description": "Free online Image Background Remover tool.",
+    "category": "Ai Tools",
+    "categorySlug": "ai-tools",
+    "logo": "/Nisulka-Tools/tools/AI-Tools/image-background-remover/logo.jpg",
+    "url": "/Nisulka-Tools/tools/AI-Tools/image-background-remover/",
+    "keywords": [],
+    "featured": false,
+    "status": "active"
+  },
+  {
     "name": "Text To Audio Generator",
     "slug": "text-to-audio-generator",
     "path": "AI-Tools/text-to-audio-generator",
