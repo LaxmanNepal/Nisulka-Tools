@@ -9,10 +9,10 @@
 .site-nav{display:none;align-items:center;gap:.25rem}.nav-link{display:inline-flex;align-items:center;min-height:40px;padding:.5rem .8rem;border-radius:var(--radius-md);color:var(--text-secondary);font-size:var(--font-size-sm);font-weight:500;transition:background var(--transition-fast),color var(--transition-fast)}
 .nav-link:hover{background:var(--bg-surface-secondary);color:var(--text-primary)}.nav-link.active{background:var(--brand-primary-light);color:var(--brand-primary);font-weight:600}
 .header-actions{display:flex;align-items:center;gap:.5rem}
-/* Compact header search */
-.header-search{display:flex;align-items:center;width:150px;height:38px;padding:0 .65rem;border:1px solid var(--border-color);border-radius:var(--radius-md);background:var(--bg-surface);color:var(--text-muted);transition:width .2s ease,border-color var(--transition-fast),box-shadow var(--transition-fast)}
-.header-search:focus-within,.header-search.is-focused{width:205px;border-color:var(--brand-primary);box-shadow:0 0 0 3px color-mix(in srgb,var(--brand-primary) 12%,transparent)}
+.header-search{display:flex;align-items:center;width:150px;height:38px;padding:0 .65rem;border:1px solid var(--border-color);border-radius:var(--radius-md);background:var(--bg-surface);color:var(--text-muted);transition:width .2s ease,border-color var(--transition-fast),box-shadow var(--transition-fast);overflow:hidden}
+.header-search:focus-within,.header-search.is-focused,.header-search.is-expanded{width:205px;border-color:var(--brand-primary);box-shadow:0 0 0 3px color-mix(in srgb,var(--brand-primary) 12%,transparent)}
 .header-search-icon{display:flex;flex:0 0 auto;width:16px;height:16px}.header-search-icon svg{width:100%;height:100%}
+.header-search-trigger{display:flex;align-items:center;justify-content:center;flex:0 0 auto;width:24px;height:32px;padding:0;border:0;background:transparent;color:inherit;cursor:pointer}
 .header-search input{width:100%;min-width:0;padding:0 .45rem;border:0;outline:0;background:transparent;color:var(--text-primary);font:inherit;font-size:var(--font-size-sm)}
 .header-search input::placeholder{color:var(--text-muted)}.header-search input::-webkit-search-cancel-button{cursor:pointer}
 .header-icon-button{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;padding:0;border:1px solid var(--border-color);border-radius:var(--radius-md);background:var(--bg-surface);color:var(--text-secondary);font-size:1rem;transition:background var(--transition-fast),border-color var(--transition-fast),color var(--transition-fast)}
@@ -23,8 +23,8 @@
 @media (max-width:767px){
 .site-nav{position:absolute;top:calc(100% + 1px);left:0;right:0;display:flex;flex-direction:column;align-items:stretch;padding:.75rem;background:var(--bg-surface);border-bottom:1px solid var(--border-color);box-shadow:var(--shadow-md);opacity:0;visibility:hidden;transform:translateY(-8px);transition:opacity var(--transition-fast),visibility var(--transition-fast),transform var(--transition-fast)}
 .site-nav.is-open{opacity:1;visibility:visible;transform:translateY(0)}.nav-link{width:100%;min-height:46px}body.menu-open{overflow:hidden}
-.header-search{width:38px;padding:0;justify-content:center;border-color:var(--border-color);cursor:pointer}.header-search:focus-within,.header-search.is-focused{width:180px;padding:0 .65rem}.header-search input{display:none}.header-search:focus-within input,.header-search.is-focused input{display:block}
+.header-search{width:38px;height:38px;padding:0;justify-content:center;cursor:pointer;overflow:hidden}.header-search.is-expanded,.header-search:focus-within,.header-search.is-focused{width:180px;padding:0 .55rem}.header-search input{display:none}.header-search.is-expanded input,.header-search:focus-within input,.header-search.is-focused input{display:block}.header-search-trigger{width:32px;height:36px;cursor:pointer}
 }
 @media (min-width:768px){.site-nav{display:flex}.mobile-menu-button{display:none}}
 @media (min-width:1024px){.header-inner{min-height:72px}.site-logo-text{font-size:1.05rem}.site-nav{gap:.35rem}}
-@media (max-width:420px){.header-actions{gap:.3rem}.header-search:focus-within,.header-search.is-focused{width:150px}.site-logo-text{display:none}}
+@media (max-width:420px){.header-actions{gap:.3rem}.header-search.is-expanded,.header-search:focus-within,.header-search.is-focused{width:150px}.site-logo-text{display:none}}
