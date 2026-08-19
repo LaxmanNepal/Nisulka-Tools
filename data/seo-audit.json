@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-08-19T21:52:50.005365+00:00",
-  "totalTools": 8,
-  "averageScore": 80.5,
+  "generatedAt": "2026-08-19T22:39:11.631072+00:00",
+  "totalTools": 9,
+  "averageScore": 78.2,
   "tools": [
     {
       "name": "Text To Handwriting",
@@ -269,6 +269,44 @@
       "rank": 7
     },
     {
+      "name": "About Your System",
+      "slug": "about-your-system",
+      "url": "/Nisulka-Tools/tools/about-your-system/",
+      "score": 60,
+      "grade": "C",
+      "title": "Device & Network Inspector - Nisulka Tools",
+      "description": "",
+      "wordCount": 4181,
+      "h1Count": 1,
+      "h2Count": 14,
+      "images": 0,
+      "imagesWithoutAlt": 0,
+      "canonical": "",
+      "openGraph": {
+        "title": false,
+        "description": false
+      },
+      "passed": [
+        "Title length is good",
+        "Exactly one H1 found",
+        "H2 headings found",
+        "No images requiring alt text",
+        "Sufficient page content"
+      ],
+      "issues": [
+        "Missing meta description",
+        "Missing canonical URL",
+        "Missing Open Graph title",
+        "Missing Open Graph description"
+      ],
+      "issueSummary": {
+        "total": 4,
+        "critical": 0,
+        "warning": 4
+      },
+      "rank": 8
+    },
+    {
       "name": "Draw App",
       "slug": "draw-app",
       "url": "/Nisulka-Tools/tools/draw-app/",
@@ -304,7 +342,7 @@
         "critical": 0,
         "warning": 4
       },
-      "rank": 8
+      "rank": 9
     }
   ]
 }
