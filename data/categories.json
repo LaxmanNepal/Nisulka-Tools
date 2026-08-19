@@ -1,5 +1,15 @@
 [
   {
+    "name": "Ai Tools",
+    "slug": "ai-tools",
+    "description": "Free online ai tools for everyday tasks.",
+    "url": "/Nisulka-Tools/categories/ai-tools/",
+    "toolCount": 1,
+    "tools": [
+      "text-to-audio-generator"
+    ]
+  },
+  {
     "name": "Analytics",
     "slug": "analytics",
     "description": "Free online analytics for everyday tasks.",

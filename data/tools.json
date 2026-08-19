@@ -1,5 +1,18 @@
 [
   {
+    "name": "Text To Audio Generator",
+    "slug": "text-to-audio-generator",
+    "path": "AI-Tools/text-to-audio-generator",
+    "description": "Free online Text To Audio Generator tool.",
+    "category": "Ai Tools",
+    "categorySlug": "ai-tools",
+    "logo": "/Nisulka-Tools/tools/AI-Tools/text-to-audio-generator/logo.jpg",
+    "url": "/Nisulka-Tools/tools/AI-Tools/text-to-audio-generator/",
+    "keywords": [],
+    "featured": false,
+    "status": "active"
+  },
+  {
     "name": "YouTube Channel Analytics",
     "slug": "youtube-channel-analysis",
     "path": "youtube-channel-analysis",
