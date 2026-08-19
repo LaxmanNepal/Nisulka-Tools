@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice AI Toolkit - Text to Audio Studio | Nisulka Tools</title>
+    <meta name="description" content="Free online AI Text to Audio Generator. Synthesize natural neural speech into downloadable WAV audio files with custom voices, tone controls, and multi-language support.">
+
+    <!-- Nisulka Core Stylesheets -->
+    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/variables.css">
+    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/global.css">
+    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/components.css">
+    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/header.css">
+    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/footer.css">
+    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/tool.css">
+
+    <!-- Tool Specific Styling -->
+    <style>
+        .tool-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem 4rem 1rem;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-muted, #64748b);
+            margin-bottom: 1.5rem;
+        }
+
+        .breadcrumb a {
+            color: var(--primary-color, #2563eb);
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .tool-header {
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+
+        .tool-title {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--text-heading, #0f172a);
+            margin-bottom: 0.75rem;
+            line-height: 1.2;
+        }
+
+        .tool-description {
+            font-size: 1.125rem;
+            color: var(--text-secondary, #475569);
+            max-width: 800px;
+            line-height: 1.6;
+        }
+
+        /* Tabs UI */
+        .tool-tabs {
+            display: flex;
+            gap: 0.5rem;
+            border-bottom: 2px solid var(--border-color, #e2e8f0);
+            margin-bottom: 2rem;
+        }
+
+        .tab-btn {
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: var(--text-muted, #64748b);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+            margin-bottom: -2px;
+        }
+
+        .tab-btn:hover {
+            color: var(--primary-color, #2563eb);
+        }
+
+        .tab-btn.active {
+            color: var(--primary-color, #2563eb);
+            border-bottom-color: var(--primary-color, #2563eb);
+            background: var(--bg-hover, rgba(37, 99, 235, 0.05));
+            border-radius: 6px 6px 0 0;
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        /* Tool Workspace Layout */
+        .workspace-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 900px) {
+            .workspace-grid {
+                grid-template-columns: 1fr 360px;
+            }
+        }
+
+        .card-box {
+            background: var(--card-bg, #ffffff);
+            border: 1px solid var(--border-color, #e2e8f0);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1.5rem;
+        }
+
+        .card-box-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-heading, #0f172a);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-main, #334155);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control, .form-select, .form-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            font-size: 0.95rem;
+            border: 1px solid var(--border-color, #cbd5e1);
+            border-radius: 0.5rem;
+            background-color: var(--input-bg, #ffffff);
+            color: var(--text-main, #0f172a);
+            font-family: inherit;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .form-control:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-color, #2563eb);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        .form-textarea {
+            min-height: 180px;
+            resize: vertical;
+            line-height: 1.5;
+        }
+
+        /* Audio Player Box */
+        .audio-player-container {
+            background: #0f172a;
+            color: #ffffff;
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-top: 1.5rem;
+        }
+
+        .visualizer-canvas {
+            width: 100%;
+            height: 60px;
+            background: #1e293b;
+            border-radius: 0.375rem;
+            margin-bottom: 1rem;
+        }
+
+        .audio-controls-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* Button Group */
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color, #2563eb);
+            color: #ffffff;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background-color: var(--primary-dark, #1d4ed8);
+        }
+
+        .btn-success {
+            background-color: #10b981;
+            color: #ffffff;
+        }
+
+        .btn-success:hover:not(:disabled) {
+            background-color: #059669;
+        }
+
+        .btn-secondary {
+            background-color: var(--bg-secondary, #f1f5f9);
+            color: var(--text-main, #334155);
+            border: 1px solid var(--border-color, #cbd5e1);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background-color: var(--border-color, #e2e8f0);
+        }
+
+        .btn-danger {
+            background-color: #ef4444;
+            color: #ffffff;
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            background-color: #dc2626;
+        }
+
+        .btn-action:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+
+        /* Live Status & Audio Visualizer */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.875rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-top: 1rem;
+        }
+
+        .status-info {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary-color, #2563eb);
+            border-left: 4px solid var(--primary-color, #2563eb);
+        }
+
+        .status-success {
+            background: rgba(34, 197, 94, 0.1);
+            color: #16a34a;
+            border-left: 4px solid #22c55e;
+        }
+
+        .status-error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #dc2626;
+            border-left: 4px solid #ef4444;
+        }
+
+        .transcript-box {
+            background: var(--bg-secondary, #f8fafc);
+            border: 1px solid var(--border-color, #e2e8f0);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            min-height: 180px;
+            max-height: 350px;
+            overflow-y: auto;
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text-main, #1e293b);
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .transcript-interim {
+            color: var(--text-muted, #94a3b8);
+            font-style: italic;
+        }
+
+        .meta-counter {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.8rem;
+            color: var(--text-muted, #64748b);
+            margin-top: 0.5rem;
+        }
+
+        .spinner {
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top: 2px solid #ffffff;
+            width: 16px;
+            height: 16px;
+            animation: spin 0.8s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Useful Content & Article Sections */
+        .content-section {
+            margin-top: 3.5rem;
+            padding-top: 2.5rem;
+            border-top: 1px solid var(--border-color, #e2e8f0);
+        }
+
+        .content-section h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-heading, #0f172a);
+            margin-bottom: 1rem;
+        }
+
+        .content-section h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--text-heading, #1e293b);
+            margin: 1.25rem 0 0.5rem 0;
+        }
+
+        .content-section p {
+            color: var(--text-secondary, #475569);
+            line-height: 1.7;
+            margin-bottom: 1rem;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.25rem;
+            margin: 1.5rem 0;
+        }
+
+        .feature-card {
+            background: var(--card-bg, #ffffff);
+            border: 1px solid var(--border-color, #e2e8f0);
+            border-radius: 0.5rem;
+            padding: 1.25rem;
+        }
+
+        .feature-card h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--primary-color, #2563eb);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Accordion FAQ */
+        .faq-accordion {
+            margin-top: 1.5rem;
+        }
+
+        .faq-item {
+            border: 1px solid var(--border-color, #e2e8f0);
+            border-radius: 0.5rem;
+            margin-bottom: 0.75rem;
+            overflow: hidden;
+            background: var(--card-bg, #ffffff);
+        }
+
+        .faq-header {
+            width: 100%;
+            text-align: left;
+            padding: 1rem 1.25rem;
+            background: none;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-heading, #0f172a);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-header:hover {
+            background: var(--bg-hover, #f8fafc);
+        }
+
+        .faq-content {
+            padding: 0 1.25rem 1rem 1.25rem;
+            display: none;
+            color: var(--text-secondary, #475569);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .faq-item.open .faq-content {
+            display: block;
+        }
+
+        .faq-icon {
+            transition: transform 0.2s ease;
+        }
+
+        .faq-item.open .faq-icon {
+            transform: rotate(180deg);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- OFFICIAL NISULKA HEADER MOUNT -->
+    <div id="site-header-mount"></div>
+
+    <!-- MAIN TOOL CONTAINER -->
+    <main class="tool-container">
+
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+            <a href="/">Home</a>
+            <span>/</span>
+            <a href="/tools">Audio Tools</a>
+            <span>/</span>
+            <span aria-current="page">Voice AI Toolkit</span>
+        </nav>
+
+        <!-- Tool Header -->
+        <header class="tool-header">
+            <h1 class="tool-title">Voice AI Toolkit - AI Text to Audio Studio</h1>
+            <p class="tool-description">
+                Convert written text into high-fidelity AI audio files (.wav) or speech in real time with expressive neural voices, emotional tone direction, multi-speaker dialogues, and speech transcribing.
+            </p>
+        </header>
+
+        <!-- Tool Navigation Tabs -->
+        <div class="tool-tabs" role="tablist">
+            <button class="tab-btn active" id="tab-tts-btn" role="tab" aria-selected="true" aria-controls="tab-tts" onclick="switchTab('tts')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                </svg>
+                Text to Audio (AI Studio)
+            </button>
+            <button class="tab-btn" id="tab-stt-btn" role="tab" aria-selected="false" aria-controls="tab-stt" onclick="switchTab('stt')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                    <line x1="12" y1="19" x2="12" y2="23"></line>
+                    <line x1="8" y1="23" x2="16" y2="23"></line>
+                </svg>
+                Speech to Text (STT)
+            </button>
+        </div>
+
+        <!-- TAB 1: TEXT TO AUDIO STUDIO -->
+        <div id="tab-tts" class="tab-panel active" role="tabpanel" aria-labelledby="tab-tts-btn">
+            <div class="workspace-grid">
+                
+                <!-- Main Input Area -->
+                <div>
+                    <div class="card-box">
+                        <div class="card-box-title">
+                            <span>Script / Text Input</span>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button class="btn-action btn-secondary" onclick="insertSampleText()" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">Sample</button>
+                                <button class="btn-action btn-secondary" onclick="clearTTSText()" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">Clear</button>
+                            </div>
+                        </div>
+                        
+                        <textarea id="ttsInput" class="form-textarea" placeholder="Type or paste your text here to generate an AI audio file..." oninput="updateTTSCounts()"></textarea>
+                        
+                        <div class="meta-counter">
+                            <span id="ttsCharCount">0 characters</span>
+                            <span>•</span>
+                            <span id="ttsWordCount">0 words</span>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="btn-group">
+                            <button id="ttsGenerateBtn" class="btn-action btn-primary" onclick="generateAudio()">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                                </svg>
+                                Generate AI Audio (WAV)
+                            </button>
+                            <button id="ttsBrowserPlayBtn" class="btn-action btn-secondary" onclick="speakBrowserNative()">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                </svg>
+                                Quick Speak (Browser)
+                            </button>
+                            <button id="ttsStopBtn" class="btn-action btn-danger" onclick="stopAudio()" disabled>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="6" y="6" width="12" height="12"></rect>
+                                </svg>
+                                Stop
+                            </button>
+                        </div>
+
+                        <div id="ttsStatus" style="display: none;" class="status-badge status-info">
+                            Ready
+                        </div>
+
+                        <!-- Generated Audio Player Section -->
+                        <div id="audioPlayerSection" class="audio-player-container" style="display: none;">
+                            <div style="font-size: 0.875rem; color: #94a3b8; font-weight: 600; margin-bottom: 0.5rem; display: flex; justify-content: space-between;">
+                                <span>AUDIO PLAYER & VISUALIZER</span>
+                                <span id="audioTimeDisplay">0:00 / 0:00</span>
+                            </div>
+
+                            <canvas id="visualizerCanvas" class="visualizer-canvas"></canvas>
+
+                            <audio id="audioElement" style="width: 100%; margin-bottom: 1rem;" controls></audio>
+
+                            <div class="audio-controls-row">
+                                <a id="downloadAudioBtn" class="btn-action btn-success" download="ai-generated-audio.wav" href="#" style="text-decoration: none;">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                        <polyline points="7 10 12 15 17 10"></polyline>
+                                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                                    </svg>
+                                    Download WAV Audio
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Voice Controls Sidebar -->
+                <div>
+                    <div class="card-box">
+                        <div class="card-box-title">Voice & Audio Settings</div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="engineSelect">TTS Engine Mode</label>
+                            <select id="engineSelect" class="form-select" onchange="toggleEngineOptions()">
+                                <option value="gemini" selected>Gemini AI Neural Engine (HD WAV Export)</option>
+                                <option value="browser">Browser Native Engine (WebSpeech)</option>
+                            </select>
+                        </div>
+
+                        <!-- Gemini Voices -->
+                        <div id="geminiVoiceGroup" class="form-group">
+                            <label class="form-label" for="geminiVoiceSelect">AI Voice Character</label>
+                            <select id="geminiVoiceSelect" class="form-select">
+                                <option value="Zephyr">Zephyr — Bright & Natural</option>
+                                <option value="Puck">Puck — Upbeat & Friendly</option>
+                                <option value="Charon">Charon — Deep & Informative</option>
+                                <option value="Kore">Kore — Firm & Professional</option>
+                                <option value="Fenrir">Fenrir — Energetic & Dynamic</option>
+                                <option value="Leda">Leda — Youthful & Clear</option>
+                                <option value="Aoede">Aoede — Breezy & Soft</option>
+                                <option value="Callirrhoe">Callirrhoe — Easy-going</option>
+                                <option value="Orus">Orus — Authoritative</option>
+                                <option value="Sulafat">Sulafat — Warm & Caring</option>
+                            </select>
+                        </div>
+
+                        <!-- Emotion / Speaking Style -->
+                        <div id="geminiStyleGroup" class="form-group">
+                            <label class="form-label" for="emotionSelect">Voice Emotion & Style</label>
+                            <select id="emotionSelect" class="form-select">
+                                <option value="Say in a natural, friendly tone: ">Natural & Friendly</option>
+                                <option value="Say cheerfully and enthusiastically: ">Cheerful & Enthusiastic</option>
+                                <option value="Say in a calm, soothing meditation style: ">Calm & Soothing</option>
+                                <option value="Say like an authoritative news anchor: ">Professional News Anchor</option>
+                                <option value="Say dramatically like a story narrator: ">Dramatic Narrator</option>
+                                <option value="Say in a soft whisper: ">Soft Whisper</option>
+                            </select>
+                        </div>
+
+                        <!-- Browser System Voices (Fallback) -->
+                        <div id="browserVoiceGroup" class="form-group" style="display: none;">
+                            <label class="form-label" for="ttsVoiceSelect">Browser System Voice</label>
+                            <select id="ttsVoiceSelect" class="form-select">
+                                <option value="">Loading system voices...</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="ttsSpeed">Playback Speed</label>
+                            <select id="ttsSpeed" class="form-select">
+                                <option value="0.8">0.8x (Slower)</option>
+                                <option value="1.0" selected>1.0x (Normal)</option>
+                                <option value="1.2">1.2x (Faster)</option>
+                                <option value="1.5">1.5x (Fast)</option>
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <!-- Multi-Speaker Dialogue Card -->
+                    <div class="card-box">
+                        <div class="card-box-title">Multi-Speaker Dialogue</div>
+                        <p style="font-size: 0.825rem; color: var(--text-muted, #64748b); margin-bottom: 0.75rem;">
+                            Generate conversational podcast or interview audio with two AI voices. Format script as:
+                        </p>
+                        <pre style="font-size: 0.75rem; background: #f1f5f9; padding: 0.5rem; border-radius: 0.25rem; color: #334155;">Joe: Hello Jane!
+Jane: Hi Joe, how are you?</pre>
+                        <button class="btn-action btn-secondary" onclick="insertDialogueSample()" style="width: 100%; margin-top: 0.5rem; font-size: 0.85rem;">
+                            Load Dialogue Script Sample
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- TAB 2: SPEECH TO TEXT -->
+        <div id="tab-stt" class="tab-panel" role="tabpanel" aria-labelledby="tab-stt-btn">
+            <div class="workspace-grid">
+                
+                <!-- Main Transcription Box -->
+                <div>
+                    <div class="card-box">
+                        <div class="card-box-title">
+                            <span>Live Microphone Transcript</span>
+                            <span id="sttRecordingIndicator" style="display: none; font-size: 0.85rem; color: #ef4444; font-weight: 500;">
+                                Listening...
+                            </span>
+                        </div>
+
+                        <div id="sttTranscript" class="transcript-box">Click "Start Recording" and begin speaking...</div>
+
+                        <div class="meta-counter">
+                            <span id="sttCharCount">0 characters</span>
+                            <span>•</span>
+                            <span id="sttWordCount">0 words</span>
+                        </div>
+
+                        <div class="btn-group">
+                            <button id="sttStartBtn" class="btn-action btn-primary" onclick="startSTT()">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                                </svg>
+                                Start Recording
+                            </button>
+                            <button id="sttStopBtn" class="btn-action btn-danger" onclick="stopSTT()" disabled>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="6" y="6" width="12" height="12"></rect>
+                                </svg>
+                                Stop
+                            </button>
+                            <button id="sttCopyBtn" class="btn-action btn-secondary" onclick="copyTranscript()" disabled>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                                Copy Text
+                            </button>
+                            <button class="btn-action btn-secondary" onclick="downloadTranscript()">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                                Export TXT
+                            </button>
+                            <button class="btn-action btn-secondary" onclick="clearTranscript()">
+                                Clear
+                            </button>
+                        </div>
+
+                        <div id="sttStatus" style="display: none;" class="status-badge status-info">
+                            Microphone idle
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recognition Settings Sidebar -->
+                <div>
+                    <div class="card-box">
+                        <div class="card-box-title">Transcription Settings</div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="sttLangSelect">Spoken Language</label>
+                            <select id="sttLangSelect" class="form-select">
+                                <option value="en-US">English (United States)</option>
+                                <option value="en-GB">English (United Kingdom)</option>
+                                <option value="es-ES">Spanish (Spain)</option>
+                                <option value="fr-FR">French (France)</option>
+                                <option value="de-DE">German (Germany)</option>
+                                <option value="hi-IN">Hindi (India)</option>
+                                <option value="ne-NP">Nepali (Nepal)</option>
+                                <option value="zh-CN">Chinese (Mandarin)</option>
+                                <option value="ja-JP">Japanese</option>
+                                <option value="ar-SA">Arabic</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- USEFUL CONTENT SECTION -->
+        <section class="content-section">
+            <h2>About the Voice AI Toolkit</h2>
+            <p>
+                The <strong>Voice AI Toolkit</strong> allows you to turn text into clear, downloadable audio files (.wav) or real-time speech synthesis. Powered by high-definition AI neural voices, you can generate natural voiceovers, podcasts, dramatic narrations, or transcribe audio into text instantly.
+            </p>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+                        </svg>
+                        HD AI Audio Export (.WAV)
+                    </h4>
+                    <p>Synthesize high-fidelity voice tracks and download lossless WAV audio files directly to your browser for video editing, podcasts, or voiceover production.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path>
+                            <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                        </svg>
+                        Expressive Voice Direction
+                    </h4>
+                    <p>Select emotional tones including dramatic storytelling, cheerful, calm meditation, whisper, or professional broadcast modes.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="2" y1="12" x2="22" y2="12"></line>
+                        </svg>
+                        Multi-Speaker Conversations
+                    </h4>
+                    <p>Format scripts with dialogue prefixes (e.g., Joe: ... / Jane: ...) to generate multi-speaker interviews and podcast conversations.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- OFFICIAL NISULKA FOOTER MOUNT -->
+    <div id="site-footer-mount"></div>
+
+    <!-- NISULKA OFFICIAL JS -->
+    <script src="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/js/header.js"></script>
+    <script src="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/js/footer.js"></script>
+
+    <!-- TOOL LOGIC SCRIPT -->
+    <script>
+        // Global State
+        const synth = window.speechSynthesis;
+        let systemVoices = [];
+        let activeAudioUrl = null;
+        let audioContext = null;
+        let animFrameId = null;
+
+        // Speech Recognition Init
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let recognition = null;
+        let isRecording = false;
+        let finalTranscriptText = '';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initSystemVoices();
+            if (synth.onvoiceschanged !== undefined) {
+                synth.onvoiceschanged = initSystemVoices;
+            }
+            initSTT();
+            updateTTSCounts();
+            updateSTTCounts();
+            initVisualizer();
+        });
+
+        // Tab Switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+                btn.setAttribute('aria-selected', 'false');
+            });
+            document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+
+            const selectedBtn = document.getElementById(`tab-${tabName}-btn`);
+            const selectedPanel = document.getElementById(`tab-${tabName}`);
+
+            if (selectedBtn && selectedPanel) {
+                selectedBtn.classList.add('active');
+                selectedBtn.setAttribute('aria-selected', 'true');
+                selectedPanel.classList.add('active');
+            }
+
+            stopAudio();
+            stopSTT();
+        }
+
+        function toggleEngineOptions() {
+            const engine = document.getElementById('engineSelect').value;
+            const geminiVoiceGroup = document.getElementById('geminiVoiceGroup');
+            const geminiStyleGroup = document.getElementById('geminiStyleGroup');
+            const browserVoiceGroup = document.getElementById('browserVoiceGroup');
+
+            if (engine === 'gemini') {
+                geminiVoiceGroup.style.display = 'block';
+                geminiStyleGroup.style.display = 'block';
+                browserVoiceGroup.style.display = 'none';
+            } else {
+                geminiVoiceGroup.style.display = 'none';
+                geminiStyleGroup.style.display = 'none';
+                browserVoiceGroup.style.display = 'block';
+            }
+        }
+
+        // --- GEMINI AI TEXT TO AUDIO GENERATION LOGIC ---
+        async function generateAudio() {
+            const textInput = document.getElementById('ttsInput').value.trim();
+            const statusBox = document.getElementById('ttsStatus');
+            const genBtn = document.getElementById('ttsGenerateBtn');
+
+            if (!textInput) {
+                showStatus(statusBox, 'Please enter some text to generate audio.', 'error');
+                return;
+            }
+
+            const voice = document.getElementById('geminiVoiceSelect').value;
+            const style = document.getElementById('emotionSelect').value;
+            const speed = document.getElementById('ttsSpeed').value;
+
+            // Check if script contains multi-speaker dialogue
+            const isMultiSpeaker = textInput.includes('Joe:') || textInput.includes('Jane:') || textInput.includes('Host:') || textInput.includes('Guest:');
+
+            genBtn.disabled = true;
+            genBtn.innerHTML = '<span class="spinner"></span> Synthesizing AI Audio...';
+            showStatus(statusBox, 'Generating AI audio with ' + voice + ' voice...', 'info');
+
+            try {
+                let payload = {};
+
+                if (isMultiSpeaker) {
+                    payload = {
+                        contents: [{
+                            parts: [{ text: `TTS the following conversation:\n${textInput}` }]
+                        }],
+                        generationConfig: {
+                            responseModalities: ["AUDIO"],
+                            speechConfig: {
+                                multiSpeakerVoiceConfig: {
+                                    speakerVoiceConfigs: [
+                                        { speaker: "Joe", voiceConfig: { prebuiltVoiceConfig: { voiceName: "Kore" } } },
+                                        { speaker: "Jane", voiceConfig: { prebuiltVoiceConfig: { voiceName: "Zephyr" } } },
+                                        { speaker: "Host", voiceConfig: { prebuiltVoiceConfig: { voiceName: "Charon" } } },
+                                        { speaker: "Guest", voiceConfig: { prebuiltVoiceConfig: { voiceName: "Puck" } } }
+                                    ]
+                                }
+                            }
+                        }
+                    };
+                } else {
+                    const promptText = `${style} ${textInput}`;
+                    payload = {
+                        contents: [{
+                            parts: [{ text: promptText }]
+                        }],
+                        generationConfig: {
+                            responseModalities: ["AUDIO"],
+                            speechConfig: {
+                                voiceConfig: {
+                                    prebuiltVoiceConfig: { voiceName: voice }
+                                }
+                            }
+                        }
+                    };
+                }
+
+                const apiKey = ""; // API key populated by environment runtime
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Synthesis HTTP error! Status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                const part = result?.candidates?.[0]?.content?.parts?.[0];
+                const base64Audio = part?.inlineData?.data;
+                const mimeType = part?.inlineData?.mimeType || "audio/L16;rate=24000";
+
+                if (!base64Audio) {
+                    throw new Error("No audio payload returned from AI voice server.");
+                }
+
+                // Extract Sample Rate
+                let sampleRate = 24000;
+                const rateMatch = mimeType.match(/rate=(\d+)/);
+                if (rateMatch && rateMatch[1]) {
+                    sampleRate = parseInt(rateMatch[1], 10);
+                }
+
+                // Convert base64 PCM16 to WAV Blob
+                const pcmBuffer = base64ToArrayBuffer(base64Audio);
+                const pcm16 = new Int16Array(pcmBuffer);
+                const wavBlob = pcmToWav(pcm16, sampleRate);
+
+                if (activeAudioUrl) {
+                    URL.revokeObjectURL(activeAudioUrl);
+                }
+                activeAudioUrl = URL.createObjectURL(wavBlob);
+
+                // Attach to HTML5 player
+                const audioElement = document.getElementById('audioElement');
+                audioElement.src = activeAudioUrl;
+                audioElement.playbackRate = parseFloat(speed);
+                audioElement.play();
+
+                // Show player box & download link
+                document.getElementById('audioPlayerSection').style.display = 'block';
+                const downloadBtn = document.getElementById('downloadAudioBtn');
+                downloadBtn.href = activeAudioUrl;
+
+                document.getElementById('ttsStopBtn').disabled = false;
+                showStatus(statusBox, 'Audio generated successfully! Click download to save .wav file.', 'success');
+
+            } catch (err) {
+                console.error("AI TTS Generation error:", err);
+                showStatus(statusBox, "AI Audio Synthesis error: " + err.message + ". Trying fallback...", "error");
+                speakBrowserNative();
+            } finally {
+                genBtn.disabled = false;
+                genBtn.innerHTML = `
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg> Generate AI Audio (WAV)`;
+            }
+        }
+
+        // --- PCM16 to WAV CONVERTER HELPERS ---
+        function base64ToArrayBuffer(base64) {
+            const binaryString = atob(base64);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            return bytes.buffer;
+        }
+
+        function pcmToWav(pcm16Array, sampleRate = 24000, numChannels = 1) {
+            const buffer = new ArrayBuffer(44 + pcm16Array.length * 2);
+            const view = new DataView(buffer);
+
+            /* RIFF identifier */
+            writeString(view, 0, 'RIFF');
+            /* RIFF chunk length */
+            view.setUint32(4, 36 + pcm16Array.length * 2, true);
+            /* RIFF type */
+            writeString(view, 8, 'WAVE');
+            /* format chunk identifier */
+            writeString(view, 12, 'fmt ');
+            /* format chunk length */
+            view.setUint32(16, 16, true);
+            /* sample format (PCM = 1) */
+            view.setUint16(20, 1, true);
+            /* channel count */
+            view.setUint16(22, numChannels, true);
+            /* sample rate */
+            view.setUint32(24, sampleRate, true);
+            /* byte rate */
+            view.setUint32(28, sampleRate * numChannels * 2, true);
+            /* block align */
+            view.setUint16(32, numChannels * 2, true);
+            /* bits per sample */
+            view.setUint16(34, 16, true);
+            /* data chunk identifier */
+            writeString(view, 36, 'data');
+            /* data chunk length */
+            view.setUint32(40, pcm16Array.length * 2, true);
+
+            /* Write PCM samples */
+            let offset = 44;
+            for (let i = 0; i < pcm16Array.length; i++, offset += 2) {
+                view.setInt16(offset, pcm16Array[i], true);
+            }
+
+            return new Blob([buffer], { type: 'audio/wav' });
+        }
+
+        function writeString(view, offset, string) {
+            for (let i = 0; i < string.length; i++) {
+                view.setUint8(offset + i, string.charCodeAt(i));
+            }
+        }
+
+        // --- BROWSER NATIVE FALLBACK ---
+        function initSystemVoices() {
+            systemVoices = synth.getVoices();
+            const voiceSelect = document.getElementById('ttsVoiceSelect');
+            if (!voiceSelect) return;
+
+            voiceSelect.innerHTML = '';
+            if (systemVoices.length === 0) {
+                voiceSelect.innerHTML = '<option value="">Default System Voice</option>';
+                return;
+            }
+
+            systemVoices.forEach((voice, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = `${voice.name} (${voice.lang})`;
+                voiceSelect.appendChild(option);
+            });
+        }
+
+        function speakBrowserNative() {
+            const textInput = document.getElementById('ttsInput').value.trim();
+            const statusBox = document.getElementById('ttsStatus');
+
+            if (!textInput) {
+                showStatus(statusBox, 'Please enter some text to speak.', 'error');
+                return;
+            }
+
+            if (synth.speaking) {
+                synth.cancel();
+            }
+
+            const utterance = new SpeechSynthesisUtterance(textInput);
+            const voiceIndex = document.getElementById('ttsVoiceSelect').value;
+            if (voiceIndex && systemVoices[voiceIndex]) {
+                utterance.voice = systemVoices[voiceIndex];
+            }
+
+            utterance.rate = parseFloat(document.getElementById('ttsSpeed').value);
+
+            utterance.onstart = () => {
+                showStatus(statusBox, 'Playing via Browser Speech Engine...', 'info');
+                document.getElementById('ttsStopBtn').disabled = false;
+            };
+
+            utterance.onend = () => {
+                showStatus(statusBox, 'Finished speaking.', 'success');
+                document.getElementById('ttsStopBtn').disabled = true;
+            };
+
+            synth.speak(utterance);
+        }
+
+        function stopAudio() {
+            const audioElement = document.getElementById('audioElement');
+            if (audioElement) {
+                audioElement.pause();
+                audioElement.currentTime = 0;
+            }
+            if (synth.speaking || synth.paused) {
+                synth.cancel();
+            }
+            document.getElementById('ttsStopBtn').disabled = true;
+            const statusBox = document.getElementById('ttsStatus');
+            showStatus(statusBox, 'Audio playback stopped.', 'info');
+        }
+
+        // --- AUDIO VISUALIZER ---
+        function initVisualizer() {
+            const canvas = document.getElementById('visualizerCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+
+            function draw() {
+                canvas.width = canvas.clientWidth;
+                canvas.height = canvas.clientHeight;
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                const audioElement = document.getElementById('audioElement');
+
+                if (audioElement && !audioElement.paused) {
+                    const time = Date.now() * 0.005;
+                    ctx.fillStyle = '#2563eb';
+                    const barCount = Math.floor(canvas.width / 8);
+
+                    for (let i = 0; i < barCount; i++) {
+                        const height = Math.abs(Math.sin(time + i * 0.2)) * (canvas.height * 0.8);
+                        ctx.fillRect(i * 8, (canvas.height - height) / 2, 5, height);
+                    }
+                } else {
+                    ctx.fillStyle = '#334155';
+                    ctx.fillRect(0, canvas.height / 2 - 1, canvas.width, 2);
+                }
+
+                animFrameId = requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        // --- SAMPLES & UTILITY ---
+        function insertSampleText() {
+            document.getElementById('ttsInput').value = "Welcome to the Voice AI Toolkit! This studio allows you to synthesize natural AI voices and export high-quality WAV audio files for your videos, podcasts, and digital content.";
+            updateTTSCounts();
+        }
+
+        function insertDialogueSample() {
+            document.getElementById('ttsInput').value = "Joe: Welcome to the AI Audio Podcast!\nJane: Thanks Joe! I am super excited to share our latest voice synthesis updates with everyone today.";
+            updateTTSCounts();
+        }
+
+        function clearTTSText() {
+            document.getElementById('ttsInput').value = '';
+            stopAudio();
+            updateTTSCounts();
+        }
+
+        function updateTTSCounts() {
+            const text = document.getElementById('ttsInput').value;
+            document.getElementById('ttsCharCount').textContent = `${text.length} characters`;
+            document.getElementById('ttsWordCount').textContent = `${text.trim() === '' ? 0 : text.trim().split(/\s+/).length} words`;
+        }
+
+        // --- SPEECH TO TEXT LOGIC ---
+        function initSTT() {
+            const statusBox = document.getElementById('sttStatus');
+            if (!SpeechRecognition) {
+                showStatus(statusBox, 'Speech Recognition is not supported by your browser.', 'error');
+                document.getElementById('sttStartBtn').disabled = true;
+                return;
+            }
+
+            recognition = new SpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+
+            recognition.onstart = () => {
+                isRecording = true;
+                document.getElementById('sttStartBtn').disabled = true;
+                document.getElementById('sttStopBtn').disabled = false;
+                document.getElementById('sttRecordingIndicator').style.display = 'inline-flex';
+                showStatus(statusBox, 'Recording in progress...', 'info');
+            };
+
+            recognition.onend = () => {
+                isRecording = false;
+                document.getElementById('sttStartBtn').disabled = false;
+                document.getElementById('sttStopBtn').disabled = true;
+                document.getElementById('sttRecordingIndicator').style.display = 'none';
+                showStatus(statusBox, 'Recording stopped.', 'success');
+            };
+
+            recognition.onerror = (e) => {
+                showStatus(statusBox, 'Microphone error: ' + e.error, 'error');
+                stopSTT();
+            };
+
+            recognition.onresult = (event) => {
+                let interimTranscript = '';
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    if (event.results[i].isFinal) {
+                        finalTranscriptText += event.results[i][0].transcript + ' ';
+                    } else {
+                        interimTranscript += event.results[i][0].transcript;
+                    }
+                }
+
+                const transcriptBox = document.getElementById('sttTranscript');
+                transcriptBox.innerHTML = escapeHTML(finalTranscriptText) + 
+                    '<span class="transcript-interim">' + escapeHTML(interimTranscript) + '</span>';
+
+                document.getElementById('sttCopyBtn').disabled = (finalTranscriptText.trim() === '' && interimTranscript.trim() === '');
+                updateSTTCounts();
+            };
+        }
+
+        function startSTT() {
+            if (!recognition) return;
+            recognition.lang = document.getElementById('sttLangSelect').value;
+            try { recognition.start(); } catch (e) { console.error(e); }
+        }
+
+        function stopSTT() {
+            if (recognition && isRecording) recognition.stop();
+        }
+
+        function clearTranscript() {
+            finalTranscriptText = '';
+            document.getElementById('sttTranscript').innerHTML = 'Click "Start Recording" and begin speaking...';
+            document.getElementById('sttCopyBtn').disabled = true;
+            updateSTTCounts();
+        }
+
+        function copyTranscript() {
+            const textToCopy = finalTranscriptText || document.getElementById('sttTranscript').innerText;
+            navigator.clipboard.writeText(textToCopy.trim()).then(() => {
+                const copyBtn = document.getElementById('sttCopyBtn');
+                const origText = copyBtn.innerHTML;
+                copyBtn.innerHTML = 'Copied!';
+                setTimeout(() => copyBtn.innerHTML = origText, 2000);
+            });
+        }
+
+        function downloadTranscript() {
+            const text = finalTranscriptText || document.getElementById('sttTranscript').innerText;
+            if (!text || text.includes('Click "Start Recording"')) {
+                alert('No transcript available to export.');
+                return;
+            }
+            const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `transcript-${new Date().toISOString().slice(0,10)}.txt`;
+            link.click();
+        }
+
+        function updateSTTCounts() {
+            const text = finalTranscriptText.trim();
+            document.getElementById('sttCharCount').textContent = `${text.length} characters`;
+            document.getElementById('sttWordCount').textContent = `${text === '' ? 0 : text.split(/\s+/).length} words`;
+        }
+
+        function showStatus(element, message, type) {
+            if (!element) return;
+            element.style.display = 'inline-flex';
+            element.className = 'status-badge status-' + type;
+            element.textContent = message;
+        }
+
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, 
+                tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+            );
+        }
+    </script>
+
+</body>
+</html>
