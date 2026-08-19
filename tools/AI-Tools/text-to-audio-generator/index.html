@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Voice Generator Web App</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Feather Icons & Phosphor Icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Nisulka CSS Dependencies -->
+    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/variables.css" />
+    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/global.css" />
+    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/components.css" />
+    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/header.css" />
+    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/footer.css" />
+    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/tool.css" />
+
+    <!-- Custom App Styling -->
+    <style>
+        .nisulka-tool-page {
+            width: 100%;
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 2rem 1rem 4rem 1rem;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .tool-breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-bottom: 1.5rem;
+        }
+
+        .tool-breadcrumb a {
+            color: #2563eb;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .tool-breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .tool-card {
+            background: #ffffff;
+            border-radius: 1.25rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+            padding: 2rem;
+            margin-bottom: 2.5rem;
+            transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
+        }
+
+        body.dark .tool-card,
+        html[data-theme="dark"] .tool-card {
+            background: #1e293b;
+            border-color: #334155;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .tool-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.75rem;
+        }
+
+        .tool-title-group h1 {
+            font-size: 1.85rem;
+            font-weight: 700;
+            color: #0f172a;
+            letter-spacing: -0.025em;
+        }
+
+        body.dark .tool-title-group h1,
+        html[data-theme="dark"] .tool-title-group h1 {
+            color: #f1f5f9;
+        }
+
+        .tool-title-group p {
+            color: #64748b;
+            font-size: 0.95rem;
+            margin-top: 0.25rem;
+        }
+
+        body.dark .tool-title-group p,
+        html[data-theme="dark"] .tool-title-group p {
+            color: #94a3b8;
+        }
+
+        .theme-toggle-tool {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+            color: #64748b;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: background 0.2s, color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-toggle-tool:hover {
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+
+        body.dark .theme-toggle-tool,
+        html[data-theme="dark"] .theme-toggle-tool {
+            background: #0f172a;
+            border-color: #334155;
+            color: #94a3b8;
+        }
+
+        body.dark .theme-toggle-tool:hover,
+        html[data-theme="dark"] .theme-toggle-tool:hover {
+            background: #334155;
+            color: #f1f5f9;
+        }
+
+        .preset-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.6rem;
+            border-radius: 1rem;
+            background: #eff6ff;
+            color: #2563eb;
+            border: 1px solid #bfdbfe;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .preset-badge:hover {
+            background: #dbeafe;
+        }
+
+        body.dark .preset-badge,
+        html[data-theme="dark"] .preset-badge {
+            background: #1e3a8a;
+            color: #93c5fd;
+            border-color: #1e40af;
+        }
+
+        .input-wrapper {
+            position: relative;
+            margin-bottom: 1.25rem;
+        }
+
+        textarea.tool-input {
+            width: 100%;
+            height: 160px;
+            padding: 1rem 1rem 2.5rem 1rem;
+            border-radius: 0.85rem;
+            border: 1.5px solid #e2e8f0;
+            background: #f8fafc;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            resize: vertical;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            color: #0f172a;
+        }
+
+        body.dark textarea.tool-input,
+        html[data-theme="dark"] textarea.tool-input {
+            background: #0f172a;
+            border-color: #334155;
+            color: #e2e8f0;
+        }
+
+        textarea.tool-input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+        }
+
+        .input-actions {
+            position: absolute;
+            bottom: 0.75rem;
+            right: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.8rem;
+            color: #64748b;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 0.25rem 0.6rem 0.25rem 0.75rem;
+            border-radius: 2rem;
+            backdrop-filter: blur(4px);
+            border: 1px solid #e2e8f0;
+        }
+
+        body.dark .input-actions,
+        html[data-theme="dark"] .input-actions {
+            background: rgba(15, 23, 42, 0.9);
+            border-color: #334155;
+            color: #94a3b8;
+        }
+
+        .copy-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #64748b;
+            transition: color 0.2s;
+            padding: 0.1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .copy-btn:hover {
+            color: #2563eb;
+        }
+
+        .control-group {
+            margin: 1.25rem 0;
+        }
+
+        .control-label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.4rem;
+            color: #0f172a;
+        }
+
+        body.dark .control-label,
+        html[data-theme="dark"] .control-label {
+            color: #e2e8f0;
+        }
+
+        select.tool-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            border: 1.5px solid #e2e8f0;
+            background: #f8fafc;
+            font-size: 0.95rem;
+            font-family: 'Inter', sans-serif;
+            color: #0f172a;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1.2rem;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        body.dark select.tool-select,
+        html[data-theme="dark"] select.tool-select {
+            background-color: #0f172a;
+            border-color: #334155;
+            color: #e2e8f0;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+        }
+
+        select.tool-select:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+        }
+
+        .range-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        input[type="range"].tool-range {
+            flex: 1;
+            height: 6px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: #e2e8f0;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        body.dark input[type="range"].tool-range,
+        html[data-theme="dark"] input[type="range"].tool-range {
+            background: #334155;
+        }
+
+        input[type="range"].tool-range::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #2563eb;
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        .range-value {
+            font-weight: 600;
+            min-width: 3.5rem;
+            text-align: right;
+            font-size: 0.95rem;
+            color: #2563eb;
+        }
+
+        body.dark .range-value,
+        html[data-theme="dark"] .range-value {
+            color: #60a5fa;
+        }
+
+        .btn-generate {
+            width: 100%;
+            padding: 0.9rem;
+            border: none;
+            border-radius: 0.75rem;
+            background: #2563eb;
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            margin-top: 1rem;
+        }
+
+        .btn-generate:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-generate:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        .btn-generate .spinner {
+            display: none;
+            animation: spin 1s linear infinite;
+        }
+
+        .btn-generate.loading .spinner {
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .message {
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            margin-top: 1rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .message.error {
+            display: block;
+            background: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fca5a5;
+        }
+
+        body.dark .message.error,
+        html[data-theme="dark"] .message.error {
+            background: #7f1d1d;
+            color: #fca5a5;
+            border-color: #991b1b;
+        }
+
+        .message.success {
+            display: block;
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #86efac;
+        }
+
+        body.dark .message.success,
+        html[data-theme="dark"] .message.success {
+            background: #14532d;
+            color: #86efac;
+            border-color: #166534;
+        }
+
+        /* Audio Output Section */
+        .audio-output {
+            margin-top: 1.75rem;
+            border-top: 1.5px solid #e2e8f0;
+            padding-top: 1.5rem;
+            display: none;
+        }
+
+        body.dark .audio-output,
+        html[data-theme="dark"] .audio-output {
+            border-top-color: #334155;
+        }
+
+        .audio-output.show {
+            display: block;
+        }
+
+        .visualizer-container {
+            width: 100%;
+            height: 80px;
+            background: #0f172a;
+            border-radius: 0.75rem;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            position: relative;
+        }
+
+        canvas#audioVisualizer {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .btn-download {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.85rem;
+            padding: 0.65rem 1.25rem;
+            background: #16a34a;
+            color: white;
+            border-radius: 0.75rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-decoration: none;
+        }
+
+        .btn-download:hover {
+            background: #15803d;
+        }
+
+        /* History Section */
+        .history-section {
+            margin-top: 2rem;
+            border-top: 1.5px solid #e2e8f0;
+            padding-top: 1.5rem;
+        }
+
+        body.dark .history-section,
+        html[data-theme="dark"] .history-section {
+            border-top-color: #334155;
+        }
+
+        .history-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        body.dark .history-item,
+        html[data-theme="dark"] .history-item {
+            background: #0f172a;
+            border-color: #334155;
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            margin-top: 2.5rem;
+            background: #ffffff;
+            border-radius: 1.25rem;
+            border: 1px solid #e2e8f0;
+            padding: 2rem;
+        }
+
+        body.dark .faq-section,
+        html[data-theme="dark"] .faq-section {
+            background: #1e293b;
+            border-color: #334155;
+        }
+
+        .faq-section h2 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 1.25rem;
+        }
+
+        body.dark .faq-section h2,
+        html[data-theme="dark"] .faq-section h2 {
+            color: #f1f5f9;
+        }
+
+        .faq-item {
+            border-bottom: 1px solid #e2e8f0;
+            padding: 1rem 0;
+        }
+
+        body.dark .faq-item,
+        html[data-theme="dark"] .faq-item {
+            border-bottom-color: #334155;
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .faq-question {
+            font-weight: 600;
+            color: #0f172a;
+            font-size: 0.98rem;
+        }
+
+        body.dark .faq-question,
+        html[data-theme="dark"] .faq-question {
+            color: #e2e8f0;
+        }
+
+        .faq-answer {
+            color: #475569;
+            font-size: 0.9rem;
+            margin-top: 0.35rem;
+            line-height: 1.5;
+        }
+
+        body.dark .faq-answer,
+        html[data-theme="dark"] .faq-answer {
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+    <!-- OFFICIAL NISULKA HEADER MOUNT POINT -->
+    <div id="site-header-mount"></div>
+
+    <!-- MAIN TOOL CONTENT AREA -->
+    <main class="nisulka-tool-page">
+
+        <!-- BREADCRUMB -->
+        <nav class="tool-breadcrumb" aria-label="Breadcrumb">
+            <a href="#">Home</a>
+            <span>/</span>
+            <a href="#">Tools</a>
+            <span>/</span>
+            <span aria-current="page">AI Voice Generator</span>
+        </nav>
+
+        <!-- TOOL CARD WORKSPACE -->
+        <div class="tool-card">
+            <div class="tool-header">
+                <div class="tool-title-group">
+                    <h1>AI Voice Generator</h1>
+                    <p>Convert text into natural, expressive high-quality AI speech</p>
+                </div>
+                <button class="theme-toggle-tool" id="themeToggle" title="Toggle dark/light theme" aria-label="Toggle theme">
+                    <i data-feather="moon" id="themeIcon" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Sample Presets -->
+            <div class="flex flex-wrap gap-2 mb-3 items-center">
+                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Try Sample:</span>
+                <button type="button" class="preset-badge" data-preset="narration">📖 Story Narration</button>
+                <button type="button" class="preset-badge" data-preset="announcement">📢 News Speech</button>
+                <button type="button" class="preset-badge" data-preset="bengali">🇧🇩 Bengali Speech</button>
+                <button type="button" class="preset-badge" data-preset="whisper">🤫 Soft Whisper</button>
+            </div>
+
+            <!-- Text Input -->
+            <div class="input-wrapper">
+                <textarea id="textInput" class="tool-input" placeholder="Type or paste your text here to convert into voice..." maxlength="10000"></textarea>
+                <div class="input-actions">
+                    <span id="charCount">0 / 10000</span>
+                    <button id="copyBtn" class="copy-btn" title="Copy text" type="button">
+                        <i data-feather="copy" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Voice Controls Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Voice Select -->
+                <div class="control-group">
+                    <label for="voiceSelect" class="control-label">Voice Avatar</label>
+                    <select id="voiceSelect" class="tool-select">
+                        <option value="Zephyr">Voice 1 — Zephyr (Bright, Female)</option>
+                        <option value="Puck">Voice 2 — Puck (Upbeat, Male)</option>
+                        <option value="Kore" selected>Voice 3 — Kore (Firm, Female)</option>
+                        <option value="Charon">Voice 4 — Charon (Informative, Male)</option>
+                        <option value="Fenrir">Voice 5 — Fenrir (Excitable, Male)</option>
+                        <option value="Aoede">Voice 6 — Aoede (Breezy, Female)</option>
+                        <option value="Sulafat">Voice 7 — Sulafat (Warm, Female)</option>
+                        <option value="Algieba">Voice 8 — Algieba (Smooth, Male)</option>
+                    </select>
+                </div>
+
+                <!-- Tone & Style Prompt -->
+                <div class="control-group">
+                    <label for="styleSelect" class="control-label">Voice Tone / Style</label>
+                    <select id="styleSelect" class="tool-select">
+                        <option value="">Default (Natural)</option>
+                        <option value="Say cheerfully">Cheerful & Happy</option>
+                        <option value="Say in an excited tone">Excited & Energetic</option>
+                        <option value="Say in a calm, soothing voice">Calm & Soothing</option>
+                        <option value="Say in a professional news broadcast voice">News Broadcast</option>
+                        <option value="Say in a spooky whisper">Soft Whisper</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Speed Slider -->
+            <div class="control-group">
+                <label for="speedSlider" class="control-label">Playback Speed: <span id="speedValue" class="range-value">1.0x</span></label>
+                <div class="range-wrapper">
+                    <input type="range" id="speedSlider" class="tool-range" min="0.5" max="2.0" step="0.1" value="1.0" />
+                </div>
+            </div>
+
+            <!-- Generate Button -->
+            <button id="generateBtn" class="btn-generate">
+                <span id="btnText">Generate Voice</span>
+                <i data-feather="loader" class="spinner w-5 h-5"></i>
+            </button>
+
+            <!-- Messages -->
+            <div id="errorMsg" class="message error"></div>
+            <div id="copySuccess" class="message success">Text copied to clipboard!</div>
+
+            <!-- Audio Output & Visualizer -->
+            <div id="audioOutput" class="audio-output">
+                <h3 class="font-semibold text-lg text-slate-800 dark:text-slate-100 mb-2">Generated Audio Output</h3>
+                
+                <!-- Audio Visualizer Canvas -->
+                <div class="visualizer-container">
+                    <canvas id="audioVisualizer"></canvas>
+                </div>
+
+                <audio id="audioPlayer" controls class="w-full"></audio>
+
+                <div class="flex flex-wrap gap-3 items-center mt-3">
+                    <a id="downloadLink" href="#" download="ai-voice.wav" class="btn-download">
+                        <i data-feather="download" class="w-4 h-4"></i> Download Audio (.wav)
+                    </a>
+                </div>
+            </div>
+
+            <!-- Session Clip History -->
+            <div id="historyContainer" class="history-section hidden">
+                <h3 class="font-semibold text-md text-slate-800 dark:text-slate-100 mb-3">Recent Audio Clips</h3>
+                <div id="historyList"></div>
+            </div>
+        </div>
+
+        <!-- FAQ SECTION -->
+        <section class="faq-section">
+            <h2>Frequently Asked Questions</h2>
+            <div class="faq-item">
+                <div class="faq-question">What languages does this AI Voice Generator support?</div>
+                <div class="faq-answer">It supports English, Bengali, Hindi, Spanish, French, German, Japanese, and over 20 global languages automatically based on text input.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">How do tone and style options work?</div>
+                <div class="faq-answer">You can select natural expression modifiers like Cheerful, Soft Whisper, or News Broadcast to customize the voice inflection.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">Is the generated audio royalty-free?</div>
+                <div class="faq-answer">Yes, all generated audio WAV files can be freely downloaded and used for videos, podcasts, presentations, or personal projects.</div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- OFFICIAL NISULKA FOOTER MOUNT POINT -->
+    <div id="site-footer-mount"></div>
+
+    <!-- NISULKA SCRIPTS -->
+    <script src="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/js/header.js"></script>
+    <script src="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/js/footer.js"></script>
+
+    <!-- TOOL LOGIC -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Feather Icons
+            if (window.feather) feather.replace();
+
+            // DOM Elements
+            const textInput = document.getElementById('textInput');
+            const charCount = document.getElementById('charCount');
+            const copyBtn = document.getElementById('copyBtn');
+            const voiceSelect = document.getElementById('voiceSelect');
+            const styleSelect = document.getElementById('styleSelect');
+            const speedSlider = document.getElementById('speedSlider');
+            const speedValue = document.getElementById('speedValue');
+            const generateBtn = document.getElementById('generateBtn');
+            const btnText = document.getElementById('btnText');
+            const errorMsg = document.getElementById('errorMsg');
+            const copySuccess = document.getElementById('copySuccess');
+            const audioOutput = document.getElementById('audioOutput');
+            const audioPlayer = document.getElementById('audioPlayer');
+            const downloadLink = document.getElementById('downloadLink');
+            const themeToggle = document.getElementById('themeToggle');
+            const themeIcon = document.getElementById('themeIcon');
+            const canvas = document.getElementById('audioVisualizer');
+            const canvasCtx = canvas.getContext('2d');
+            const historyContainer = document.getElementById('historyContainer');
+            const historyList = document.getElementById('historyList');
+
+            // Sample Presets Data
+            const presets = {
+                narration: "Once upon a time in a vibrant digital kingdom, creators built tools that gave human speech to imagination.",
+                announcement: "Good evening. Welcome to tonight's bulletin. Top story: Breakthrough advancements in AI technology offer instant speech rendering worldwide.",
+                bengali: "নমস্কার! এই এআই ভয়েস জেনারেটরের মাধ্যমে আপনি যেকোনো লেখাকে স্বাভাবিক কণ্ঠে রূপান্তর করতে পারবেন।",
+                whisper: "Listen closely... the secret to extraordinary voice generation lies right here in your hands."
+            };
+
+            // Preset Click Handlers
+            document.querySelectorAll('.preset-badge').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const key = this.getAttribute('data-preset');
+                    if (presets[key]) {
+                        textInput.value = presets[key];
+                        charCount.textContent = textInput.value.length + ' / 10000';
+                    }
+                });
+            });
+
+            function setTheme(dark) {
+                if (dark) {
+                    document.body.classList.add('dark');
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    themeIcon.setAttribute('data-feather', 'sun');
+                } else {
+                    document.body.classList.remove('dark');
+                    document.documentElement.setAttribute('data-theme', 'light');
+                    themeIcon.setAttribute('data-feather', 'moon');
+                }
+                if (window.feather) feather.replace();
+            }
+
+            const savedTheme = localStorage.getItem('aiVoiceTheme');
+            if (savedTheme === 'dark') setTheme(true);
+            else if (savedTheme === 'light') setTheme(false);
+            else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) setTheme(true);
+
+            themeToggle.addEventListener('click', function() {
+                const isDark = !document.body.classList.contains('dark');
+                localStorage.setItem('aiVoiceTheme', isDark ? 'dark' : 'light');
+                setTheme(isDark);
+            });
+
+            // Character counter
+            textInput.addEventListener('input', function() {
+                charCount.textContent = this.value.length + ' / 10000';
+            });
+
+            // Copy Action
+            copyBtn.addEventListener('click', function() {
+                if (!textInput.value) return;
+                try {
+                    navigator.clipboard.writeText(textInput.value).then(() => {
+                        copySuccess.style.display = 'block';
+                        setTimeout(() => { copySuccess.style.display = 'none'; }, 2000);
+                    }).catch(() => {
+                        textInput.select();
+                        document.execCommand('copy');
+                        copySuccess.style.display = 'block';
+                        setTimeout(() => { copySuccess.style.display = 'none'; }, 2000);
+                    });
+                } catch (e) {
+                    errorMsg.textContent = 'Unable to copy text automatically.';
+                    errorMsg.style.display = 'block';
+                    setTimeout(() => { errorMsg.style.display = 'none'; }, 3000);
+                }
+            });
+
+            // Speed Slider adjustment
+            speedSlider.addEventListener('input', function() {
+                const val = parseFloat(this.value).toFixed(1);
+                speedValue.textContent = val + 'x';
+                if (audioPlayer) {
+                    audioPlayer.playbackRate = parseFloat(val);
+                }
+            });
+
+            function base64ToArrayBuffer(base64) {
+                const binary = atob(base64);
+                const bytes = new Uint8Array(binary.length);
+                for (let i = 0; i < binary.length; i++) {
+                    bytes[i] = binary.charCodeAt(i);
+                }
+                return bytes.buffer;
+            }
+
+            function pcmToWav(pcmData, sampleRate) {
+                const numChannels = 1;
+                const bytesPerSample = 2;
+                const buffer = new ArrayBuffer(44 + pcmData.length * bytesPerSample);
+                const view = new DataView(buffer);
+                let offset = 0;
+
+                // RIFF header
+                view.setUint32(offset, 0x52494646, false); offset += 4;
+                view.setUint32(offset, 36 + pcmData.length * bytesPerSample, true); offset += 4;
+                view.setUint32(offset, 0x57415645, false); offset += 4;
+
+                // fmt chunk
+                view.setUint32(offset, 0x666d7420, false); offset += 4;
+                view.setUint32(offset, 16, true); offset += 4;
+                view.setUint16(offset, 1, true); offset += 2;
+                view.setUint16(offset, numChannels, true); offset += 2;
+                view.setUint32(offset, sampleRate, true); offset += 4;
+                view.setUint32(offset, sampleRate * numChannels * bytesPerSample, true); offset += 4;
+                view.setUint16(offset, numChannels * bytesPerSample, true); offset += 2;
+                view.setUint16(offset, bytesPerSample * 8, true); offset += 2;
+
+                // data chunk
+                view.setUint32(offset, 0x64617461, false); offset += 4;
+                view.setUint32(offset, pcmData.length * bytesPerSample, true); offset += 4;
+
+                const pcmView = new Int16Array(buffer, offset);
+                pcmView.set(pcmData);
+                return new Blob([buffer], { type: 'audio/wav' });
+            }
+
+            let audioCtx, analyser, sourceNode;
+
+            function initVisualizer() {
+                if (audioCtx) return;
+                try {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    analyser = audioCtx.createAnalyser();
+                    analyser.fftSize = 64;
+                    sourceNode = audioCtx.createMediaElementSource(audioPlayer);
+                    sourceNode.connect(analyser);
+                    analyser.connect(audioCtx.destination);
+                    drawVisualizer();
+                } catch (e) {
+                    console.warn('AudioContext visualization setup skipped:', e);
+                }
+            }
+
+            function drawVisualizer() {
+                requestAnimationFrame(drawVisualizer);
+                if (!analyser) return;
+
+                const width = canvas.width = canvas.parentElement.clientWidth;
+                const height = canvas.height = canvas.parentElement.clientHeight;
+                const bufferLength = analyser.frequencyBinCount;
+                const dataArray = new Uint8Array(bufferLength);
+
+                analyser.getByteFrequencyData(dataArray);
+                canvasCtx.clearRect(0, 0, width, height);
+
+                const barWidth = (width / bufferLength) * 2;
+                let x = 0;
+
+                for (let i = 0; i < bufferLength; i++) {
+                    const barHeight = (dataArray[i] / 255) * height;
+                    canvasCtx.fillStyle = '#2563eb';
+                    canvasCtx.beginPath();
+                    canvasCtx.roundRect(x, height - barHeight, barWidth - 2, barHeight, 4);
+                    canvasCtx.fill();
+                    x += barWidth;
+                }
+            }
+
+            audioPlayer.addEventListener('play', () => {
+                if (audioCtx && audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                } else {
+                    initVisualizer();
+                }
+            });
+
+            async function fetchWithBackoff(url, options, retries = 3, delay = 1000) {
+                for (let i = 0; i < retries; i++) {
+                    try {
+                        const resp = await fetch(url, options);
+                        if (resp.ok) return resp;
+                        if (resp.status === 429 && i < retries - 1) {
+                            await new Promise(r => setTimeout(r, delay));
+                            delay *= 2;
+                            continue;
+                        }
+                        throw new Error(`API error code ${resp.status}`);
+                    } catch (e) {
+                        if (i === retries - 1) throw e;
+                        await new Promise(r => setTimeout(r, delay));
+                        delay *= 2;
+                    }
+                }
+            }
+
+            const historyClips = [];
+
+            function addHistoryItem(text, voice, wavBlobUrl) {
+                historyClips.unshift({ text, voice, url: wavBlobUrl, time: new Date().toLocaleTimeString() });
+                historyContainer.classList.remove('hidden');
+
+                historyList.innerHTML = historyClips.slice(0, 5).map((item, idx) => `
+                    <div class="history-item">
+                        <div class="truncate mr-3">
+                            <p class="font-medium text-sm text-slate-800 dark:text-slate-200 truncate">${item.text}</p>
+                            <span class="text-xs text-slate-500">${item.voice} • ${item.time}</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="playHistoryClip('${item.url}')" class="p-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition" title="Play">
+                                <i data-feather="play" class="w-4 h-4"></i>
+                            </button>
+                            <a href="${item.url}" download="voice-clip.wav" class="p-1.5 bg-green-600 text-white rounded-md hover:bg-green-700 transition" title="Download">
+                                <i data-feather="download" class="w-4 h-4"></i>
+                            </a>
+                        </div>
+                    </div>
+                `).join('');
+
+                if (window.feather) feather.replace();
+            }
+
+            window.playHistoryClip = function(url) {
+                audioPlayer.src = url;
+                audioPlayer.play();
+            };
+
+            generateBtn.addEventListener('click', async function() {
+                const text = textInput.value.trim();
+                errorMsg.style.display = 'none';
+
+                if (!text) {
+                    errorMsg.textContent = 'Please enter some text to generate speech.';
+                    errorMsg.style.display = 'block';
+                    return;
+                }
+
+                generateBtn.disabled = true;
+                btnText.textContent = 'Generating Speech...';
+                generateBtn.classList.add('loading');
+                if (window.feather) feather.replace();
+
+                // Style prefix application
+                const stylePrefix = styleSelect.value;
+                const formattedPrompt = stylePrefix ? `${stylePrefix}: ${text}` : text;
+
+                const apiKey = 'AIzaSyArThuSKi1yq7yfR0M35b9vCAuu0yhJ8ss';
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
+
+                const payload = {
+                    contents: [{ parts: [{ text: formattedPrompt }] }],
+                    generationConfig: {
+                        responseModalities: ['AUDIO'],
+                        speechConfig: {
+                            voiceConfig: {
+                                prebuiltVoiceConfig: { voiceName: voiceSelect.value }
+                            }
+                        }
+                    },
+                    model: 'gemini-2.5-flash-preview-tts'
+                };
+
+                try {
+                    const response = await fetchWithBackoff(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const result = await response.json();
+                    const part = result?.candidates?.[0]?.content?.parts?.[0];
+                    const audioData = part?.inlineData?.data;
+                    const mimeType = part?.inlineData?.mimeType;
+
+                    if (audioData && mimeType && mimeType.startsWith('audio/L16')) {
+                        const rateMatch = mimeType.match(/rate=(\d+)/);
+                        const sampleRate = rateMatch ? parseInt(rateMatch[1], 10) : 24000;
+                        const pcmBuffer = base64ToArrayBuffer(audioData);
+                        const pcm16 = new Int16Array(pcmBuffer);
+                        const wavBlob = pcmToWav(pcm16, sampleRate);
+                        const audioUrl = URL.createObjectURL(wavBlob);
+
+                        const speed = parseFloat(speedSlider.value);
+                        audioPlayer.src = audioUrl;
+                        audioPlayer.playbackRate = speed;
+                        downloadLink.href = audioUrl;
+                        audioOutput.classList.add('show');
+
+                        addHistoryItem(text, voiceSelect.value, audioUrl);
+                    } else {
+                        throw new Error('Received empty or unrecognized audio format.');
+                    }
+                } catch (err) {
+                    errorMsg.textContent = 'Voice generation failed: ' + err.message;
+                    errorMsg.style.display = 'block';
+                } finally {
+                    generateBtn.disabled = false;
+                    btnText.textContent = 'Generate Voice';
+                    generateBtn.classList.remove('loading');
+                    if (window.feather) feather.replace();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
