@@ -35,8 +35,9 @@
     "slug": "other-tools",
     "description": "Free online other tools for everyday tasks.",
     "url": "/Nisulka-Tools/categories/other-tools/",
-    "toolCount": 5,
+    "toolCount": 6,
     "tools": [
+      "about-your-system",
       "currency-converter",
       "draw-app",
       "instagram-image-downloader",

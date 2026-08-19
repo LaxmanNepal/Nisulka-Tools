@@ -61,6 +61,19 @@
     "status": "active"
   },
   {
+    "name": "About Your System",
+    "slug": "about-your-system",
+    "path": "about-your-system",
+    "description": "Free online About Your System tool.",
+    "category": "Other Tools",
+    "categorySlug": "other-tools",
+    "logo": "/Nisulka-Tools/tools/about-your-system/logo.jpg",
+    "url": "/Nisulka-Tools/tools/about-your-system/",
+    "keywords": [],
+    "featured": false,
+    "status": "active"
+  },
+  {
     "name": "Currency Converter",
     "slug": "currency-converter",
     "path": "currency-converter",
