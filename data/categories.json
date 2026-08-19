@@ -4,8 +4,9 @@
     "slug": "ai-tools",
     "description": "Free online ai tools for everyday tasks.",
     "url": "/Nisulka-Tools/categories/ai-tools/",
-    "toolCount": 1,
+    "toolCount": 2,
     "tools": [
+      "AI-Text-To-Audio",
       "text-to-audio-generator"
     ]
   },
