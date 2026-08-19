@@ -1128,15 +1128,18 @@
                 }
             });
 
-            async function fetchWithBackoff(url, options, retries = 3, delay = 1000) {
+            async function fetchWithBackoff(url, options, retries = 5, delay = 2000) {
                 for (let i = 0; i < retries; i++) {
                     try {
                         const resp = await fetch(url, options);
                         if (resp.ok) return resp;
-                        if (resp.status === 429 && i < retries - 1) {
-                            await new Promise(r => setTimeout(r, delay));
-                            delay *= 2;
-                            continue;
+                        if (resp.status === 429) {
+                            if (i < retries - 1) {
+                                await new Promise(r => setTimeout(r, delay));
+                                delay *= 2;
+                                continue;
+                            }
+                            throw new Error('Rate limit reached (429). The API is currently busy—please wait a few seconds and try again.');
                         }
                         throw new Error(`API error code ${resp.status}`);
                     } catch (e) {
@@ -1239,7 +1242,7 @@
                 const stylePrefix = styleSelect.value;
                 const formattedPrompt = stylePrefix ? `${stylePrefix}: ${text}` : text;
 
-                const apiKey = 'AIzaSyArThuSKi1yq7yfR0M35b9vCAuu0yhJ8ss';
+                const apiKey = '';
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
 
                 const payload = {
