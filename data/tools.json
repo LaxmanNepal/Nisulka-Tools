@@ -13,19 +13,6 @@
     "status": "active"
   },
   {
-    "name": "Ai Text To Audio",
-    "slug": "AI-Text-To-Audio",
-    "path": "AI-Tools/text-to-audio-generator/AI-Text-To-Audio",
-    "description": "Free online Ai Text To Audio tool.",
-    "category": "Ai Tools",
-    "categorySlug": "ai-tools",
-    "logo": "/Nisulka-Tools/tools/AI-Tools/text-to-audio-generator/AI-Text-To-Audio/logo.jpg",
-    "url": "/Nisulka-Tools/tools/AI-Tools/text-to-audio-generator/AI-Text-To-Audio/",
-    "keywords": [],
-    "featured": false,
-    "status": "active"
-  },
-  {
     "name": "Text To Audio Generator",
     "slug": "text-to-audio-generator",
     "path": "AI-Tools/text-to-audio-generator",
