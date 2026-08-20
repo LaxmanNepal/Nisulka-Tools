@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Nepali AI Voice Generator | Nisulka Tools</title>
-  <meta name="description" content="Free Online Nepali AI Text to Speech (TTS) Voice Generator - Convert Nepali (नेपाली), Romanized Nepali, and English text into natural AI voice with customizable voices, speed control, and instant lossless WAV download." />
+  <meta name="description" content="Free Online Nepali AI Text to Speech (TTS) Voice Generator - Convert Nepali (नेपाली), Romanized Nepali, and English text into natural AI voice with customizable voices, speed control, multiple AI voice sources, and instant lossless WAV download." />
 
   <!-- Nisulka Official Global & Component Stylesheets -->
   <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/variables.css" />
@@ -107,6 +107,12 @@
     textarea::-webkit-scrollbar-thumb:hover {
       background: #94a3b8;
     }
+
+    /* Modal Backdrop Blur */
+    .modal-backdrop {
+      background-color: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+    }
   </style>
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col justify-between">
@@ -137,35 +143,50 @@
     <header class="text-center max-w-3xl mx-auto mb-10">
       <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sky-100 border border-sky-200 text-sky-800 text-xs font-semibold mb-4 shadow-sm">
         <svg class="w-3.5 h-3.5 text-sky-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
-        <span>Neural Nepali & Devanagari Text-to-Speech Studio</span>
+        <span>Multi-Source Neural Nepali & Devanagari TTS Studio</span>
       </div>
       <h1 class="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-3">
         Nepali AI Voice Generator
       </h1>
       <p class="text-base sm:text-lg text-slate-600 leading-relaxed">
-        Convert Nepali (<span class="font-medium text-slate-800">नेपाली</span>), Romanized Nepali, and English text into natural, lifelike AI voice with high-fidelity speech synthesis, custom voices, and instant lossless WAV download.
+        Convert Nepali (<span class="font-medium text-slate-800">नेपाली</span>), Romanized Nepali, and English text into natural AI voice with multiple AI engines, customizable voice personas, and lossless audio download.
       </p>
     </header>
 
     <!-- Primary Tool Workspace Card -->
     <div class="bg-white rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/50 p-5 sm:p-8 space-y-8">
       
-      <!-- Engine Selector Bar & Quick Sample Presets -->
+      <!-- Top Bar: Source / Engine Provider Selector & API Settings Modal Button -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-200">
+        <div class="flex flex-col sm:flex-row sm:items-center gap-2.5">
+          <label for="provider-select" class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+            <svg class="w-4 h-4 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+            <span>Voice Source / Engine:</span>
+          </label>
+          <select id="provider-select" class="text-sm font-semibold px-3 py-1.5 rounded-xl border border-slate-300 bg-white text-slate-800 focus:ring-2 focus:ring-sky-500 focus:outline-none shadow-sm cursor-pointer">
+            <option value="gemini">✨ Google Gemini 3.1 Neural AI (Expressive)</option>
+            <option value="google-nepali">🇳🇵 Google Nepali Native Speech (100% Fluent Devanagari)</option>
+            <option value="openai">⚡ OpenAI Audio TTS (Alloy/Nova/Echo)</option>
+            <option value="elevenlabs">🎙️ ElevenLabs Multilingual v2</option>
+            <option value="browser">🌐 Browser Device Engine (100% Offline)</option>
+          </select>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button id="open-api-settings-btn" type="button" class="px-3.5 py-1.5 rounded-xl bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm cursor-pointer">
+            <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            <span>API Keys & Sources ⚙️</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Sample Presets -->
       <div>
-        <div class="flex flex-wrap items-center justify-between gap-3 mb-2.5">
+        <div class="flex items-center justify-between gap-3 mb-2.5">
           <span class="text-xs font-semibold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
             <svg class="w-3.5 h-3.5 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
             Quick Sample Scripts
           </span>
-          
-          <div class="flex items-center gap-2">
-            <span class="text-xs text-slate-500 font-medium">Synthesis Mode:</span>
-            <select id="engine-mode-select" class="text-xs font-semibold px-2.5 py-1 rounded-lg border border-slate-300 bg-slate-50 text-slate-700 focus:ring-1 focus:ring-sky-500 focus:outline-none">
-              <option value="auto">Auto (Cloud AI + Browser Fallback)</option>
-              <option value="cloud">Cloud Neural TTS (Gemini API)</option>
-              <option value="browser">Browser Native Engine (100% Offline)</option>
-            </select>
-          </div>
         </div>
         <div class="flex flex-wrap gap-2" id="sample-buttons-container"></div>
       </div>
@@ -217,9 +238,9 @@
         <div class="flex items-center justify-between">
           <label class="text-sm font-semibold text-slate-800 flex items-center gap-2">
             <svg class="w-4 h-4 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 100-6 3 3 0 000 6z"/></svg>
-            <span>Choose Nepali Voice Persona</span>
+            <span>Choose Voice Persona</span>
           </label>
-          <span class="text-xs text-slate-500">7 High-Fidelity Voices</span>
+          <span id="voice-count-badge" class="text-xs text-slate-500">Available Voices</span>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3" id="voice-grid"></div>
       </div>
@@ -262,11 +283,11 @@
             <option value="dramatic">Dramatic & Powerful</option>
             <option value="calm">Calm & Soothing</option>
           </select>
-          <p class="text-xs text-slate-500">Customizes acoustic cadence and emphasis for Nepali storytelling, news, or commercial voiceovers.</p>
+          <p class="text-xs text-slate-500">Acoustic cadence guidance for Nepali storytelling, news, or commercial voiceovers.</p>
         </div>
       </div>
 
-      <!-- Notice / Info Banner -->
+      <!-- Info / Notice Banner -->
       <div id="info-banner" class="hidden p-4 rounded-2xl bg-sky-50 border border-sky-200 text-sky-800 text-xs flex items-start gap-3">
         <svg class="w-4 h-4 text-sky-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         <div class="flex-1" id="info-message"></div>
@@ -298,8 +319,9 @@
               <h3 class="font-bold text-base text-white flex items-center gap-2">
                 <span>Audio Synthesized</span>
                 <span id="player-voice-badge" class="text-xs px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-500/30">Voice: Kore</span>
+                <span id="player-source-badge" class="text-xs px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">Source: Gemini</span>
               </h3>
-              <span id="player-format-badge" class="text-xs text-slate-400">24kHz Lossless Audio</span>
+              <span id="player-format-badge" class="text-xs text-slate-400">High Quality Audio</span>
             </div>
           </div>
           <div class="flex items-center gap-2">
@@ -341,28 +363,82 @@
       </div>
     </div>
 
+    <!-- API Keys & Custom Sources Settings Modal -->
+    <div id="api-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 modal-backdrop">
+      <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-slate-200 space-y-6 relative">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+          <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center font-bold">⚙️</div>
+            <div>
+              <h3 class="font-bold text-lg text-slate-900">TTS Sources & API Keys</h3>
+              <p class="text-xs text-slate-500">Configure multi-engine voice providers or custom keys</p>
+            </div>
+          </div>
+          <button id="close-api-modal-btn" type="button" class="text-slate-400 hover:text-slate-600 text-xl font-bold p-1">&times;</button>
+        </div>
+
+        <div class="space-y-4">
+          <!-- Gemini API Key -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-bold text-slate-700 flex items-center justify-between">
+              <span>Google Gemini API Key (Optional)</span>
+              <span class="text-[10px] text-slate-400 font-normal">Leave blank for Nisulka Server tier</span>
+            </label>
+            <input id="custom-gemini-key" type="password" placeholder="AIzaSy..." class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-sky-500 focus:outline-none" />
+          </div>
+
+          <!-- OpenAI API Key -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-bold text-slate-700 flex items-center justify-between">
+              <span>OpenAI API Key (For OpenAI Audio TTS)</span>
+              <span class="text-[10px] text-slate-400 font-normal">sk-...</span>
+            </label>
+            <input id="custom-openai-key" type="password" placeholder="sk-proj-..." class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-sky-500 focus:outline-none" />
+          </div>
+
+          <!-- ElevenLabs API Key -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-bold text-slate-700 flex items-center justify-between">
+              <span>ElevenLabs API Key (For Multilingual v2)</span>
+              <span class="text-[10px] text-slate-400 font-normal">xi-api-key</span>
+            </label>
+            <input id="custom-eleven-key" type="password" placeholder="xi-..." class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-sky-500 focus:outline-none" />
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-sky-50 border border-sky-100 text-xs text-sky-800 leading-relaxed">
+            💡 <strong>Privacy Note:</strong> Custom API keys are stored locally in your browser's private storage (localStorage) and are only used for your speech synthesis requests.
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-4">
+          <button id="reset-api-keys-btn" type="button" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-500 hover:bg-slate-100 transition-colors">Reset</button>
+          <button id="save-api-keys-btn" type="button" class="px-5 py-2 rounded-xl text-xs font-bold bg-sky-600 hover:bg-sky-700 text-white transition-colors shadow-md">Save Settings</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Guide & Info -->
     <section class="mt-14 space-y-12 text-slate-700">
       <div>
         <h2 class="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-2.5">
           <svg class="w-6 h-6 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-          <span>How to Generate Nepali AI Voice in 3 Easy Steps</span>
+          <span>Multi-Source Voice Synthesis Features</span>
         </h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div class="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm relative">
             <span class="text-3xl font-black text-sky-500/20 absolute top-4 right-5">01</span>
-            <h3 class="font-bold text-base text-slate-900 mb-2">1. Type or Paste Nepali Script</h3>
-            <p class="text-sm text-slate-600 leading-relaxed">Enter your script in Devanagari Nepali (नेपाली), Romanized Nepali, or English.</p>
+            <h3 class="font-bold text-base text-slate-900 mb-2">Google Gemini 3.1 Neural</h3>
+            <p class="text-sm text-slate-600 leading-relaxed">Studio-grade human intonation, natural inflection, and expressive Devanagari pronunciation.</p>
           </div>
           <div class="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm relative">
             <span class="text-3xl font-black text-sky-500/20 absolute top-4 right-5">02</span>
-            <h3 class="font-bold text-base text-slate-900 mb-2">2. Select Voice & Speech Rate</h3>
-            <p class="text-sm text-slate-600 leading-relaxed">Choose your voice persona (Kore, Puck, Charon, Zephyr, etc.) and playback speed.</p>
+            <h3 class="font-bold text-base text-slate-900 mb-2">Google Nepali Native (ne-NP)</h3>
+            <p class="text-sm text-slate-600 leading-relaxed">100% authentic Devanagari syllable parsing with true native Nepali accent and zero foreign phonetic artifacts.</p>
           </div>
           <div class="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm relative">
             <span class="text-3xl font-black text-sky-500/20 absolute top-4 right-5">03</span>
-            <h3 class="font-bold text-base text-slate-900 mb-2">3. Listen & Download WAV</h3>
-            <p class="text-sm text-slate-600 leading-relaxed">Generate audio, preview with the built-in player, and download lossless WAV.</p>
+            <h3 class="font-bold text-base text-slate-900 mb-2">Offline Browser Engine</h3>
+            <p class="text-sm text-slate-600 leading-relaxed">Instant local device speech synthesis with zero server dependency, perfect for static web hosts.</p>
           </div>
         </div>
       </div>
@@ -387,15 +463,41 @@
 
   <!-- Embedded All-In-One Application JavaScript Engine -->
   <script>
-    const VOICES = [
-      { id: 'Kore', name: 'Kore', gender: 'Female', tone: 'Firm & Professional', desc: 'Crisp, articulate Nepali female voice with high clarity.', badge: 'Popular', nepaliLabel: 'कोरे (स्पष्ट महिला स्वर)', pitch: 1.05 },
-      { id: 'Puck', name: 'Puck', gender: 'Male', tone: 'Upbeat & Energetic', desc: 'Dynamic, friendly, and youthful Nepali male cadence.', badge: 'Trending', nepaliLabel: 'पक (उर्जावान पुरुष स्वर)', pitch: 1.0 },
-      { id: 'Charon', name: 'Charon', gender: 'Male', tone: 'Deep & Authoritative', desc: 'Calm, rich baritone vocal delivery with natural pauses.', badge: 'Narrator', nepaliLabel: 'क्यारोन (गम्भीर पुरुष स्वर)', pitch: 0.8 },
-      { id: 'Zephyr', name: 'Zephyr', gender: 'Female', tone: 'Bright & Conversational', desc: 'Warm, natural, and expressive Nepali female voice.', badge: 'Expressive', nepaliLabel: 'जेफिर (मिठो महिला स्वर)', pitch: 1.15 },
-      { id: 'Aoede', name: 'Aoede', gender: 'Female', tone: 'Melodic & Soothing', desc: 'Gentle, soft, and relaxing vocal tone.', badge: 'Soothing', nepaliLabel: 'आयडे (शान्त महिला स्वर)', pitch: 0.95 },
-      { id: 'Fenrir', name: 'Fenrir', gender: 'Male', tone: 'Strong & Resonant', desc: 'Commanding and confident presentation tone.', badge: 'Formal', nepaliLabel: 'फेनरिर (प्रभावशाली पुरुष स्वर)', pitch: 0.85 },
-      { id: 'Sulafat', name: 'Sulafat', gender: 'Female', tone: 'Warm & Natural', desc: 'Friendly, easygoing conversational tone.', badge: 'Natural', nepaliLabel: 'सुलाफात (प्राकृतिक महिला स्वर)', pitch: 1.0 },
-    ];
+    // Provider Voice Catalog
+    const PROVIDER_VOICES = {
+      gemini: [
+        { id: 'Kore', name: 'Kore', gender: 'Female', tone: 'Firm & Professional', desc: 'Crisp, articulate Nepali female voice with high clarity.', badge: 'Popular', nepaliLabel: 'कोरे (स्पष्ट महिला स्वर)', pitch: 1.05 },
+        { id: 'Puck', name: 'Puck', gender: 'Male', tone: 'Upbeat & Energetic', desc: 'Dynamic, friendly, and youthful Nepali male cadence.', badge: 'Trending', nepaliLabel: 'पक (उर्जावान पुरुष स्वर)', pitch: 1.0 },
+        { id: 'Charon', name: 'Charon', gender: 'Male', tone: 'Deep & Authoritative', desc: 'Calm, rich baritone vocal delivery with natural pauses.', badge: 'Narrator', nepaliLabel: 'क्यारोन (गम्भीर पुरुष स्वर)', pitch: 0.8 },
+        { id: 'Zephyr', name: 'Zephyr', gender: 'Female', tone: 'Bright & Conversational', desc: 'Warm, natural, and expressive Nepali female voice.', badge: 'Expressive', nepaliLabel: 'जेफिर (मिठो महिला स्वर)', pitch: 1.15 },
+        { id: 'Aoede', name: 'Aoede', gender: 'Female', tone: 'Melodic & Soothing', desc: 'Gentle, soft, and relaxing vocal tone.', badge: 'Soothing', nepaliLabel: 'आयडे (शान्त महिला स्वर)', pitch: 0.95 },
+        { id: 'Fenrir', name: 'Fenrir', gender: 'Male', tone: 'Strong & Resonant', desc: 'Commanding and confident presentation tone.', badge: 'Formal', nepaliLabel: 'फेनरिर (प्रभावशाली पुरुष स्वर)', pitch: 0.85 },
+        { id: 'Sulafat', name: 'Sulafat', gender: 'Female', tone: 'Warm & Natural', desc: 'Friendly, easygoing conversational tone.', badge: 'Natural', nepaliLabel: 'सुलाफात (प्राकृतिक महिला स्वर)', pitch: 1.0 },
+      ],
+      'google-nepali': [
+        { id: 'Nepali-Female', name: 'Nepali Female (ne-NP)', gender: 'Female', tone: 'Native Fluent', desc: 'Authentic pure Nepali Devanagari pronunciation with natural accent.', badge: '100% Native', nepaliLabel: 'नेपाली महिला स्वर (प्राकृतिक)', pitch: 1.0 },
+        { id: 'Nepali-Male', name: 'Nepali Male (ne-NP)', gender: 'Male', tone: 'Native Deep', desc: 'Native Nepali male voice with balanced syllable stress.', badge: 'Authentic', nepaliLabel: 'नेपाली पुरुष स्वर (स्पष्ट)', pitch: 0.9 },
+        { id: 'Nepali-Natural', name: 'Nepali Natural', gender: 'Female', tone: 'Conversational', desc: 'Warm everyday conversational tone for Devanagari articles.', badge: 'Fluent', nepaliLabel: 'नेपाली प्राकृतिक स्वर', pitch: 1.05 },
+      ],
+      openai: [
+        { id: 'alloy', name: 'Alloy', gender: 'Neutral', tone: 'Balanced & Versatile', desc: 'General-purpose balanced voice with high precision.', badge: 'Versatile', nepaliLabel: 'एलोय (सन्तुलित स्वर)', pitch: 1.0 },
+        { id: 'nova', name: 'Nova', gender: 'Female', tone: 'Warm & Energetic', desc: 'Enthusiastic and clear vocal character.', badge: 'Vibrant', nepaliLabel: 'नोभा (उर्जावान महिला स्वर)', pitch: 1.1 },
+        { id: 'echo', name: 'Echo', gender: 'Male', tone: 'Smooth & Warm', desc: 'Relaxed baritone voice suitable for documentaries.', badge: 'Smooth', nepaliLabel: 'इको (गहिरो पुरुष स्वर)', pitch: 0.9 },
+        { id: 'shimmer', name: 'Shimmer', gender: 'Female', tone: 'Expressive & Clear', desc: 'Clear, crisp soprano voice for tutorials and audiobooks.', badge: 'Clear', nepaliLabel: 'शिमर (स्पष्ट स्वर)', pitch: 1.15 },
+        { id: 'fable', name: 'Fable', gender: 'Male', tone: 'Narrative & British', desc: 'Articulate expressive storytelling timbre.', badge: 'Storyteller', nepaliLabel: 'फेबल (कथावाचक स्वर)', pitch: 0.95 },
+        { id: 'onyx', name: 'Onyx', gender: 'Male', tone: 'Deep & Authoritative', desc: 'Resonant and serious tone for presentations.', badge: 'Deep', nepaliLabel: 'ओनिक्स (गम्भीर स्वर)', pitch: 0.8 },
+      ],
+      elevenlabs: [
+        { id: 'Rachel', name: 'Rachel', gender: 'Female', tone: 'Calm & Professional', desc: 'ElevenLabs flagship calm and engaging voice.', badge: 'Flagship', nepaliLabel: 'रेचल (व्यावसायिक महिला स्वर)', pitch: 1.0 },
+        { id: 'Adam', name: 'Adam', gender: 'Male', tone: 'Deep & Dynamic', desc: 'Popular deep narration and commercial voice.', badge: 'Dynamic', nepaliLabel: 'एडम (प्रभावशाली पुरुष स्वर)', pitch: 0.9 },
+        { id: 'Bella', name: 'Bella', gender: 'Female', tone: 'Sweet & Expressive', desc: 'Soft and expressive voice for stories.', badge: 'Expressive', nepaliLabel: 'बेला (मिठो स्वर)', pitch: 1.1 },
+        { id: 'Josh', name: 'Josh', gender: 'Male', tone: 'Casual & Youthful', desc: 'Casual, friendly young male delivery.', badge: 'Casual', nepaliLabel: 'जोश (युवा पुरुष स्वर)', pitch: 1.0 },
+      ],
+      browser: [
+        { id: 'Browser-Nepali', name: 'Device Nepali Voice', gender: 'Female', tone: 'Hardware Accelerated', desc: 'Locally synthesized on your device using native speech synthesizer.', badge: 'Offline', nepaliLabel: 'डिभाइस नेपाली स्वर', pitch: 1.0 },
+        { id: 'Browser-Male', name: 'Device Male Voice', gender: 'Male', tone: 'Hardware Accelerated', desc: 'Device native speech engine with pitch modulation.', badge: 'Fast', nepaliLabel: 'डिभाइस पुरुष स्वर', pitch: 0.85 },
+      ]
+    };
 
     const SAMPLE_SCRIPTS = [
       { title: 'Welcome & Intro', lang: 'Nepali', text: 'निसुल्क एआई भ्वाइस जेनेरेटरमा यहाँलाई हार्दिक स्वागत छ। यस आधुनिक प्रविधिको सहयोगले तपाईँ कुनै पनि नेपाली पाठलाई अत्यन्तै स्वाभाविक र स्पष्ट मानव आवाजमा रूपान्तरण गर्न सक्नुहुन्छ।' },
@@ -406,13 +508,14 @@
     ];
 
     const FAQS = [
-      { q: 'How does the Nepali AI Voice Generator work?', a: 'It uses neural speech models and browser-native speech synthesis to process Devanagari script, Nepali phonemes, and punctuation pauses to synthesize lifelike, natural-sounding human audio.' },
-      { q: 'Can I generate voices for both Nepali and English?', a: 'Yes! The tool natively supports Devanagari script (नेपाली), Romanized Nepali, and English text with natural cadence and inflections.' },
-      { q: 'Why do I see status 405 on some static hosts?', a: 'Status 405 happens when the HTML file is deployed on a static web server that lacks a POST API endpoint. Our smart engine automatically detects this and switches seamlessly to high-fidelity client-side voice synthesis!' },
-      { q: 'What audio format is provided?', a: 'Your generated audio is packaged in lossless 16-bit linear PCM WAV container format at studio quality for download.' },
+      { q: 'What voice sources/engines are available?', a: 'You can choose between Google Gemini 3.1 Neural AI (expressive), Google Nepali Native Speech (100% authentic Devanagari ne-NP stream), OpenAI Audio TTS (tts-1), ElevenLabs Multilingual v2, or the 100% Offline Browser Device Engine!' },
+      { q: 'How does Google Nepali Native Speech work?', a: 'Google Nepali Native uses pure Devanagari phonetic models tuned specifically for Nepali syllables and vocabulary, resulting in zero foreign accent and crystal-clear pronunciation.' },
+      { q: 'Can I provide my own API keys?', a: 'Yes! Click the "API Keys & Sources" button to enter your personal OpenAI, ElevenLabs, or Gemini API keys. Keys are saved securely in your local browser storage.' },
+      { q: 'What audio format is provided for download?', a: 'The tool delivers studio-quality audio in lossless WAV or high-bitrate MP3 format, ready for videos, podcasts, and presentations.' },
       { q: 'Is this free to use?', a: 'Yes, Nisulka Tools provides this AI Voice Generator 100% free with unlimited generation and no watermarks.' },
     ];
 
+    let currentProvider = 'gemini';
     let selectedVoice = 'Kore';
     let speechHistory = [];
     let activeBrowserUtterance = null;
@@ -465,20 +568,7 @@
       return bytes;
     }
 
-    // Synthesize simple audio wav buffer for client-side download fallback
-    function generateSyntheticWav(durationSeconds = 2, sampleRate = 24000, pitchFreq = 220) {
-      const numSamples = Math.floor(durationSeconds * sampleRate);
-      const pcm = new Int16Array(numSamples);
-      for (let i = 0; i < numSamples; i++) {
-        const t = i / sampleRate;
-        const envelope = Math.sin((Math.PI * i) / numSamples);
-        const wave = Math.sin(2 * Math.PI * pitchFreq * t) * 0.4 + Math.sin(2 * Math.PI * (pitchFreq * 1.5) * t) * 0.2;
-        pcm[i] = wave * envelope * 32767;
-      }
-      return pcmToWav(new Uint8Array(pcm.buffer), sampleRate);
-    }
-
-    // High-quality Browser Native Speech Synthesis Engine for Zero-Server / Static Hosting
+    // High-quality Browser Native Speech Synthesis Engine
     function speakWithBrowserEngine(text, voiceConfig, speedRate = 1.0) {
       return new Promise((resolve, reject) => {
         if (!('speechSynthesis' in window)) {
@@ -492,56 +582,44 @@
         utterance.pitch = voiceConfig.pitch || 1.0;
 
         const voices = window.speechSynthesis.getVoices();
-        
-        // Priority 1: Nepali ('ne', 'ne-NP')
         let matchedVoice = voices.find(v => v.lang && (v.lang.startsWith('ne') || v.lang.includes('NP')));
-        
-        // Priority 2: Hindi or Indian languages with high phonetic compatibility for Devanagari
         if (!matchedVoice) {
           matchedVoice = voices.find(v => v.lang && (v.lang.startsWith('hi') || v.lang.includes('IN')));
         }
-        
-        // Priority 3: Match gender
         if (!matchedVoice && voiceConfig.gender) {
           const isFemale = voiceConfig.gender.toLowerCase() === 'female';
           matchedVoice = voices.find(v => isFemale ? (v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('zira')) : (v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('david')));
         }
 
-        if (matchedVoice) {
-          utterance.voice = matchedVoice;
-        }
+        if (matchedVoice) utterance.voice = matchedVoice;
 
-        utterance.onstart = () => {
-          activeBrowserUtterance = utterance;
-        };
-
-        utterance.onend = () => {
-          activeBrowserUtterance = null;
-          resolve(true);
-        };
-
-        utterance.onerror = (e) => {
-          activeBrowserUtterance = null;
-          resolve(true); // gracefully continue
-        };
+        utterance.onstart = () => { activeBrowserUtterance = utterance; };
+        utterance.onend = () => { activeBrowserUtterance = null; resolve(true); };
+        utterance.onerror = () => { activeBrowserUtterance = null; resolve(true); };
 
         window.speechSynthesis.speak(utterance);
         activeBrowserUtterance = utterance;
       });
     }
 
-    // Ensure voices are loaded in Chrome/Safari
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.onvoiceschanged = () => {
-        window.speechSynthesis.getVoices();
-      };
+    function getActiveVoices() {
+      return PROVIDER_VOICES[currentProvider] || PROVIDER_VOICES.gemini;
     }
 
     function renderVoices() {
       const grid = document.getElementById('voice-grid');
+      const countBadge = document.getElementById('voice-count-badge');
       if (!grid) return;
 
-      grid.innerHTML = VOICES.map(v => {
+      const voices = getActiveVoices();
+      if (countBadge) countBadge.innerText = `${voices.length} Voices (${currentProvider.toUpperCase()})`;
+
+      // Ensure valid voice is selected
+      if (!voices.some(v => v.id === selectedVoice)) {
+        selectedVoice = voices[0].id;
+      }
+
+      grid.innerHTML = voices.map(v => {
         const isSel = v.id === selectedVoice;
         return `
           <div class="voice-card text-left p-3.5 rounded-2xl border transition-all flex flex-col justify-between ${
@@ -598,12 +676,12 @@
       container.innerHTML = speechHistory.map((item) => `
         <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
           <div class="flex-1 min-w-0">
-            <span class="font-bold text-slate-900">${item.voice} (${item.speed}x):</span>
+            <span class="font-bold text-slate-900">${item.voice} [${item.provider || 'AI'}] (${item.speed}x):</span>
             <span class="text-slate-600 ml-1 truncate block sm:inline">${item.text}</span>
           </div>
           <div class="flex items-center gap-2 flex-shrink-0">
             ${item.audioUrl ? `<audio src="${item.audioUrl}" controls class="h-8 w-44"></audio>` : ''}
-            <a href="${item.audioUrl || '#'}" download="nepali_voice_${item.voice.toLowerCase()}_${item.timestamp || Date.now()}.wav" class="px-2.5 py-1 rounded-lg bg-sky-100 text-sky-700 font-semibold hover:bg-sky-200 transition-colors">WAV</a>
+            <a href="${item.audioUrl || '#'}" download="nepali_voice_${item.voice.toLowerCase()}_${item.timestamp || Date.now()}.${item.format || 'wav'}" class="px-2.5 py-1 rounded-lg bg-sky-100 text-sky-700 font-semibold hover:bg-sky-200 transition-colors">Download</a>
           </div>
         </div>
       `).join('');
@@ -636,6 +714,7 @@
       updateStats();
       renderHistory();
 
+      // UI Elements
       const textarea = document.getElementById('speech-text-input');
       const speedSlider = document.getElementById('speed-slider');
       const speedBadge = document.getElementById('speed-badge');
@@ -645,8 +724,59 @@
       const errorMessage = document.getElementById('error-message');
       const infoBanner = document.getElementById('info-banner');
       const infoMessage = document.getElementById('info-message');
-      const engineModeSelect = document.getElementById('engine-mode-select');
+      const providerSelect = document.getElementById('provider-select');
       const browserReplayBtn = document.getElementById('browser-replay-btn');
+
+      // Modal Elements
+      const apiModal = document.getElementById('api-modal');
+      const openApiModalBtn = document.getElementById('open-api-settings-btn');
+      const closeApiModalBtn = document.getElementById('close-api-modal-btn');
+      const saveApiKeysBtn = document.getElementById('save-api-keys-btn');
+      const resetApiKeysBtn = document.getElementById('reset-api-keys-btn');
+      const customGeminiKeyInput = document.getElementById('custom-gemini-key');
+      const customOpenaiKeyInput = document.getElementById('custom-openai-key');
+      const customElevenKeyInput = document.getElementById('custom-eleven-key');
+
+      // Load saved custom keys
+      if (customGeminiKeyInput) customGeminiKeyInput.value = localStorage.getItem('nisulka_custom_gemini_key') || '';
+      if (customOpenaiKeyInput) customOpenaiKeyInput.value = localStorage.getItem('nisulka_custom_openai_key') || '';
+      if (customElevenKeyInput) customElevenKeyInput.value = localStorage.getItem('nisulka_custom_eleven_key') || '';
+
+      if (openApiModalBtn && apiModal) {
+        openApiModalBtn.addEventListener('click', () => apiModal.classList.remove('hidden'));
+      }
+      if (closeApiModalBtn && apiModal) {
+        closeApiModalBtn.addEventListener('click', () => apiModal.classList.add('hidden'));
+      }
+      if (saveApiKeysBtn && apiModal) {
+        saveApiKeysBtn.addEventListener('click', () => {
+          if (customGeminiKeyInput) localStorage.setItem('nisulka_custom_gemini_key', customGeminiKeyInput.value.trim());
+          if (customOpenaiKeyInput) localStorage.setItem('nisulka_custom_openai_key', customOpenaiKeyInput.value.trim());
+          if (customElevenKeyInput) localStorage.setItem('nisulka_custom_eleven_key', customElevenKeyInput.value.trim());
+          apiModal.classList.add('hidden');
+          if (infoBanner && infoMessage) {
+            infoBanner.classList.remove('hidden');
+            infoMessage.innerHTML = '<strong>API Settings Saved:</strong> Your custom provider preferences are stored securely.';
+          }
+        });
+      }
+      if (resetApiKeysBtn) {
+        resetApiKeysBtn.addEventListener('click', () => {
+          localStorage.removeItem('nisulka_custom_gemini_key');
+          localStorage.removeItem('nisulka_custom_openai_key');
+          localStorage.removeItem('nisulka_custom_eleven_key');
+          if (customGeminiKeyInput) customGeminiKeyInput.value = '';
+          if (customOpenaiKeyInput) customOpenaiKeyInput.value = '';
+          if (customElevenKeyInput) customElevenKeyInput.value = '';
+        });
+      }
+
+      if (providerSelect) {
+        providerSelect.addEventListener('change', (e) => {
+          currentProvider = e.target.value;
+          renderVoices();
+        });
+      }
 
       if (textarea) {
         textarea.addEventListener('input', updateStats);
@@ -734,7 +864,7 @@
       if (browserReplayBtn) {
         browserReplayBtn.addEventListener('click', () => {
           const text = textarea ? textarea.value.trim() : '';
-          const voiceObj = VOICES.find(v => v.id === selectedVoice) || VOICES[0];
+          const voiceObj = getActiveVoices().find(v => v.id === selectedVoice) || getActiveVoices()[0];
           const speed = speedSlider ? parseFloat(speedSlider.value) : 1.0;
           speakWithBrowserEngine(text, voiceObj, speed);
         });
@@ -754,87 +884,98 @@
           if (errorBanner) errorBanner.classList.add('hidden');
           if (infoBanner) infoBanner.classList.add('hidden');
           generateBtn.disabled = true;
-          if (generateBtnText) generateBtnText.innerText = 'Synthesizing Nepali Audio...';
+          if (generateBtnText) generateBtnText.innerText = 'Synthesizing Audio...';
 
           const speed = speedSlider ? parseFloat(speedSlider.value) : 1.0;
           const emotionSelect = document.getElementById('emotion-select');
           const emotion = emotionSelect ? emotionSelect.value : 'neutral';
-          const voiceObj = VOICES.find(v => v.id === selectedVoice) || VOICES[0];
-          const engineMode = engineModeSelect ? engineModeSelect.value : 'auto';
+          const voiceObj = getActiveVoices().find(v => v.id === selectedVoice) || getActiveVoices()[0];
 
           let audioUrl = '';
-          let usedEngine = 'cloud';
+          let usedEngine = currentProvider;
+          let audioFormat = 'wav';
 
-          // Try Cloud Server Endpoint if not in browser-only mode
-          if (engineMode !== 'browser') {
+          // Check if custom key is needed for this provider
+          let customApiKey = '';
+          if (currentProvider === 'gemini') customApiKey = localStorage.getItem('nisulka_custom_gemini_key') || '';
+          if (currentProvider === 'openai') customApiKey = localStorage.getItem('nisulka_custom_openai_key') || '';
+          if (currentProvider === 'elevenlabs') customApiKey = localStorage.getItem('nisulka_custom_eleven_key') || '';
+
+          // 1. If Browser Engine selected
+          if (currentProvider === 'browser') {
             try {
-              const response = await fetch('/api/tts', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text, voice: selectedVoice, speed, emotion })
-              });
-
-              // Status 405 or 404 on static hosting server
-              if (response.status === 405 || response.status === 404) {
-                console.warn(`Server returned ${response.status} (Static host detected). Switching to browser speech synthesis engine.`);
-                usedEngine = 'browser_fallback';
-              } else if (!response.ok) {
-                const errData = await response.json().catch(() => ({}));
-                throw new Error(errData.error || `Server responded with status ${response.status}`);
-              } else {
-                const data = await response.json();
-                if (data.audioWavBase64) {
-                  const binary = atob(data.audioWavBase64);
-                  const len = binary.length;
-                  const bytes = new Uint8Array(len);
-                  for (let i = 0; i < len; i++) bytes[i] = binary.charCodeAt(i);
-                  const blob = new Blob([bytes], { type: 'audio/wav' });
-                  audioUrl = URL.createObjectURL(blob);
-                } else if (data.rawPcmBase64 || data.audioBase64) {
-                  const pcmBytes = base64ToUint8Array(data.rawPcmBase64 || data.audioBase64);
-                  const wavBlob = pcmToWav(pcmBytes, data.sampleRate || 24000, 1, 16);
-                  audioUrl = URL.createObjectURL(wavBlob);
-                }
-              }
-            } catch (err) {
-              if (engineMode === 'cloud') {
-                // User forced cloud only
-                if (errorBanner && errorMessage) {
-                  errorBanner.classList.remove('hidden');
-                  errorMessage.innerText = err.message || 'Speech synthesis failed.';
-                }
-                generateBtn.disabled = false;
-                if (generateBtnText) generateBtnText.innerText = 'Generate Nepali Voice';
-                return;
-              }
-              console.warn('Cloud API fetch failed, engaging client fallback:', err);
-              usedEngine = 'browser_fallback';
-            }
-          } else {
-            usedEngine = 'browser';
-          }
-
-          // If browser engine or fallback is used
-          if (usedEngine === 'browser' || usedEngine === 'browser_fallback') {
-            try {
-              // Trigger client speech playback
               speakWithBrowserEngine(text, voiceObj, speed);
-
-              // Generate playable fallback WAV blob
-              const syntheticBlob = generateSyntheticWav(Math.min(5, Math.max(1, text.length * 0.08)), 24000, voiceObj.gender === 'Female' ? 330 : 180);
-              audioUrl = URL.createObjectURL(syntheticBlob);
-
               if (infoBanner && infoMessage) {
                 infoBanner.classList.remove('hidden');
-                infoMessage.innerHTML = usedEngine === 'browser_fallback' 
-                  ? '<strong>Static Server Detected (Status 405):</strong> Successfully synthesized audio via Browser Voice Engine with Nepali phonetics!'
-                  : '<strong>Browser Engine Mode:</strong> Generated voice playback on your device.';
+                infoMessage.innerHTML = '<strong>Browser Device Engine:</strong> Speech audio playing on your device.';
               }
-            } catch (fallbackErr) {
+              if (browserReplayBtn) browserReplayBtn.classList.remove('hidden');
+            } catch (bErr) {
               if (errorBanner && errorMessage) {
                 errorBanner.classList.remove('hidden');
-                errorMessage.innerText = 'Could not generate speech on this device: ' + fallbackErr.message;
+                errorMessage.innerText = 'Browser Speech Synthesis failed: ' + bErr.message;
               }
+            }
+            generateBtn.disabled = false;
+            if (generateBtnText) generateBtnText.innerText = 'Generate Nepali Voice';
+            return;
+          }
+
+          // 2. Cloud Server / API Synthesis
+          try {
+            const response = await fetch('/api/tts', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                text,
+                voice: selectedVoice,
+                speed,
+                emotion,
+                provider: currentProvider,
+                customApiKey: customApiKey || undefined,
+              })
+            });
+
+            // If static host 405/404 detected
+            if (response.status === 405 || response.status === 404) {
+              console.warn(`Static host returned status ${response.status}. Engaging Browser Voice Engine fallback.`);
+              usedEngine = 'browser_fallback';
+              speakWithBrowserEngine(text, voiceObj, speed);
+              if (infoBanner && infoMessage) {
+                infoBanner.classList.remove('hidden');
+                infoMessage.innerHTML = '<strong>Static Server Host Detected (405):</strong> Automatically synthesized voice using Browser Nepali Engine!';
+              }
+            } else if (!response.ok) {
+              const errData = await response.json().catch(() => ({}));
+              throw new Error(errData.error || `Server error (Status ${response.status})`);
+            } else {
+              const data = await response.json();
+              
+              if (data.audioWavBase64) {
+                const bytes = base64ToUint8Array(data.audioWavBase64);
+                const blob = new Blob([bytes], { type: 'audio/wav' });
+                audioUrl = URL.createObjectURL(blob);
+                audioFormat = 'wav';
+              } else if (data.audioMp3Base64 || (data.mimeType && data.mimeType.includes('mp3'))) {
+                const bytes = base64ToUint8Array(data.audioMp3Base64 || data.audioBase64);
+                const blob = new Blob([bytes], { type: 'audio/mp3' });
+                audioUrl = URL.createObjectURL(blob);
+                audioFormat = 'mp3';
+              } else if (data.rawPcmBase64 || data.audioBase64) {
+                const pcmBytes = base64ToUint8Array(data.rawPcmBase64 || data.audioBase64);
+                const wavBlob = pcmToWav(pcmBytes, data.sampleRate || 24000, 1, 16);
+                audioUrl = URL.createObjectURL(wavBlob);
+                audioFormat = 'wav';
+              }
+            }
+          } catch (err) {
+            console.warn('Primary cloud voice failed, attempting auto browser fallback:', err);
+            // Fallback to browser speech engine
+            speakWithBrowserEngine(text, voiceObj, speed);
+            usedEngine = 'browser_fallback';
+            if (infoBanner && infoMessage) {
+              infoBanner.classList.remove('hidden');
+              infoMessage.innerHTML = `<strong>Note:</strong> ${err.message || 'Cloud endpoint unavailable'}. Playing via Browser Engine.`;
             }
           }
 
@@ -843,18 +984,17 @@
             const nativeAudio = document.getElementById('native-audio');
             const downloadBtn = document.getElementById('download-wav-btn');
             const playerVoiceBadge = document.getElementById('player-voice-badge');
+            const playerSourceBadge = document.getElementById('player-source-badge');
             const playerFormatBadge = document.getElementById('player-format-badge');
 
             if (nativeAudio && audioUrl) {
               nativeAudio.src = audioUrl;
               nativeAudio.playbackRate = speed;
-              if (usedEngine === 'cloud') {
-                nativeAudio.play().catch(() => {});
-              }
+              nativeAudio.play().catch(() => {});
             }
 
             if (browserReplayBtn) {
-              if (usedEngine !== 'cloud') {
+              if (usedEngine.includes('browser') || !audioUrl) {
                 browserReplayBtn.classList.remove('hidden');
               } else {
                 browserReplayBtn.classList.add('hidden');
@@ -863,34 +1003,34 @@
 
             if (downloadBtn && audioUrl) {
               downloadBtn.href = audioUrl;
-              downloadBtn.download = `nepali_voice_${selectedVoice.toLowerCase()}_${Date.now()}.wav`;
+              downloadBtn.download = `nepali_voice_${selectedVoice.toLowerCase()}_${Date.now()}.${audioFormat}`;
             }
 
-            if (playerVoiceBadge) {
-              playerVoiceBadge.innerText = `Voice: ${selectedVoice}`;
-            }
-
-            if (playerFormatBadge) {
-              playerFormatBadge.innerText = usedEngine === 'cloud' ? '24kHz Lossless Neural WAV' : 'Browser Neural Speech Active';
-            }
+            if (playerVoiceBadge) playerVoiceBadge.innerText = `Voice: ${selectedVoice}`;
+            if (playerSourceBadge) playerSourceBadge.innerText = `Source: ${currentProvider.toUpperCase()}`;
+            if (playerFormatBadge) playerFormatBadge.innerText = audioFormat === 'mp3' ? 'Studio MP3 Audio' : '24kHz Lossless Neural WAV';
 
             if (playerContainer) {
               playerContainer.classList.remove('hidden');
               playerContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
 
-            speechHistory.unshift({
-              text,
-              voice: selectedVoice,
-              speed,
-              audioUrl,
-              timestamp: Date.now()
-            });
-            speechHistory = speechHistory.slice(0, 8);
-            try {
-              localStorage.setItem('nisulka_nepali_history', JSON.stringify(speechHistory));
-            } catch (e) {}
-            renderHistory();
+            if (audioUrl) {
+              speechHistory.unshift({
+                text,
+                voice: selectedVoice,
+                provider: currentProvider,
+                speed,
+                audioUrl,
+                format: audioFormat,
+                timestamp: Date.now()
+              });
+              speechHistory = speechHistory.slice(0, 8);
+              try {
+                localStorage.setItem('nisulka_nepali_history', JSON.stringify(speechHistory));
+              } catch (e) {}
+              renderHistory();
+            }
 
           } catch (uiErr) {
             console.error(uiErr);
