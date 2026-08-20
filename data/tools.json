@@ -26,6 +26,19 @@
     "status": "active"
   },
   {
+    "name": "Slowed And Reverb Generator",
+    "slug": "slowed-and-reverb-generator",
+    "path": "AI-Tools/slowed-and-reverb-generator",
+    "description": "Free online Slowed And Reverb Generator tool.",
+    "category": "Ai Tools",
+    "categorySlug": "ai-tools",
+    "logo": "/Nisulka-Tools/tools/AI-Tools/slowed-and-reverb-generator/logo.jpg",
+    "url": "/Nisulka-Tools/tools/AI-Tools/slowed-and-reverb-generator/",
+    "keywords": [],
+    "featured": false,
+    "status": "active"
+  },
+  {
     "name": "Text To Audio Generator",
     "slug": "text-to-audio-generator",
     "path": "AI-Tools/text-to-audio-generator",
