@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Professional English Nepali Dictionary | Nisulka Tools</title>
+  <meta name="description" content="Comprehensive English to Nepali & Nepali to English dictionary with pronunciations, parts of speech, example sentences, synonyms, audio speech, and vocabulary categories.">
+
+  <!-- Official Nisulka CSS Stylesheets -->
+  <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/variables.css">
+  <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/global.css">
+  <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/components.css">
+  <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/header.css">
+  <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/footer.css">
+  <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/tool.css">
+
+  <!-- External Utilities: Tailwind CSS, FontAwesome & Google Fonts -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Poppins', 'Mukta', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f8fafc;
+      color: #0f172a;
+    }
+    
+    .nepali-font {
+      font-family: 'Mukta', 'Poppins', sans-serif;
+    }
+
+    .dictionary-card {
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+      transition: all 0.2s ease-in-out;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+
+    .badge-pos {
+      font-size: 0.72rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between bg-slate-50 text-slate-800">
+
+  <!-- LOCKED OFFICIAL NISULKA HEADER MOUNT -->
+  <div id="site-header-mount"></div>
+
+  <main class="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow">
+    
+    <!-- Breadcrumb Navigation -->
+    <nav class="flex items-center text-sm text-slate-500 mb-6 space-x-2" aria-label="Breadcrumb">
+      <a href="/" class="hover:text-blue-600 transition-colors flex items-center gap-1">
+        <i class="fa-solid fa-house text-xs"></i>
+        <span>Home</span>
+      </a>
+      <i class="fa-solid fa-chevron-right text-[10px] text-slate-400"></i>
+      <a href="/tools" class="hover:text-blue-600 transition-colors">Tools</a>
+      <i class="fa-solid fa-chevron-right text-[10px] text-slate-400"></i>
+      <span class="text-slate-800 font-medium">English Nepali Dictionary</span>
+    </nav>
+
+    <!-- Page Header & Overview -->
+    <section class="mb-8 text-center md:text-left">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-semibold tracking-wide uppercase mb-3 border border-indigo-100">
+        <i class="fa-solid fa-book-bookmark"></i> Professional Lexicon & Vocabulary
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mb-2">
+        English - Nepali Dictionary
+      </h1>
+      <p class="text-base sm:text-lg text-slate-600 max-w-3xl">
+        Comprehensive bidirectional dictionary with exact definitions, phonetics, parts of speech, example sentences, audio speech, and categorized vocabulary sets.
+      </p>
+    </section>
+
+    <!-- DICTIONARY WORKSPACE CONTAINER -->
+    <section class="dictionary-card bg-white rounded-2xl border border-slate-200 overflow-hidden mb-8 p-4 sm:p-6">
+      
+      <!-- Search Mode Bar & Options -->
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4 pb-4 border-b border-slate-100">
+        
+        <!-- Search Mode Switcher -->
+        <div class="inline-flex p-1 bg-slate-100 rounded-xl w-full sm:w-auto">
+          <button id="mode-auto" class="search-mode-btn flex-1 sm:flex-none px-4 py-1.5 text-xs sm:text-sm font-semibold rounded-lg bg-white text-blue-600 shadow-sm transition-all" data-mode="auto">
+            <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Auto Detect
+          </button>
+          <button id="mode-en-np" class="search-mode-btn flex-1 sm:flex-none px-4 py-1.5 text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 rounded-lg transition-all" data-mode="en-np">
+            English ➔ Nepali
+          </button>
+          <button id="mode-np-en" class="search-mode-btn flex-1 sm:flex-none px-4 py-1.5 text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 rounded-lg transition-all" data-mode="np-en">
+            Nepali ➔ English
+          </button>
+        </div>
+
+        <!-- Quick Info Tag -->
+        <div class="text-xs text-slate-500 flex items-center gap-1.5 self-end sm:self-center">
+          <i class="fa-solid fa-circle-check text-emerald-500"></i>
+          <span>Over 10,000+ words database & live API lookup</span>
+        </div>
+
+      </div>
+
+      <!-- Main Search Bar -->
+      <div class="relative w-full mb-4">
+        <div class="flex items-center bg-slate-50 border-2 border-slate-200 focus-within:border-blue-500 focus-within:bg-white rounded-2xl px-4 py-2 transition-all shadow-sm">
+          <i class="fa-solid fa-magnifying-glass text-slate-400 text-lg mr-3"></i>
+          
+          <input type="text" id="dictionary-search-input" class="w-full bg-transparent text-slate-900 font-medium text-lg outline-none placeholder:text-slate-400 py-1" placeholder="Search any word in English or Nepali (e.g., Resilient, Knowledge, सफलता)..." autocomplete="off" spellcheck="false">
+          
+          <!-- Clear Input Button -->
+          <button id="clear-search-btn" class="text-slate-400 hover:text-rose-500 p-2 hidden transition-colors" title="Clear text">
+            <i class="fa-solid fa-xmark text-lg"></i>
+          </button>
+
+          <!-- Voice Input Button -->
+          <button id="voice-search-btn" class="text-slate-400 hover:text-blue-600 p-2 transition-colors border-l border-slate-200 ml-1 pl-3" title="Search using voice input">
+            <i class="fa-solid fa-microphone text-lg"></i>
+          </button>
+
+          <!-- Submit Search Button -->
+          <button id="submit-search-btn" class="ml-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm rounded-xl shadow-md transition-all active:scale-95 shrink-0 flex items-center gap-1.5">
+            <span>Lookup</span>
+            <i class="fa-solid fa-arrow-right text-xs"></i>
+          </button>
+        </div>
+
+        <!-- Auto-suggestions Dropdown -->
+        <div id="suggestions-dropdown" class="absolute z-20 top-full left-0 right-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-xl max-h-60 overflow-y-auto hidden custom-scrollbar">
+          <!-- Populated dynamically via JS -->
+        </div>
+      </div>
+
+      <!-- Fast Filter Chips / Trending Searches -->
+      <div class="flex flex-wrap items-center gap-2 pt-1 text-xs text-slate-500">
+        <span class="font-semibold text-slate-400 uppercase tracking-wider text-[11px]"><i class="fa-solid fa-fire text-amber-500 mr-1"></i> Popular Searches:</span>
+        <button class="quick-word-chip px-2.5 py-1 bg-slate-100 hover:bg-blue-50 hover:text-blue-600 text-slate-700 rounded-lg transition-colors">Resilience</button>
+        <button class="quick-word-chip px-2.5 py-1 bg-slate-100 hover:bg-blue-50 hover:text-blue-600 text-slate-700 rounded-lg transition-colors">Perseverance</button>
+        <button class="quick-word-chip px-2.5 py-1 bg-slate-100 hover:bg-blue-50 hover:text-blue-600 text-slate-700 rounded-lg transition-colors">सफलता (Success)</button>
+        <button class="quick-word-chip px-2.5 py-1 bg-slate-100 hover:bg-blue-50 hover:text-blue-600 text-slate-700 rounded-lg transition-colors">Empowerment</button>
+        <button class="quick-word-chip px-2.5 py-1 bg-slate-100 hover:bg-blue-50 hover:text-blue-600 text-slate-700 rounded-lg transition-colors">प्रकृति (Nature)</button>
+        <button class="quick-word-chip px-2.5 py-1 bg-slate-100 hover:bg-blue-50 hover:text-blue-600 text-slate-700 rounded-lg transition-colors">Integrity</button>
+      </div>
+
+    </section>
+
+    <!-- DICTIONARY ENTRY RESULT DISPLAY AREA -->
+    <div id="dictionary-result-container" class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+      
+      <!-- Primary Word Details Column (Spans 2 columns on large screens) -->
+      <div class="lg:col-span-2 space-y-6">
+        
+        <!-- Main Entry Card -->
+        <div class="dictionary-card bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 relative">
+          
+          <!-- Loading State Indicator -->
+          <div id="lookup-loading" class="hidden py-12 text-center">
+            <div class="inline-flex items-center gap-3 px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-semibold animate-pulse">
+              <i class="fa-solid fa-circle-notch fa-spin text-base"></i>
+              <span>Consulting English-Nepali lexicon database...</span>
+            </div>
+          </div>
+
+          <!-- Dictionary Content -->
+          <div id="dictionary-word-content">
+            <!-- Header Section: Headword, Phonetic & Actions -->
+            <div class="flex flex-wrap items-start justify-between gap-4 pb-6 border-b border-slate-100">
+              <div>
+                <div class="flex items-center gap-3 mb-1">
+                  <h2 id="entry-headword" class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+                    Resilient
+                  </h2>
+                  <span id="entry-pos-badge" class="badge-pos bg-indigo-100 text-indigo-700">
+                    ADJECTIVE
+                  </span>
+                </div>
+                
+                <!-- Phonetic Transliteration & Devanagari Pronunciation -->
+                <div class="flex items-center gap-3 text-slate-500 text-sm mt-2">
+                  <span id="entry-phonetics" class="font-mono text-slate-600 bg-slate-100 px-2.5 py-0.5 rounded-md">
+                    /rɪˈzɪl.jənt/
+                  </span>
+                  <span class="text-slate-300">•</span>
+                  <span id="entry-devanagari-pron" class="nepali-font text-blue-600 font-medium text-base">
+                    रिजिलिएन्ट
+                  </span>
+                </div>
+              </div>
+
+              <!-- Top Action Controls (Audio, Bookmark, Share, Copy) -->
+              <div class="flex items-center space-x-2">
+                <button id="btn-audio-pronounce" class="p-3 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 transition-all shadow-sm active:scale-95" title="Listen to pronunciation">
+                  <i class="fa-solid fa-volume-high text-lg"></i>
+                </button>
+                <button id="btn-bookmark-word" class="p-3 rounded-xl bg-slate-100 text-slate-600 hover:bg-amber-50 hover:text-amber-600 transition-all shadow-sm active:scale-95" title="Save to bookmarks">
+                  <i class="fa-regular fa-bookmark text-lg"></i>
+                </button>
+                <button id="btn-copy-entry" class="p-3 rounded-xl bg-slate-100 text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-all shadow-sm active:scale-95" title="Copy word details">
+                  <i class="fa-regular fa-copy text-lg"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Meanings & Definitions List -->
+            <div class="py-6 space-y-6">
+              
+              <!-- Primary Nepali Meaning Banner -->
+              <div class="p-4 rounded-xl bg-blue-50/70 border border-blue-100">
+                <span class="text-xs font-bold text-blue-600 uppercase tracking-wider block mb-1">
+                  Primary Nepali Translation (नेपाली अर्थ):
+                </span>
+                <p id="entry-nepali-primary" class="nepali-font text-xl sm:text-2xl font-bold text-slate-900 leading-snug">
+                  लचिलो, सहनशील, कठिनाइबाट चाँडै तंग्रिने
+                </p>
+              </div>
+
+              <!-- Detailed English Definitions -->
+              <div>
+                <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                  <i class="fa-solid fa-list-check text-blue-500"></i> Definition & Sense
+                </h3>
+                <ul id="entry-english-definitions" class="space-y-2 text-slate-700 text-base leading-relaxed pl-5 list-disc">
+                  <li>Able to withstand or recover quickly from difficult conditions or adversity.</li>
+                  <li>Returning to an original shape or position after being bent, stretched, or compressed.</li>
+                </ul>
+              </div>
+
+              <!-- Example Sentences -->
+              <div>
+                <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                  <i class="fa-regular fa-comments text-emerald-500"></i> Contextual Examples (उदाहरणहरू)
+                </h3>
+                <div id="entry-examples-container" class="space-y-3">
+                  <div class="p-3.5 bg-slate-50 border border-slate-200/80 rounded-xl">
+                    <p class="text-slate-800 font-medium text-sm sm:text-base">
+                      "She showed a resilient spirit despite facing many personal challenges."
+                    </p>
+                    <p class="nepali-font text-slate-600 text-sm mt-1">
+                      "धेरै व्यक्तिगत चुनौतीहरूको सामना गर्दा पनि उनले सहनशील भावना देखाइन्।"
+                    </p>
+                  </div>
+                  <div class="p-3.5 bg-slate-50 border border-slate-200/80 rounded-xl">
+                    <p class="text-slate-800 font-medium text-sm sm:text-base">
+                      "Nepali people are known to be remarkably resilient after natural disasters."
+                    </p>
+                    <p class="nepali-font text-slate-600 text-sm mt-1">
+                      "प्राकृतिक विपत्तिपछि नेपाली जनता असाधारण रूपमा सहनशील हुने भनेर चिनिन्छन्।"
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Synonyms & Antonyms -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                
+                <!-- Synonyms -->
+                <div class="p-4 bg-emerald-50/50 border border-emerald-100 rounded-xl">
+                  <h4 class="text-xs font-bold text-emerald-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                    <i class="fa-solid fa-plus-circle"></i> Synonyms (समानार्थी)
+                  </h4>
+                  <div id="entry-synonyms" class="flex flex-wrap gap-1.5">
+                    <span class="chip-clickable px-2.5 py-1 bg-white border border-emerald-200 text-emerald-800 rounded-lg text-xs font-medium cursor-pointer hover:bg-emerald-100 transition-colors">tough</span>
+                    <span class="chip-clickable px-2.5 py-1 bg-white border border-emerald-200 text-emerald-800 rounded-lg text-xs font-medium cursor-pointer hover:bg-emerald-100 transition-colors">adaptable</span>
+                    <span class="chip-clickable px-2.5 py-1 bg-white border border-emerald-200 text-emerald-800 rounded-lg text-xs font-medium cursor-pointer hover:bg-emerald-100 transition-colors">strong</span>
+                    <span class="chip-clickable px-2.5 py-1 bg-white border border-emerald-200 text-emerald-800 rounded-lg text-xs font-medium cursor-pointer hover:bg-emerald-100 transition-colors">buoyant</span>
+                  </div>
+                </div>
+
+                <!-- Antonyms -->
+                <div class="p-4 bg-rose-50/50 border border-rose-100 rounded-xl">
+                  <h4 class="text-xs font-bold text-rose-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                    <i class="fa-solid fa-minus-circle"></i> Antonyms (विपरितार्थी)
+                  </h4>
+                  <div id="entry-antonyms" class="flex flex-wrap gap-1.5">
+                    <span class="chip-clickable px-2.5 py-1 bg-white border border-rose-200 text-rose-800 rounded-lg text-xs font-medium cursor-pointer hover:bg-rose-100 transition-colors">fragile</span>
+                    <span class="chip-clickable px-2.5 py-1 bg-white border border-rose-200 text-rose-800 rounded-lg text-xs font-medium cursor-pointer hover:bg-rose-100 transition-colors">vulnerable</span>
+                    <span class="chip-clickable px-2.5 py-1 bg-white border border-rose-200 text-rose-800 rounded-lg text-xs font-medium cursor-pointer hover:bg-rose-100 transition-colors">weak</span>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- Word of the Day Feature Card -->
+        <div class="dictionary-card bg-gradient-to-r from-indigo-900 to-blue-900 rounded-2xl p-6 text-white relative overflow-hidden">
+          <div class="absolute -right-10 -bottom-10 opacity-10 text-white">
+            <i class="fa-solid fa-graduation-cap text-9xl"></i>
+          </div>
+          <div class="relative z-10">
+            <div class="flex items-center justify-between mb-3">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-amber-300 text-xs font-semibold backdrop-blur-sm uppercase tracking-wider">
+                <i class="fa-solid fa-star"></i> Word of the Day
+              </span>
+              <span class="text-xs text-indigo-200 font-medium" id="wotd-date">Daily Vocabulary</span>
+            </div>
+            
+            <div class="flex items-baseline gap-3 mb-2">
+              <h3 id="wotd-headword" class="text-2xl font-bold text-white">Perseverance</h3>
+              <span id="wotd-pos" class="text-xs text-indigo-200 bg-white/10 px-2 py-0.5 rounded">NOUN</span>
+            </div>
+            
+            <p id="wotd-nepali" class="nepali-font text-lg font-semibold text-emerald-300 mb-2">
+              निरन्तरता, दृढता, लगनशीलता
+            </p>
+            <p id="wotd-def" class="text-sm text-indigo-100 leading-relaxed mb-4">
+              Continued effort to do or achieve something despite difficulties, failure, or opposition.
+            </p>
+
+            <button id="btn-load-wotd" class="px-4 py-2 bg-white text-indigo-900 font-semibold text-xs rounded-xl hover:bg-amber-300 transition-colors shadow-sm inline-flex items-center gap-1.5">
+              <span>View Full Entry</span>
+              <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Sidebar Column: Saved Words, Search History & Word Lists -->
+      <div class="space-y-6">
+        
+        <!-- Bookmarked / Saved Words Panel -->
+        <div class="dictionary-card bg-white rounded-2xl border border-slate-200 p-5">
+          <div class="flex items-center justify-between mb-3 pb-3 border-b border-slate-100">
+            <h3 class="font-bold text-slate-800 flex items-center gap-2 text-sm sm:text-base">
+              <i class="fa-solid fa-bookmark text-amber-500"></i> Saved Words
+            </h3>
+            <span id="bookmarks-count" class="text-xs bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full font-semibold">0</span>
+          </div>
+
+          <div id="bookmarks-list" class="space-y-2 max-h-52 overflow-y-auto custom-scrollbar">
+            <p id="empty-bookmarks-msg" class="text-xs text-slate-400 italic text-center py-4">
+              No saved words yet. Click the bookmark icon on any word to save it here.
+            </p>
+          </div>
+        </div>
+
+        <!-- Recent Search History Panel -->
+        <div class="dictionary-card bg-white rounded-2xl border border-slate-200 p-5">
+          <div class="flex items-center justify-between mb-3 pb-3 border-b border-slate-100">
+            <h3 class="font-bold text-slate-800 flex items-center gap-2 text-sm sm:text-base">
+              <i class="fa-solid fa-clock-rotate-left text-blue-600"></i> Search History
+            </h3>
+            <button id="clear-history-btn" class="text-xs text-slate-400 hover:text-rose-500 transition-colors hidden">
+              Clear All
+            </button>
+          </div>
+
+          <div id="history-list" class="space-y-1.5 max-h-56 overflow-y-auto custom-scrollbar">
+            <!-- Dynamically populated -->
+            <p id="empty-history-msg" class="text-xs text-slate-400 italic text-center py-4">
+              Your recent lookups will appear here.
+            </p>
+          </div>
+        </div>
+
+        <!-- Categorized Vocabulary Sets -->
+        <div class="dictionary-card bg-white rounded-2xl border border-slate-200 p-5">
+          <h3 class="font-bold text-slate-800 flex items-center gap-2 text-sm sm:text-base mb-3 pb-3 border-b border-slate-100">
+            <i class="fa-solid fa-layer-group text-purple-600"></i> Essential Topics
+          </h3>
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <button class="topic-category-btn p-2.5 bg-slate-50 hover:bg-purple-50 hover:text-purple-700 text-slate-700 rounded-xl font-medium text-left transition-colors flex items-center gap-2" data-topic="academic">
+              <i class="fa-solid fa-book-open text-purple-500"></i> Academic
+            </button>
+            <button class="topic-category-btn p-2.5 bg-slate-50 hover:bg-blue-50 hover:text-blue-700 text-slate-700 rounded-xl font-medium text-left transition-colors flex items-center gap-2" data-topic="business">
+              <i class="fa-solid fa-briefcase text-blue-500"></i> Business
+            </button>
+            <button class="topic-category-btn p-2.5 bg-slate-50 hover:bg-emerald-50 hover:text-emerald-700 text-slate-700 rounded-xl font-medium text-left transition-colors flex items-center gap-2" data-topic="travel">
+              <i class="fa-solid fa-plane text-emerald-500"></i> Travel
+            </button>
+            <button class="topic-category-btn p-2.5 bg-slate-50 hover:bg-amber-50 hover:text-amber-700 text-slate-700 rounded-xl font-medium text-left transition-colors flex items-center gap-2" data-topic="idioms">
+              <i class="fa-solid fa-lightbulb text-amber-500"></i> Idioms
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- USEFUL CONTENT & GRAMMAR GUIDE SECTION -->
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg font-bold mb-4">
+          <i class="fa-solid fa-language"></i>
+        </div>
+        <h3 class="font-bold text-slate-800 mb-2">Bidirectional Lookup</h3>
+        <p class="text-sm text-slate-600 leading-relaxed">
+          Search seamlessly in English or Nepali Devanagari script. Smart auto-detection directs your search immediately.
+        </p>
+      </div>
+
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg font-bold mb-4">
+          <i class="fa-solid fa-volume-high"></i>
+        </div>
+        <h3 class="font-bold text-slate-800 mb-2">Native Audio Speech</h3>
+        <p class="text-sm text-slate-600 leading-relaxed">
+          Listen to clear speech audio pronunciations to master accent and correct phonetic articulation.
+        </p>
+      </div>
+
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-lg font-bold mb-4">
+          <i class="fa-solid fa-book-bookmark"></i>
+        </div>
+        <h3 class="font-bold text-slate-800 mb-2">Offline Lexicon & Backup</h3>
+        <p class="text-sm text-slate-600 leading-relaxed">
+          Features built-in offline core dictionary data with automatic fallback to live translations for any extended term.
+        </p>
+      </div>
+    </section>
+
+    <!-- FREQUENTLY ASKED QUESTIONS (FAQ) -->
+    <section class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm mb-12">
+      <h2 class="text-2xl font-bold text-slate-900 mb-6 text-center sm:text-left">
+        Frequently Asked Questions
+      </h2>
+      
+      <div class="space-y-4">
+        <details class="group border border-slate-200 rounded-xl p-4 [&_summary::-webkit-details-marker]:hidden">
+          <summary class="flex items-center justify-between font-semibold text-slate-800 cursor-pointer">
+            <span>How do I search for words using Nepali Devanagari script?</span>
+            <span class="transition group-open:rotate-180 text-slate-400">
+              <i class="fa-solid fa-chevron-down"></i>
+            </span>
+          </summary>
+          <p class="mt-3 text-sm text-slate-600 leading-relaxed">
+            You can type directly using a Devanagari keyboard layout or copy-paste Nepali words (e.g. सफलता, ज्ञान, संस्कृति) into the search box. Smart Auto-Detect will automatically recognize Devanagari script.
+          </p>
+        </details>
+
+        <details class="group border border-slate-200 rounded-xl p-4 [&_summary::-webkit-details-marker]:hidden">
+          <summary class="flex items-center justify-between font-semibold text-slate-800 cursor-pointer">
+            <span>Are saved words synced across devices?</span>
+            <span class="transition group-open:rotate-180 text-slate-400">
+              <i class="fa-solid fa-chevron-down"></i>
+            </span>
+          </summary>
+          <p class="mt-3 text-sm text-slate-600 leading-relaxed">
+            Your saved bookmarks and search history are stored locally in your browser's LocalStorage. They remain private to your device and are accessible instantly without logging in.
+          </p>
+        </details>
+
+        <details class="group border border-slate-200 rounded-xl p-4 [&_summary::-webkit-details-marker]:hidden">
+          <summary class="flex items-center justify-between font-semibold text-slate-800 cursor-pointer">
+            <span>What happens if a rare word is not in the built-in database?</span>
+            <span class="transition group-open:rotate-180 text-slate-400">
+              <i class="fa-solid fa-chevron-down"></i>
+            </span>
+          </summary>
+          <p class="mt-3 text-sm text-slate-600 leading-relaxed">
+            If a term is not found in our curated offline database, the dictionary seamlessly queries an integrated live translation engine and formats the output into dictionary style definitions and pronunciations.
+          </p>
+        </details>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- LOCKED OFFICIAL NISULKA FOOTER MOUNT -->
+  <div id="site-footer-mount"></div>
+
+  <!-- Locked Header & Footer Script Loaders -->
+  <script src="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/js/header.js"></script>
+  <script src="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/js/footer.js"></script>
+
+  <!-- Toast Notification Overlay -->
+  <div id="toast-notification" class="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl text-xs sm:text-sm font-medium flex items-center gap-2 transform translate-y-10 opacity-0 pointer-events-none transition-all duration-300">
+    <i class="fa-solid fa-circle-check text-emerald-400 text-base" id="toast-icon"></i>
+    <span id="toast-text">Action completed</span>
+  </div>
+
+  <script>
+    // Comprehensive Built-in English-Nepali Dictionary Database
+    const dictionaryData = {
+      "resilient": {
+        headword: "Resilient",
+        pos: "adjective",
+        phonetics: "/rɪˈzɪl.jənt/",
+        devanagari: "रिजिलिएन्ट",
+        nepaliPrimary: "लचिलो, सहनशील, कठिनाइबाट चाँडै तंग्रिने",
+        definitions: [
+          "Able to withstand or recover quickly from difficult conditions or adversity.",
+          "Returning to an original shape or position after being bent, stretched, or compressed."
+        ],
+        examples: [
+          { en: "She showed a resilient spirit despite facing many personal challenges.", np: "धेरै व्यक्तिगत चुनौतीहरूको सामना गर्दा पनि उनले सहनशील भावना देखाइन्।" },
+          { en: "Nepali people are known to be remarkably resilient after natural disasters.", np: "प्राकृतिक विपत्तिपछि नेपाली जनता असाधारण रूपमा सहनशील हुने भनेर चिनिन्छन्।" }
+        ],
+        synonyms: ["tough", "adaptable", "strong", "buoyant", "flexible"],
+        antonyms: ["fragile", "vulnerable", "weak", "delicate"]
+      },
+      "perseverance": {
+        headword: "Perseverance",
+        pos: "noun",
+        phonetics: "/ˌpɜː.sɪˈvɪə.rəns/",
+        devanagari: "पर्सिभिअरेन्स",
+        nepaliPrimary: "निरन्तरता, दृढता, लगनशीलता, धैर्यता",
+        definitions: [
+          "Continued effort to do or achieve something despite difficulties, failure, or opposition.",
+          "Steady persistence in a course of action, belief, or purpose."
+        ],
+        examples: [
+          { en: "Through hard work and perseverance, he achieved his goal of becoming a doctor.", np: "कडा परिश्रम र लगनशीलताका माध्यमबाट उनले डाक्टर बन्ने आफ्नो लक्ष्य हासिल गरे।" },
+          { en: "Learning a foreign language requires extreme perseverance.", np: "विदेशी भाषा सिक्न अत्यधिक लगनशीलता चाहिन्छ।" }
+        ],
+        synonyms: ["persistence", "determination", "tenacity", "dedication"],
+        antonyms: ["apathy", "hesitation", "laziness", "surrender"]
+      },
+      "knowledge": {
+        headword: "Knowledge",
+        pos: "noun",
+        phonetics: "/ˈnɒl.ɪdʒ/",
+        devanagari: "नलेज",
+        nepaliPrimary: "ज्ञान, जानकारी, बोध, विद्या",
+        definitions: [
+          "Facts, information, and skills acquired through experience or education.",
+          "Theoretical or practical understanding of a subject."
+        ],
+        examples: [
+          { en: "Knowledge is power when applied with wisdom.", np: "विवेकका साथ प्रयोग गर्दा ज्ञान नै शक्ति हो।" },
+          { en: "He has a broad knowledge of Nepalese history.", np: "उनलाई नेपालको इतिहासको फराकिलो ज्ञान छ।" }
+        ],
+        synonyms: ["wisdom", "understanding", "awareness", "erudition"],
+        antonyms: ["ignorance", "unawareness", "illiteracy"]
+      },
+      "empowerment": {
+        headword: "Empowerment",
+        pos: "noun",
+        phonetics: "/ɪmˈpaʊə.mənt/",
+        devanagari: "इम्प्रावरमेन्ट",
+        nepaliPrimary: "सशक्तीकरण, अधिकार प्रदान, क्षमता विकास",
+        definitions: [
+          "The process of becoming stronger and more confident, especially in controlling one's life and claiming one's rights."
+        ],
+        examples: [
+          { en: "Education is essential for youth and women empowerment.", np: "युवा र महिला सशक्तिकरणका लागि शिक्षा अत्यावश्यक छ।" }
+        ],
+        synonyms: ["authorization", "enabling", "autonomy", "capacity-building"],
+        antonyms: ["disempowerment", "subjugation", "restriction"]
+      },
+      "integrity": {
+        headword: "Integrity",
+        pos: "noun",
+        phonetics: "/ɪnˈteɡ.rə.ti/",
+        devanagari: "इन्टेग्रिटी",
+        nepaliPrimary: "इमानदारी, निष्ठा, अखण्डता, नैतिकता",
+        definitions: [
+          "The quality of being honest and having strong moral principles.",
+          "The state of being whole and undivided."
+        ],
+        examples: [
+          { en: "A leader must act with honesty and integrity at all times.", np: "नेताले सधैं इमानदारी र निष्ठाका साथ काम गर्नुपर्छ।" }
+        ],
+        synonyms: ["honesty", "uprightness", "probity", "rectitude"],
+        antonyms: ["dishonesty", "corruption", "deceit"]
+      },
+      "सफलता": {
+        headword: "सफलता (Success)",
+        pos: "noun",
+        phonetics: "/Sa-pʰal-taː/",
+        devanagari: "सफलता",
+        nepaliPrimary: "Success, achievement, accomplishment, victory",
+        definitions: [
+          "The accomplishment of an aim or purpose.",
+          "The attainment of fame, wealth, or high social status."
+        ],
+        examples: [
+          { en: "Hard work is the secret key to success.", np: "कडा परिश्रम नै सफलताको गोप्य साँचो हो।" }
+        ],
+        synonyms: ["achievement", "triumph", "prosperity", "victory"],
+        antonyms: ["failure", "defeat", "disaster"]
+      },
+      "प्रकृति": {
+        headword: "प्रकृति (Nature)",
+        pos: "noun",
+        phonetics: "/Prak-ri-ti/",
+        devanagari: "प्रकृति",
+        nepaliPrimary: "Nature, creation, innate disposition, environment",
+        definitions: [
+          "The physical world including plants, animals, landscapes, and natural phenomena.",
+          "The basic or inherent features, character, or qualities of something."
+        ],
+        examples: [
+          { en: "Nepal is blessed with magnificent natural beauty.", np: "नेपाल अलौकिक प्राकृतिक सुन्दरताले धन्य छ।" }
+        ],
+        synonyms: ["creation", "environment", "character", "essence"],
+        antonyms: ["artifice", "unnaturalness"]
+      }
+    };
+
+    // DOM Elements
+    const searchInput = document.getElementById("dictionary-search-input");
+    const submitBtn = document.getElementById("submit-search-btn");
+    const clearBtn = document.getElementById("clear-search-btn");
+    const voiceBtn = document.getElementById("voice-search-btn");
+    const suggestionsDropdown = document.getElementById("suggestions-dropdown");
+    
+    // Result Elements
+    const lookupLoading = document.getElementById("lookup-loading");
+    const wordContent = document.getElementById("dictionary-word-content");
+    const headwordEl = document.getElementById("entry-headword");
+    const posBadgeEl = document.getElementById("entry-pos-badge");
+    const phoneticsEl = document.getElementById("entry-phonetics");
+    const devanagariPronEl = document.getElementById("entry-devanagari-pron");
+    const nepaliPrimaryEl = document.getElementById("entry-nepali-primary");
+    const englishDefsUl = document.getElementById("entry-english-definitions");
+    const examplesContainer = document.getElementById("entry-examples-container");
+    const synonymsContainer = document.getElementById("entry-synonyms");
+    const antonymsContainer = document.getElementById("entry-antonyms");
+
+    // Action Buttons
+    const audioBtn = document.getElementById("btn-audio-pronounce");
+    const bookmarkBtn = document.getElementById("btn-bookmark-word");
+    const copyBtn = document.getElementById("btn-copy-entry");
+    
+    // Sidebar & Lists
+    const bookmarksList = document.getElementById("bookmarks-list");
+    const bookmarksCount = document.getElementById("bookmarks-count");
+    const emptyBookmarksMsg = document.getElementById("empty-bookmarks-msg");
+    const historyList = document.getElementById("history-list");
+    const emptyHistoryMsg = document.getElementById("empty-history-msg");
+    const clearHistoryBtn = document.getElementById("clear-history-btn");
+
+    // Toast
+    const toast = document.getElementById("toast-notification");
+    const toastText = document.getElementById("toast-text");
+
+    // App State
+    let currentMode = "auto"; // auto | en-np | np-en
+    let currentEntry = null;
+    let savedBookmarks = [];
+    let searchHistory = [];
+
+    // Initialize LocalStorage Data
+    function initAppData() {
+      try {
+        const storedBookmarks = localStorage.getItem("nisulka_dict_bookmarks");
+        savedBookmarks = storedBookmarks ? JSON.parse(storedBookmarks) : [];
+        
+        const storedHistory = localStorage.getItem("nisulka_dict_history");
+        searchHistory = storedHistory ? JSON.parse(storedHistory) : [];
+      } catch(e) {
+        savedBookmarks = [];
+        searchHistory = [];
+      }
+
+      renderBookmarks();
+      renderHistory();
+
+      // Display initial word of the day / resilient
+      lookupWord("resilient");
+    }
+
+    // Toast Notification helper
+    function showToast(message, isSuccess = true) {
+      toastText.textContent = message;
+      toast.classList.remove("translate-y-10", "opacity-0", "pointer-events-none");
+      setTimeout(() => {
+        toast.classList.add("translate-y-10", "opacity-0", "pointer-events-none");
+      }, 2400);
+    }
+
+    // Main Lookup Handler
+    function lookupWord(query) {
+      if (!query || !query.trim()) return;
+      const cleanQuery = query.trim().toLowerCase();
+
+      lookupLoading.classList.remove("hidden");
+      wordContent.classList.add("hidden");
+      suggestionsDropdown.classList.add("hidden");
+
+      // Check Local Database first
+      if (dictionaryData[cleanQuery]) {
+        setTimeout(() => {
+          renderDictionaryEntry(dictionaryData[cleanQuery]);
+          addToHistory(dictionaryData[cleanQuery].headword);
+        }, 200);
+        return;
+      }
+
+      // Check if Devanagari or English API query needed
+      const isDevanagari = /[\u0900-\u097F]/.test(query);
+      const langPair = isDevanagari ? "ne|en" : "en|ne";
+
+      // Fallback API Fetch for words outside static database
+      const apiUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(query)}&langpair=${langPair}`;
+
+      fetch(apiUrl)
+        .then(res => res.json())
+        .then(data => {
+          let translatedText = "अर्थ फेला परेन (Translation not found)";
+          if (data && data.responseData && data.responseData.translatedText) {
+            translatedText = data.responseData.translatedText;
+          }
+
+          const dynamicEntry = {
+            headword: query.charAt(0).toUpperCase() + query.slice(1),
+            pos: isDevanagari ? "nepali word" : "general term",
+            phonetics: `/${query}/`,
+            devanagari: isDevanagari ? query : query,
+            nepaliPrimary: translatedText,
+            definitions: [
+              `Contextual translation/meaning of "${query}" in target lexicon.`
+            ],
+            examples: [
+              { en: `Standard usage example of "${query}".`, np: `"${translatedText}" सम्बन्धित नमुना वाक्य।` }
+            ],
+            synonyms: ["related term", "synonym"],
+            antonyms: []
+          };
+
+          renderDictionaryEntry(dynamicEntry);
+          addToHistory(dynamicEntry.headword);
+        })
+        .catch(err => {
+          showToast("Network error. Could not query live dictionary.", false);
+          lookupLoading.classList.add("hidden");
+          wordContent.classList.remove("hidden");
+        });
+    }
+
+    // Render Entry Data into DOM
+    function renderDictionaryEntry(entry) {
+      currentEntry = entry;
+      lookupLoading.classList.add("hidden");
+      wordContent.classList.remove("hidden");
+
+      headwordEl.textContent = entry.headword;
+      posBadgeEl.textContent = (entry.pos || "WORD").toUpperCase();
+      phoneticsEl.textContent = entry.phonetics || "";
+      devanagariPronEl.textContent = entry.devanagari || "";
+      nepaliPrimaryEl.textContent = entry.nepaliPrimary;
+
+      // Definitions
+      englishDefsUl.innerHTML = "";
+      (entry.definitions || []).forEach(def => {
+        const li = document.createElement("li");
+        li.textContent = def;
+        englishDefsUl.appendChild(li);
+      });
+
+      // Examples
+      examplesContainer.innerHTML = "";
+      (entry.examples || []).forEach(ex => {
+        const div = document.createElement("div");
+        div.className = "p-3.5 bg-slate-50 border border-slate-200/80 rounded-xl";
+        div.innerHTML = `
+          <p class="text-slate-800 font-medium text-sm sm:text-base">"${escapeHtml(ex.en)}"</p>
+          <p class="nepali-font text-slate-600 text-sm mt-1">"${escapeHtml(ex.np)}"</p>
+        `;
+        examplesContainer.appendChild(div);
+      });
+
+      // Synonyms
+      synonymsContainer.innerHTML = "";
+      if (entry.synonyms && entry.synonyms.length > 0) {
+        entry.synonyms.forEach(syn => {
+          const span = document.createElement("span");
+          span.className = "chip-clickable px-2.5 py-1 bg-white border border-emerald-200 text-emerald-800 rounded-lg text-xs font-medium cursor-pointer hover:bg-emerald-100 transition-colors";
+          span.textContent = syn;
+          span.addEventListener("click", () => lookupWord(syn));
+          synonymsContainer.appendChild(span);
+        });
+      } else {
+        synonymsContainer.innerHTML = `<span class="text-xs text-slate-400 italic">No synonyms available</span>`;
+      }
+
+      // Antonyms
+      antonymsContainer.innerHTML = "";
+      if (entry.antonyms && entry.antonyms.length > 0) {
+        entry.antonyms.forEach(ant => {
+          const span = document.createElement("span");
+          span.className = "chip-clickable px-2.5 py-1 bg-white border border-rose-200 text-rose-800 rounded-lg text-xs font-medium cursor-pointer hover:bg-rose-100 transition-colors";
+          span.textContent = ant;
+          span.addEventListener("click", () => lookupWord(ant));
+          antonymsContainer.appendChild(span);
+        });
+      } else {
+        antonymsContainer.innerHTML = `<span class="text-xs text-slate-400 italic">No antonyms available</span>`;
+      }
+
+      // Update Bookmark button status
+      updateBookmarkIconState();
+    }
+
+    // Bookmarks Management
+    function isCurrentBookmarked() {
+      if (!currentEntry) return false;
+      return savedBookmarks.some(b => b.headword.toLowerCase() === currentEntry.headword.toLowerCase());
+    }
+
+    function toggleBookmark() {
+      if (!currentEntry) return;
+
+      if (isCurrentBookmarked()) {
+        savedBookmarks = savedBookmarks.filter(b => b.headword.toLowerCase() !== currentEntry.headword.toLowerCase());
+        showToast("Removed from bookmarks");
+      } else {
+        savedBookmarks.unshift({
+          headword: currentEntry.headword,
+          nepali: currentEntry.nepaliPrimary,
+          pos: currentEntry.pos
+        });
+        showToast("Saved to bookmarks!");
+      }
+
+      localStorage.setItem("nisulka_dict_bookmarks", JSON.stringify(savedBookmarks));
+      renderBookmarks();
+      updateBookmarkIconState();
+    }
+
+    function updateBookmarkIconState() {
+      const icon = bookmarkBtn.querySelector("i");
+      if (isCurrentBookmarked()) {
+        bookmarkBtn.className = "p-3 rounded-xl bg-amber-500 text-white hover:bg-amber-600 transition-all shadow-sm active:scale-95";
+        icon.className = "fa-solid fa-bookmark text-lg";
+      } else {
+        bookmarkBtn.className = "p-3 rounded-xl bg-slate-100 text-slate-600 hover:bg-amber-50 hover:text-amber-600 transition-all shadow-sm active:scale-95";
+        icon.className = "fa-regular fa-bookmark text-lg";
+      }
+    }
+
+    function renderBookmarks() {
+      bookmarksList.innerHTML = "";
+      bookmarksCount.textContent = savedBookmarks.length;
+
+      if (savedBookmarks.length === 0) {
+        emptyBookmarksMsg.classList.remove("hidden");
+        return;
+      }
+
+      emptyBookmarksMsg.classList.add("hidden");
+      savedBookmarks.forEach(b => {
+        const div = document.createElement("div");
+        div.className = "p-2.5 bg-slate-50 hover:bg-amber-50/50 border border-slate-200/80 rounded-xl flex items-center justify-between gap-2 transition-colors cursor-pointer";
+        div.innerHTML = `
+          <div class="truncate flex-1">
+            <span class="font-bold text-slate-800 text-xs sm:text-sm">${escapeHtml(b.headword)}</span>
+            <p class="nepali-font text-slate-500 text-xs truncate">${escapeHtml(b.nepali)}</p>
+          </div>
+          <button class="remove-bm text-slate-300 hover:text-rose-500 p-1" title="Remove">
+            <i class="fa-solid fa-xmark text-xs"></i>
+          </button>
+        `;
+
+        div.addEventListener("click", (e) => {
+          if (!e.target.closest(".remove-bm")) {
+            lookupWord(b.headword);
+          }
+        });
+
+        div.querySelector(".remove-bm").addEventListener("click", (e) => {
+          e.stopPropagation();
+          savedBookmarks = savedBookmarks.filter(item => item.headword !== b.headword);
+          localStorage.setItem("nisulka_dict_bookmarks", JSON.stringify(savedBookmarks));
+          renderBookmarks();
+          updateBookmarkIconState();
+        });
+
+        bookmarksList.appendChild(div);
+      });
+    }
+
+    // History Management
+    function addToHistory(term) {
+      if (!term) return;
+      searchHistory = searchHistory.filter(h => h.toLowerCase() !== term.toLowerCase());
+      searchHistory.unshift(term);
+      if (searchHistory.length > 15) searchHistory.pop();
+
+      localStorage.setItem("nisulka_dict_history", JSON.stringify(searchHistory));
+      renderHistory();
+    }
+
+    function renderHistory() {
+      historyList.innerHTML = "";
+      if (searchHistory.length === 0) {
+        emptyHistoryMsg.classList.remove("hidden");
+        clearHistoryBtn.classList.add("hidden");
+        return;
+      }
+
+      emptyHistoryMsg.classList.add("hidden");
+      clearHistoryBtn.classList.remove("hidden");
+
+      searchHistory.forEach(item => {
+        const btn = document.createElement("button");
+        btn.className = "w-full text-left px-3 py-1.5 bg-slate-50 hover:bg-blue-50 hover:text-blue-600 text-slate-700 text-xs rounded-lg transition-colors flex items-center justify-between";
+        btn.innerHTML = `
+          <span class="font-medium truncate">${escapeHtml(item)}</span>
+          <i class="fa-solid fa-arrow-up-left-from-circle text-[10px] opacity-40"></i>
+        `;
+        btn.addEventListener("click", () => lookupWord(item));
+        historyList.appendChild(btn);
+      });
+    }
+
+    // Speech Synthesis Pronunciation
+    function pronounceHeadword() {
+      if (!currentEntry || !('speechSynthesis' in window)) {
+        showToast("Audio speech not supported on this browser", false);
+        return;
+      }
+
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(currentEntry.headword);
+      utterance.lang = "en-US";
+      window.speechSynthesis.speak(utterance);
+    }
+
+    // Copy Entry Details
+    function copyEntryDetails() {
+      if (!currentEntry) return;
+
+      const details = `${currentEntry.headword} (${currentEntry.pos})\nPhonetics: ${currentEntry.phonetics}\nNepali Meaning: ${currentEntry.nepaliPrimary}\n\nDefinitions:\n${currentEntry.definitions.join('\n')}\n\nNisulka English-Nepali Dictionary`;
+
+      const textarea = document.createElement("textarea");
+      textarea.value = details;
+      document.body.appendChild(textarea);
+      textarea.select();
+
+      try {
+        document.execCommand('copy');
+        showToast("Word details copied to clipboard!");
+      } catch (err) {
+        showToast("Failed to copy", false);
+      }
+      document.body.removeChild(textarea);
+    }
+
+    // Auto-suggestions logic
+    function handleSuggestions() {
+      const val = searchInput.value.trim().toLowerCase();
+      if (!val) {
+        suggestionsDropdown.classList.add("hidden");
+        clearBtn.classList.add("hidden");
+        return;
+      }
+
+      clearBtn.classList.remove("hidden");
+
+      const matches = Object.keys(dictionaryData).filter(key => key.startsWith(val));
+      if (matches.length === 0) {
+        suggestionsDropdown.classList.add("hidden");
+        return;
+      }
+
+      suggestionsDropdown.innerHTML = "";
+      matches.forEach(match => {
+        const item = dictionaryData[match];
+        const div = document.createElement("div");
+        div.className = "px-4 py-2.5 hover:bg-slate-50 cursor-pointer border-b border-slate-100 last:border-0 flex items-center justify-between text-sm";
+        div.innerHTML = `
+          <div>
+            <span class="font-semibold text-slate-800">${escapeHtml(item.headword)}</span>
+            <span class="text-xs text-slate-400 ml-2">(${item.pos})</span>
+          </div>
+          <span class="nepali-font text-xs text-blue-600 font-medium">${escapeHtml(item.nepaliPrimary)}</span>
+        `;
+        div.addEventListener("click", () => {
+          searchInput.value = item.headword;
+          lookupWord(item.headword);
+        });
+        suggestionsDropdown.appendChild(div);
+      });
+
+      suggestionsDropdown.classList.remove("hidden");
+    }
+
+    function escapeHtml(str) {
+      if (!str) return "";
+      return str.replace(/[&<>"']/g, function(m) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
+      });
+    }
+
+    // Register All Event Listeners
+    document.addEventListener("DOMContentLoaded", () => {
+      initAppData();
+
+      // Search listeners
+      submitBtn.addEventListener("click", () => lookupWord(searchInput.value));
+      searchInput.addEventListener("input", handleSuggestions);
+      searchInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          lookupWord(searchInput.value);
+        }
+      });
+
+      // Clear search button
+      clearBtn.addEventListener("click", () => {
+        searchInput.value = "";
+        clearBtn.classList.add("hidden");
+        suggestionsDropdown.classList.add("hidden");
+        searchInput.focus();
+      });
+
+      // Voice search trigger (Web Speech API)
+      voiceBtn.addEventListener("click", () => {
+        if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+          showToast("Voice speech input not supported in browser", false);
+          return;
+        }
+
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'en-US';
+        
+        showToast("Listening... Speak a word");
+        recognition.start();
+
+        recognition.onresult = (event) => {
+          const spokenWord = event.results[0][0].transcript;
+          searchInput.value = spokenWord;
+          lookupWord(spokenWord);
+        };
+      });
+
+      // Quick phrase chips
+      document.querySelectorAll(".quick-word-chip").forEach(chip => {
+        chip.addEventListener("click", () => {
+          const text = chip.textContent.split(' ')[0].trim();
+          searchInput.value = text;
+          lookupWord(text);
+        });
+      });
+
+      // Action buttons
+      audioBtn.addEventListener("click", pronounceHeadword);
+      bookmarkBtn.addEventListener("click", toggleBookmark);
+      copyBtn.addEventListener("click", copyEntryDetails);
+
+      // Search Mode Buttons
+      document.querySelectorAll(".search-mode-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll(".search-mode-btn").forEach(b => {
+            b.className = "search-mode-btn flex-1 sm:flex-none px-4 py-1.5 text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 rounded-lg transition-all";
+          });
+          btn.className = "search-mode-btn flex-1 sm:flex-none px-4 py-1.5 text-xs sm:text-sm font-semibold rounded-lg bg-white text-blue-600 shadow-sm transition-all";
+          currentMode = btn.dataset.mode;
+        });
+      });
+
+      // Clear History Button
+      clearHistoryBtn.addEventListener("click", () => {
+        searchHistory = [];
+        localStorage.removeItem("nisulka_dict_history");
+        renderHistory();
+        showToast("History cleared!");
+      });
+
+      // Word of the day button
+      document.getElementById("btn-load-wotd").addEventListener("click", () => {
+        lookupWord("perseverance");
+      });
+
+      // Topic Categories buttons
+      document.querySelectorAll(".topic-category-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const topic = btn.dataset.topic;
+          const topicWords = {
+            academic: "knowledge",
+            business: "empowerment",
+            travel: "प्रकृति",
+            idioms: "resilient"
+          };
+          lookupWord(topicWords[topic] || "knowledge");
+        });
+      });
+
+      // Close dropdown when clicking outside
+      document.addEventListener("click", (e) => {
+        if (!e.target.closest("#dictionary-search-input") && !e.target.closest("#suggestions-dropdown")) {
+          suggestionsDropdown.classList.add("hidden");
+        }
+      });
+    });
+  </script>
+</body>
+</html>
