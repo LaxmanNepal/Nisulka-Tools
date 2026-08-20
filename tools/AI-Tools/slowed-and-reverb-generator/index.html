@@ -1,0 +1,1702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slowed + Reverb Music Creator | Free Online Audio Tool - Nisulka Tools</title>
+    <meta name="description" content="Create Slowed + Reverb versions of your favorite songs online for free. Adjust speed, pitch, custom room impulses, lo-fi filters, and export high-quality WAV audio.">
+    <meta name="keywords" content="slowed and reverb, slow and reverb maker, slowed reverb audio, audio editor, lo-fi music generator, daycore music, chop and screw, online audio slowed reverb">
+    
+    <!-- Official Nisulka CSS -->
+    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/variables.css">
+    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/global.css">
+    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/header.css">
+    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/footer.css">
+    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/components.css">
+    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/tool.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* ==========================================================
+           TOOL-SPECIFIC STYLES (Strictly isolated from Header/Footer)
+           ========================================================== */
+        :root {
+            --tool-primary: #059669;
+            --tool-primary-hover: #047857;
+            --tool-primary-light: #ecfdf5;
+            --tool-primary-border: #a7f3d0;
+            --tool-teal: #0d9488;
+            --tool-dark: #0f172a;
+            --tool-slate-bg: #f8fafc;
+            --tool-card-bg: #ffffff;
+            --tool-border: #e2e8f0;
+            --tool-text-main: #1e293b;
+            --tool-text-muted: #64748b;
+            --tool-radius: 16px;
+        }
+
+        .tool-page-wrapper {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f1f5f9;
+            color: var(--tool-text-main);
+            min-height: 80vh;
+            padding: 24px 16px 48px;
+        }
+
+        .tool-inner-container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* Breadcrumb */
+        .nisulka-breadcrumb {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--tool-text-muted);
+            margin-bottom: 20px;
+        }
+
+        .nisulka-breadcrumb a {
+            color: var(--tool-text-muted);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .nisulka-breadcrumb a:hover {
+            color: var(--tool-primary);
+        }
+
+        .nisulka-breadcrumb .current-page {
+            color: var(--tool-dark);
+            font-weight: 700;
+        }
+
+        /* Header Hero inside Tool */
+        .tool-hero-box {
+            margin-bottom: 28px;
+        }
+
+        .tool-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .tool-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 600;
+            background-color: var(--tool-primary-light);
+            color: var(--tool-primary-hover);
+            border: 1px solid var(--tool-primary-border);
+        }
+
+        .tool-badge.indigo {
+            background-color: #eef2ff;
+            color: #4338ca;
+            border-color: #c7d2fe;
+        }
+
+        .tool-badge.purple {
+            background-color: #faf5ff;
+            color: #7e22ce;
+            border-color: #e9d5ff;
+        }
+
+        .tool-main-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--tool-dark);
+            letter-spacing: -0.02em;
+            margin: 0 0 10px;
+            line-height: 1.25;
+        }
+
+        @media (min-width: 640px) {
+            .tool-main-title {
+                font-size: 40px;
+            }
+        }
+
+        .tool-main-title span {
+            background: linear-gradient(135deg, #059669 0%, #0d9488 50%, #4f46e5 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .tool-main-description {
+            font-size: 16px;
+            color: var(--tool-text-muted);
+            line-height: 1.6;
+            margin: 0;
+            max-width: 780px;
+        }
+
+        /* Card Container */
+        .tool-card {
+            background: var(--tool-card-bg);
+            border: 1px solid var(--tool-border);
+            border-radius: var(--tool-radius);
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+        }
+
+        /* Uploader Area */
+        .dropzone-area {
+            border: 2px dashed #cbd5e1;
+            border-radius: var(--tool-radius);
+            background: #f8fafc;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .dropzone-area:hover, .dropzone-area.dragover {
+            border-color: var(--tool-primary);
+            background: #ecfdf5;
+        }
+
+        .dropzone-icon {
+            width: 56px;
+            height: 56px;
+            margin: 0 auto 16px;
+            background: #d1fae5;
+            color: var(--tool-primary);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dropzone-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--tool-dark);
+            margin-bottom: 6px;
+        }
+
+        .dropzone-sub {
+            font-size: 14px;
+            color: var(--tool-text-muted);
+            margin-bottom: 20px;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .btn-primary {
+            background: var(--tool-primary);
+            color: #ffffff;
+            border: none;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .btn-primary:hover {
+            background: var(--tool-primary-hover);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background: #ffffff;
+            color: var(--tool-text-main);
+            border: 1px solid #cbd5e1;
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background: #f1f5f9;
+            border-color: #94a3b8;
+        }
+
+        /* Loaded Track Info Bar */
+        .loaded-track-bar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            background: #ffffff;
+            border: 1px solid var(--tool-border);
+            border-radius: var(--tool-radius);
+            padding: 16px 20px;
+            margin-bottom: 24px;
+        }
+
+        .track-meta {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .track-icon-wrap {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #059669, #0d9488);
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .track-name {
+            font-weight: 700;
+            color: var(--tool-dark);
+            font-size: 15px;
+            margin-bottom: 2px;
+            word-break: break-all;
+        }
+
+        .track-details {
+            font-size: 12px;
+            color: var(--tool-text-muted);
+        }
+
+        /* Waveform Canvas */
+        .waveform-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .waveform-status {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--tool-text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--tool-primary);
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .waveform-canvas-wrap {
+            position: relative;
+            width: 100%;
+            height: 100px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .waveform-canvas-wrap canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* Waveform Controls */
+        .playback-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-top: 18px;
+        }
+
+        .playback-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .play-btn-circle {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            background: var(--tool-primary);
+            color: #ffffff;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .play-btn-circle:hover {
+            background: var(--tool-primary-hover);
+            transform: scale(1.03);
+        }
+
+        .icon-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            color: var(--tool-text-main);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .icon-btn:hover {
+            background: #e2e8f0;
+        }
+
+        .icon-btn.active {
+            background: #d1fae5;
+            color: var(--tool-primary);
+            border-color: #a7f3d0;
+        }
+
+        .time-display {
+            font-family: monospace;
+            font-size: 14px;
+            font-weight: 700;
+            background: #f8fafc;
+            padding: 8px 14px;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            color: var(--tool-dark);
+        }
+
+        /* Presets Bar */
+        .presets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .preset-card-btn {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 12px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .preset-card-btn:hover {
+            background: #ffffff;
+            border-color: #cbd5e1;
+        }
+
+        .preset-card-btn.active {
+            background: #ecfdf5;
+            border-color: var(--tool-primary);
+            box-shadow: 0 0 0 1px var(--tool-primary);
+        }
+
+        .preset-card-title {
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--tool-dark);
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+
+        .preset-card-desc {
+            font-size: 11px;
+            color: var(--tool-text-muted);
+            line-height: 1.4;
+        }
+
+        /* Sliders Grid */
+        .controls-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .controls-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .control-block {
+            background: var(--tool-card-bg);
+            border: 1px solid var(--tool-border);
+            border-radius: var(--tool-radius);
+            padding: 20px;
+        }
+
+        .control-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .control-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--tool-dark);
+            margin: 0 0 2px;
+        }
+
+        .control-sub {
+            font-size: 12px;
+            color: var(--tool-text-muted);
+            margin: 0;
+        }
+
+        .control-val-badge {
+            font-family: monospace;
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--tool-primary);
+            background: #ecfdf5;
+            padding: 4px 10px;
+            border-radius: 8px;
+            border: 1px solid var(--tool-primary-border);
+        }
+
+        .custom-range {
+            width: 100%;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 6px;
+            outline: none;
+            cursor: pointer;
+            accent-color: var(--tool-primary);
+        }
+
+        .range-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #94a3b8;
+            margin-top: 6px;
+            font-family: monospace;
+        }
+
+        .select-input {
+            width: 100%;
+            padding: 10px 14px;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--tool-dark);
+            cursor: pointer;
+            outline: none;
+        }
+
+        .select-input:focus {
+            border-color: var(--tool-primary);
+        }
+
+        /* Export Bar */
+        .export-banner {
+            background: linear-gradient(135deg, #059669 0%, #0d9488 100%);
+            color: #ffffff;
+            border-radius: var(--tool-radius);
+            padding: 24px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.15);
+        }
+
+        .export-title {
+            font-size: 18px;
+            font-weight: 800;
+            margin: 0 0 4px;
+        }
+
+        .export-sub {
+            font-size: 13px;
+            color: #d1fae5;
+            margin: 0;
+        }
+
+        .btn-export-white {
+            background: #ffffff;
+            color: #047857;
+            font-size: 15px;
+            font-weight: 800;
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+            transition: all 0.2s;
+        }
+
+        .btn-export-white:hover {
+            background: #f8fafc;
+            transform: translateY(-1px);
+        }
+
+        /* Accordion FAQ */
+        .faq-card {
+            border: 1px solid var(--tool-border);
+            border-radius: 12px;
+            margin-bottom: 10px;
+            overflow: hidden;
+            background: #ffffff;
+        }
+
+        .faq-question {
+            padding: 16px;
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--tool-dark);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+
+        .faq-question:hover {
+            background: #f8fafc;
+        }
+
+        .faq-answer {
+            padding: 0 16px 16px;
+            font-size: 14px;
+            color: var(--tool-text-muted);
+            line-height: 1.6;
+            display: none;
+        }
+
+        .faq-card.open .faq-answer {
+            display: block;
+        }
+
+        .faq-card.open .faq-icon {
+            transform: rotate(180deg);
+        }
+
+        /* Modal */
+        .export-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 99999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .export-modal-overlay.show {
+            display: flex;
+        }
+
+        .export-modal-box {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 24px;
+            max-width: 480px;
+            width: 100%;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-bar-wrap {
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 9999px;
+            overflow: hidden;
+            margin: 16px 0 8px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #059669, #0d9488);
+            width: 0%;
+            transition: width 0.15s ease;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==========================================
+         OFFICIAL NISULKA HEADER (LOCKED)
+         ========================================== -->
+    <div id="site-header-mount"></div>
+
+    <!-- ==========================================
+         MAIN TOOL WORKSPACE
+         ========================================== -->
+    <main class="tool-page-wrapper">
+        <div class="tool-inner-container">
+
+            <!-- 1. Breadcrumb -->
+            <nav class="nisulka-breadcrumb" aria-label="Breadcrumb">
+                <a href="https://apps.laxmannepal.com.np/Nisulka-Tools/">Nisulka Tools</a>
+                <span>&rsaquo;</span>
+                <a href="https://apps.laxmannepal.com.np/Nisulka-Tools/">Audio Tools</a>
+                <span>&rsaquo;</span>
+                <span class="current-page">Slowed + Reverb Creator</span>
+            </nav>
+
+            <!-- 2. Tool Title & Description -->
+            <header class="tool-hero-box">
+                <div class="tool-badges">
+                    <span class="tool-badge">⚡ 100% Free & Unlimited</span>
+                    <span class="tool-badge indigo">✨ Studio Convolution Reverb</span>
+                    <span class="tool-badge purple">🔒 Client-Side Audio Privacy</span>
+                </div>
+                <h1 class="tool-main-title">Slowed + Reverb <span>Music Creator</span></h1>
+                <p class="tool-main-description">
+                    Transform any song into a dreamy, nostalgic slowed and reverberated masterpiece.
+                    Adjust playback speed and analog tape pitch, select room impulse responses, sculpt lo-fi warmth, and export in 16-bit WAV.
+                </p>
+            </header>
+
+            <!-- 3. Uploader Card / Loaded Track Bar -->
+            <section id="uploaderCard" class="tool-card">
+                <div id="dropzone" class="dropzone-area">
+                    <div class="dropzone-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    </div>
+                    <div class="dropzone-title">Upload your audio file</div>
+                    <div class="dropzone-sub">Drag & drop your song here or choose from your device (MP3, WAV, FLAC, M4A, OGG)</div>
+                    <div class="btn-group">
+                        <button id="btnBrowse" type="button" class="btn-primary">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                            Choose Audio File
+                        </button>
+                        <button id="btnDemo" type="button" class="btn-secondary">
+                            ✨ Try with Demo Song
+                        </button>
+                    </div>
+                    <input type="file" id="audioFileInput" accept="audio/*,.mp3,.wav,.flac,.m4a,.ogg,.aac" style="display:none;">
+                </div>
+            </section>
+
+            <!-- Loaded File Info Bar (Hidden by default until file loaded) -->
+            <div id="loadedTrackBar" class="loaded-track-bar" style="display:none;">
+                <div class="track-meta">
+                    <div class="track-icon-wrap">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                    </div>
+                    <div>
+                        <div id="trackName" class="track-name">Song Name.mp3</div>
+                        <div id="trackMeta" class="track-details">0:00 • 0 MB • 44100 Hz Stereo</div>
+                    </div>
+                </div>
+                <div class="btn-group">
+                    <button id="btnChangeTrack" class="btn-secondary" style="padding:8px 14px; font-size:13px;">Change Audio</button>
+                    <button id="btnResetTrack" class="btn-secondary" style="padding:8px 14px; font-size:13px; color:#e11d48;">Reset</button>
+                </div>
+            </div>
+
+            <!-- 4. Interactive Waveform & Player Area -->
+            <section id="playerCard" class="tool-card" style="display:none;">
+                <div class="waveform-header">
+                    <div class="waveform-status">
+                        <span class="pulse-dot"></span>
+                        <span>Interactive Audio Waveform</span>
+                    </div>
+                    <div id="speedAdjustedLength" style="font-size:12px; font-weight:700; color:var(--tool-text-muted);">
+                        Length: <strong id="effectiveDurationText" style="color:var(--tool-dark);">0:00</strong>
+                    </div>
+                </div>
+
+                <div id="waveformWrap" class="waveform-canvas-wrap">
+                    <canvas id="waveformCanvas"></canvas>
+                </div>
+
+                <div class="playback-toolbar">
+                    <div class="playback-left">
+                        <button id="btnPlayPause" type="button" class="play-btn-circle" title="Play/Pause (Spacebar)">
+                            <svg id="playIcon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                            <svg id="pauseIcon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                        </button>
+                        <button id="btnRestart" type="button" class="icon-btn" title="Restart">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+                        </button>
+                        <button id="btnLoop" type="button" class="icon-btn" title="Toggle Loop">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+                        </button>
+                    </div>
+
+                    <div id="timeDisplay" class="time-display">
+                        <span id="currentTimeText">0:00</span> / <span id="totalTimeText">0:00</span>
+                    </div>
+
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span style="font-size:13px; color:var(--tool-text-muted);">Volume:</span>
+                        <input id="volumeSlider" type="range" min="0" max="1.5" step="0.05" value="1.0" class="custom-range" style="width:90px;">
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. 1-Click Aesthetic Presets -->
+            <section class="tool-card">
+                <div style="font-size:14px; font-weight:800; text-transform:uppercase; letter-spacing:0.04em; color:var(--tool-dark); margin-bottom:4px;">
+                    ✨ 1-Click Aesthetic Presets
+                </div>
+                <div class="presets-grid">
+                    <button type="button" class="preset-card-btn active" data-speed="0.85" data-reverb="0.52" data-preset="dream_cathedral">
+                        <div class="preset-card-title">Classic Slowed <span>0.85x</span></div>
+                        <div class="preset-card-desc">The iconic slowed tempo with lush cathedral reverberation.</div>
+                    </button>
+                    <button type="button" class="preset-card-btn" data-speed="0.82" data-reverb="0.62" data-preset="lofi_chamber">
+                        <div class="preset-card-title">Midnight Lo-Fi <span>0.82x</span></div>
+                        <div class="preset-card-desc">Dark, warm chamber echo with muffled vinyl low-pass vibe.</div>
+                    </button>
+                    <button type="button" class="preset-card-btn" data-speed="0.78" data-reverb="0.75" data-preset="infinite_void">
+                        <div class="preset-card-title">Ethereal Void <span>0.78x</span></div>
+                        <div class="preset-card-desc">Deep atmosphere drenched in a massive 9-second decay.</div>
+                    </button>
+                    <button type="button" class="preset-card-btn" data-speed="0.90" data-reverb="0.38" data-preset="elve_cloakroom">
+                        <div class="preset-card-title">Daycore Mellow <span>0.90x</span></div>
+                        <div class="preset-card-desc">Gentle slowdown with crisp clarity and intimate acoustic space.</div>
+                    </button>
+                    <button type="button" class="preset-card-btn" data-speed="1.25" data-reverb="0.35" data-preset="vintage_plate">
+                        <div class="preset-card-title">Nightcore Sped <span>1.25x</span></div>
+                        <div class="preset-card-desc">Upbeat, bright tempo acceleration with crisp studio plate reverb.</div>
+                    </button>
+                </div>
+            </section>
+
+            <!-- 6. Speed & Reverb Controls Grid -->
+            <section class="controls-grid">
+                <!-- Speed Box -->
+                <div class="control-block">
+                    <div class="control-header">
+                        <div>
+                            <h4 class="control-title">Playback Speed & Pitch</h4>
+                            <p class="control-sub">Analog vinyl slowdown & pitch drop</p>
+                        </div>
+                        <span id="speedValueBadge" class="control-val-badge">0.85x</span>
+                    </div>
+                    <input id="speedSlider" type="range" min="0.50" max="1.50" step="0.01" value="0.85" class="custom-range">
+                    <div class="range-labels">
+                        <span>0.50x</span>
+                        <span>0.85x (Default)</span>
+                        <span>1.00x</span>
+                        <span>1.50x</span>
+                    </div>
+                </div>
+
+                <!-- Reverb Box -->
+                <div class="control-block">
+                    <div class="control-header">
+                        <div>
+                            <h4 class="control-title">Reverb Wet Mix</h4>
+                            <p class="control-sub">Balance of original & space echo</p>
+                        </div>
+                        <span id="reverbValueBadge" class="control-val-badge">52%</span>
+                    </div>
+                    <input id="reverbSlider" type="range" min="0.0" max="1.0" step="0.01" value="0.52" class="custom-range">
+                    <div class="range-labels">
+                        <span>0% (Dry)</span>
+                        <span>35% (Subtle)</span>
+                        <span>55% (Dreamy)</span>
+                        <span>100% (Full Wet)</span>
+                    </div>
+                    <div style="margin-top:14px;">
+                        <label style="font-size:12px; font-weight:700; color:var(--tool-text-main); display:block; margin-bottom:6px;">
+                            Reverb Environment Space:
+                        </label>
+                        <select id="reverbPresetSelect" class="select-input">
+                            <option value="dream_cathedral">Dream Cathedral (6.5s decay)</option>
+                            <option value="elve_cloakroom">Elveden Cloakroom (3.2s decay)</option>
+                            <option value="infinite_void">Infinite Cosmic Void (9.5s decay)</option>
+                            <option value="vintage_plate">Vintage EMT Plate (2.8s decay)</option>
+                            <option value="lofi_chamber">Late Night Chamber (4.2s decay)</option>
+                            <option value="underground_tunnel">Underground Tunnel (5.0s decay)</option>
+                            <option value="marble_hall">Marble Ballroom (4.5s decay)</option>
+                            <option value="cozy_room">Cozy Living Room (1.8s decay)</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 7. Prominent Export Banner -->
+            <section id="exportBanner" class="export-banner" style="margin-top:24px; display:none;">
+                <div>
+                    <h3 class="export-title">Ready to Export Your Slowed + Reverb Audio?</h3>
+                    <p class="export-sub">Rendered with studio-grade offline convolution reverb into 16-bit uncompressed WAV.</p>
+                </div>
+                <button id="btnOpenExportModal" type="button" class="btn-export-white">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Export & Download WAV
+                </button>
+            </section>
+
+            <!-- 8. Informative Guide & Details -->
+            <section class="tool-card" style="margin-top:40px;">
+                <h2 style="font-size:22px; font-weight:800; color:var(--tool-dark); margin:0 0 14px;">
+                    How to Create the Perfect Slowed and Reverberated Music
+                </h2>
+                <p style="font-size:14px; color:var(--tool-text-muted); line-height:1.7; margin-bottom:16px;">
+                    The slowed and reverb music aesthetic originated from the legendary Chopped and Screwed DJ techniques developed in Houston. By reducing the playback speed between <strong>0.80x and 0.88x</strong>, the lower pitch deepens vocal tonality while stretching out instrumental harmonics. Pairing this with a stereo convolution impulse response creates the sensation of listening to music echoing in an empty cathedral or late-night room.
+                </p>
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:16px; margin-top:20px;">
+                    <div style="background:#f8fafc; padding:16px; border-radius:12px; border:1px solid #e2e8f0;">
+                        <h4 style="font-size:14px; font-weight:700; color:var(--tool-dark); margin:0 0 4px;">1. Client-Side Processing</h4>
+                        <p style="font-size:12px; color:var(--tool-text-muted); margin:0; line-height:1.5;">Your audio files never touch an external server. The entire decoding, audio processing, and rendering take place in your browser.</p>
+                    </div>
+                    <div style="background:#f8fafc; padding:16px; border-radius:12px; border:1px solid #e2e8f0;">
+                        <h4 style="font-size:14px; font-weight:700; color:var(--tool-dark); margin:0 0 4px;">2. Studio Convolution Reverb</h4>
+                        <p style="font-size:12px; color:var(--tool-text-muted); margin:0; line-height:1.5;">Authentic mathematical impulse response simulation generates natural, rich acoustic reflections without artificial robotic artifacts.</p>
+                    </div>
+                    <div style="background:#f8fafc; padding:16px; border-radius:12px; border:1px solid #e2e8f0;">
+                        <h4 style="font-size:14px; font-weight:700; color:var(--tool-dark); margin:0 0 4px;">3. Lossless WAV Output</h4>
+                        <p style="font-size:12px; color:var(--tool-text-muted); margin:0; line-height:1.5;">Exports directly into uncompressed 16-bit PCM WAV at full sample rate for crystal clear audio suitable for video editing and sharing.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 9. FAQ Section -->
+            <section class="tool-card">
+                <h2 style="font-size:22px; font-weight:800; color:var(--tool-dark); margin:0 0 16px;">
+                    Frequently Asked Questions
+                </h2>
+
+                <div class="faq-card open">
+                    <div class="faq-question">
+                        <span>What is the best playback speed for slowed + reverb songs?</span>
+                        <span class="faq-icon">▾</span>
+                    </div>
+                    <div class="faq-answer">
+                        A speed between 0.82x and 0.87x (such as our 0.85x default) is universally considered the sweet spot for modern slowed and reverb music. It drops the pitch enough to sound deep and emotional without distorting vocal cadence.
+                    </div>
+                </div>
+
+                <div class="faq-card">
+                    <div class="faq-question">
+                        <span>Are my audio files uploaded to any server?</span>
+                        <span class="faq-icon">▾</span>
+                    </div>
+                    <div class="faq-answer">
+                        No. 100% of the audio decoding, real-time effects, and file exporting happen in your browser using the HTML5 Web Audio API. Your files remain completely private on your device.
+                    </div>
+                </div>
+
+                <div class="faq-card">
+                    <div class="faq-question">
+                        <span>What format is the downloaded song?</span>
+                        <span class="faq-icon">▾</span>
+                    </div>
+                    <div class="faq-answer">
+                        The tool exports a studio-grade uncompressed 16-bit PCM stereo WAV file matching the original sample rate of your audio (44.1kHz or 48kHz).
+                    </div>
+                </div>
+
+                <div class="faq-card">
+                    <div class="faq-question">
+                        <span>Is this tool free to use?</span>
+                        <span class="faq-icon">▾</span>
+                    </div>
+                    <div class="faq-answer">
+                        Yes, this tool is 100% free with no watermarks, duration limitations, file count limits, or registration requirements.
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- ==========================================
+         EXPORT & DOWNLOAD MODAL
+         ========================================== -->
+    <div id="exportModal" class="export-modal-overlay">
+        <div class="export-modal-box">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                <h3 style="font-size:18px; font-weight:800; margin:0; color:var(--tool-dark);">Export Audio</h3>
+                <button id="btnCloseModal" type="button" style="background:none; border:none; font-size:22px; cursor:pointer; color:#94a3b8;">&times;</button>
+            </div>
+
+            <div id="modalPreRender">
+                <p style="font-size:13px; color:var(--tool-text-muted); margin-bottom:16px;">
+                    Render your slowed and reverberated track offline at full master resolution.
+                </p>
+                <div style="background:#f8fafc; padding:12px; border-radius:10px; font-size:13px; margin-bottom:20px; border:1px solid #e2e8f0;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                        <span>Speed:</span>
+                        <strong id="modalSpeedText">0.85x</strong>
+                    </div>
+                    <div style="display:flex; justify-content:space-between;">
+                        <span>Reverb Mix:</span>
+                        <strong id="modalReverbText">52%</strong>
+                    </div>
+                </div>
+                <button id="btnStartRender" type="button" class="btn-primary" style="width:100%; justify-content:center;">
+                    Start Rendering
+                </button>
+            </div>
+
+            <div id="modalRendering" style="display:none; text-align:center; padding:20px 0;">
+                <div style="font-size:14px; font-weight:700; color:var(--tool-dark); margin-bottom:8px;">
+                    Rendering Audio... <span id="renderPercentText">0%</span>
+                </div>
+                <div class="progress-bar-wrap">
+                    <div id="renderProgressFill" class="progress-bar-fill"></div>
+                </div>
+                <p style="font-size:12px; color:var(--tool-text-muted);">Applying convolution impulse and offline resampling...</p>
+            </div>
+
+            <div id="modalPostRender" style="display:none; text-align:center; padding-top:10px;">
+                <div style="color:var(--tool-primary); font-size:15px; font-weight:700; margin-bottom:12px;">
+                    ✓ Audio Rendered Successfully!
+                </div>
+                <button id="btnDownloadFile" type="button" class="btn-primary" style="width:100%; justify-content:center; margin-bottom:10px;">
+                    Download WAV File
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         OFFICIAL NISULKA FOOTER (LOCKED)
+         ========================================== -->
+    <div id="site-footer-mount"></div>
+
+    <!-- Official Nisulka Scripts -->
+    <script src="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/js/header.js"></script>
+    <script src="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/js/footer.js"></script>
+
+    <!-- ==========================================
+         STANDALONE TOOL JAVASCRIPT LOGIC
+         ========================================== -->
+    <script>
+        (function() {
+            // Audio State & Config
+            let audioCtx = null;
+            let currentAudioBuffer = null;
+            let sourceNode = null;
+            let dryGainNode = null;
+            let wetGainNode = null;
+            let convolverNode = null;
+            let masterGainNode = null;
+            let isPlaying = false;
+            let startTime = 0;
+            let pauseOffset = 0;
+            let isLooping = false;
+
+            let settings = {
+                speed: 0.85,
+                reverbWet: 0.52,
+                reverbPreset: 'dream_cathedral',
+                reverbDecay: 6.5,
+                volume: 1.0
+            };
+
+            const REVERB_CONFIGS = {
+                dream_cathedral: { decay: 6.5, damping: 4200, lowCut: 80 },
+                elve_cloakroom: { decay: 3.2, damping: 5500, lowCut: 120 },
+                infinite_void: { decay: 9.5, damping: 3800, lowCut: 60 },
+                vintage_plate: { decay: 2.8, damping: 8000, lowCut: 150 },
+                lofi_chamber: { decay: 4.2, damping: 3200, lowCut: 140 },
+                underground_tunnel: { decay: 5.0, damping: 6000, lowCut: 100 },
+                marble_hall: { decay: 4.5, damping: 7000, lowCut: 90 },
+                cozy_room: { decay: 1.8, damping: 4500, lowCut: 100 }
+            };
+
+            let peaks = [];
+            let renderedBlob = null;
+            let renderedUrl = null;
+
+            // DOM Elements
+            const dropzone = document.getElementById('dropzone');
+            const btnBrowse = document.getElementById('btnBrowse');
+            const btnDemo = document.getElementById('btnDemo');
+            const fileInput = document.getElementById('audioFileInput');
+            const uploaderCard = document.getElementById('uploaderCard');
+            const loadedTrackBar = document.getElementById('loadedTrackBar');
+            const trackName = document.getElementById('trackName');
+            const trackMeta = document.getElementById('trackMeta');
+            const btnChangeTrack = document.getElementById('btnChangeTrack');
+            const btnResetTrack = document.getElementById('btnResetTrack');
+
+            const playerCard = document.getElementById('playerCard');
+            const exportBanner = document.getElementById('exportBanner');
+            const canvas = document.getElementById('waveformCanvas');
+            const waveformWrap = document.getElementById('waveformWrap');
+            const btnPlayPause = document.getElementById('btnPlayPause');
+            const playIcon = document.getElementById('playIcon');
+            const pauseIcon = document.getElementById('pauseIcon');
+            const btnRestart = document.getElementById('btnRestart');
+            const btnLoop = document.getElementById('btnLoop');
+            const currentTimeText = document.getElementById('currentTimeText');
+            const totalTimeText = document.getElementById('totalTimeText');
+            const effectiveDurationText = document.getElementById('effectiveDurationText');
+            const volumeSlider = document.getElementById('volumeSlider');
+
+            const speedSlider = document.getElementById('speedSlider');
+            const speedValueBadge = document.getElementById('speedValueBadge');
+            const reverbSlider = document.getElementById('reverbSlider');
+            const reverbValueBadge = document.getElementById('reverbValueBadge');
+            const reverbPresetSelect = document.getElementById('reverbPresetSelect');
+
+            const exportModal = document.getElementById('exportModal');
+            const btnOpenExportModal = document.getElementById('btnOpenExportModal');
+            const btnCloseModal = document.getElementById('btnCloseModal');
+            const modalPreRender = document.getElementById('modalPreRender');
+            const modalRendering = document.getElementById('modalRendering');
+            const modalPostRender = document.getElementById('modalPostRender');
+            const btnStartRender = document.getElementById('btnStartRender');
+            const btnDownloadFile = document.getElementById('btnDownloadFile');
+            const renderProgressFill = document.getElementById('renderProgressFill');
+            const renderPercentText = document.getElementById('renderPercentText');
+            const modalSpeedText = document.getElementById('modalSpeedText');
+            const modalReverbText = document.getElementById('modalReverbText');
+
+            // Initialize AudioContext
+            function getAudioContext() {
+                if (!audioCtx) {
+                    const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
+                    audioCtx = new AudioCtxClass();
+                }
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                return audioCtx;
+            }
+
+            // Synthetic Reverb Generator
+            function generateImpulseResponse(ctx, decayTime, dampingFreq, lowCutFreq) {
+                const sampleRate = ctx.sampleRate;
+                const length = Math.max(sampleRate * 0.1, Math.floor(sampleRate * decayTime));
+                const impulseBuffer = ctx.createBuffer(2, length, sampleRate);
+                const left = impulseBuffer.getChannelData(0);
+                const right = impulseBuffer.getChannelData(1);
+
+                const decayConstant = 6.91 / (decayTime * sampleRate);
+                const damping = Math.exp((-2 * Math.PI * dampingFreq) / sampleRate);
+                const highpass = Math.exp((-2 * Math.PI * lowCutFreq) / sampleRate);
+
+                let lpL = 0, lpR = 0, hpL = 0, hpR = 0;
+
+                for (let i = 0; i < length; i++) {
+                    const env = Math.exp(-i * decayConstant);
+                    const noiseL = (Math.random() * 2 - 1);
+                    const noiseR = (Math.random() * 2 - 1);
+
+                    const center = (noiseL + noiseR) * 0.5;
+                    const side = (noiseL - noiseR) * 0.6;
+
+                    let sampleL = (center + side) * env;
+                    let sampleR = (center - side) * env;
+
+                    lpL = (1 - damping) * sampleL + damping * lpL;
+                    lpR = (1 - damping) * sampleR + damping * lpR;
+
+                    const outL = lpL - hpL;
+                    hpL = (1 - highpass) * lpL + highpass * hpL;
+
+                    const outR = lpR - hpR;
+                    hpR = (1 - highpass) * lpR + highpass * hpR;
+
+                    left[i] = outL;
+                    right[i] = outR;
+                }
+
+                return impulseBuffer;
+            }
+
+            // Format mm:ss
+            function formatTime(secs) {
+                if (isNaN(secs) || secs < 0) return "0:00";
+                const mins = Math.floor(secs / 60);
+                const rem = Math.floor(secs % 60);
+                return mins + ":" + (rem < 10 ? "0" : "") + rem;
+            }
+
+            // Calculate Waveform Peaks
+            function computePeaks(buffer) {
+                const data = buffer.getChannelData(0);
+                const barCount = 300;
+                const step = Math.floor(data.length / barCount);
+                const res = [];
+                for (let i = 0; i < barCount; i++) {
+                    let max = 0;
+                    const start = i * step;
+                    for (let j = 0; j < step; j += 15) {
+                        const val = Math.abs(data[start + j] || 0);
+                        if (val > max) max = val;
+                    }
+                    res.push(max);
+                }
+                const maxVal = Math.max(0.01, ...res);
+                return res.map(p => Math.min(1.0, (p / maxVal) * 0.95));
+            }
+
+            // Draw Canvas Waveform
+            function drawWaveform() {
+                if (!canvas || !currentAudioBuffer) return;
+                const ctx = canvas.getContext('2d');
+                const width = canvas.width;
+                const height = canvas.height;
+                ctx.clearRect(0, 0, width, height);
+
+                const duration = currentAudioBuffer.duration;
+                const currentTrackPos = getCurrentTrackTime();
+                const progress = duration > 0 ? currentTrackPos / duration : 0;
+                const progressPx = progress * width;
+
+                const count = peaks.length;
+                const barWidth = Math.max(2, (width / count) * 0.7);
+                const gap = (width - count * barWidth) / (count - 1);
+
+                for (let i = 0; i < count; i++) {
+                    const x = i * (barWidth + gap);
+                    const isPast = x <= progressPx;
+                    const barHeight = Math.max(4, peaks[i] * (height * 0.82));
+                    const y = (height - barHeight) / 2;
+
+                    if (isPast) {
+                        const grad = ctx.createLinearGradient(0, y, 0, y + barHeight);
+                        grad.addColorStop(0, '#059669');
+                        grad.addColorStop(1, '#0d9488');
+                        ctx.fillStyle = grad;
+                    } else {
+                        ctx.fillStyle = '#cbd5e1';
+                    }
+
+                    ctx.beginPath();
+                    ctx.roundRect(x, y, barWidth, barHeight, 2);
+                    ctx.fill();
+                }
+
+                // Playhead
+                ctx.strokeStyle = '#047857';
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                ctx.moveTo(progressPx, 0);
+                ctx.lineTo(progressPx, height);
+                ctx.stroke();
+            }
+
+            function resizeCanvas() {
+                if (!canvas || !waveformWrap) return;
+                const rect = waveformWrap.getBoundingClientRect();
+                const dpr = window.devicePixelRatio || 1;
+                canvas.width = rect.width * dpr;
+                canvas.height = 100 * dpr;
+                const ctx = canvas.getContext('2d');
+                ctx.scale(dpr, dpr);
+                drawWaveform();
+            }
+
+            window.addEventListener('resize', resizeCanvas);
+
+            // Audio Graph Setup
+            function setupAudioGraph() {
+                const ctx = getAudioContext();
+                if (!masterGainNode) {
+                    masterGainNode = ctx.createGain();
+                    dryGainNode = ctx.createGain();
+                    wetGainNode = ctx.createGain();
+                    convolverNode = ctx.createConvolver();
+
+                    convolverNode.connect(wetGainNode);
+                    dryGainNode.connect(masterGainNode);
+                    wetGainNode.connect(masterGainNode);
+                    masterGainNode.connect(ctx.destination);
+                }
+
+                updateReverbImpulse();
+                updateMix();
+            }
+
+            function updateMix() {
+                if (!dryGainNode || !wetGainNode || !audioCtx) return;
+                const wet = settings.reverbWet;
+                const dry = Math.cos(wet * 0.5 * Math.PI);
+                const wetVal = Math.sin(wet * 0.5 * Math.PI);
+                const now = audioCtx.currentTime;
+                dryGainNode.gain.setTargetAtTime(dry, now, 0.02);
+                wetGainNode.gain.setTargetAtTime(wetVal, now, 0.02);
+                masterGainNode.gain.setTargetAtTime(settings.volume, now, 0.02);
+            }
+
+            function updateReverbImpulse() {
+                if (!convolverNode || !audioCtx) return;
+                const conf = REVERB_CONFIGS[settings.reverbPreset] || REVERB_CONFIGS.dream_cathedral;
+                convolverNode.buffer = generateImpulseResponse(audioCtx, conf.decay, conf.damping, conf.lowCut);
+            }
+
+            function getCurrentTrackTime() {
+                if (!isPlaying || !audioCtx) return pauseOffset;
+                const elapsedReal = audioCtx.currentTime - startTime;
+                const elapsedTrack = elapsedReal * settings.speed;
+                return Math.min(pauseOffset + elapsedTrack, currentAudioBuffer ? currentAudioBuffer.duration : 0);
+            }
+
+            function playAudio(offsetSec) {
+                if (!currentAudioBuffer) return;
+                const ctx = getAudioContext();
+                stopSource();
+                setupAudioGraph();
+
+                if (offsetSec !== undefined) {
+                    pauseOffset = Math.max(0, Math.min(offsetSec, currentAudioBuffer.duration));
+                }
+
+                if (pauseOffset >= currentAudioBuffer.duration - 0.05) {
+                    pauseOffset = 0;
+                }
+
+                sourceNode = ctx.createBufferSource();
+                sourceNode.buffer = currentAudioBuffer;
+                sourceNode.playbackRate.setValueAtTime(settings.speed, ctx.currentTime);
+
+                sourceNode.connect(dryGainNode);
+                sourceNode.connect(convolverNode);
+
+                startTime = ctx.currentTime;
+                isPlaying = true;
+                updatePlayIcons();
+
+                sourceNode.onended = function() {
+                    if (isPlaying) {
+                        isPlaying = false;
+                        pauseOffset = 0;
+                        if (isLooping) {
+                            playAudio(0);
+                        } else {
+                            updatePlayIcons();
+                        }
+                    }
+                };
+
+                sourceNode.start(0, pauseOffset);
+            }
+
+            function pauseAudio() {
+                if (!isPlaying) return;
+                pauseOffset = getCurrentTrackTime();
+                stopSource();
+                isPlaying = false;
+                updatePlayIcons();
+            }
+
+            function stopSource() {
+                if (sourceNode) {
+                    try {
+                        sourceNode.onended = null;
+                        sourceNode.stop();
+                        sourceNode.disconnect();
+                    } catch(e) {}
+                    sourceNode = null;
+                }
+            }
+
+            function updatePlayIcons() {
+                if (isPlaying) {
+                    playIcon.style.display = 'none';
+                    pauseIcon.style.display = 'block';
+                } else {
+                    playIcon.style.display = 'block';
+                    pauseIcon.style.display = 'none';
+                }
+            }
+
+            // Animation Frame Loop
+            function animLoop() {
+                if (isPlaying && currentAudioBuffer) {
+                    const currentPos = getCurrentTrackTime();
+                    const effDuration = currentAudioBuffer.duration / settings.speed;
+                    const effCurrent = currentPos / settings.speed;
+                    currentTimeText.textContent = formatTime(effCurrent);
+                    totalTimeText.textContent = formatTime(effDuration);
+                    drawWaveform();
+                }
+                requestAnimationFrame(animLoop);
+            }
+            requestAnimationFrame(animLoop);
+
+            // Load Buffer into Workspace
+            function loadAudioBuffer(buffer, name, size) {
+                stopSource();
+                currentAudioBuffer = buffer;
+                pauseOffset = 0;
+                isPlaying = false;
+                updatePlayIcons();
+
+                peaks = computePeaks(buffer);
+
+                uploaderCard.style.display = 'none';
+                loadedTrackBar.style.display = 'flex';
+                playerCard.style.display = 'block';
+                exportBanner.style.display = 'flex';
+
+                trackName.textContent = name;
+                trackMeta.textContent = formatTime(buffer.duration) + " • " + (size ? (size / (1024*1024)).toFixed(1) + " MB • " : "") + buffer.sampleRate + "Hz Stereo";
+
+                const effDuration = buffer.duration / settings.speed;
+                effectiveDurationText.textContent = formatTime(effDuration);
+                totalTimeText.textContent = formatTime(effDuration);
+                currentTimeText.textContent = "0:00";
+
+                setTimeout(resizeCanvas, 50);
+            }
+
+            // Synthesize Demo Song
+            async function generateDemoSong() {
+                const ctx = getAudioContext();
+                const sampleRate = ctx.sampleRate || 44100;
+                const bpm = 80;
+                const beat = 60 / bpm;
+                const totalDur = 12;
+                const totalSamples = Math.floor(totalDur * sampleRate);
+
+                const off = new OfflineAudioContext(2, totalSamples, sampleRate);
+                const comp = off.createDynamicsCompressor();
+                comp.connect(off.destination);
+
+                const chords = [
+                    { time: 0 * 4 * beat, freqs: [146.83, 220, 277.18, 329.63] },
+                    { time: 1 * 4 * beat, freqs: [138.59, 207.65, 246.94, 311.13] },
+                    { time: 2 * 4 * beat, freqs: [123.47, 185, 220, 277.18] },
+                    { time: 3 * 4 * beat, freqs: [110, 164.81, 220, 277.18] }
+                ];
+
+                chords.forEach(c => {
+                    c.freqs.forEach(f => {
+                        const osc = off.createOscillator();
+                        const g = off.createGain();
+                        osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(f, c.time);
+                        g.gain.setValueAtTime(0, c.time);
+                        g.gain.linearRampToValueAtTime(0.08, c.time + 0.1);
+                        g.gain.exponentialRampToValueAtTime(0.0001, c.time + 3.8 * beat);
+                        osc.connect(g);
+                        g.connect(comp);
+                        osc.start(c.time);
+                        osc.stop(c.time + 3.8 * beat);
+                    });
+                });
+
+                return await off.startRendering();
+            }
+
+            // Encode 16-Bit Stereo WAV
+            function encodeWAV(audioBuffer) {
+                const numChannels = 2;
+                const sampleRate = audioBuffer.sampleRate;
+                const length = audioBuffer.length;
+                const dataSize = length * numChannels * 2;
+                const bufferSize = 44 + dataSize;
+                const arrayBuffer = new ArrayBuffer(bufferSize);
+                const view = new DataView(arrayBuffer);
+
+                function writeString(offset, str) {
+                    for (let i = 0; i < str.length; i++) {
+                        view.setUint8(offset + i, str.charCodeAt(i));
+                    }
+                }
+
+                writeString(0, 'RIFF');
+                view.setUint32(4, 36 + dataSize, true);
+                writeString(8, 'WAVE');
+                writeString(12, 'fmt ');
+                view.setUint32(16, 16, true);
+                view.setUint16(20, 1, true); // PCM
+                view.setUint16(22, numChannels, true);
+                view.setUint32(24, sampleRate, true);
+                view.setUint32(28, sampleRate * 4, true);
+                view.setUint16(32, 4, true);
+                view.setUint16(34, 16, true);
+                writeString(36, 'data');
+                view.setUint32(40, dataSize, true);
+
+                const left = audioBuffer.getChannelData(0);
+                const right = audioBuffer.numberOfChannels > 1 ? audioBuffer.getChannelData(1) : left;
+
+                let offset = 44;
+                for (let i = 0; i < length; i++) {
+                    let sL = Math.max(-1, Math.min(1, left[i]));
+                    view.setInt16(offset, sL < 0 ? sL * 0x8000 : sL * 0x7fff, true);
+                    offset += 2;
+
+                    let sR = Math.max(-1, Math.min(1, right[i]));
+                    view.setInt16(offset, sR < 0 ? sR * 0x8000 : sR * 0x7fff, true);
+                    offset += 2;
+                }
+
+                return new Blob([arrayBuffer], { type: 'audio/wav' });
+            }
+
+            // Events
+            btnBrowse.addEventListener('click', () => fileInput.click());
+            btnChangeTrack.addEventListener('click', () => fileInput.click());
+
+            btnDemo.addEventListener('click', async () => {
+                btnDemo.textContent = "Loading Demo...";
+                const buf = await generateDemoSong();
+                btnDemo.textContent = "✨ Try with Demo Song";
+                loadAudioBuffer(buf, "Dreamy Nostalgia (Lo-Fi Chill Demo)", 1024 * 1024 * 1.5);
+            });
+
+            fileInput.addEventListener('change', async (e) => {
+                if (e.target.files && e.target.files[0]) {
+                    const file = e.target.files[0];
+                    const ctx = getAudioContext();
+                    const ab = await file.arrayBuffer();
+                    const buf = await ctx.decodeAudioData(ab);
+                    loadAudioBuffer(buf, file.name, file.size);
+                }
+            });
+
+            // Drag & Drop
+            dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('dragover'); });
+            dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+            dropzone.addEventListener('drop', async (e) => {
+                e.preventDefault();
+                dropzone.classList.remove('dragover');
+                if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                    const file = e.dataTransfer.files[0];
+                    const ctx = getAudioContext();
+                    const ab = await file.arrayBuffer();
+                    const buf = await ctx.decodeAudioData(ab);
+                    loadAudioBuffer(buf, file.name, file.size);
+                }
+            });
+
+            btnResetTrack.addEventListener('click', () => {
+                stopSource();
+                currentAudioBuffer = null;
+                uploaderCard.style.display = 'block';
+                loadedTrackBar.style.display = 'none';
+                playerCard.style.display = 'none';
+                exportBanner.style.display = 'none';
+            });
+
+            // Play / Pause / Seek
+            btnPlayPause.addEventListener('click', () => {
+                if (isPlaying) pauseAudio();
+                else playAudio();
+            });
+
+            btnRestart.addEventListener('click', () => {
+                playAudio(0);
+            });
+
+            btnLoop.addEventListener('click', () => {
+                isLooping = !isLooping;
+                btnLoop.classList.toggle('active', isLooping);
+            });
+
+            waveformWrap.addEventListener('click', (e) => {
+                if (!currentAudioBuffer) return;
+                const rect = waveformWrap.getBoundingClientRect();
+                const pos = (e.clientX - rect.left) / rect.width;
+                const targetTrackSec = pos * currentAudioBuffer.duration;
+                playAudio(targetTrackSec);
+            });
+
+            // Sliders
+            speedSlider.addEventListener('input', (e) => {
+                const val = parseFloat(e.target.value);
+                settings.speed = val;
+                speedValueBadge.textContent = val.toFixed(2) + "x";
+                if (sourceNode && audioCtx) {
+                    const curPos = getCurrentTrackTime();
+                    pauseOffset = curPos;
+                    startTime = audioCtx.currentTime;
+                    sourceNode.playbackRate.setValueAtTime(val, audioCtx.currentTime);
+                }
+                if (currentAudioBuffer) {
+                    const eff = currentAudioBuffer.duration / val;
+                    effectiveDurationText.textContent = formatTime(eff);
+                    totalTimeText.textContent = formatTime(eff);
+                }
+            });
+
+            reverbSlider.addEventListener('input', (e) => {
+                const val = parseFloat(e.target.value);
+                settings.reverbWet = val;
+                reverbValueBadge.textContent = Math.round(val * 100) + "%";
+                updateMix();
+            });
+
+            reverbPresetSelect.addEventListener('change', (e) => {
+                settings.reverbPreset = e.target.value;
+                updateReverbImpulse();
+            });
+
+            volumeSlider.addEventListener('input', (e) => {
+                settings.volume = parseFloat(e.target.value);
+                updateMix();
+            });
+
+            // Preset Buttons
+            document.querySelectorAll('.preset-card-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.preset-card-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+
+                    const sp = parseFloat(btn.getAttribute('data-speed'));
+                    const rev = parseFloat(btn.getAttribute('data-reverb'));
+                    const preset = btn.getAttribute('data-preset');
+
+                    speedSlider.value = sp;
+                    speedValueBadge.textContent = sp.toFixed(2) + "x";
+                    settings.speed = sp;
+
+                    reverbSlider.value = rev;
+                    reverbValueBadge.textContent = Math.round(rev * 100) + "%";
+                    settings.reverbWet = rev;
+
+                    reverbPresetSelect.value = preset;
+                    settings.reverbPreset = preset;
+
+                    if (sourceNode && audioCtx) {
+                        sourceNode.playbackRate.setValueAtTime(sp, audioCtx.currentTime);
+                    }
+                    updateReverbImpulse();
+                    updateMix();
+                });
+            });
+
+            // Modal Flow
+            btnOpenExportModal.addEventListener('click', () => {
+                modalSpeedText.textContent = settings.speed.toFixed(2) + "x";
+                modalReverbText.textContent = Math.round(settings.reverbWet * 100) + "% (" + settings.reverbPreset.replace('_', ' ') + ")";
+                modalPreRender.style.display = 'block';
+                modalRendering.style.display = 'none';
+                modalPostRender.style.display = 'none';
+                exportModal.classList.add('show');
+            });
+
+            btnCloseModal.addEventListener('click', () => exportModal.classList.remove('show'));
+
+            btnStartRender.addEventListener('click', async () => {
+                if (!currentAudioBuffer) return;
+                modalPreRender.style.display = 'none';
+                modalRendering.style.display = 'block';
+                renderProgressFill.style.width = '20%';
+                renderPercentText.textContent = '20%';
+
+                const sampleRate = currentAudioBuffer.sampleRate;
+                const totalDur = (currentAudioBuffer.duration / settings.speed) + 4;
+                const totalSamples = Math.ceil(totalDur * sampleRate);
+
+                const offCtx = new OfflineAudioContext(2, totalSamples, sampleRate);
+                const src = offCtx.createBufferSource();
+                src.buffer = currentAudioBuffer;
+                src.playbackRate.setValueAtTime(settings.speed, 0);
+
+                const dryG = offCtx.createGain();
+                const wetG = offCtx.createGain();
+                const conv = offCtx.createConvolver();
+
+                const conf = REVERB_CONFIGS[settings.reverbPreset] || REVERB_CONFIGS.dream_cathedral;
+                conv.buffer = generateImpulseResponse(offCtx, conf.decay, conf.damping, conf.lowCut);
+
+                const wet = settings.reverbWet;
+                dryG.gain.setValueAtTime(Math.cos(wet * 0.5 * Math.PI), 0);
+                wetG.gain.setValueAtTime(Math.sin(wet * 0.5 * Math.PI), 0);
+
+                src.connect(dryG);
+                src.connect(conv);
+                conv.connect(wetG);
+                dryG.connect(offCtx.destination);
+                wetG.connect(offCtx.destination);
+
+                src.start(0);
+
+                renderProgressFill.style.width = '60%';
+                renderPercentText.textContent = '60%';
+
+                const rendered = await offCtx.startRendering();
+
+                renderProgressFill.style.width = '90%';
+                renderPercentText.textContent = '90%';
+
+                renderedBlob = encodeWAV(rendered);
+                renderedUrl = URL.createObjectURL(renderedBlob);
+
+                renderProgressFill.style.width = '100%';
+                renderPercentText.textContent = '100%';
+
+                setTimeout(() => {
+                    modalRendering.style.display = 'none';
+                    modalPostRender.style.display = 'block';
+                }, 300);
+            });
+
+            btnDownloadFile.addEventListener('click', () => {
+                if (!renderedUrl) return;
+                const a = document.createElement('a');
+                a.href = renderedUrl;
+                a.download = (trackName.textContent.replace(/\.[^/.]+$/, "") || "Audio") + " (Slowed + Reverb).wav";
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            });
+
+            // Keyboard Spacebar play/pause
+            window.addEventListener('keydown', (e) => {
+                if (e.code === 'Space' && currentAudioBuffer && !['INPUT','SELECT','TEXTAREA'].includes(e.target.tagName)) {
+                    e.preventDefault();
+                    if (isPlaying) pauseAudio();
+                    else playAudio();
+                }
+            });
+
+            // Accordion FAQ toggle
+            document.querySelectorAll('.faq-card').forEach(card => {
+                const q = card.querySelector('.faq-question');
+                q.addEventListener('click', () => {
+                    card.classList.toggle('open');
+                });
+            });
+        })();
+    </script>
+</body>
+</html>
