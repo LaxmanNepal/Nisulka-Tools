@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-20T22:01:59.378339+00:00",
+  "generatedAt": "2026-08-20T22:12:44.773253+00:00",
   "totalTools": 12,
   "averageScore": 75.6,
   "tools": [
@@ -426,9 +426,9 @@
       "url": "/Nisulka-Tools/tools/weather/",
       "score": 53,
       "grade": "D",
-      "title": "Weather Forecast Dashboard - Nisulka Tools",
+      "title": "Weather Forecast Dashboard · Nisulka Tools",
       "description": "",
-      "wordCount": 2654,
+      "wordCount": 2335,
       "h1Count": 2,
       "h2Count": 1,
       "images": 1,
