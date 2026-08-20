@@ -152,6 +152,19 @@
     "status": "active"
   },
   {
+    "name": "Cv Generator",
+    "slug": "cv-generator",
+    "path": "cv-generator",
+    "description": "Free online Cv Generator tool.",
+    "category": "Other Tools",
+    "categorySlug": "other-tools",
+    "logo": "/Nisulka-Tools/tools/cv-generator/logo.jpg",
+    "url": "/Nisulka-Tools/tools/cv-generator/",
+    "keywords": [],
+    "featured": false,
+    "status": "active"
+  },
+  {
     "name": "Draw App",
     "slug": "draw-app",
     "path": "draw-app",
@@ -186,6 +199,19 @@
     "categorySlug": "other-tools",
     "logo": "/Nisulka-Tools/tools/instagram-image-downloader/logo.jpg",
     "url": "/Nisulka-Tools/tools/instagram-image-downloader/",
+    "keywords": [],
+    "featured": false,
+    "status": "active"
+  },
+  {
+    "name": "Weather",
+    "slug": "weather",
+    "path": "weather",
+    "description": "Free online Weather tool.",
+    "category": "Other Tools",
+    "categorySlug": "other-tools",
+    "logo": "/Nisulka-Tools/tools/weather/logo.jpg",
+    "url": "/Nisulka-Tools/tools/weather/",
     "keywords": [],
     "featured": false,
     "status": "active"
