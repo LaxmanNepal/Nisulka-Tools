@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-08-20T22:23:25.181304+00:00",
+  "generatedAt": "2026-08-20T22:41:11.833141+00:00",
   "totalTools": 12,
-  "averageScore": 77.7,
+  "averageScore": 76.2,
   "tools": [
     {
       "name": "Text To Handwriting",
@@ -231,44 +231,6 @@
       "rank": 6
     },
     {
-      "name": "Weather",
-      "slug": "weather",
-      "url": "/Nisulka-Tools/tools/weather/",
-      "score": 78,
-      "grade": "B",
-      "title": "Weather Forecast Dashboard - Nisulka Tools",
-      "description": "Check live weather conditions, 5-day forecasts, 24-hour hourly temperatures, sunrise/sunset daylight cycles, humidity, wind speeds, and atmospheric metrics worldwide.",
-      "wordCount": 4377,
-      "h1Count": 2,
-      "h2Count": 1,
-      "images": 1,
-      "imagesWithoutAlt": 0,
-      "canonical": "",
-      "openGraph": {
-        "title": true,
-        "description": true
-      },
-      "passed": [
-        "Title length is good",
-        "Meta description length is good",
-        "H2 headings found",
-        "Open Graph title found",
-        "Open Graph description found",
-        "All images have alt attributes",
-        "Sufficient page content"
-      ],
-      "issues": [
-        "Multiple H1 headings found (2)",
-        "Missing canonical URL"
-      ],
-      "issueSummary": {
-        "total": 2,
-        "critical": 0,
-        "warning": 2
-      },
-      "rank": 7
-    },
-    {
       "name": "English Nepali Dictionary",
       "slug": "English-Nepali-Dictionary",
       "url": "/Nisulka-Tools/tools/English-Nepali-Dictionary/",
@@ -304,7 +266,7 @@
         "critical": 0,
         "warning": 3
       },
-      "rank": 8
+      "rank": 7
     },
     {
       "name": "Cv Generator",
@@ -342,7 +304,7 @@
         "critical": 0,
         "warning": 3
       },
-      "rank": 9
+      "rank": 8
     },
     {
       "name": "Youtube Title Generator",
@@ -380,7 +342,7 @@
         "critical": 0,
         "warning": 3
       },
-      "rank": 10
+      "rank": 9
     },
     {
       "name": "About Your System",
@@ -418,7 +380,7 @@
         "critical": 0,
         "warning": 4
       },
-      "rank": 11
+      "rank": 10
     },
     {
       "name": "Draw App",
@@ -443,6 +405,44 @@
         "Exactly one H1 found",
         "H2 headings found",
         "No images requiring alt text",
+        "Sufficient page content"
+      ],
+      "issues": [
+        "Missing meta description",
+        "Missing canonical URL",
+        "Missing Open Graph title",
+        "Missing Open Graph description"
+      ],
+      "issueSummary": {
+        "total": 4,
+        "critical": 0,
+        "warning": 4
+      },
+      "rank": 11
+    },
+    {
+      "name": "Weather",
+      "slug": "weather",
+      "url": "/Nisulka-Tools/tools/weather/",
+      "score": 60,
+      "grade": "C",
+      "title": "Live Weather Dashboard & 5-Day Forecast | Nisulka Tools",
+      "description": "",
+      "wordCount": 2643,
+      "h1Count": 1,
+      "h2Count": 4,
+      "images": 1,
+      "imagesWithoutAlt": 0,
+      "canonical": "",
+      "openGraph": {
+        "title": false,
+        "description": false
+      },
+      "passed": [
+        "Title length is good",
+        "Exactly one H1 found",
+        "H2 headings found",
+        "All images have alt attributes",
         "Sufficient page content"
       ],
       "issues": [
