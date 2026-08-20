@@ -3,9 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Weather Dashboard & 5-Day Forecast | Nisulka Tools</title>
+    <title>Live Weather Dashboard & Multi-Day Forecast | Nisulka Tools</title>
+    <meta name="description" content="Real-time global weather forecast dashboard with hourly scrubbers, air quality analytics, UV index, wind compass, radar maps, and city comparisons.">
+    <meta name="keywords" content="weather dashboard, live forecast, open-meteo, air quality index, UV forecast, wind compass, weather map">
+    <meta name="theme-color" content="#4f46e5">
+
+    <!-- JSON-LD Structured Data for Search Engine Optimization -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Nisulka Live Weather Dashboard",
+      "url": "https://apps.laxmannepal.com.np/Nisulka-Tools/weather",
+      "description": "Interactive meteorological analytics platform featuring real-time telemetry, air quality tracking, 7-day predictions, and weather radar mapping.",
+      "applicationCategory": "WeatherApplication",
+      "operatingSystem": "All"
+    }
+    </script>
     
-    <!-- Official Nisulka Stylesheets (LOCKED) -->
+    <!-- Official Nisulka Stylesheets (LOCKED - DO NOT MODIFY) -->
     <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/variables.css">
     <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/global.css">
     <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/components.css">
@@ -13,7 +29,7 @@
     <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/footer.css">
     <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/tool.css">
 
-    <!-- External Tailwind CSS, FontAwesome, Chart.js, Leaflet Maps & Inter Font -->
+    <!-- External Libraries: Tailwind CSS, FontAwesome 6, Chart.js, Leaflet Maps, Inter Font -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -43,13 +59,13 @@
             z-index: 10;
         }
 
-        /* Modern Crisp Light Glassmorphism Cards */
+        /* Glassmorphism Crisp Light Cards */
         .white-card {
-            background: rgba(255, 255, 255, 0.94);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid var(--card-border);
-            box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
+            box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
@@ -71,7 +87,6 @@
             box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
         }
 
-        /* Custom Scrollbar for horizontal hourly cards */
         .no-scrollbar::-webkit-scrollbar {
             display: none;
         }
@@ -83,17 +98,17 @@
         .chart-container {
             position: relative;
             width: 100%;
-            height: 290px;
+            height: 310px;
         }
 
         #weather-map {
             width: 100%;
-            height: 280px;
+            height: 300px;
             border-radius: 1.25rem;
             z-index: 1;
         }
 
-        /* Custom Range Slider Styling */
+        /* Custom Range Slider Styling for Scrubber */
         input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none;
             height: 20px;
@@ -114,74 +129,98 @@
             box-shadow: 0 2px 6px rgba(79, 70, 229, 0.4);
             border: 2px solid #ffffff;
         }
+
+        /* Focus rings for WCAG accessibility */
+        a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible {
+            outline: 2px solid #4f46e5;
+            outline-offset: 2px;
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between bg-slate-50 text-slate-900">
 
-    <!-- OFFICIAL NISULKA HEADER MOUNT POINT (LOCKED) -->
+    <!-- OFFICIAL NISULKA HEADER MOUNT POINT (LOCKED - DO NOT ALTER) -->
     <div id="site-header-mount" class="relative z-20"></div>
 
-    <main class="flex-grow relative z-10">
+    <main class="flex-grow relative z-10" id="main-content">
         <div class="nisulka-tool-wrapper">
             
             <!-- Breadcrumb Navigation -->
             <nav class="flex text-sm text-slate-500 mb-6" aria-label="Breadcrumb">
                 <ol class="inline-flex items-center space-x-1 md:space-x-3">
                     <li class="inline-flex items-center">
-                        <a href="https://apps.laxmannepal.com.np/Nisulka-Tools/" class="inline-flex items-center text-slate-600 hover:text-indigo-600 transition-colors">
-                            <i class="fa-solid fa-house text-xs mr-2 text-indigo-500"></i> Home
+                        <a href="https://apps.laxmannepal.com.np/Nisulka-Tools/" class="inline-flex items-center text-slate-600 hover:text-indigo-600 transition-colors focus:outline-none">
+                            <i class="fa-solid fa-house text-xs mr-2 text-indigo-500" aria-hidden="true"></i> Home
                         </a>
                     </li>
                     <li>
                         <div class="flex items-center">
-                            <i class="fa-solid fa-chevron-right text-xs text-slate-400 mx-2"></i>
+                            <i class="fa-solid fa-chevron-right text-xs text-slate-400 mx-2" aria-hidden="true"></i>
                             <span class="text-slate-500">Tools</span>
                         </div>
                     </li>
                     <li aria-current="page">
                         <div class="flex items-center">
-                            <i class="fa-solid fa-chevron-right text-xs text-slate-400 mx-2"></i>
-                            <span class="text-indigo-600 font-semibold">Weather Dashboard</span>
+                            <i class="fa-solid fa-chevron-right text-xs text-slate-400 mx-2" aria-hidden="true"></i>
+                            <span class="text-indigo-600 font-semibold">Live Weather Dashboard</span>
                         </div>
                     </li>
                 </ol>
             </nav>
 
-            <!-- Page Header -->
-            <div class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+            <!-- Page Header Bar -->
+            <header class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
                 <div>
                     <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-semibold mb-3">
-                        <i class="fa-solid fa-cloud-sun text-amber-500"></i>
-                        <span>Interactive Real-Time Meteorological Intelligence</span>
+                        <i class="fa-solid fa-cloud-sun text-amber-500" aria-hidden="true"></i>
+                        <span>Live Global Meteorological Intelligence Platform</span>
                     </div>
                     <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
-                        Live Weather Dashboard & Interactive Analytics
+                        Live Weather Forecast & Atmospheric Analytics
                     </h1>
                     <p class="text-slate-600 text-sm md:text-base max-w-3xl mt-2 leading-relaxed">
-                        Explore interactive hourly scrubbers, geographic weather maps, multi-variable trend charts, side-by-side city comparisons, solar/lunar dynamics, and air quality telemetry worldwide.
+                        Access real-time telemetry, 24-hour interactive time scrubbers, air quality chemical breakdowns, multi-variable trend charts, side-by-side city comparison, and interactive weather maps.
                     </p>
                 </div>
                 
                 <!-- Quick Controls -->
                 <div class="flex flex-wrap items-center gap-3">
-                    <button onclick="copyTelemetryReport()" class="px-3.5 py-2 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs font-semibold rounded-2xl shadow-sm transition-all flex items-center space-x-1.5">
+                    <button onclick="saveCurrentLocation()" id="save-location-btn" class="px-3.5 py-2 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs font-semibold rounded-2xl shadow-sm transition-all flex items-center space-x-1.5 focus:ring-2 focus:ring-indigo-500" title="Bookmark current location">
+                        <i class="fa-regular fa-bookmark text-indigo-600" id="bookmark-icon"></i>
+                        <span id="save-loc-text">Bookmark City</span>
+                    </button>
+
+                    <button onclick="copyTelemetryReport()" class="px-3.5 py-2 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs font-semibold rounded-2xl shadow-sm transition-all flex items-center space-x-1.5 focus:ring-2 focus:ring-indigo-500" title="Copy text report to clipboard">
                         <i class="fa-regular fa-copy text-indigo-600"></i>
                         <span id="copy-report-text">Copy Report</span>
                     </button>
-                    <div class="bg-white p-1 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-1">
+
+                    <div class="bg-white p-1 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-1" role="group" aria-label="Temperature unit selection">
                         <button id="unit-c" onclick="setUnit('C')" class="px-3.5 py-1.5 text-xs rounded-xl font-medium transition-all unit-btn-active">°C (Celsius)</button>
                         <button id="unit-f" onclick="setUnit('F')" class="px-3.5 py-1.5 text-xs rounded-xl text-slate-600 hover:text-slate-900 font-medium transition-all">°F (Fahrenheit)</button>
                     </div>
                 </div>
+            </header>
+
+            <!-- Notification Toast Container -->
+            <div id="toast-msg" class="hidden fixed bottom-6 right-6 z-50 bg-slate-900 text-white text-xs font-semibold px-4 py-3 rounded-2xl shadow-xl flex items-center space-x-2 border border-slate-700 transition-all" role="status">
+                <i class="fa-solid fa-circle-check text-emerald-400 text-base" aria-hidden="true"></i>
+                <span id="toast-text">Action successful!</span>
             </div>
 
-            <!-- Toast Notification Box -->
-            <div id="toast-msg" class="hidden fixed bottom-6 right-6 z-50 bg-slate-900 text-white text-xs font-semibold px-4 py-3 rounded-2xl shadow-xl flex items-center space-x-2 border border-slate-700 transition-all">
-                <i class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
-                <span id="toast-text">Telemetry copied to clipboard!</span>
+            <!-- Critical Weather Alert / Advisory Banner -->
+            <div id="advisory-alert-box" class="hidden mb-6 p-4 rounded-2xl border border-amber-200 bg-amber-50/90 text-amber-900 flex items-start space-x-3 shadow-sm transition-all">
+                <i class="fa-solid fa-triangle-exclamation text-amber-600 text-lg mt-0.5 flex-shrink-0" aria-hidden="true"></i>
+                <div class="flex-grow">
+                    <h4 class="font-bold text-xs uppercase tracking-wider text-amber-800" id="advisory-title">Meteorological Advisory</h4>
+                    <p id="advisory-body" class="text-xs text-amber-900 mt-0.5 leading-relaxed">Atmospheric conditions warrant increased awareness in this location.</p>
+                </div>
+                <button onclick="dismissAdvisory()" class="text-amber-600 hover:text-amber-800 text-sm p-1 focus:outline-none" aria-label="Dismiss advisory">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
             </div>
 
-            <!-- Alert / Error Container -->
+            <!-- Error Banner -->
             <div id="alert-container" class="hidden mb-6 p-4 rounded-2xl border border-red-200 bg-red-50 text-red-700 flex items-center justify-between shadow-sm">
                 <div class="flex items-center space-x-3">
                     <i class="fa-solid fa-circle-exclamation text-lg text-red-500"></i>
@@ -192,28 +231,46 @@
                 </button>
             </div>
 
+            <!-- Saved Locations Quick-Bar -->
+            <div id="saved-locations-bar" class="hidden mb-6 p-4 white-card rounded-2xl border-indigo-100">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center">
+                        <i class="fa-solid fa-star text-amber-400 mr-2"></i> Bookmarked Metropolises
+                    </span>
+                    <button onclick="clearSavedLocations()" class="text-[11px] font-semibold text-slate-400 hover:text-red-500 transition-colors">Clear All</button>
+                </div>
+                <div id="saved-chips-container" class="flex flex-wrap gap-2 pt-1">
+                    <!-- Populated dynamically via JS -->
+                </div>
+            </div>
+
             <!-- MAIN WORKSPACE GRID -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
                 
                 <!-- Search & Controls Sidebar (4 cols) -->
-                <div class="lg:col-span-4 flex flex-col space-y-6">
+                <aside class="lg:col-span-4 flex flex-col space-y-6" aria-label="Search and quick controls">
                     
                     <!-- Search Card -->
-                    <div class="white-card p-6 rounded-3xl">
+                    <div class="white-card p-6 rounded-3xl relative">
                         <h2 class="text-base font-bold text-slate-900 mb-4 flex items-center">
-                            <i class="fa-solid fa-magnifying-glass text-indigo-600 mr-2.5"></i> Search Location
+                            <i class="fa-solid fa-magnifying-glass text-indigo-600 mr-2.5" aria-hidden="true"></i> Search Location
                         </h2>
                         
                         <div class="space-y-4">
-                            <div>
-                                <label for="city-input" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">City or Region Name</label>
+                            <div class="relative">
+                                <label for="city-input" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">City, Town, or Region</label>
                                 <div class="relative">
-                                    <input type="text" id="city-input" placeholder="e.g. London, Tokyo, New York, Sydney" class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-300 rounded-2xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-sm font-medium">
-                                    <i class="fa-solid fa-location-dot absolute left-4 top-3.5 text-slate-400"></i>
+                                    <input type="text" id="city-input" autocomplete="off" placeholder="e.g. London, Tokyo, Chicago, Kathmandu" class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-300 rounded-2xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-sm font-medium" aria-autocomplete="list">
+                                    <i class="fa-solid fa-location-dot absolute left-4 top-3.5 text-slate-400" aria-hidden="true"></i>
+                                </div>
+
+                                <!-- Autocomplete Suggestions Dropdown -->
+                                <div id="autocomplete-results" class="hidden absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl shadow-xl border border-slate-200 z-50 max-h-60 overflow-y-auto divide-y divide-slate-100">
+                                    <!-- Populated dynamically -->
                                 </div>
                             </div>
 
-                            <button id="search-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-2xl shadow-md hover:shadow-indigo-500/20 transition-all flex items-center justify-center space-x-2 text-sm">
+                            <button id="search-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-2xl shadow-md hover:shadow-indigo-500/20 transition-all flex items-center justify-center space-x-2 text-sm focus:ring-2 focus:ring-indigo-500">
                                 <i class="fa-solid fa-search"></i>
                                 <span>Get Forecast Data</span>
                             </button>
@@ -224,9 +281,9 @@
                                 <div class="flex-grow border-t border-slate-200"></div>
                             </div>
 
-                            <button id="location-btn" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-3 px-4 rounded-2xl transition-all flex items-center justify-center space-x-2 text-sm border border-slate-200">
-                                <i class="fa-solid fa-crosshairs text-indigo-600"></i>
-                                <span>Use Current Location</span>
+                            <button id="location-btn" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-3 px-4 rounded-2xl transition-all flex items-center justify-center space-x-2 text-sm border border-slate-200 focus:ring-2 focus:ring-indigo-500">
+                                <i class="fa-solid fa-crosshairs text-indigo-600" id="gps-icon"></i>
+                                <span id="gps-btn-text">Use My Current GPS</span>
                             </button>
                         </div>
 
@@ -250,7 +307,7 @@
                             <i class="fa-solid fa-person-running text-indigo-600 mr-2"></i> Activity & Outdoor Advisory
                         </h3>
                         <p id="weather-summary-text" class="text-xs text-slate-600 leading-relaxed mb-4">
-                            Loading current environmental telemetry and generating activity recommendations...
+                            Loading environmental telemetry and generating intelligent recommendations...
                         </p>
 
                         <!-- Outdoor Activity Index Matrix -->
@@ -264,8 +321,8 @@
                                 <span id="rating-cycling" class="font-bold text-indigo-600">Good</span>
                             </div>
                             <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200/60 flex items-center justify-between">
-                                <span class="text-slate-500 text-[11px]">UV Risk</span>
-                                <span id="rating-uv" class="font-bold text-amber-600">Moderate</span>
+                                <span class="text-slate-500 text-[11px]">Hiking</span>
+                                <span id="rating-hiking" class="font-bold text-teal-600">Optimal</span>
                             </div>
                             <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200/60 flex items-center justify-between">
                                 <span class="text-slate-500 text-[11px]">Outfit</span>
@@ -286,7 +343,7 @@
                             <span class="text-xs text-slate-500 font-medium">US AQI Level</span>
                             <span id="sidebar-aqi-val" class="text-2xl font-black text-slate-900">35</span>
                         </div>
-                        <p id="sidebar-aqi-desc" class="text-xs text-slate-500 leading-relaxed mb-3">Air quality is considered satisfactory, and air pollution poses little or no risk.</p>
+                        <p id="sidebar-aqi-desc" class="text-xs text-slate-500 leading-relaxed mb-3">Air quality is considered satisfactory, posing minimal pollution risk.</p>
                         
                         <!-- AQI Progress Bar -->
                         <div class="w-full bg-slate-100 rounded-full h-2 mb-1 overflow-hidden">
@@ -298,24 +355,25 @@
                             <span>200+ Unhealthy</span>
                         </div>
                     </div>
-                </div>
+                </aside>
 
                 <!-- Right Main Weather Content (8 cols) -->
                 <div class="lg:col-span-8 flex flex-col space-y-8">
                     
                     <!-- Main Hero Weather Banner Card -->
-                    <div id="hero-weather-card" class="hero-banner-card rounded-3xl p-6 md:p-8 relative overflow-hidden">
+                    <section id="hero-weather-card" class="hero-banner-card rounded-3xl p-6 md:p-8 relative overflow-hidden" aria-label="Current Weather Overview">
                         <div class="flex flex-col md:flex-row justify-between items-start md:items-center relative z-10 gap-6">
                             <div>
-                                <div class="inline-flex items-center space-x-2 bg-indigo-50 border border-indigo-200 px-3 py-1 rounded-full text-xs font-medium text-indigo-700 mb-3">
-                                    <i class="fa-solid fa-globe text-indigo-500"></i>
-                                    <span id="realm-coordinate-text">Coordinates: Fetching...</span>
+                                <div class="inline-flex items-center space-x-2 bg-indigo-50 border border-indigo-200 px-3 py-1 rounded-full text-xs font-medium text-indigo-700 mb-3 flex-wrap gap-1">
+                                    <span class="inline-flex items-center"><i class="fa-solid fa-globe text-indigo-500 mr-1.5"></i> <span id="realm-coordinate-text">Coordinates: Loading...</span></span>
+                                    <span class="text-slate-300">•</span>
+                                    <span id="elevation-badge" class="inline-flex items-center text-slate-600"><i class="fa-solid fa-mountain text-slate-400 mr-1"></i> Elev: -- m</span>
                                 </div>
                                 <h2 id="current-city" class="text-3xl md:text-5xl font-black text-slate-900 tracking-tight">London</h2>
                                 <p id="current-date" class="text-slate-500 text-xs md:text-sm font-medium mt-1">Friday, August 21, 2026</p>
                             </div>
                             <div class="flex items-center space-x-4 bg-white/90 p-4 rounded-3xl border border-indigo-100 shadow-sm">
-                                <img id="current-icon" src="https://openweathermap.org/img/wn/02d@4x.png" alt="Weather condition" class="w-20 h-20 filter drop-shadow">
+                                <img id="current-icon" src="https://openweathermap.org/img/wn/02d@4x.png" alt="Weather condition icon" class="w-20 h-20 filter drop-shadow">
                                 <div>
                                     <div id="current-temp" class="text-4xl md:text-5xl font-black text-slate-900">18.5°C</div>
                                     <div id="current-desc" class="text-indigo-600 capitalize font-bold text-sm md:text-base mt-0.5">Partly Cloudy</div>
@@ -324,7 +382,7 @@
                             </div>
                         </div>
 
-                        <!-- Top Metric Pill Strip -->
+                        <!-- Top Metric Strip -->
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-8 pt-6 border-t border-slate-200/80 relative z-10">
                             <div class="bg-white/80 p-3.5 rounded-2xl border border-slate-200/80">
                                 <div class="flex items-center space-x-3">
@@ -363,16 +421,16 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </section>
 
-                    <!-- NEW INTERACTIVE FEATURE 1: 24-HOUR INTERACTIVE SCRUBBER TIMELINE -->
+                    <!-- 24-HOUR INTERACTIVE SCRUBBER TIMELINE -->
                     <div class="white-card p-6 rounded-3xl border-indigo-200">
                         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-2">
                             <div>
                                 <h3 class="text-base font-bold text-slate-900 flex items-center">
                                     <i class="fa-solid fa-sliders text-indigo-600 mr-2.5"></i> Interactive 24-Hour Time Scrubber
                                 </h3>
-                                <p class="text-xs text-slate-500 mt-0.5">Drag the slider to inspect atmospheric conditions at any hour of the day</p>
+                                <p class="text-xs text-slate-500 mt-0.5">Drag slider to inspect predicted atmospheric conditions at any hour</p>
                             </div>
                             <span id="scrubber-hour-display" class="px-3 py-1 bg-indigo-600 text-white font-bold text-xs rounded-xl shadow-sm">
                                 Selected: Now (00:00)
@@ -380,7 +438,7 @@
                         </div>
 
                         <div class="space-y-4 pt-2">
-                            <input type="range" id="hourly-scrubber" min="0" max="23" step="1" value="0" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600">
+                            <input type="range" id="hourly-scrubber" min="0" max="23" step="1" value="0" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600" aria-label="Hourly timeline scrubber slider">
                             
                             <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200/80 text-xs">
                                 <div class="flex flex-col">
@@ -410,11 +468,11 @@
                                 <h3 class="text-lg font-bold text-slate-900 flex items-center">
                                     <i class="fa-solid fa-chart-line text-indigo-600 mr-2"></i> Meteorological Charts & Trends
                                 </h3>
-                                <p class="text-xs text-slate-500 mt-0.5">Visual analytics for temperature, rain probability, wind, air quality, and barometric trends</p>
+                                <p class="text-xs text-slate-500 mt-0.5">Analytics for temperature curves, rain, wind vectors, AQI, and barometric pressure</p>
                             </div>
                             
                             <!-- Chart View Selector Tabs -->
-                            <div class="bg-slate-100 p-1 rounded-2xl border border-slate-200 flex flex-wrap gap-1 self-stretch lg:self-auto">
+                            <div class="bg-slate-100 p-1 rounded-2xl border border-slate-200 flex flex-wrap gap-1 self-stretch lg:self-auto" role="tablist" aria-label="Chart metric views">
                                 <button id="chart-tab-temp" onclick="switchChartTab('temp')" class="px-3 py-1.5 text-xs rounded-xl transition-all tab-btn-active">24h Temp</button>
                                 <button id="chart-tab-precip" onclick="switchChartTab('precip')" class="px-3 py-1.5 text-xs text-slate-600 hover:text-slate-900 rounded-xl transition-all">Precipitation</button>
                                 <button id="chart-tab-wind" onclick="switchChartTab('wind')" class="px-3 py-1.5 text-xs text-slate-600 hover:text-slate-900 rounded-xl transition-all">Wind Speed</button>
@@ -426,18 +484,18 @@
 
                         <!-- Canvas Container -->
                         <div class="chart-container">
-                            <canvas id="weather-analytics-chart"></canvas>
+                            <canvas id="weather-analytics-chart" aria-label="Meteorological trend graph" role="img"></canvas>
                         </div>
                     </div>
 
-                    <!-- NEW INTERACTIVE FEATURE 2: GEOGRAPHIC INTERACTIVE WEATHER MAP -->
+                    <!-- GEOGRAPHIC INTERACTIVE WEATHER MAP -->
                     <div class="white-card p-6 rounded-3xl">
                         <div class="flex items-center justify-between mb-4">
                             <div>
                                 <h3 class="text-lg font-bold text-slate-900 flex items-center">
-                                    <i class="fa-solid fa-map-location-dot text-indigo-600 mr-2.5"></i> Interactive Location Map
+                                    <i class="fa-solid fa-map-location-dot text-indigo-600 mr-2.5"></i> Geographic Location Map
                                 </h3>
-                                <p class="text-xs text-slate-500 mt-0.5">Geographic coordinates & regional topographical positioning</p>
+                                <p class="text-xs text-slate-500 mt-0.5">Topographical positioning & regional elevation</p>
                             </div>
                             <span class="px-3 py-1 bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-semibold rounded-full">
                                 <i class="fa-solid fa-layer-group text-xs mr-1"></i> Interactive Map
@@ -446,30 +504,31 @@
                         <div id="weather-map"></div>
                     </div>
 
-                    <!-- NEW INTERACTIVE FEATURE 3: SIDE-BY-SIDE METROPOLIS COMPARISON -->
+                    <!-- SIDE-BY-SIDE METROPOLIS COMPARISON -->
                     <div class="white-card p-6 rounded-3xl">
                         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-2">
                             <div>
                                 <h3 class="text-lg font-bold text-slate-900 flex items-center">
                                     <i class="fa-solid fa-code-compare text-indigo-600 mr-2.5"></i> Metropolis Side-by-Side Comparison
                                 </h3>
-                                <p class="text-xs text-slate-500 mt-0.5">Compare conditions in <span id="comp-city-a-label" class="font-bold text-indigo-600">London</span> against another metropolis</p>
+                                <p class="text-xs text-slate-500 mt-0.5">Compare active conditions in <span id="comp-city-a-label" class="font-bold text-indigo-600">London</span> against another city</p>
                             </div>
 
                             <div class="flex items-center space-x-2">
-                                <select id="compare-city-select" class="px-3 py-1.5 bg-slate-100 border border-slate-300 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <select id="compare-city-select" class="px-3 py-1.5 bg-slate-100 border border-slate-300 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500" aria-label="Select city to compare">
                                     <option value="Tokyo">Compare Tokyo</option>
                                     <option value="New York">Compare New York</option>
                                     <option value="Paris">Compare Paris</option>
                                     <option value="Sydney">Compare Sydney</option>
                                     <option value="Dubai">Compare Dubai</option>
+                                    <option value="Singapore">Compare Singapore</option>
                                 </select>
                             </div>
                         </div>
 
                         <!-- Comparison Matrix Grid -->
                         <div class="grid grid-cols-2 gap-4 text-xs pt-2">
-                            <!-- City A Card -->
+                            <!-- Active City Card -->
                             <div class="bg-indigo-50/60 p-4 rounded-2xl border border-indigo-100 flex flex-col justify-between">
                                 <div>
                                     <span class="text-[11px] font-bold text-indigo-500 uppercase tracking-wider">Active Location</span>
@@ -492,7 +551,7 @@
                                 </div>
                             </div>
 
-                            <!-- City B Card -->
+                            <!-- Target City Card -->
                             <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col justify-between">
                                 <div>
                                     <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Comparison Target</span>
@@ -550,10 +609,10 @@
                                 </div>
                             </div>
 
-                            <!-- 2. Miasma & Air Purity Index -->
+                            <!-- 2. Air Quality & Chemical Pollutants -->
                             <div class="white-card p-5 rounded-2xl flex flex-col justify-between">
                                 <div class="flex items-center justify-between text-slate-400 mb-2">
-                                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Air Quality</span>
+                                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Pollutant Details</span>
                                     <i class="fa-solid fa-smog text-teal-600"></i>
                                 </div>
                                 <div>
@@ -568,7 +627,7 @@
                                 </div>
                             </div>
 
-                            <!-- 3. Elemental Wind Vector & Gusts -->
+                            <!-- 3. Wind Vector & Gusts -->
                             <div class="white-card p-5 rounded-2xl flex flex-col justify-between">
                                 <div class="flex items-center justify-between text-slate-400 mb-2">
                                     <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Wind Vector</span>
@@ -675,14 +734,14 @@
                     </div>
 
                     <!-- Extended Forecast & Timeline View -->
-                    <div>
+                    <section aria-label="Extended forecast section">
                         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-3">
                             <h3 class="text-lg font-bold text-slate-900 flex items-center">
                                 <i class="fa-regular fa-calendar-days text-indigo-600 mr-2.5"></i> Multi-Day & Hourly Forecast
                             </h3>
                             
                             <!-- Toggle Buttons -->
-                            <div class="bg-slate-100 p-1 rounded-2xl border border-slate-200 flex space-x-1 self-stretch sm:self-auto">
+                            <div class="bg-slate-100 p-1 rounded-2xl border border-slate-200 flex space-x-1 self-stretch sm:self-auto" role="tablist">
                                 <button id="timespan-week" onclick="setTimespan('week')" class="flex-1 sm:flex-none px-4 py-1.5 text-xs rounded-xl transition-all tab-btn-active">
                                     7-Day Forecast
                                 </button>
@@ -700,12 +759,12 @@
                                 <p class="text-slate-500 text-xs font-medium">Loading extended forecast predictions...</p>
                             </div>
                         </div>
-                    </div>
+                    </section>
 
                 </div>
             </div>
 
-            <!-- METEOROLOGICAL LORE / KNOWLEDGE SECTION -->
+            <!-- METEOROLOGICAL KNOWLEDGE SECTION -->
             <section class="mt-16 pt-12 border-t border-slate-200">
                 <div class="max-w-4xl mx-auto">
                     <h2 class="text-2xl font-bold text-slate-900 mb-8 text-center tracking-tight">Understanding Meteorological Telemetry</h2>
@@ -717,7 +776,7 @@
                             </div>
                             <h3 class="font-bold text-slate-900 mb-2 text-sm">Solar Radiation & UV Index</h3>
                             <p class="text-xs text-slate-500 leading-relaxed">
-                                The UV Index quantifies solar ultraviolet radiation intensity. Levels 0-2 are minimal risk, 3-5 moderate, while 6+ requires sun protective wear.
+                                The UV Index quantifies solar ultraviolet radiation intensity. Levels 0-2 present minimal risk, 3-5 moderate risk, while 6+ requires protective clothing and sunscreen.
                             </p>
                         </div>
 
@@ -727,7 +786,7 @@
                             </div>
                             <h3 class="font-bold text-slate-900 mb-2 text-sm">Air Quality Index (AQI)</h3>
                             <p class="text-xs text-slate-500 leading-relaxed">
-                                Tracks fine particulate matter (PM2.5, PM10) and gases. Values under 50 signify pristine air, while scores above 100 suggest caution for sensitive groups.
+                                Tracks fine particulate matter (PM2.5, PM10) and toxic gases. Scores under 50 signify pristine air, whereas scores above 100 suggest caution for sensitive groups.
                             </p>
                         </div>
 
@@ -737,7 +796,7 @@
                             </div>
                             <h3 class="font-bold text-slate-900 mb-2 text-sm">Barometric Pressure Trends</h3>
                             <p class="text-xs text-slate-500 leading-relaxed">
-                                Atmospheric pressure fluctuations indicate weather transitions. Dropping pressure signals incoming rain or storm fronts, whereas rising pressure brings fair weather.
+                                Atmospheric pressure fluctuations indicate weather transitions. Dropping pressure signals incoming rain or storm fronts, whereas rising pressure brings fair skies.
                             </p>
                         </div>
                     </div>
@@ -751,7 +810,7 @@
                 <div class="space-y-4">
                     <div class="white-card p-6 rounded-3xl">
                         <h3 class="text-sm font-bold text-slate-900 mb-2">How frequently is the weather data updated?</h3>
-                        <p class="text-xs text-slate-500 leading-relaxed">The meteorological feeds are sourced directly from Open-Meteo observational endpoints, updating hourly with live satellite and radar sync.</p>
+                        <p class="text-xs text-slate-500 leading-relaxed">The meteorological telemetry is sourced directly from Open-Meteo observational endpoints, updating hourly with live satellite and radar synchronization.</p>
                     </div>
 
                     <div class="white-card p-6 rounded-3xl">
@@ -769,10 +828,10 @@
         </div>
     </main>
 
-    <!-- OFFICIAL NISULKA FOOTER MOUNT POINT (LOCKED) -->
+    <!-- OFFICIAL NISULKA FOOTER MOUNT POINT (LOCKED - DO NOT ALTER) -->
     <div id="site-footer-mount" class="relative z-20"></div>
 
-    <!-- OFFICIAL NISULKA HEADER & FOOTER SCRIPTS (LOCKED) -->
+    <!-- OFFICIAL NISULKA HEADER & FOOTER SCRIPTS (LOCKED - DO NOT ALTER) -->
     <script src="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/js/header.js"></script>
     <script src="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/js/footer.js"></script>
 
@@ -782,8 +841,12 @@
         const locationButton = document.querySelector("#location-btn");
         const alertContainer = document.querySelector("#alert-container");
         const alertMessage = document.querySelector("#alert-message");
+        const advisoryBox = document.querySelector("#advisory-alert-box");
+        const advisoryTitle = document.querySelector("#advisory-title");
+        const advisoryBody = document.querySelector("#advisory-body");
+        const autocompleteResults = document.querySelector("#autocomplete-results");
 
-        // Current Hero Weather Elements
+        // Hero Weather Elements
         const currentCityEl = document.querySelector("#current-city");
         const currentDateEl = document.querySelector("#current-date");
         const currentTempEl = document.querySelector("#current-temp");
@@ -795,9 +858,10 @@
         const currentPressureEl = document.querySelector("#current-pressure");
         const heroUvValEl = document.querySelector("#hero-uv-val");
         const realmCoordinateText = document.querySelector("#realm-coordinate-text");
+        const elevationBadge = document.querySelector("#elevation-badge");
         const daysForecastDiv = document.querySelector("#days-forecast-container");
 
-        // Metrics Elements
+        // Metric Card Elements
         const sunRiseEl = document.querySelector("#sun-rise");
         const sunSetEl = document.querySelector("#sun-set");
         const moonPhaseEl = document.querySelector("#moon-phase");
@@ -828,7 +892,7 @@
         const sidebarAqiDesc = document.querySelector("#sidebar-aqi-desc");
         const aqiProgressBar = document.querySelector("#aqi-progress-bar");
 
-        // Interactive Scrubber Elements
+        // Scrubber Elements
         const hourlyScrubber = document.querySelector("#hourly-scrubber");
         const scrubberHourDisplay = document.querySelector("#scrubber-hour-display");
         const scrubTemp = document.querySelector("#scrub-temp");
@@ -839,7 +903,11 @@
         // Comparison Select Element
         const compareCitySelect = document.querySelector("#compare-city-select");
 
-        // Application State
+        // Saved Locations Bar
+        const savedLocationsBar = document.querySelector("#saved-locations-bar");
+        const savedChipsContainer = document.querySelector("#saved-chips-container");
+
+        // Global State variables
         let currentUnit = "C";
         let currentTimespan = "week";
         let currentChartTab = "temp";
@@ -848,6 +916,8 @@
         let weatherChartInstance = null;
         let leafletMapInstance = null;
         let mapMarkerInstance = null;
+        let searchDebounceTimer = null;
+        let savedLocations = JSON.parse(localStorage.getItem("nisulka_saved_cities") || "[]");
 
         function showAlert(msg) {
             alertMessage.textContent = msg;
@@ -856,6 +926,10 @@
 
         function dismissAlert() {
             alertContainer.classList.add("hidden");
+        }
+
+        function dismissAdvisory() {
+            advisoryBox.classList.add("hidden");
         }
 
         function mapWMOCode(code, isDay = 1) {
@@ -926,6 +1000,74 @@
             return arr[val % 16];
         }
 
+        function renderSavedLocations() {
+            if (savedLocations.length === 0) {
+                savedLocationsBar.classList.add("hidden");
+                return;
+            }
+            savedLocationsBar.classList.remove("hidden");
+            savedChipsContainer.innerHTML = "";
+
+            savedLocations.forEach(loc => {
+                const chip = document.createElement("div");
+                chip.className = "inline-flex items-center bg-slate-100 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 text-slate-700 hover:text-indigo-600 rounded-xl px-3 py-1 text-xs font-semibold transition-all space-x-1.5 cursor-pointer";
+                chip.innerHTML = `
+                    <span onclick="selectSavedLocation('${loc.name}', ${loc.lat}, ${loc.lng}, '${loc.country}')">${loc.name}${loc.country ? ', ' + loc.country : ''}</span>
+                    <i class="fa-solid fa-xmark text-slate-400 hover:text-red-500 p-0.5" onclick="removeSavedLocation(event, '${loc.name}')"></i>
+                `;
+                savedChipsContainer.appendChild(chip);
+            });
+
+            updateBookmarkButton();
+        }
+
+        function updateBookmarkButton() {
+            const isSaved = savedLocations.some(l => l.name.toLowerCase() === cachedCityName.toLowerCase());
+            const icon = document.querySelector("#bookmark-icon");
+            const text = document.querySelector("#save-loc-text");
+            if (isSaved) {
+                icon.className = "fa-solid fa-bookmark text-amber-500";
+                text.textContent = "Bookmarked";
+            } else {
+                icon.className = "fa-regular fa-bookmark text-indigo-600";
+                text.textContent = "Bookmark City";
+            }
+        }
+
+        function saveCurrentLocation() {
+            if (!cachedData || !cachedCityName) return;
+            const idx = savedLocations.findIndex(l => l.name.toLowerCase() === cachedCityName.toLowerCase());
+            if (idx >= 0) {
+                savedLocations.splice(idx, 1);
+            } else {
+                savedLocations.push({
+                    name: cachedCityName,
+                    country: cachedData.country || "",
+                    lat: cachedData.latitude,
+                    lng: cachedData.longitude
+                });
+            }
+            localStorage.setItem("nisulka_saved_cities", JSON.stringify(savedLocations));
+            renderSavedLocations();
+        }
+
+        function removeSavedLocation(event, name) {
+            event.stopPropagation();
+            savedLocations = savedLocations.filter(l => l.name.toLowerCase() !== name.toLowerCase());
+            localStorage.setItem("nisulka_saved_cities", JSON.stringify(savedLocations));
+            renderSavedLocations();
+        }
+
+        function clearSavedLocations() {
+            savedLocations = [];
+            localStorage.removeItem("nisulka_saved_cities");
+            renderSavedLocations();
+        }
+
+        function selectSavedLocation(name, lat, lng, country) {
+            getWeatherDetails(name, country, lat, lng);
+        }
+
         function setUnit(unit) {
             if (currentUnit === unit) return;
             currentUnit = unit;
@@ -967,6 +1109,7 @@
 
         function quickSearch(cityName) {
             cityInput.value = cityName;
+            autocompleteResults.classList.add("hidden");
             getCityCoordinates();
         }
 
@@ -979,7 +1122,6 @@
             const copyBtnText = document.querySelector("#copy-report-text");
             copyBtnText.textContent = "Copied!";
             
-            // Clipboard copy fallbacks
             try {
                 navigator.clipboard.writeText(report);
             } catch (e) {
@@ -1018,11 +1160,11 @@
                 }
 
                 const tempData = [];
-                const dewData = [];
+                const apparentData = [];
                 for (let i = 0; i < 24; i += 2) {
                     if (!hourly.time[i]) break;
                     tempData.push(Number(convertTemp(hourly.temperature_2m[i]).toFixed(1)));
-                    dewData.push(Number(convertTemp(hourly.dew_point_2m ? hourly.dew_point_2m[i] : hourly.temperature_2m[i] - 4).toFixed(1)));
+                    apparentData.push(Number(convertTemp(hourly.apparent_temperature ? hourly.apparent_temperature[i] : hourly.temperature_2m[i]).toFixed(1)));
                 }
 
                 datasets = [
@@ -1030,14 +1172,14 @@
                         label: `Temperature (°${currentUnit})`,
                         data: tempData,
                         borderColor: '#4f46e5',
-                        backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                        backgroundColor: 'rgba(79, 70, 229, 0.12)',
                         fill: true,
                         tension: 0.4,
                         borderWidth: 2.5
                     },
                     {
-                        label: `Dew Point (°${currentUnit})`,
-                        data: dewData,
+                        label: `Feels Like (°${currentUnit})`,
+                        data: apparentData,
                         borderColor: '#06b6d4',
                         backgroundColor: 'transparent',
                         borderDash: [4, 4],
@@ -1111,7 +1253,7 @@
 
                 datasets = [
                     {
-                        label: 'UV Index curve',
+                        label: 'UV Index Curve',
                         data: uvData,
                         borderColor: '#f59e0b',
                         backgroundColor: 'rgba(245, 158, 11, 0.15)',
@@ -1357,8 +1499,13 @@
 
             const currentWMO = mapWMOCode(current.weather_code, current.is_day);
 
-            // Coordinates
+            // Coordinates & Elevation
             realmCoordinateText.textContent = `Lat: ${data.latitude.toFixed(2)}°, Lon: ${data.longitude.toFixed(2)}°`;
+            if (data.elevation !== undefined) {
+                elevationBadge.textContent = `Elev: ${data.elevation} m`;
+            } else {
+                elevationBadge.textContent = `Elev: Sea Level`;
+            }
 
             // Hero Updates
             currentCityEl.textContent = `${cityName}${data.country ? ', ' + data.country : ''}`;
@@ -1373,6 +1520,23 @@
 
             const heroUv = current.uv_index !== undefined ? Math.round(current.uv_index) : (daily.uv_index_max ? Math.round(daily.uv_index_max[0]) : 0);
             heroUvValEl.textContent = `${heroUv} (${heroUv <= 2 ? 'Low' : heroUv <= 5 ? 'Mod' : 'High'})`;
+
+            // Dynamic Advisory Detection
+            if (current.temperature_2m > 35) {
+                advisoryBox.classList.remove("hidden");
+                advisoryTitle.textContent = "Extreme Heat Warning";
+                advisoryBody.textContent = `High temperatures of ${formatTemp(current.temperature_2m)} detected. Avoid direct sunlight and stay hydrated.`;
+            } else if (current.wind_speed_10m > 45) {
+                advisoryBox.classList.remove("hidden");
+                advisoryTitle.textContent = "High Wind Warning";
+                advisoryBody.textContent = `Gale-force winds exceeding ${current.wind_speed_10m.toFixed(1)} km/h present in the area. Secure loose objects.`;
+            } else if (current.weather_code >= 95) {
+                advisoryBox.classList.remove("hidden");
+                advisoryTitle.textContent = "Thunderstorm Advisory";
+                advisoryBody.textContent = "Active thunderstorms detected in this quadrant. Seek indoor shelter immediately.";
+            } else {
+                advisoryBox.classList.add("hidden");
+            }
 
             // Celestial Cycle & Moon Phase
             if (daily.sunrise && daily.sunrise[0]) {
@@ -1398,21 +1562,21 @@
                 airQualityStatusEl.className = "px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800";
                 sidebarAqiBadge.textContent = "Good";
                 sidebarAqiBadge.className = "px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800";
-                sidebarAqiDesc.textContent = "Air quality is considered satisfactory, and air pollution poses little or no risk.";
+                sidebarAqiDesc.textContent = "Air quality is satisfactory, posing minimal air pollution risk.";
                 aqiProgressBar.className = "bg-emerald-500 h-2 rounded-full transition-all duration-500";
             } else if (usAqi <= 100) {
                 airQualityStatusEl.textContent = "Moderate";
                 airQualityStatusEl.className = "px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800";
                 sidebarAqiBadge.textContent = "Moderate";
                 sidebarAqiBadge.className = "px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800";
-                sidebarAqiDesc.textContent = "Air quality is acceptable; however, sensitive individuals may experience mild effects.";
+                sidebarAqiDesc.textContent = "Air quality is acceptable; sensitive individuals may experience mild effects.";
                 aqiProgressBar.className = "bg-amber-500 h-2 rounded-full transition-all duration-500";
             } else {
                 airQualityStatusEl.textContent = "Unhealthy";
                 airQualityStatusEl.className = "px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-800";
                 sidebarAqiBadge.textContent = "Unhealthy";
                 sidebarAqiBadge.className = "px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-800";
-                sidebarAqiDesc.textContent = "Increased likelihood of adverse effects among sensitive groups and general public.";
+                sidebarAqiDesc.textContent = "Increased likelihood of adverse effects among sensitive groups.";
                 aqiProgressBar.className = "bg-red-500 h-2 rounded-full transition-all duration-500";
             }
             aqiPm25El.textContent = aqi && aqi.pm2_5 ? `${aqi.pm2_5.toFixed(1)} µg/m³` : "Normal";
@@ -1442,7 +1606,7 @@
 
             // Dew Point & Humidity
             dewPointValEl.textContent = formatTemp(current.dew_point_2m || (current.temperature_2m - 4));
-            humidityStatusEl.textContent = current.relative_humidity_2m > 70 ? "High Humidity" : current.relative_humidity_2m < 35 ? "Dry Air" : "Comfortable";
+            humidityStatusEl.textContent = current.relative_humidity_2m > 70 ? "High Humidity" : current.relative_humidity_2m < 35 ? "Dry Air" : "Optimal";
 
             // Visibility
             const visKm = ((current.visibility || 10000) / 1000).toFixed(1);
@@ -1460,31 +1624,34 @@
             // Activity Ratings & Summary text
             const ratingRun = document.querySelector("#rating-running");
             const ratingCyc = document.querySelector("#rating-cycling");
-            const ratingUv = document.querySelector("#rating-uv");
+            const ratingHik = document.querySelector("#rating-hiking");
             const ratingOutfit = document.querySelector("#rating-outfit");
 
             if (current.temperature_2m < 5) {
-                weatherSummaryText.textContent = `Chilly conditions in ${cityName} (${formatTemp(current.temperature_2m)}). Bundle up with thermal layers and warm outerwear before heading outside.`;
+                weatherSummaryText.textContent = `Chilly conditions in ${cityName} (${formatTemp(current.temperature_2m)}). Bundle up with thermal layers and warm outerwear.`;
                 ratingRun.textContent = "Fair"; ratingRun.className = "font-bold text-amber-600";
                 ratingCyc.textContent = "Cold"; ratingCyc.className = "font-bold text-amber-600";
+                ratingHik.textContent = "Brisk"; ratingHik.className = "font-bold text-slate-700";
                 ratingOutfit.textContent = "Heavy Coat";
             } else if (current.temperature_2m > 30) {
                 weatherSummaryText.textContent = `Warm weather in ${cityName} (${formatTemp(current.temperature_2m)}). Stay hydrated, wear light breathable clothing, and limit peak sun exposure.`;
-                ratingRun.textContent = "Heat Caution"; ratingRun.className = "font-bold text-red-600";
+                ratingRun.textContent = "Caution"; ratingRun.className = "font-bold text-red-600";
                 ratingCyc.textContent = "Fair"; ratingCyc.className = "font-bold text-amber-600";
+                ratingHik.textContent = "Warm"; ratingHik.className = "font-bold text-amber-600";
                 ratingOutfit.textContent = "Light Cotton";
             } else if (precip > 50) {
-                weatherSummaryText.textContent = `High chance of rainfall (${precip}%) today in ${cityName}. Don't forget an umbrella or rain gear if you plan outdoor activities.`;
+                weatherSummaryText.textContent = `High chance of rainfall (${precip}%) today in ${cityName}. Carry an umbrella or waterproof outerwear.`;
                 ratingRun.textContent = "Wet Track"; ratingRun.className = "font-bold text-amber-600";
                 ratingCyc.textContent = "Slippery"; ratingCyc.className = "font-bold text-red-600";
+                ratingHik.textContent = "Muddy"; ratingHik.className = "font-bold text-amber-600";
                 ratingOutfit.textContent = "Raincoat";
             } else {
                 weatherSummaryText.textContent = `Pleasant conditions in ${cityName} (${formatTemp(current.temperature_2m)}) with ${currentWMO.desc.toLowerCase()}. Great weather for outdoor routines and travel.`;
                 ratingRun.textContent = "Excellent"; ratingRun.className = "font-bold text-emerald-600";
                 ratingCyc.textContent = "Optimal"; ratingCyc.className = "font-bold text-emerald-600";
+                ratingHik.textContent = "Great"; ratingHik.className = "font-bold text-emerald-600";
                 ratingOutfit.textContent = "Light Layers";
             }
-            ratingUv.textContent = heroUv <= 2 ? "Low" : heroUv <= 5 ? "Moderate" : "High";
 
             // Update Side-by-Side Comparison City A
             document.querySelector("#comp-city-a-label").textContent = cityName;
@@ -1494,6 +1661,9 @@
             document.querySelector("#comp-hum-a").textContent = `${current.relative_humidity_2m}%`;
             document.querySelector("#comp-wind-a").textContent = `${current.wind_speed_10m.toFixed(1)} km/h`;
 
+            // Update Bookmarks state
+            updateBookmarkButton();
+
             // Render Map, Chart, Scrubber & Extended Forecast
             renderMap(data.latitude, data.longitude, cityName);
             renderChart(data);
@@ -1502,8 +1672,8 @@
             updateComparisonCity(compareCitySelect.value);
         }
 
-        const getWeatherDetails = (cityName, country, latitude, longitude) => {
-            const WEATHER_URL = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code,surface_pressure,wind_speed_10m,wind_direction_10m,wind_gusts_10m,uv_index,dew_point_2m,visibility,cloud_cover&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,weather_code,wind_speed_10m,uv_index,dew_point_2m,surface_pressure&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max,precipitation_probability_max,precipitation_sum&timezone=auto`;
+        const getWeatherDetails = (cityName, country, latitude, longitude, elevation = undefined) => {
+            const WEATHER_URL = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code,surface_pressure,wind_speed_10m,wind_direction_10m,wind_gusts_10m,uv_index,dew_point_2m,visibility,cloud_cover&hourly=temperature_2m,apparent_temperature,relative_humidity_2m,precipitation_probability,weather_code,wind_speed_10m,uv_index,dew_point_2m,surface_pressure&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max,precipitation_probability_max,precipitation_sum&timezone=auto`;
             const AQI_URL = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${latitude}&longitude=${longitude}&current=us_aqi,pm10,pm2_5`;
 
             Promise.all([
@@ -1516,11 +1686,13 @@
             .then(([weatherData, aqiData]) => {
                 dismissAlert();
                 cityInput.value = "";
+                autocompleteResults.classList.add("hidden");
 
                 const combined = {
                     ...weatherData,
                     latitude: latitude,
                     longitude: longitude,
+                    elevation: elevation !== undefined ? elevation : weatherData.elevation,
                     country: country,
                     aqi: aqiData && aqiData.current ? aqiData.current : { us_aqi: 35, pm2_5: 8.2, pm10: 14.1 }
                 };
@@ -1528,9 +1700,53 @@
                 renderAllWeather(cityName, combined);
             })
             .catch(() => {
-                showAlert("Could not retrieve weather telemetry. Please check your network connection.");
+                showAlert("Could not retrieve weather telemetry. Please check your connection.");
             });
         };
+
+        function handleSearchAutocomplete() {
+            const query = cityInput.value.trim();
+            if (query.length < 2) {
+                autocompleteResults.classList.add("hidden");
+                return;
+            }
+
+            const GEO_URL = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=6&language=en&format=json`;
+
+            fetch(GEO_URL)
+                .then(res => res.json())
+                .then(data => {
+                    if (!data.results || data.results.length === 0) {
+                        autocompleteResults.classList.add("hidden");
+                        return;
+                    }
+
+                    autocompleteResults.innerHTML = "";
+                    data.results.forEach(item => {
+                        const div = document.createElement("div");
+                        div.className = "p-3 hover:bg-indigo-50 cursor-pointer text-xs transition-colors flex items-center justify-between";
+                        const adminStr = item.admin1 ? `${item.admin1}, ` : "";
+                        const countryStr = item.country || "";
+                        div.innerHTML = `
+                            <div>
+                                <span class="font-bold text-slate-900 text-sm">${item.name}</span>
+                                <span class="text-slate-500 block text-[11px]">${adminStr}${countryStr}</span>
+                            </div>
+                            <span class="text-[10px] font-semibold text-indigo-600 bg-indigo-50 border border-indigo-100 px-2 py-0.5 rounded-lg">
+                                ${item.latitude.toFixed(1)}°, ${item.longitude.toFixed(1)}°
+                            </span>
+                        `;
+                        div.addEventListener("click", () => {
+                            getWeatherDetails(item.name, item.country || "", item.latitude, item.longitude, item.elevation);
+                        });
+                        autocompleteResults.appendChild(div);
+                    });
+                    autocompleteResults.classList.remove("hidden");
+                })
+                .catch(() => {
+                    autocompleteResults.classList.add("hidden");
+                });
+        }
 
         const getCityCoordinates = () => {
             const cityName = cityInput.value.trim();
@@ -1549,8 +1765,8 @@
                         showAlert(`City "${cityName}" not found. Please verify spelling.`);
                         return;
                     }
-                    const { name, country, latitude, longitude } = data.results[0];
-                    getWeatherDetails(name, country || "", latitude, longitude);
+                    const { name, country, latitude, longitude, elevation } = data.results[0];
+                    getWeatherDetails(name, country || "", latitude, longitude, elevation);
                 })
                 .catch(() => {
                     showAlert("Geocoding service unavailable. Try again shortly.");
@@ -1562,6 +1778,11 @@
                 showAlert("Geolocation is not supported by your browser.");
                 return;
             }
+
+            const gpsBtnText = document.querySelector("#gps-btn-text");
+            const gpsIcon = document.querySelector("#gps-icon");
+            gpsBtnText.textContent = "Acquiring GPS Signal...";
+            gpsIcon.className = "fa-solid fa-spinner animate-spin text-indigo-600";
 
             navigator.geolocation.getCurrentPosition(
                 position => {
@@ -1577,27 +1798,53 @@
                         })
                         .catch(() => {
                             getWeatherDetails("Current Location", "", latitude, longitude);
+                        })
+                        .finally(() => {
+                            gpsBtnText.textContent = "Use My Current GPS";
+                            gpsIcon.className = "fa-solid fa-crosshairs text-indigo-600";
                         });
                 },
-                () => {
-                    showAlert("Location access denied. Defaulting to London.");
+                (err) => {
+                    gpsBtnText.textContent = "Use My Current GPS";
+                    gpsIcon.className = "fa-solid fa-crosshairs text-indigo-600";
+                    showAlert("Location access denied or timed out. Defaulting to London.");
                     quickSearch("London");
-                }
+                },
+                { timeout: 10000 }
             );
         };
 
-        // Event Listeners
         searchButton.addEventListener("click", getCityCoordinates);
         locationButton.addEventListener("click", getUserCoordinates);
-        cityInput.addEventListener("keyup", e => e.key === "Enter" && getCityCoordinates());
+        
+        cityInput.addEventListener("input", () => {
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(handleSearchAutocomplete, 300);
+        });
+
+        cityInput.addEventListener("keyup", e => {
+            if (e.key === "Enter") {
+                clearTimeout(searchDebounceTimer);
+                getCityCoordinates();
+            }
+        });
+
+        document.addEventListener("click", (e) => {
+            if (!cityInput.contains(e.target) && !autocompleteResults.contains(e.target)) {
+                autocompleteResults.classList.add("hidden");
+            }
+        });
+
         hourlyScrubber.addEventListener("input", e => updateScrubberHour(e.target.value));
         compareCitySelect.addEventListener("change", e => updateComparisonCity(e.target.value));
 
         document.addEventListener("DOMContentLoaded", function() {
+            renderSavedLocations();
             quickSearch("London");
         });
 
         if (document.readyState === "complete" || document.readyState === "interactive") {
+            renderSavedLocations();
             quickSearch("London");
         }
     </script>
