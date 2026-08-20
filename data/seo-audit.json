@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-08-20T21:20:21.769609+00:00",
+  "generatedAt": "2026-08-20T22:01:59.378339+00:00",
   "totalTools": 12,
-  "averageScore": 76.2,
+  "averageScore": 75.6,
   "tools": [
     {
       "name": "Text To Handwriting",
@@ -424,13 +424,13 @@
       "name": "Weather",
       "slug": "weather",
       "url": "/Nisulka-Tools/tools/weather/",
-      "score": 60,
-      "grade": "C",
-      "title": "Live Weather Dashboard & 5-Day Forecast | Nisulka Tools",
+      "score": 53,
+      "grade": "D",
+      "title": "Weather Forecast Dashboard - Nisulka Tools",
       "description": "",
-      "wordCount": 1844,
-      "h1Count": 1,
-      "h2Count": 4,
+      "wordCount": 2654,
+      "h1Count": 2,
+      "h2Count": 1,
       "images": 1,
       "imagesWithoutAlt": 0,
       "canonical": "",
@@ -440,21 +440,21 @@
       },
       "passed": [
         "Title length is good",
-        "Exactly one H1 found",
         "H2 headings found",
         "All images have alt attributes",
         "Sufficient page content"
       ],
       "issues": [
         "Missing meta description",
+        "Multiple H1 headings found (2)",
         "Missing canonical URL",
         "Missing Open Graph title",
         "Missing Open Graph description"
       ],
       "issueSummary": {
-        "total": 4,
+        "total": 5,
         "critical": 0,
-        "warning": 4
+        "warning": 5
       },
       "rank": 12
     }
