@@ -1,745 +1,1013 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Audio Converter - Nisulka Tools</title>
-    <meta name="description" content="Add a spatial, 3D movement effect to your audio files. Upload, adjust rotation speed, listen instantly, and download for free.">
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- FontAwesome / Phosphor Icons equivalent (Material Symbols used as requested for modern UI) -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-    
-    <!-- Official Nisulka CSS -->
-    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/variables.css">
-    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/global.css">
-    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/components.css">
-    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/header.css">
-    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/footer.css">
-    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/tool.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3D Audio Converter | Nisulka Tools</title>
+  <meta name="description" content="Free online 3D and 8D Audio Converter. Transform songs and audio into immersive 360° binaural spatial sound with customizable orbit speed, reverb, and trajectory. 100% private in-browser." />
+  <meta property="og:title" content="3D Audio Converter | Nisulka Tools" />
+  <meta property="og:description" content="Convert your audio files into immersive 3D and 8D spatial sound with real-time HRTF binaural panning and studio reverb." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
 
-    <!-- External Libraries -->
-    <script src="https://unpkg.com/wavesurfer.js@6.6.0"></script>
-    <script src="https://download.songpeel.com/tools/WavAudioEncoder.min.js"></script>
+  <!-- Nisulka Official Stylesheets -->
+  <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/variables.css" />
+  <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/global.css" />
+  <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/components.css" />
+  <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/header.css" />
+  <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/footer.css" />
+  <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/tool.css" />
 
-    <style>
-        /* Tool-specific overrides (strictly avoiding header/footer selectors) */
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-color, #f8fafc);
-            color: var(--text-color, #0f172a);
-        }
-        
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
-        }
+  <!-- Tailwind CSS CDN for instant styling -->
+  <script src="https://cdn.tailwindcss.com"></script>
 
-        /* Material Icon Alignment */
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-            vertical-align: middle;
-        }
+  <!-- Google Fonts for crisp dashboard typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
 
-        /* Custom Range Slider for Speed */
-        input[type=range] {
-            -webkit-appearance: none;
-            width: 100%;
-            background: transparent;
-        }
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            height: 20px;
-            width: 20px;
-            border-radius: 50%;
-            background: #2563eb;
-            cursor: pointer;
-            margin-top: -8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            transition: transform 0.1s;
-        }
-        input[type=range]::-webkit-slider-thumb:hover {
-            transform: scale(1.1);
-        }
-        input[type=range]::-webkit-slider-runnable-track {
-            width: 100%;
-            height: 6px;
-            cursor: pointer;
-            background: #e2e8f0;
-            border-radius: 9999px;
-        }
-        input[type=range]:focus {
-            outline: none;
-        }
-
-        /* Waveform container styling */
-        #waveform-container wave {
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        /* Custom Toast Notification */
-        .toast {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            padding: 1rem 1.5rem;
-            border-radius: 0.5rem;
-            color: white;
-            font-weight: 500;
-            opacity: 0;
-            transform: translateY(100%);
-            transition: all 0.3s ease;
-            z-index: 9999;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
-        .toast.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .toast.error { background-color: #ef4444; }
-        .toast.success { background-color: #10b981; }
-        .toast.info { background-color: #3b82f6; }
-
-        /* Hide elements initially */
-        #workspace-player { display: none; }
-        #loading-overlay { display: none; }
-    </style>
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    .custom-range {
+      accent-color: #0891b2;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      cursor: pointer;
+    }
+    .active-preset {
+      border-color: #06b6d4 !important;
+      background-color: #ecfeff !important;
+      color: #0e7490 !important;
+    }
+    .active-pattern {
+      background-color: #0891b2 !important;
+      color: #ffffff !important;
+      border-color: #0891b2 !important;
+    }
+    .active-reverb {
+      border-color: #6366f1 !important;
+      background-color: #eef2ff !important;
+      color: #4338ca !important;
+    }
+  </style>
 </head>
-<body class="flex flex-col min-h-screen">
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-cyan-500 selection:text-white min-h-screen flex flex-col justify-between">
 
-    <!-- OFFICIAL HEADER MOUNT -->
-    <div id="site-header-mount"></div>
+  <!-- OFFICIAL NISULKA HEADER MOUNT -->
+  <div id="site-header-mount"></div>
 
-    <main class="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
-        <!-- Breadcrumb -->
-        <nav class="flex text-sm text-gray-500 mb-6" aria-label="Breadcrumb">
-            <ol class="inline-flex items-center space-x-1 md:space-x-3">
-                <li class="inline-flex items-center">
-                    <a href="#" class="inline-flex items-center hover:text-blue-600 transition-colors">
-                        <span class="material-symbols-outlined text-sm mr-1">home</span>
-                        Home
-                    </a>
-                </li>
-                <li>
-                    <div class="flex items-center">
-                        <span class="material-symbols-outlined text-sm mx-1">chevron_right</span>
-                        <a href="#" class="hover:text-blue-600 transition-colors">Audio Tools</a>
-                    </div>
-                </li>
-                <li aria-current="page">
-                    <div class="flex items-center">
-                        <span class="material-symbols-outlined text-sm mx-1">chevron_right</span>
-                        <span class="text-gray-800 font-medium">3D Audio Converter</span>
-                    </div>
-                </li>
-            </ol>
-        </nav>
+  <!-- MAIN TOOL WORKSPACE -->
+  <main class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 font-sans flex-grow" id="tool-workspace">
+    <!-- Breadcrumb -->
+    <nav class="mb-6 flex flex-wrap items-center justify-between gap-3 text-sm" aria-label="Breadcrumb">
+      <ol class="flex items-center space-x-2 text-slate-500 font-medium">
+        <li>
+          <a href="https://apps.laxmannepal.com.np/Nisulka-Tools/" class="flex items-center gap-1.5 text-slate-500 hover:text-cyan-600 transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+            <span>Home</span>
+          </a>
+        </li>
+        <li class="text-slate-400">/</li>
+        <li class="text-slate-500">Audio Tools</li>
+        <li class="text-slate-400">/</li>
+        <li class="text-slate-900 font-semibold" aria-current="page">3D Audio Converter</li>
+      </ol>
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-cyan-50 text-cyan-700 border border-cyan-200">
+        <span>🎧 Binaural 8D Spatializer</span>
+      </div>
+    </nav>
 
-        <!-- Tool Header -->
-        <div class="text-center max-w-3xl mx-auto mb-10">
-            <h1 class="text-4xl font-bold text-gray-900 mb-4 tracking-tight">3D Audio Converter</h1>
-            <p class="text-lg text-gray-600">
-                Transform any standard audio file into an immersive 3D experience. Upload your song, adjust the rotation speed, and experience spatial audio instantly.
-            </p>
+    <!-- Header / Title Section -->
+    <div class="mb-8 pb-6 border-b border-slate-200 flex flex-col md:flex-row md:items-end justify-between gap-4">
+      <div class="max-w-3xl">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-cyan-50 border border-cyan-200 text-cyan-800 text-xs font-semibold uppercase tracking-wider mb-3">
+          <span>360° Binaural Spatial Audio Engine</span>
+        </div>
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mb-3">3D Audio Converter</h1>
+        <p class="text-base sm:text-lg text-slate-600 leading-relaxed">
+          Convert standard stereo tracks into immersive 3D and 8D binaural audio. Experience music orbiting smoothly around your head with customizable speed, spatial trajectory paths, acoustic room reverb, and high-fidelity lossless WAV export.
+        </p>
+      </div>
+
+      <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3 shadow-xs max-w-sm">
+        <div class="text-2xl">🎧</div>
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-wider text-amber-900 mb-0.5">Headphones Recommended</h4>
+          <p class="text-xs text-amber-800 leading-normal">Put on stereo headphones or earbuds to experience the full 360° binaural spatialization.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Upload Dropzone -->
+    <div class="space-y-4 mb-8">
+      <div id="dropzone" class="border-2 border-dashed border-slate-300 hover:border-cyan-400 bg-white rounded-2xl p-8 sm:p-10 text-center transition-all cursor-pointer select-none">
+        <input type="file" id="file-input" accept=".wav,.mp3,.aac,.ogg,.flac,.m4a,audio/*" class="hidden" />
+        <div class="flex flex-col items-center justify-center max-w-md mx-auto space-y-4">
+          <div class="w-16 h-16 rounded-2xl bg-cyan-100 flex items-center justify-center text-cyan-600 shadow-xs">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+          </div>
+          <div>
+            <h3 id="upload-title" class="text-lg font-bold text-slate-800">Drop your audio file here or browse</h3>
+            <p class="text-xs sm:text-sm text-slate-500 mt-1">Supported formats: <strong class="text-slate-700">WAV, MP3, AAC, OGG, FLAC, M4A</strong> (Max 100MB)</p>
+          </div>
+          <button type="button" id="browse-btn" class="px-5 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white font-semibold text-sm shadow-sm transition-all">
+            Select Audio File
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Demo Buttons -->
+      <div class="bg-slate-100 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div class="text-xs text-slate-600 font-medium flex items-center gap-1.5">
+          <span>✨</span>
+          <span>Don't have an audio file ready? Test immediately with a built-in synth demo:</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button type="button" id="demo-synth-btn" class="px-3.5 py-1.5 rounded-lg bg-white hover:bg-cyan-50 border border-slate-200 text-xs font-semibold text-slate-700 hover:text-cyan-700 shadow-xs transition-all">
+            ▶ Synthwave Beat Demo
+          </button>
+          <button type="button" id="demo-ambient-btn" class="px-3.5 py-1.5 rounded-lg bg-white hover:bg-cyan-50 border border-slate-200 text-xs font-semibold text-slate-700 hover:text-cyan-700 shadow-xs transition-all">
+            ▶ Ambient Chords Demo
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Workspace Area (Revealed on Audio Load) -->
+    <div id="player-section" class="space-y-6 hidden">
+      <!-- Waveform Controller -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-100">
+          <div>
+            <h3 id="current-song-title" class="text-sm font-bold text-slate-800">Track Loaded</h3>
+            <p class="text-xs text-slate-500">Duration: <span id="duration-text">00:00</span> • Real-Time 3D HRTF Spatialization</p>
+          </div>
+          <button type="button" id="export-wav-btn" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold text-sm shadow-md transition-all flex items-center gap-2">
+            <span>⬇️</span>
+            <span>Export 3D Audio WAV</span>
+          </button>
         </div>
 
-        <!-- Main Tool Workspace -->
-        <div class="glass-panel rounded-2xl p-6 md:p-10 mb-12 relative overflow-hidden bg-white">
-            
-            <!-- Loading Overlay -->
-            <div id="loading-overlay" class="absolute inset-0 bg-white/80 backdrop-blur-sm z-50 flex flex-col items-center justify-center">
-                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
-                <h3 id="loading-text" class="text-lg font-semibold text-gray-800">Processing audio...</h3>
-                <p class="text-sm text-gray-500 mt-1">This might take a few moments depending on file size.</p>
-            </div>
-
-            <!-- Upload Section -->
-            <div id="workspace-upload" class="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-xl p-12 transition-all hover:bg-gray-50 hover:border-blue-400 group">
-                <span class="material-symbols-outlined text-6xl text-gray-400 group-hover:text-blue-500 mb-4 transition-colors">audio_file</span>
-                <h3 class="text-xl font-semibold text-gray-800 mb-2">Upload Audio File</h3>
-                <p class="text-gray-500 text-center mb-6 max-w-md">
-                    Supported formats: WAV, MP3, AAC, OGG, FLAC. Maximum file size: 50MB.
-                </p>
-                <input type="file" id="audio-file-input" class="hidden" accept=".wav,.mp3,.aac,.ogg,.flac,audio/*">
-                <label for="audio-file-input" class="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-8 rounded-lg shadow-md transition-transform transform active:scale-95 flex items-center gap-2">
-                    <span class="material-symbols-outlined text-sm">upload</span>
-                    Browse Files
-                </label>
-            </div>
-
-            <!-- Player Section (Hidden Initially) -->
-            <div id="workspace-player" class="flex flex-col gap-6">
-                <!-- Top controls -->
-                <div class="flex flex-wrap items-center justify-between gap-4 border-b border-gray-100 pb-4">
-                    <div class="flex items-center gap-3">
-                        <button id="btn-upload-new" class="text-sm text-gray-500 hover:text-blue-600 flex items-center gap-1 transition-colors">
-                            <span class="material-symbols-outlined text-sm">upload_file</span>
-                            Upload New
-                        </button>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <div class="flex items-center gap-2 text-sm text-gray-600 font-medium">
-                            <span class="material-symbols-outlined text-base">360</span>
-                            3D Rotation Speed: <span id="speed-display" class="w-10 text-right text-blue-600 font-bold">50%</span>
-                        </div>
-                        <input type="range" id="speed-slider" min="1" max="100" value="50" class="w-32 md:w-48">
-                    </div>
-                </div>
-
-                <!-- Waveform Area -->
-                <div id="waveform-container" class="w-full h-32 bg-gray-50 rounded-lg shadow-inner relative">
-                    <!-- Wavesurfer mounts here -->
-                    <div id="waveform" class="w-full h-full"></div>
-                </div>
-
-                <!-- Bottom Toolbar -->
-                <div class="flex flex-wrap items-center justify-between gap-4 pt-2">
-                    
-                    <!-- Playback Controls -->
-                    <div class="flex items-center gap-3 bg-gray-100 rounded-full p-1 shadow-sm">
-                        <button id="btn-backward" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-200 text-gray-700 transition-colors" title="Rewind 5s">
-                            <span class="material-symbols-outlined">fast_rewind</span>
-                        </button>
-                        <button id="btn-play" class="w-12 h-12 flex items-center justify-center rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-md transition-transform active:scale-95" title="Play/Pause">
-                            <span id="play-icon" class="material-symbols-outlined text-2xl">play_arrow</span>
-                        </button>
-                        <button id="btn-forward" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-200 text-gray-700 transition-colors" title="Forward 5s">
-                            <span class="material-symbols-outlined">fast_forward</span>
-                        </button>
-                    </div>
-
-                    <!-- Action Button -->
-                    <button id="btn-download" class="bg-gray-900 hover:bg-black text-white font-medium py-3 px-6 rounded-lg shadow-md flex items-center gap-2 transition-transform transform active:scale-95">
-                        <span class="material-symbols-outlined">download</span>
-                        Download 3D Audio
-                    </button>
-                </div>
-            </div>
-
+        <!-- Waveform Canvas -->
+        <div class="relative bg-slate-900 rounded-xl p-3 sm:p-4 overflow-hidden shadow-inner cursor-pointer" id="waveform-wrap">
+          <canvas id="waveform-canvas" width="900" height="100" class="w-full h-20 sm:h-24 block"></canvas>
+          <div class="text-[10px] text-slate-400 text-right mt-1">Click anywhere along the waveform to scrub position</div>
         </div>
 
-        <!-- Educational Content Section -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mt-16 mb-16">
+        <!-- Player Controls -->
+        <div class="flex flex-wrap items-center justify-between gap-4 pt-1">
+          <div class="flex items-center gap-2">
+            <button type="button" id="skip-back" class="w-9 h-9 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold flex items-center justify-center transition-colors" title="Rewind 5 seconds">↺ 5s</button>
+            <button type="button" id="play-pause-btn" class="px-6 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-sm shadow-sm transition-all flex items-center gap-2">
+              <span id="play-icon">▶</span>
+              <span id="play-text">Play 3D</span>
+            </button>
+            <button type="button" id="skip-fwd" class="w-9 h-9 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold flex items-center justify-center transition-colors" title="Forward 5 seconds">5s ↻</button>
+            <button type="button" id="loop-btn" class="w-9 h-9 rounded-lg bg-cyan-100 text-cyan-700 font-bold ring-2 ring-cyan-400 flex items-center justify-center transition-all" title="Toggle Loop">🔁</button>
+          </div>
+
+          <div class="text-sm font-mono font-semibold text-slate-700 bg-slate-100 px-3.5 py-1.5 rounded-lg border border-slate-200">
+            <span id="time-current" class="text-cyan-700">00:00</span> / <span id="time-total">00:00</span>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-slate-500 font-medium">Volume</span>
+            <input type="range" id="vol-slider" min="0" max="1" step="0.01" value="0.85" class="w-24 custom-range" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Split Grid: 3D Radar + Spatial Controls -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+        <!-- 3D Radar Visualizer (5 Cols) -->
+        <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-200 p-5 shadow-xs flex flex-col justify-between">
+          <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
             <div>
-                <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                    <span class="material-symbols-outlined text-blue-600">spatial_audio_off</span>
-                    What is 3D Audio?
-                </h2>
-                <p class="text-gray-600 mb-4 leading-relaxed">
-                    3D audio (also known as 8D audio when combined with reverb) is an auditory illusion created using spatial panning. It tricks your brain into thinking the sound is moving around you in a three-dimensional space, providing an immersive, concert-like experience right in your headphones.
-                </p>
-                <p class="text-gray-600 leading-relaxed">
-                    Our tool utilizes advanced HRTF (Head-Related Transfer Function) algorithms to dynamically pan your audio, simulating a moving sound source.
-                </p>
+              <h3 class="text-sm font-bold text-slate-800">3D Sound Stage</h3>
+              <p class="text-xs text-slate-500">Live 360° spatial orbit radar</p>
+            </div>
+            <div class="px-2.5 py-1 rounded-full bg-slate-100 text-xs font-semibold text-slate-700 border border-slate-200">
+              <span id="azimuth-display">0° Azimuth</span>
+            </div>
+          </div>
+
+          <div class="relative flex-grow flex items-center justify-center min-h-[280px] bg-slate-50 border border-slate-200 rounded-xl overflow-hidden p-2">
+            <canvas id="radar-canvas" width="360" height="300" class="w-full h-full max-w-[360px] max-h-[300px] object-contain"></canvas>
+            <div id="radar-coords" class="absolute bottom-2 left-2 bg-white/90 backdrop-blur-xs px-2.5 py-1 rounded-md text-[11px] font-mono text-slate-600 border border-slate-200 shadow-2xs">
+              X: 0.0m | Y: 0.2m | Z: 2.2m
+            </div>
+          </div>
+
+          <!-- Ear Channel Meters -->
+          <div class="mt-4 pt-3 border-t border-slate-100 grid grid-cols-2 gap-3 text-xs">
+            <div>
+              <div class="flex justify-between font-medium text-slate-600 mb-1">
+                <span>Left Ear</span>
+                <span id="left-ear-val" class="font-bold text-cyan-600">50%</span>
+              </div>
+              <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                <div id="left-ear-bar" class="h-full bg-cyan-500 rounded-full w-1/2 transition-all duration-75"></div>
+              </div>
             </div>
             <div>
-                <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                    <span class="material-symbols-outlined text-blue-600">headphones</span>
-                    Best Practices
-                </h2>
-                <ul class="space-y-3 text-gray-600">
-                    <li class="flex items-start gap-2">
-                        <span class="material-symbols-outlined text-green-500 mt-1">check_circle</span>
-                        <strong>Use Headphones:</strong> 3D effects rely heavily on stereo separation. You must wear headphones to experience the full spatial effect.
-                    </li>
-                    <li class="flex items-start gap-2">
-                        <span class="material-symbols-outlined text-green-500 mt-1">check_circle</span>
-                        <strong>Start with 50% Speed:</strong> The default rotation speed is optimal for most tracks. Adjust if you want a faster or more relaxing pan.
-                    </li>
-                    <li class="flex items-start gap-2">
-                        <span class="material-symbols-outlined text-green-500 mt-1">check_circle</span>
-                        <strong>High-Quality Files:</strong> For best results, use uncompressed audio formats like WAV or high-bitrate MP3/FLAC.
-                    </li>
-                </ul>
+              <div class="flex justify-between font-medium text-slate-600 mb-1">
+                <span>Right Ear</span>
+                <span id="right-ear-val" class="font-bold text-indigo-600">50%</span>
+              </div>
+              <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                <div id="right-ear-bar" class="h-full bg-indigo-500 rounded-full w-1/2 transition-all duration-75"></div>
+              </div>
             </div>
+          </div>
         </div>
 
-        <!-- FAQ Section -->
-        <div class="mb-12">
-            <h2 class="text-3xl font-bold text-center text-gray-900 mb-8">Frequently Asked Questions</h2>
-            <div class="space-y-4 max-w-4xl mx-auto">
-                
-                <details class="group bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
-                    <summary class="flex justify-between items-center font-medium cursor-pointer list-none p-5 text-gray-800 hover:bg-gray-50 transition-colors">
-                        <span>Is this tool completely free?</span>
-                        <span class="transition group-open:rotate-180">
-                            <span class="material-symbols-outlined">expand_more</span>
-                        </span>
-                    </summary>
-                    <div class="text-gray-600 mt-3 p-5 pt-0 border-t border-gray-100 bg-gray-50">
-                        Yes, our 3D Audio Converter is 100% free to use. There are no hidden fees, subscriptions, or watermarks added to your downloaded audio.
-                    </div>
-                </details>
-
-                <details class="group bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
-                    <summary class="flex justify-between items-center font-medium cursor-pointer list-none p-5 text-gray-800 hover:bg-gray-50 transition-colors">
-                        <span>Are my audio files stored on your servers?</span>
-                        <span class="transition group-open:rotate-180">
-                            <span class="material-symbols-outlined">expand_more</span>
-                        </span>
-                    </summary>
-                    <div class="text-gray-600 mt-3 p-5 pt-0 border-t border-gray-100 bg-gray-50">
-                        No. All audio processing is done locally within your browser using the Web Audio API. Your files are never uploaded to our servers, ensuring complete privacy.
-                    </div>
-                </details>
-
-                <details class="group bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
-                    <summary class="flex justify-between items-center font-medium cursor-pointer list-none p-5 text-gray-800 hover:bg-gray-50 transition-colors">
-                        <span>What is the maximum file size?</span>
-                        <span class="transition group-open:rotate-180">
-                            <span class="material-symbols-outlined">expand_more</span>
-                        </span>
-                    </summary>
-                    <div class="text-gray-600 mt-3 p-5 pt-0 border-t border-gray-100 bg-gray-50">
-                        The maximum supported file size is 50MB. This limitation helps ensure your browser can handle the heavy audio processing without crashing.
-                    </div>
-                </details>
+        <!-- Controls (7 Cols) -->
+        <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-xs space-y-6">
+          <!-- Presets -->
+          <div>
+            <label class="text-xs font-bold text-slate-700 uppercase tracking-wider block mb-2">Quick Presets</label>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <button type="button" data-preset="classic" class="preset-btn active-preset p-2.5 rounded-xl border border-cyan-500 bg-cyan-50 text-left text-xs font-bold text-slate-800 transition-all">
+                8D Classic Orbit
+              </button>
+              <button type="button" data-preset="infinity" class="preset-btn p-2.5 rounded-xl border border-slate-200 hover:border-cyan-300 text-left text-xs font-bold text-slate-800 transition-all">
+                Infinity 8D Loop
+              </button>
+              <button type="button" data-preset="pendulum" class="preset-btn p-2.5 rounded-xl border border-slate-200 hover:border-cyan-300 text-left text-xs font-bold text-slate-800 transition-all">
+                Pendulum Swing
+              </button>
+              <button type="button" data-preset="spiral" class="preset-btn p-2.5 rounded-xl border border-slate-200 hover:border-cyan-300 text-left text-xs font-bold text-slate-800 transition-all">
+                4D Cosmic Spiral
+              </button>
             </div>
+          </div>
+
+          <!-- Trajectory Patterns -->
+          <div>
+            <label class="text-xs font-bold text-slate-700 uppercase tracking-wider block mb-2">Motion Trajectory</label>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <button type="button" data-pattern="circle" class="pattern-btn active-pattern p-2.5 rounded-xl bg-cyan-600 text-white text-xs font-bold transition-all">⭕ 360° Circle</button>
+              <button type="button" data-pattern="figure8" class="pattern-btn p-2.5 rounded-xl border border-slate-200 text-slate-700 text-xs font-bold transition-all">♾️ Figure-8</button>
+              <button type="button" data-pattern="pendulum" class="pattern-btn p-2.5 rounded-xl border border-slate-200 text-slate-700 text-xs font-bold transition-all">↔️ Pendulum</button>
+              <button type="button" data-pattern="spiral" class="pattern-btn p-2.5 rounded-xl border border-slate-200 text-slate-700 text-xs font-bold transition-all">🌀 Spiral</button>
+            </div>
+          </div>
+
+          <!-- Sliders Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+              <div class="flex justify-between text-xs font-bold text-slate-700 mb-1">
+                <span>Orbit Speed</span>
+                <span id="speed-val" class="text-cyan-700 font-semibold">48%</span>
+              </div>
+              <input type="range" id="speed-slider" min="10" max="100" value="48" class="w-full custom-range" />
+            </div>
+
+            <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+              <div class="flex justify-between text-xs font-bold text-slate-700 mb-1">
+                <span>Distance / Radius</span>
+                <span id="radius-val" class="text-indigo-700 font-semibold">2.2m</span>
+              </div>
+              <input type="range" id="radius-slider" min="0.8" max="4.0" step="0.1" value="2.2" class="w-full custom-range" />
+            </div>
+
+            <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+              <div class="flex justify-between text-xs font-bold text-slate-700 mb-1">
+                <span>Elevation / Height</span>
+                <span id="height-val" class="text-emerald-700 font-semibold">+0.2m</span>
+              </div>
+              <input type="range" id="height-slider" min="-1.5" max="1.5" step="0.1" value="0.2" class="w-full custom-range" />
+            </div>
+
+            <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between">
+              <span class="text-xs font-bold text-slate-700">Orbit Direction</span>
+              <div class="grid grid-cols-2 gap-2 mt-1">
+                <button type="button" id="dir-cw" class="p-1.5 rounded-lg bg-amber-600 text-white text-xs font-bold transition-all">Clockwise</button>
+                <button type="button" id="dir-ccw" class="p-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 text-xs font-bold transition-all">Counter-CW</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Reverb and Acoustics -->
+          <div class="pt-3 border-t border-slate-100 space-y-3">
+            <label class="text-xs font-bold text-slate-700 uppercase tracking-wider block">Acoustics &amp; Reverb</label>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <button type="button" data-reverb="none" class="reverb-btn p-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 transition-all">Dry (None)</button>
+              <button type="button" data-reverb="room" class="reverb-btn p-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 transition-all">Studio Room</button>
+              <button type="button" data-reverb="hall" class="reverb-btn active-reverb p-2 rounded-xl border border-indigo-500 bg-indigo-50 text-xs font-bold text-indigo-900 transition-all">Concert Hall</button>
+              <button type="button" data-reverb="cosmic" class="reverb-btn p-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 transition-all">Cosmic Space</button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+              <div>
+                <div class="flex justify-between text-[11px] text-slate-600 font-semibold mb-1">
+                  <span>Reverb Wet</span>
+                  <span id="reverb-val">40%</span>
+                </div>
+                <input type="range" id="reverb-slider" min="0" max="100" step="5" value="40" class="w-full custom-range" />
+              </div>
+              <div>
+                <div class="flex justify-between text-[11px] text-slate-600 font-semibold mb-1">
+                  <span>Warm Bass</span>
+                  <span id="bass-val">+3.5 dB</span>
+                </div>
+                <input type="range" id="bass-slider" min="0" max="10" step="0.5" value="3.5" class="w-full custom-range" />
+              </div>
+              <div>
+                <div class="flex justify-between text-[11px] text-slate-600 font-semibold mb-1">
+                  <span>Spatial Air</span>
+                  <span id="treble-val">+2.0 dB</span>
+                </div>
+                <input type="range" id="treble-slider" min="0" max="6" step="0.5" value="2.0" class="w-full custom-range" />
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
+    </div>
 
-    </main>
+    <!-- Educational Content & FAQ Section -->
+    <div class="space-y-10 mt-12 pt-8 border-t border-slate-200">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs">
+          <h3 class="text-base font-bold text-slate-900 mb-2">📻 HRTF Binaural Physics</h3>
+          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">Calculates real-world acoustic time delays (ITD) and spectral filtering (IID) that your ears and head naturally use to locate sounds in physical 3D space.</p>
+        </div>
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs">
+          <h3 class="text-base font-bold text-slate-900 mb-2">💫 Custom Trajectory Paths</h3>
+          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">Choose between 360° circular rotations, 8D Lemniscate infinity loops, left-to-right stereo pendulum swings, or 4D ascending spatial spirals.</p>
+        </div>
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs">
+          <h3 class="text-base font-bold text-slate-900 mb-2">🛡️ 100% In-Browser Privacy</h3>
+          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">Your audio files never leave your device. All calculations, spatial automation, and WAV rendering happen locally on your CPU via Web Audio API.</p>
+        </div>
+      </div>
 
-    <!-- OFFICIAL FOOTER MOUNT -->
-    <div id="site-footer-mount"></div>
+      <!-- FAQ Section -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-xs space-y-4">
+        <h3 class="text-xl font-bold text-slate-900 mb-4">Frequently Asked Questions</h3>
+        <details class="border border-slate-200 rounded-xl p-4 group cursor-pointer" open>
+          <summary class="font-bold text-sm text-slate-800 list-none flex justify-between items-center">
+            <span>What is the difference between 3D Audio and 8D Audio?</span>
+            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="text-xs sm:text-sm text-slate-600 mt-3 leading-relaxed">
+            3D audio creates the perception of sounds existing in three-dimensional physical space around you. "8D audio" is a popular creative music category where the stereo audio source continuously rotates in a 360° orbit around your head with added acoustic reverberation.
+          </p>
+        </details>
+        <details class="border border-slate-200 rounded-xl p-4 group cursor-pointer">
+          <summary class="font-bold text-sm text-slate-800 list-none flex justify-between items-center">
+            <span>Why are headphones required for the 3D effect to work?</span>
+            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="text-xs sm:text-sm text-slate-600 mt-3 leading-relaxed">
+            The 3D binaural effect relies on HRTF (Head-Related Transfer Function) algorithms. Headphones feed each ear an isolated audio channel without room reflections or speaker cross-talk, allowing your brain to reconstruct full 360° spherical positioning.
+          </p>
+        </details>
+        <details class="border border-slate-200 rounded-xl p-4 group cursor-pointer">
+          <summary class="font-bold text-sm text-slate-800 list-none flex justify-between items-center">
+            <span>Are my audio tracks uploaded to an external server?</span>
+            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="text-xs sm:text-sm text-slate-600 mt-3 leading-relaxed">
+            No. The entire conversion and rendering process occurs 100% locally inside your web browser using the HTML5 Web Audio API and OfflineAudioContext.
+          </p>
+        </details>
+      </div>
+    </div>
+  </main>
 
-    <!-- Official Header/Footer Scripts -->
-    <script src="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/js/header.js"></script>
-    <script src="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/js/footer.js"></script>
+  <!-- OFFICIAL NISULKA FOOTER MOUNT -->
+  <div id="site-footer-mount"></div>
 
-    <!-- Tool Specific Logic -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            
-            // UI Elements
-            const fileInput = document.getElementById('audio-file-input');
-            const workspaceUpload = document.getElementById('workspace-upload');
-            const workspacePlayer = document.getElementById('workspace-player');
-            const loadingOverlay = document.getElementById('loading-overlay');
-            const loadingText = document.getElementById('loading-text');
-            
-            const btnPlay = document.getElementById('btn-play');
-            const playIcon = document.getElementById('play-icon');
-            const btnForward = document.getElementById('btn-forward');
-            const btnBackward = document.getElementById('btn-backward');
-            const btnDownload = document.getElementById('btn-download');
-            const btnUploadNew = document.getElementById('btn-upload-new');
-            
-            const speedSlider = document.getElementById('speed-slider');
-            const speedDisplay = document.getElementById('speed-display');
+  <!-- OFFICIAL NISULKA HEADER & FOOTER SCRIPTS -->
+  <script src="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/js/header.js"></script>
+  <script src="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/js/footer.js"></script>
 
-            // Audio State Variables
-            let wavesurfer = null;
-            let audioContext = null;
-            let panner = null;
-            let currentFileName = "3D-Audio.wav";
-            let animationId = null;
-            
-            // 3D parameters
-            let currentAngle = 0;
-            let panSpeedFactor = 0; // Calculated from slider
-            let isPlaying = false;
-            let isLoaded = false;
+  <!-- PURE VANILLA JAVASCRIPT 3D AUDIO ENGINE -->
+  <script>
+    (function() {
+      // Audio engine state
+      let audioCtx = null;
+      let audioBuffer = null;
+      let sourceNode = null;
+      let pannerNode = null;
+      let bassFilter = null;
+      let trebleFilter = null;
+      let convolverNode = null;
+      let reverbGain = null;
+      let dryGain = null;
+      let masterGain = null;
+      let isPlaying = false;
+      let isLooping = true;
+      let currentFileName = 'track.wav';
+      let startTime = 0;
+      let startOffset = 0;
+      let orbitTime = 0;
+      let lastFrameTime = 0;
 
-            // Initialize Wavesurfer
-            function initWavesurfer() {
-                if(wavesurfer) wavesurfer.destroy();
-                
-                wavesurfer = WaveSurfer.create({
-                    container: '#waveform',
-                    responsive: true,
-                    waveColor: '#93c5fd', // tailwind blue-300
-                    progressColor: '#2563eb', // tailwind blue-600
-                    cursorColor: '#1e3a8a',
-                    cursorWidth: 2,
-                    height: 100,
-                    barHeight: 2,
-                    barWidth: 3,
-                    barRadius: 3,
-                    barGap: 2,
-                    normalize: true,
-                    hideScrollbar: true,
-                    backend: 'MediaElementWebAudio'
-                });
+      const settings = {
+        speed: 48,
+        radius: 2.2,
+        height: 0.2,
+        direction: 'clockwise',
+        pattern: 'circle',
+        reverbPreset: 'hall',
+        reverbAmount: 40,
+        bassBoost: 3.5,
+        trebleAir: 2.0
+      };
 
-                wavesurfer.on('error', (err) => {
-                    showToast("Error reading file format. Try a different browser or file.", "error");
-                    resetWorkspace();
-                });
+      const PRESETS = {
+        classic: { speed: 48, radius: 2.2, height: 0.2, direction: 'clockwise', pattern: 'circle', reverbPreset: 'hall', reverbAmount: 40 },
+        infinity: { speed: 55, radius: 2.5, height: 0.3, direction: 'clockwise', pattern: 'figure8', reverbPreset: 'room', reverbAmount: 30 },
+        pendulum: { speed: 60, radius: 3.0, height: 0.0, direction: 'clockwise', pattern: 'pendulum', reverbPreset: 'hall', reverbAmount: 45 },
+        spiral: { speed: 40, radius: 2.6, height: 0.5, direction: 'clockwise', pattern: 'spiral', reverbPreset: 'cosmic', reverbAmount: 60 }
+      };
 
-                wavesurfer.on('finish', () => {
-                    playIcon.textContent = 'play_arrow';
-                    isPlaying = false;
-                });
+      function getAudioContext() {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        return audioCtx;
+      }
 
-                wavesurfer.on('waveform-ready', setupWebAudioContext);
-            }
+      function createReverbImpulse(ctx, duration, decay) {
+        const sampleRate = ctx.sampleRate;
+        const length = Math.floor(sampleRate * duration);
+        const impulse = ctx.createBuffer(2, length, sampleRate);
+        const left = impulse.getChannelData(0);
+        const right = impulse.getChannelData(1);
+        for (let i = 0; i < length; i++) {
+          const t = i / sampleRate;
+          const env = Math.exp(-t * decay);
+          left[i] = (Math.random() * 2 - 1) * env;
+          right[i] = (Math.random() * 2 - 1) * env;
+        }
+        return impulse;
+      }
 
-            // Custom Toast Notification System
-            function showToast(message, type = 'info') {
-                const toast = document.createElement('div');
-                toast.className = `toast ${type}`;
-                toast.textContent = message;
-                document.body.appendChild(toast);
-                
-                // Trigger animation
-                setTimeout(() => toast.classList.add('show'), 10);
-                
-                // Remove after delay
-                setTimeout(() => {
-                    toast.classList.remove('show');
-                    setTimeout(() => toast.remove(), 300);
-                }, 4000);
-            }
+      function calculateSpatialPosition(time, set) {
+        const cycleSeconds = Math.max(1.5, 300 / Math.max(set.speed, 1));
+        const dirMultiplier = set.direction === 'clockwise' ? 1 : -1;
+        const theta = time * ((2 * Math.PI) / cycleSeconds) * dirMultiplier;
+        let x = 0, y = set.height, z = 0;
+        const R = set.radius;
 
-            // Show loading state
-            function showLoading(text) {
-                loadingText.textContent = text;
-                loadingOverlay.style.display = 'flex';
-            }
+        if (set.pattern === 'circle') {
+          x = R * Math.sin(theta);
+          z = R * Math.cos(theta);
+        } else if (set.pattern === 'figure8') {
+          x = R * Math.sin(theta);
+          z = R * Math.sin(theta) * Math.cos(theta) * 1.4;
+          y = set.height + Math.sin(theta * 2) * 0.4;
+        } else if (set.pattern === 'pendulum') {
+          x = R * Math.sin(theta);
+          z = 0.6 + 0.5 * Math.abs(Math.cos(theta));
+        } else if (set.pattern === 'spiral') {
+          const sR = R * (0.6 + 0.4 * Math.sin(theta * 0.35));
+          x = sR * Math.sin(theta);
+          z = sR * Math.cos(theta);
+          y = set.height + Math.sin(theta * 0.5) * 0.8;
+        }
 
-            // Hide loading state
-            function hideLoading() {
-                loadingOverlay.style.display = 'none';
-            }
+        let azRad = Math.atan2(x, z);
+        if (azRad < 0) azRad += 2 * Math.PI;
+        const azimuth = Math.round((azRad * 180) / Math.PI);
+        return { x, y, z, azimuth };
+      }
 
-            function resetWorkspace() {
-                if(wavesurfer) {
-                    wavesurfer.empty();
-                }
-                if(animationId) {
-                    cancelAnimationFrame(animationId);
-                }
-                workspacePlayer.style.display = 'none';
-                workspaceUpload.style.display = 'flex';
-                fileInput.value = "";
-                hideLoading();
-            }
+      function setupGraph(ctx) {
+        if (masterGain) return;
+        masterGain = ctx.createGain();
+        masterGain.gain.value = 0.85;
 
-            // File Upload Logic
-            fileInput.addEventListener('change', function(e) {
-                const file = this.files[0];
-                if (!file) return;
+        bassFilter = ctx.createBiquadFilter();
+        bassFilter.type = 'lowshelf';
+        bassFilter.frequency.value = 120;
+        bassFilter.gain.value = settings.bassBoost;
 
-                // Max size validation: 50MB (50 * 1024 * 1024 bytes)
-                if (file.size > 52428800) {
-                    showToast("File is too large. Maximum size is 50MB.", "error");
-                    this.value = "";
-                    return;
-                }
+        trebleFilter = ctx.createBiquadFilter();
+        trebleFilter.type = 'highshelf';
+        trebleFilter.frequency.value = 8000;
+        trebleFilter.gain.value = settings.trebleAir;
 
-                showLoading("Loading audio...");
-                currentFileName = file.name.replace(/\.[^/.]+$/, "") + "-3D-Audio.wav";
-                
-                // Set initial speed
-                speedSlider.value = 50;
-                updateSpeedFactor();
+        pannerNode = ctx.createPanner();
+        pannerNode.panningModel = 'HRTF';
+        pannerNode.distanceModel = 'inverse';
+        pannerNode.refDistance = 1;
+        pannerNode.maxDistance = 10000;
+        pannerNode.rolloffFactor = 1.2;
 
-                // Initialize wavesurfer fresh
-                initWavesurfer();
+        convolverNode = ctx.createConvolver();
+        reverbGain = ctx.createGain();
+        dryGain = ctx.createGain();
+        updateReverb();
 
-                const reader = new FileReader();
-                reader.onload = function(evt) {
-                    try {
-                        const blob = new Blob([evt.target.result], { type: file.type });
-                        const objectUrl = URL.createObjectURL(blob);
-                        wavesurfer.loadMediaElement(objectUrl);
-                        
-                        workspaceUpload.style.display = 'none';
-                        workspacePlayer.style.display = 'flex';
-                        playIcon.textContent = 'play_arrow';
-                    } catch(err) {
-                        showToast("Failed to load audio file.", "error");
-                        resetWorkspace();
-                    }
-                };
-                reader.readAsArrayBuffer(file);
-            });
+        pannerNode.connect(dryGain);
+        dryGain.connect(masterGain);
 
-            // Calculate rotation speed from slider (1-100)
-            function updateSpeedFactor() {
-                const val = parseInt(speedSlider.value);
-                speedDisplay.textContent = val + "%";
-                // Math conversion from legacy script
-                // 'v' in legacy script was: 100 / value * 100
-                const v = (100 / val) * 100;
-                panSpeedFactor = Math.PI / v;
-            }
+        pannerNode.connect(convolverNode);
+        convolverNode.connect(reverbGain);
+        reverbGain.connect(masterGain);
 
-            speedSlider.addEventListener('input', updateSpeedFactor);
+        masterGain.connect(ctx.destination);
+      }
 
-            // Animation Loop for 3D Panner (Live Playback)
-            function animatePanner() {
-                if (panner && isPlaying) {
-                    currentAngle += panSpeedFactor;
-                    const posX = 1 * Math.cos(currentAngle);
-                    const posZ = 1 * Math.sin(currentAngle);
-                    
-                    // Web Audio API standard update
-                    if (panner.positionX) {
-                        panner.positionX.value = posX;
-                        panner.positionZ.value = posZ;
-                    } else {
-                        // Fallback for extremely old browsers if necessary
-                        panner.setPosition(posX, 0, posZ);
-                    }
-                }
-                animationId = requestAnimationFrame(animatePanner);
-            }
+      function updateReverb() {
+        if (!convolverNode || !audioCtx) return;
+        if (settings.reverbPreset === 'none' || settings.reverbAmount === 0) {
+          reverbGain.gain.setValueAtTime(0, audioCtx.currentTime);
+          dryGain.gain.setValueAtTime(1, audioCtx.currentTime);
+        } else {
+          const revDuration = settings.reverbPreset === 'cosmic' ? 3.5 : settings.reverbPreset === 'hall' ? 2.2 : 1.2;
+          const decay = settings.reverbPreset === 'cosmic' ? 1.5 : settings.reverbPreset === 'hall' ? 2.5 : 3.5;
+          convolverNode.buffer = createReverbImpulse(audioCtx, revDuration, decay);
+          reverbGain.gain.setValueAtTime((settings.reverbAmount / 100) * 0.45, audioCtx.currentTime);
+          dryGain.gain.setValueAtTime(1 - (settings.reverbAmount / 100) * 0.2, audioCtx.currentTime);
+        }
+      }
 
-            // Setup the HRTF Panner once waveform is ready
-            function setupWebAudioContext() {
-                if (isLoaded) return; // Prevent double trigger
-                
-                try {
-                    audioContext = wavesurfer.backend.ac;
-                    panner = audioContext.createPanner();
-                    
-                    panner.panningModel = "HRTF";
-                    panner.distanceModel = "inverse";
-                    panner.refDistance = 1;
-                    panner.maxDistance = 10000;
-                    panner.rolloffFactor = 10;
-                    panner.coneInnerAngle = 360;
-                    panner.coneOuterAngle = 360;
-                    panner.coneOuterGain = 0.3;
+      function play(offset = 0) {
+        if (!audioBuffer) return;
+        const ctx = getAudioContext();
+        setupGraph(ctx);
 
-                    // Set standard position setup using AudioParams
-                    if(panner.positionX) {
-                        panner.positionX.value = 0;
-                        panner.positionY.value = 0;
-                        panner.positionZ.value = 0;
-                        panner.orientationX.value = 0;
-                        panner.orientationY.value = 0;
-                        panner.orientationZ.value = 0;
-                    }
+        if (sourceNode) {
+          try { sourceNode.stop(); sourceNode.disconnect(); } catch (e) {}
+        }
 
-                    // Setup listener
-                    const listener = audioContext.listener;
-                    if(listener.positionX) {
-                        listener.positionX.value = 0;
-                        listener.positionY.value = 0;
-                        listener.positionZ.value = 0;
-                        listener.forwardX.value = 0;
-                        listener.forwardY.value = 0;
-                        listener.forwardZ.value = -1;
-                        listener.upX.value = 0;
-                        listener.upY.value = 1;
-                        listener.upZ.value = 0;
-                    }
+        sourceNode = ctx.createBufferSource();
+        sourceNode.buffer = audioBuffer;
+        sourceNode.loop = isLooping;
 
-                    // Connect Panner into Wavesurfer chain
-                    wavesurfer.backend.setFilters([panner]);
-                    
-                    // Start Animation Loop
-                    if(animationId) cancelAnimationFrame(animationId);
-                    animatePanner();
+        sourceNode.connect(bassFilter);
+        bassFilter.connect(trebleFilter);
+        trebleFilter.connect(pannerNode);
 
-                    hideLoading();
-                    isLoaded = true;
-                    showToast("Audio processed! Press play to test.", "success");
-                    
-                } catch(err) {
-                    console.error("Audio Context Setup Error:", err);
-                    showToast("Your browser does not support Web Audio API required for this tool.", "error");
-                    hideLoading();
-                }
-            }
+        const clamped = Math.max(0, Math.min(offset, audioBuffer.duration));
+        sourceNode.start(0, clamped);
+        startTime = ctx.currentTime;
+        startOffset = clamped;
+        isPlaying = true;
+        document.getElementById('play-icon').textContent = '⏸';
+        document.getElementById('play-text').textContent = 'Pause';
+      }
 
-            // Playback Controls logic
-            btnPlay.addEventListener('click', () => {
-                if (!wavesurfer || !isLoaded) return;
-                
-                wavesurfer.playPause();
-                isPlaying = wavesurfer.isPlaying();
-                
-                if (isPlaying) {
-                    playIcon.textContent = 'pause';
-                    // Re-ensure filter is attached upon play
-                    if(panner) {
-                        wavesurfer.backend.setFilters([panner]);
-                    }
-                } else {
-                    playIcon.textContent = 'play_arrow';
-                }
-            });
+      function pause() {
+        if (!isPlaying) return;
+        if (sourceNode) {
+          try { sourceNode.stop(); sourceNode.disconnect(); } catch (e) {}
+          sourceNode = null;
+        }
+        isPlaying = false;
+        document.getElementById('play-icon').textContent = '▶';
+        document.getElementById('play-text').textContent = 'Play 3D';
+      }
 
-            btnForward.addEventListener('click', () => {
-                if(wavesurfer) wavesurfer.skipForward();
-            });
+      function formatTime(secs) {
+        if (isNaN(secs)) return '00:00';
+        const m = Math.floor(secs / 60);
+        const s = Math.floor(secs % 60);
+        return m.toString().padStart(2, '0') + ':' + s.toString().padStart(2, '0');
+      }
 
-            btnBackward.addEventListener('click', () => {
-                if(wavesurfer) wavesurfer.skipBackward();
-            });
+      // Draw Waveform Canvas
+      function drawWaveform() {
+        const canvas = document.getElementById('waveform-canvas');
+        if (!canvas || !audioBuffer) return;
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width;
+        const h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
 
-            btnUploadNew.addEventListener('click', () => {
-                isLoaded = false;
-                resetWorkspace();
-            });
+        const channelData = audioBuffer.getChannelData(0);
+        const numBars = 140;
+        const step = Math.floor(channelData.length / numBars);
+        const curSecs = isPlaying && audioCtx ? (startOffset + (audioCtx.currentTime - startTime)) % audioBuffer.duration : startOffset;
+        const progressRatio = curSecs / audioBuffer.duration;
 
-            // Download Processing (Offline Audio Context)
-            btnDownload.addEventListener('click', () => {
-                if (!wavesurfer || !isLoaded || !wavesurfer.backend.buffer) return;
-                
-                // Pause playback if running
-                if (isPlaying) {
-                    wavesurfer.pause();
-                    isPlaying = false;
-                    playIcon.textContent = 'play_arrow';
-                }
+        for (let i = 0; i < numBars; i++) {
+          let max = 0;
+          for (let j = 0; j < step; j += 4) {
+            const v = Math.abs(channelData[i * step + j] || 0);
+            if (v > max) max = v;
+          }
+          const barHeight = Math.max(4, max * h * 0.9);
+          const x = i * (w / numBars);
+          const y = (h - barHeight) / 2;
 
-                showLoading("Encoding 3D audio... please wait.");
+          ctx.fillStyle = (i / numBars) <= progressRatio ? '#06b6d4' : '#cbd5e1';
+          ctx.fillRect(x, y, (w / numBars) - 2, barHeight);
+        }
+      }
 
-                setTimeout(() => {
-                    try {
-                        const buffer = wavesurfer.backend.buffer;
-                        const sampleRate = buffer.sampleRate;
-                        const length = buffer.length;
-                        const channels = buffer.numberOfChannels;
-                        
-                        // Create offline rendering context
-                        const offlineCtx = new OfflineAudioContext(channels, length, sampleRate);
-                        const source = offlineCtx.createBufferSource();
-                        source.buffer = buffer;
+      // Waveform click seeking
+      document.getElementById('waveform-wrap').addEventListener('click', function(e) {
+        if (!audioBuffer) return;
+        const rect = this.getBoundingClientRect();
+        const clickRatio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+        const seekTarget = clickRatio * audioBuffer.duration;
+        startOffset = seekTarget;
+        if (isPlaying) {
+          play(seekTarget);
+        } else {
+          document.getElementById('time-current').textContent = formatTime(seekTarget);
+          drawWaveform();
+        }
+      });
 
-                        // Create Offline Panner
-                        const offlinePanner = offlineCtx.createPanner();
-                        offlinePanner.panningModel = "HRTF";
-                        offlinePanner.distanceModel = "inverse";
-                        offlinePanner.refDistance = 1;
-                        offlinePanner.maxDistance = 10000;
-                        offlinePanner.rolloffFactor = 10;
-                        offlinePanner.coneInnerAngle = 360;
-                        offlinePanner.coneOuterAngle = 360;
-                        offlinePanner.coneOuterGain = 0.3;
+      // Radar Canvas Animation
+      function drawRadar(coords) {
+        const canvas = document.getElementById('radar-canvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width;
+        const h = canvas.height;
+        const cx = w / 2;
+        const cy = h / 2;
+        const maxR = Math.min(w, h) * 0.42;
 
-                        // Configure Offline Listener
-                        if(offlineCtx.listener.positionX) {
-                            offlineCtx.listener.positionX.value = 0;
-                            offlineCtx.listener.positionY.value = 0;
-                            offlineCtx.listener.positionZ.value = 0;
-                            offlineCtx.listener.forwardX.value = 0;
-                            offlineCtx.listener.forwardY.value = 0;
-                            offlineCtx.listener.forwardZ.value = -1;
-                            offlineCtx.listener.upX.value = 0;
-                            offlineCtx.listener.upY.value = 1;
-                            offlineCtx.listener.upZ.value = 0;
-                        }
+        ctx.clearRect(0, 0, w, h);
 
-                        // Apply Automation for 3D effect in rendered file
-                        let simAngle = 0;
-                        let simPosX = 0;
-                        let simPosZ = 0;
-                        
-                        // Legacy calculation increments per 0.01665 duration step
-                        for (let t = 0; t < source.buffer.duration; t += 0.01665) {
-                            simAngle += panSpeedFactor;
-                            simPosX = 1 * Math.cos(simAngle);
-                            simPosZ = 1 * Math.sin(simAngle);
-                            
-                            // Automate parameters
-                            if(offlinePanner.positionX) {
-                                offlinePanner.positionX.linearRampToValueAtTime(simPosX, t);
-                                offlinePanner.positionZ.linearRampToValueAtTime(simPosZ, t);
-                            } else {
-                                offlinePanner.setPosition(simPosX, 0, simPosZ);
-                            }
-                        }
-
-                        // Connect nodes
-                        source.connect(offlinePanner);
-                        offlinePanner.connect(offlineCtx.destination);
-                        source.start();
-
-                        // Start rendering
-                        offlineCtx.startRendering().then((renderedBuffer) => {
-                            // Encode to WAV using external library
-                            if(typeof WavAudioEncoder !== 'undefined') {
-                                const encoder = new WavAudioEncoder(sampleRate, channels);
-                                const audioData = [];
-                                for (let i = 0; i < channels; i++) {
-                                    audioData.push(renderedBuffer.getChannelData(i));
-                                }
-                                encoder.encode(audioData);
-                                const wavBlob = encoder.finish("audio/wav");
-                                
-                                // Download the blob
-                                const downloadUrl = URL.createObjectURL(wavBlob);
-                                const a = document.createElement("a");
-                                a.style.display = "none";
-                                a.href = downloadUrl;
-                                a.download = currentFileName;
-                                document.body.appendChild(a);
-                                a.click();
-                                
-                                setTimeout(() => {
-                                    URL.revokeObjectURL(downloadUrl);
-                                    a.remove();
-                                }, 100);
-                                
-                                hideLoading();
-                                showToast("Download started successfully!", "success");
-                            } else {
-                                throw new Error("WavAudioEncoder library is missing.");
-                            }
-                        }).catch(err => {
-                            console.error("Rendering Error:", err);
-                            hideLoading();
-                            showToast("An error occurred while encoding the file.", "error");
-                        });
-
-                    } catch (e) {
-                        console.error("Offline Processing Error:", e);
-                        hideLoading();
-                        showToast("Failed to process the audio file for download.", "error");
-                    }
-                }, 100); // Tiny delay to allow DOM to show loading state
-            });
-
-            // Drag and drop setup for upload zone
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                workspaceUpload.addEventListener(eventName, preventDefaults, false);
-            });
-
-            function preventDefaults (e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-
-            ['dragenter', 'dragover'].forEach(eventName => {
-                workspaceUpload.addEventListener(eventName, () => {
-                    workspaceUpload.classList.add('bg-gray-100', 'border-blue-500');
-                }, false);
-            });
-
-            ['dragleave', 'drop'].forEach(eventName => {
-                workspaceUpload.addEventListener(eventName, () => {
-                    workspaceUpload.classList.remove('bg-gray-100', 'border-blue-500');
-                }, false);
-            });
-
-            workspaceUpload.addEventListener('drop', (e) => {
-                const dt = e.dataTransfer;
-                const files = dt.files;
-                
-                if(files && files.length > 0) {
-                    fileInput.files = files;
-                    const event = new Event('change');
-                    fileInput.dispatchEvent(event);
-                }
-            }, false);
-
+        // Radar Rings
+        [0.33, 0.66, 1.0].forEach(r => {
+          ctx.beginPath();
+          ctx.arc(cx, cy, maxR * r, 0, Math.PI * 2);
+          ctx.strokeStyle = '#e2e8f0';
+          ctx.lineWidth = 1;
+          ctx.stroke();
         });
-    </script>
+
+        // Crosshairs
+        ctx.beginPath();
+        ctx.moveTo(cx, cy - maxR); ctx.lineTo(cx, cy + maxR);
+        ctx.moveTo(cx - maxR, cy); ctx.lineTo(cx + maxR, cy);
+        ctx.strokeStyle = '#f1f5f9';
+        ctx.stroke();
+
+        // Listener Head
+        ctx.beginPath();
+        ctx.arc(cx, cy, 14, 0, Math.PI * 2);
+        ctx.fillStyle = '#1e293b';
+        ctx.fill();
+
+        // Listener Nose indicator
+        ctx.beginPath();
+        ctx.moveTo(cx - 4, cy - 14);
+        ctx.lineTo(cx, cy - 20);
+        ctx.lineTo(cx + 4, cy - 14);
+        ctx.fillStyle = '#0f172a';
+        ctx.fill();
+
+        // Sound Orb position
+        const sourceScale = maxR / 4.0;
+        const ox = cx + coords.x * sourceScale;
+        const oy = cy - coords.z * sourceScale;
+
+        // Glow ring
+        ctx.beginPath();
+        ctx.arc(ox, oy, 14, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(6, 182, 212, 0.2)';
+        ctx.fill();
+
+        // Sound Orb
+        ctx.beginPath();
+        ctx.arc(ox, oy, 8, 0, Math.PI * 2);
+        ctx.fillStyle = '#0284c7';
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Connecting Beam
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(ox, oy);
+        ctx.strokeStyle = 'rgba(6, 182, 212, 0.4)';
+        ctx.setLineDash([3, 3]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      // Main Loop
+      function loop(now) {
+        if (lastFrameTime > 0 && isPlaying) {
+          orbitTime += (now - lastFrameTime) / 1000;
+        }
+        lastFrameTime = now;
+
+        const pos = calculateSpatialPosition(orbitTime, settings);
+        if (pannerNode && audioCtx) {
+          if (pannerNode.positionX && pannerNode.positionX.setValueAtTime) {
+            pannerNode.positionX.setValueAtTime(pos.x, audioCtx.currentTime);
+            pannerNode.positionY.setValueAtTime(pos.y, audioCtx.currentTime);
+            pannerNode.positionZ.setValueAtTime(pos.z, audioCtx.currentTime);
+          } else if (pannerNode.setPosition) {
+            pannerNode.setPosition(pos.x, pos.y, pos.z);
+          }
+        }
+
+        drawRadar(pos);
+        if (audioBuffer) drawWaveform();
+
+        if (isPlaying && audioCtx && audioBuffer) {
+          const cur = (startOffset + (audioCtx.currentTime - startTime)) % audioBuffer.duration;
+          document.getElementById('time-current').textContent = formatTime(cur);
+        }
+
+        document.getElementById('azimuth-display').textContent = pos.azimuth + '° Azimuth';
+        document.getElementById('radar-coords').textContent = 'X: ' + pos.x.toFixed(1) + 'm | Y: ' + pos.y.toFixed(1) + 'm | Z: ' + pos.z.toFixed(1) + 'm';
+
+        // Ear meter calculation
+        const rad = (pos.azimuth * Math.PI) / 180;
+        const leftPower = Math.round(50 + 40 * Math.sin(rad));
+        const rightPower = Math.round(50 - 40 * Math.sin(rad));
+        document.getElementById('left-ear-val').textContent = leftPower + '%';
+        document.getElementById('right-ear-val').textContent = rightPower + '%';
+        document.getElementById('left-ear-bar').style.width = leftPower + '%';
+        document.getElementById('right-ear-bar').style.width = rightPower + '%';
+
+        requestAnimationFrame(loop);
+      }
+      requestAnimationFrame(loop);
+
+      // File handling
+      function handleFile(file) {
+        currentFileName = file.name;
+        document.getElementById('upload-title').textContent = 'Loaded: ' + file.name;
+        document.getElementById('current-song-title').textContent = file.name;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const ctx = getAudioContext();
+          ctx.decodeAudioData(e.target.result, function(decoded) {
+            audioBuffer = decoded;
+            document.getElementById('duration-text').textContent = formatTime(decoded.duration);
+            document.getElementById('time-total').textContent = formatTime(decoded.duration);
+            document.getElementById('player-section').classList.remove('hidden');
+            play(0);
+          }, function(err) {
+            alert('Error decoding audio file. Please try a standard MP3 or WAV file.');
+          });
+        };
+        reader.readAsArrayBuffer(file);
+      }
+
+      document.getElementById('file-input').addEventListener('change', function(e) {
+        if (e.target.files[0]) handleFile(e.target.files[0]);
+      });
+      document.getElementById('browse-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        document.getElementById('file-input').click();
+      });
+      document.getElementById('dropzone').addEventListener('click', () => document.getElementById('file-input').click());
+
+      // Drag & Drop
+      const dropzone = document.getElementById('dropzone');
+      dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('border-cyan-500', 'bg-cyan-50/20'); });
+      dropzone.addEventListener('dragleave', () => { dropzone.classList.remove('border-cyan-500', 'bg-cyan-50/20'); });
+      dropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('border-cyan-500', 'bg-cyan-50/20');
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+          handleFile(e.dataTransfer.files[0]);
+        }
+      });
+
+      // Play/Pause
+      document.getElementById('play-pause-btn').addEventListener('click', () => isPlaying ? pause() : play(startOffset));
+      document.getElementById('skip-back').addEventListener('click', () => {
+        if (!audioBuffer) return;
+        const cur = isPlaying && audioCtx ? (startOffset + (audioCtx.currentTime - startTime)) % audioBuffer.duration : startOffset;
+        play(Math.max(0, cur - 5));
+      });
+      document.getElementById('skip-fwd').addEventListener('click', () => {
+        if (!audioBuffer) return;
+        const cur = isPlaying && audioCtx ? (startOffset + (audioCtx.currentTime - startTime)) % audioBuffer.duration : startOffset;
+        play(Math.min(audioBuffer.duration, cur + 5));
+      });
+      document.getElementById('loop-btn').addEventListener('click', function() {
+        isLooping = !isLooping;
+        if (sourceNode) sourceNode.loop = isLooping;
+        this.className = isLooping 
+          ? 'w-9 h-9 rounded-lg bg-cyan-100 text-cyan-700 font-bold ring-2 ring-cyan-400 flex items-center justify-center transition-all'
+          : 'w-9 h-9 rounded-lg bg-slate-100 text-slate-400 flex items-center justify-center transition-all';
+      });
+
+      document.getElementById('vol-slider').addEventListener('input', (e) => {
+        if (masterGain && audioCtx) masterGain.gain.setValueAtTime(parseFloat(e.target.value), audioCtx.currentTime);
+      });
+
+      // Sliders
+      document.getElementById('speed-slider').addEventListener('input', (e) => {
+        settings.speed = parseInt(e.target.value);
+        document.getElementById('speed-val').textContent = e.target.value + '%';
+      });
+      document.getElementById('radius-slider').addEventListener('input', (e) => {
+        settings.radius = parseFloat(e.target.value);
+        document.getElementById('radius-val').textContent = e.target.value + 'm';
+      });
+      document.getElementById('height-slider').addEventListener('input', (e) => {
+        settings.height = parseFloat(e.target.value);
+        document.getElementById('height-val').textContent = (settings.height > 0 ? '+' : '') + settings.height + 'm';
+      });
+      document.getElementById('reverb-slider').addEventListener('input', (e) => {
+        settings.reverbAmount = parseInt(e.target.value);
+        document.getElementById('reverb-val').textContent = e.target.value + '%';
+        updateReverb();
+      });
+      document.getElementById('bass-slider').addEventListener('input', (e) => {
+        settings.bassBoost = parseFloat(e.target.value);
+        document.getElementById('bass-val').textContent = '+' + settings.bassBoost + ' dB';
+        if (bassFilter && audioCtx) bassFilter.gain.setValueAtTime(settings.bassBoost, audioCtx.currentTime);
+      });
+      document.getElementById('treble-slider').addEventListener('input', (e) => {
+        settings.trebleAir = parseFloat(e.target.value);
+        document.getElementById('treble-val').textContent = '+' + settings.trebleAir + ' dB';
+        if (trebleFilter && audioCtx) trebleFilter.gain.setValueAtTime(settings.trebleAir, audioCtx.currentTime);
+      });
+
+      // Presets
+      document.querySelectorAll('.preset-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const key = this.getAttribute('data-preset');
+          const p = PRESETS[key];
+          if (!p) return;
+          Object.assign(settings, p);
+
+          // Update UI
+          document.getElementById('speed-slider').value = settings.speed;
+          document.getElementById('speed-val').textContent = settings.speed + '%';
+          document.getElementById('radius-slider').value = settings.radius;
+          document.getElementById('radius-val').textContent = settings.radius + 'm';
+          document.getElementById('height-slider').value = settings.height;
+          document.getElementById('height-val').textContent = (settings.height > 0 ? '+' : '') + settings.height + 'm';
+          document.getElementById('reverb-slider').value = settings.reverbAmount;
+          document.getElementById('reverb-val').textContent = settings.reverbAmount + '%';
+
+          document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active-preset'));
+          this.classList.add('active-preset');
+
+          document.querySelectorAll('.pattern-btn').forEach(b => {
+            if (b.getAttribute('data-pattern') === settings.pattern) b.classList.add('active-pattern');
+            else b.classList.remove('active-pattern');
+          });
+
+          document.querySelectorAll('.reverb-btn').forEach(b => {
+            if (b.getAttribute('data-reverb') === settings.reverbPreset) b.classList.add('active-reverb');
+            else b.classList.remove('active-reverb');
+          });
+
+          updateReverb();
+        });
+      });
+
+      // Trajectory Buttons
+      document.querySelectorAll('.pattern-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          settings.pattern = this.getAttribute('data-pattern');
+          document.querySelectorAll('.pattern-btn').forEach(b => b.classList.remove('active-pattern'));
+          this.classList.add('active-pattern');
+        });
+      });
+
+      // Reverb Buttons
+      document.querySelectorAll('.reverb-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          settings.reverbPreset = this.getAttribute('data-reverb');
+          document.querySelectorAll('.reverb-btn').forEach(b => b.classList.remove('active-reverb'));
+          this.classList.add('active-reverb');
+          updateReverb();
+        });
+      });
+
+      // Direction Buttons
+      document.getElementById('dir-cw').addEventListener('click', function() {
+        settings.direction = 'clockwise';
+        this.className = 'p-1.5 rounded-lg bg-amber-600 text-white text-xs font-bold transition-all';
+        document.getElementById('dir-ccw').className = 'p-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 text-xs font-bold transition-all';
+      });
+      document.getElementById('dir-ccw').addEventListener('click', function() {
+        settings.direction = 'counterclockwise';
+        this.className = 'p-1.5 rounded-lg bg-amber-600 text-white text-xs font-bold transition-all';
+        document.getElementById('dir-cw').className = 'p-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 text-xs font-bold transition-all';
+      });
+
+      // Demo track generators
+      document.getElementById('demo-synth-btn').addEventListener('click', () => generateSynthDemo('synth'));
+      document.getElementById('demo-ambient-btn').addEventListener('click', () => generateSynthDemo('ambient'));
+
+      function generateSynthDemo(type) {
+        const sampleRate = 44100;
+        const dur = 12.0;
+        const offlineCtx = new OfflineAudioContext(2, sampleRate * dur, sampleRate);
+        const chords = type === 'synth' ? [220, 261.63, 329.63, 174.61] : [261.63, 329.63, 392, 493.88];
+        chords.forEach((freq, idx) => {
+          const osc = offlineCtx.createOscillator();
+          const g = offlineCtx.createGain();
+          osc.type = type === 'synth' ? 'sawtooth' : 'sine';
+          osc.frequency.setValueAtTime(freq, idx * 3);
+          g.gain.setValueAtTime(0.001, idx * 3);
+          g.gain.linearRampToValueAtTime(0.2, idx * 3 + 0.5);
+          g.gain.linearRampToValueAtTime(0.001, idx * 3 + 3);
+          osc.connect(g);
+          g.connect(offlineCtx.destination);
+          osc.start(idx * 3);
+          osc.stop(idx * 3 + 3);
+        });
+        offlineCtx.startRendering().then(rendered => {
+          audioBuffer = rendered;
+          document.getElementById('current-song-title').textContent = type === 'synth' ? 'Synthwave_Demo.wav' : 'Ambient_Demo.wav';
+          document.getElementById('duration-text').textContent = formatTime(rendered.duration);
+          document.getElementById('time-total').textContent = formatTime(rendered.duration);
+          document.getElementById('player-section').classList.remove('hidden');
+          play(0);
+        });
+      }
+
+      // WAV Export
+      document.getElementById('export-wav-btn').addEventListener('click', function() {
+        if (!audioBuffer) return;
+        const btn = document.getElementById('export-wav-btn');
+        const origHtml = btn.innerHTML;
+        btn.innerHTML = '<span>⏳</span><span>Rendering 3D Master...</span>';
+        btn.disabled = true;
+
+        setTimeout(() => {
+          const sRate = audioBuffer.sampleRate;
+          const dur = audioBuffer.duration;
+          const offlineCtx = new OfflineAudioContext(2, Math.ceil(sRate * dur), sRate);
+
+          const src = offlineCtx.createBufferSource();
+          src.buffer = audioBuffer;
+          const pan = offlineCtx.createPanner();
+          pan.panningModel = 'HRTF';
+          pan.distanceModel = 'inverse';
+
+          for (let t = 0; t <= dur; t += 0.03) {
+            const p = calculateSpatialPosition(t, settings);
+            if (pan.positionX && pan.positionX.setValueAtTime) {
+              pan.positionX.setValueAtTime(p.x, t);
+              pan.positionY.setValueAtTime(p.y, t);
+              pan.positionZ.setValueAtTime(p.z, t);
+            } else if (pan.setPosition) {
+              pan.setPosition(p.x, p.y, p.z);
+            }
+          }
+
+          src.connect(pan);
+          pan.connect(offlineCtx.destination);
+          src.start(0);
+
+          offlineCtx.startRendering().then(rendered => {
+            // Encode 16-bit PCM WAV
+            const numCh = 2;
+            const numSamp = rendered.length;
+            const buffer = new ArrayBuffer(44 + numSamp * 4);
+            const view = new DataView(buffer);
+            const writeStr = (offset, str) => { for (let i = 0; i < str.length; i++) view.setUint8(offset + i, str.charCodeAt(i)); };
+
+            writeStr(0, 'RIFF'); view.setUint32(4, 36 + numSamp * 4, true); writeStr(8, 'WAVE');
+            writeStr(12, 'fmt '); view.setUint32(16, 16, true); view.setUint16(20, 1, true);
+            view.setUint16(22, numCh, true); view.setUint32(24, sRate, true);
+            view.setUint32(28, sRate * 4, true); view.setUint16(32, 4, true); view.setUint16(34, 16, true);
+            writeStr(36, 'data'); view.setUint32(40, numSamp * 4, true);
+
+            const l = rendered.getChannelData(0);
+            const r = rendered.getChannelData(1);
+            let offset = 44;
+            for (let i = 0; i < numSamp; i++) {
+              const sL = Math.max(-1, Math.min(1, l[i]));
+              const sR = Math.max(-1, Math.min(1, r[i]));
+              view.setInt16(offset, sL < 0 ? sL * 32768 : sL * 32767, true);
+              view.setInt16(offset + 2, sR < 0 ? sR * 32768 : sR * 32767, true);
+              offset += 4;
+            }
+
+            const blob = new Blob([buffer], { type: 'audio/wav' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = '3D_' + currentFileName.replace(/\.[^/.]+$/, '') + '.wav';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+
+            btn.innerHTML = origHtml;
+            btn.disabled = false;
+          }).catch(err => {
+            alert('Export failed: ' + err.message);
+            btn.innerHTML = origHtml;
+            btn.disabled = false;
+          });
+        }, 50);
+      });
+    })();
+  </script>
 </body>
 </html>
