@@ -26,6 +26,19 @@
     "status": "active"
   },
   {
+    "name": "Nepali Ai Voice Generator",
+    "slug": "nepali-ai-voice-generator",
+    "path": "AI-Tools/nepali-ai-voice-generator",
+    "description": "Free online Nepali Ai Voice Generator tool.",
+    "category": "Ai Tools",
+    "categorySlug": "ai-tools",
+    "logo": "/Nisulka-Tools/tools/AI-Tools/nepali-ai-voice-generator/logo.jpg",
+    "url": "/Nisulka-Tools/tools/AI-Tools/nepali-ai-voice-generator/",
+    "keywords": [],
+    "featured": false,
+    "status": "active"
+  },
+  {
     "name": "Slowed And Reverb Generator",
     "slug": "slowed-and-reverb-generator",
     "path": "AI-Tools/slowed-and-reverb-generator",
