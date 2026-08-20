@@ -165,6 +165,19 @@
     "status": "active"
   },
   {
+    "name": "English Nepali Dictionary",
+    "slug": "English-Nepali-Dictionary",
+    "path": "English-Nepali-Dictionary",
+    "description": "Free online English Nepali Dictionary tool.",
+    "category": "Other Tools",
+    "categorySlug": "other-tools",
+    "logo": "/Nisulka-Tools/tools/English-Nepali-Dictionary/logo.jpg",
+    "url": "/Nisulka-Tools/tools/English-Nepali-Dictionary/",
+    "keywords": [],
+    "featured": false,
+    "status": "active"
+  },
+  {
     "name": "Instagram Image Downloader",
     "slug": "instagram-image-downloader",
     "path": "instagram-image-downloader",
