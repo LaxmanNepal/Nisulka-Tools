@@ -23,6 +23,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&family=Outfit:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 
+    <!-- HTML2Canvas & jsPDF for High-Quality PDF & JPG Exports -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
     <!-- Custom Tool Styling -->
     <style>
         .font-inter { font-family: 'Inter', sans-serif; }
@@ -141,8 +145,8 @@
                         </button>
                         <div id="preset-dropdown" class="hidden absolute right-0 mt-2 w-56 rounded-xl bg-white shadow-xl ring-1 ring-black ring-opacity-5 z-20 divide-y divide-slate-100 border border-slate-200">
                             <div class="py-1">
-                                <button onclick="loadPreset('aayusha')" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-blue-50 hover:text-blue-600 flex items-center gap-2">
-                                    <i class="fa-solid fa-graduation-cap text-blue-500"></i> General CV (Aayusha Acharya)
+                                <button onclick="loadPreset('general')" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-blue-50 hover:text-blue-600 flex items-center gap-2">
+                                    <i class="fa-solid fa-graduation-cap text-blue-500"></i> General Academic CV
                                 </button>
                                 <button onclick="loadPreset('alex')" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-blue-50 hover:text-blue-600 flex items-center gap-2">
                                     <i class="fa-solid fa-laptop-code text-indigo-500"></i> Tech Resume (Software Eng.)
@@ -161,8 +165,16 @@
                         <i class="fa-solid fa-upload"></i> Import JSON
                         <input type="file" id="import-json" accept=".json" class="hidden" onchange="importJSON(event)">
                     </label>
-                    <button onclick="triggerPrint()" class="px-4 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-md shadow-blue-500/20 transition flex items-center gap-2">
-                        <i class="fa-solid fa-print"></i> Print / Save PDF
+
+                    <!-- Direct Download Controls -->
+                    <button onclick="downloadPDF()" class="px-3.5 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-md shadow-blue-500/20 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-file-pdf"></i> Download PDF
+                    </button>
+                    <button onclick="downloadJPG()" class="px-3.5 py-2 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg shadow-md shadow-emerald-500/20 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-file-image"></i> Download JPG (HD)
+                    </button>
+                    <button onclick="triggerPrint()" class="px-3 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition border border-slate-300 flex items-center gap-1.5" title="Print Document">
+                        <i class="fa-solid fa-print"></i> Print
                     </button>
                 </div>
             </div>
@@ -248,9 +260,20 @@
                         <i id="icon-sec-personal" class="fa-solid fa-chevron-down text-xs text-slate-500"></i>
                     </button>
                     <div id="sec-personal" class="p-4 space-y-3 bg-white border-t border-slate-200">
+                        <!-- Profile Photo Upload -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Profile Photo (Top Right)</label>
+                            <div class="flex items-center gap-2">
+                                <input type="file" id="inp-photo" accept="image/*" onchange="handlePhotoUpload(event)" class="text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
+                                <button onclick="removePhoto()" id="btn-remove-photo" class="hidden px-2.5 py-1 text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-lg border border-rose-200 transition">
+                                    <i class="fa-solid fa-trash mr-1"></i> Remove
+                                </button>
+                            </div>
+                        </div>
+
                         <div>
                             <label class="block text-xs font-medium text-slate-700 mb-1">Full Name *</label>
-                            <input type="text" id="inp-fullname" oninput="renderCV()" placeholder="e.g. Aayusha Acharya" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500">
+                            <input type="text" id="inp-fullname" oninput="renderCV()" placeholder="e.g. John Doe" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500">
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-slate-700 mb-1">Designation / Objective Title</label>
@@ -510,41 +533,41 @@
         let accentColor = '#1e3a8a';
         let academicItems = [];
         let workExperiences = [];
+        let profilePhotoUrl = '';
 
-        // Preset Data: Aayusha Acharya CV (General / Tabular)
-        const presetAayusha = {
-            fullname: "Aayusha Acharya",
+        // Generic Preset Data
+        const presetGeneral = {
+            fullname: "John Doe",
             jobtitle: "Curriculum Vitae",
-            email: "acharyaaayusha48@gmail.com",
-            phone: "+977 9865348329",
-            permAddress: "Jitpursimara, 22 Bara",
-            tempAddress: "Hetauda-09, Makawanpur",
-            father: "Uttam Prasad Acharya",
-            mother: "Sita Acharya",
-            grandfather: "Krishna Prasad Acharya",
-            dob: "2061-03-17 (2004-07-01)",
-            citizenship: "33-02-80-00387",
-            pan: "145016966",
-            blood: "B+",
-            gender: "Female",
-            marital: "Unmarried",
-            nationality: "Nepali",
-            religion: "Hindu",
-            languages: "Nepali, English",
-            extraQual: "Diploma in Computer Application",
-            skills: "Proficient in Microsoft Office Suite (Word, Excel, PowerPoint)\nExperience with online form management and printing\nStrong organizational and administrative skills\nExcellent verbal and written communication abilities\nAttention to detail and accuracy in data entry",
+            email: "johndoe@example.com",
+            phone: "+1 (555) 019-2834",
+            permAddress: "123 Main Street, Suite 100",
+            tempAddress: "456 Campus Road",
+            father: "Robert Doe",
+            mother: "Mary Doe",
+            grandfather: "William Doe",
+            dob: "2000-01-15",
+            citizenship: "123-456-789",
+            pan: "987654321",
+            blood: "O+",
+            gender: "Male",
+            marital: "Single",
+            nationality: "American",
+            religion: "-",
+            languages: "English, Spanish",
+            extraQual: "Diploma in Computer Applications",
+            skills: "Proficient in Microsoft Office Suite (Word, Excel, PowerPoint)\nExperience with administrative database management\nStrong organizational and communication abilities",
             academic: [
-                { id: 1, level: "SEE", board: "NEB / Board", year: "2075", percent: "68.75%", division: "First", remarks: "Pass" },
-                { id: 2, level: "I.Sc. Ag (Diploma in Animal Science)", board: "CTEVT", year: "2079", percent: "76.15%", division: "First", remarks: "Pass" },
-                { id: 3, level: "B.A. 3rd Year", board: "TU", year: "Current", percent: "-", division: "-", remarks: "Running" }
+                { id: 1, level: "High School Diploma", board: "National Education Board", year: "2018", percent: "3.8 GPA", division: "First", remarks: "Completed" },
+                { id: 2, level: "Bachelor of Arts", board: "State University", year: "2022", percent: "3.7 GPA", division: "First", remarks: "Graduated" }
             ],
             experiences: [
                 {
                     id: 1,
-                    role: "Front Desk & Customer Support Associate",
-                    company: "Customer Care & Communication Center",
+                    role: "Administrative Assistant",
+                    company: "Global Services Inc.",
                     period: "2022 - Present",
-                    desc: "• Managed front desk operations including greeting customers, answering inquiries, and handling phone calls.\n• Assisted customers with printing services, online form submissions, and troubleshooting technical issues.\n• Maintained cleanliness and organization of the reception area.\n• Handled cash transactions and maintained records of daily sales."
+                    desc: "• Managed front desk operations and client communications.\n• Handled data entry and document archiving."
                 }
             ]
         };
@@ -586,7 +609,7 @@
         };
 
         window.addEventListener('DOMContentLoaded', () => {
-            loadPreset('aayusha');
+            loadPreset('general');
         });
 
         // Show Toast Messages instead of native alert()
@@ -655,7 +678,7 @@
         }
 
         function loadPreset(key) {
-            const data = key === 'aayusha' ? presetAayusha : presetAlex;
+            const data = key === 'general' ? presetGeneral : presetAlex;
 
             document.getElementById('inp-fullname').value = data.fullname || '';
             document.getElementById('inp-jobtitle').value = data.jobtitle || '';
@@ -695,9 +718,37 @@
             });
             academicItems = [];
             workExperiences = [];
+            removePhoto();
             renderFormDynamicLists();
             renderCV();
             showToast("Form cleared successfully.");
+        }
+
+        function handlePhotoUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                if (file.size > 5 * 1024 * 1024) {
+                    showToast("Photo size should be less than 5MB.");
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    profilePhotoUrl = e.target.result;
+                    document.getElementById('btn-remove-photo').classList.remove('hidden');
+                    renderCV();
+                    showToast("Profile photo uploaded successfully!");
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function removePhoto() {
+            profilePhotoUrl = '';
+            const photoInput = document.getElementById('inp-photo');
+            if (photoInput) photoInput.value = '';
+            const btnRemove = document.getElementById('btn-remove-photo');
+            if (btnRemove) btnRemove.classList.add('hidden');
+            renderCV();
         }
 
         // Dynamic Academic Handlers
@@ -800,7 +851,7 @@
             const templateStyle = document.getElementById('cfg-template').value;
 
             const data = {
-                fullname: document.getElementById('inp-fullname').value || 'Aayusha Acharya',
+                fullname: document.getElementById('inp-fullname').value || 'John Doe',
                 jobtitle: document.getElementById('inp-jobtitle').value || 'Curriculum Vitae',
                 email: document.getElementById('inp-email').value,
                 phone: document.getElementById('inp-phone').value,
@@ -847,9 +898,16 @@
             return `
                 <div class="space-y-6">
                     <!-- Title Header -->
-                    <div class="text-center pb-3 border-b-2" style="border-color: ${accentColor}">
-                        <h1 class="text-2xl font-bold uppercase tracking-wider text-slate-900">${data.fullname}</h1>
-                        <p class="text-sm font-semibold tracking-wide uppercase mt-1" style="color: ${accentColor}">${data.jobtitle || 'Curriculum Vitae'}</p>
+                    <div class="relative pb-3 border-b-2 min-h-[70px] flex items-center justify-center" style="border-color: ${accentColor}">
+                        <div class="text-center ${profilePhotoUrl ? 'pr-24' : ''}">
+                            <h1 class="text-2xl font-bold uppercase tracking-wider text-slate-900">${data.fullname}</h1>
+                            <p class="text-sm font-semibold tracking-wide uppercase mt-1" style="color: ${accentColor}">${data.jobtitle || 'Curriculum Vitae'}</p>
+                        </div>
+                        ${profilePhotoUrl ? `
+                            <div class="absolute right-0 top-0">
+                                <img src="${profilePhotoUrl}" alt="Profile Photo" class="w-20 h-20 rounded-full object-cover border-2 border-slate-300 shadow-sm" />
+                            </div>
+                        ` : ''}
                     </div>
 
                     <!-- Personal Details Table -->
@@ -859,103 +917,103 @@
                         </h2>
                         <table class="w-full text-xs text-slate-700 border-collapse">
                             <tbody>
-                                <tr class="border-b border-slate-100">
+                                <tr>
                                     <td class="py-1 font-semibold w-1/3">Name</td>
                                     <td class="py-1 w-6 text-center">:-</td>
                                     <td class="py-1 font-medium">${data.fullname}</td>
                                 </tr>
                                 ${data.permAddress ? `
-                                <tr class="border-b border-slate-100">
+                                <tr>
                                     <td class="py-1 font-semibold">Permanent Address</td>
                                     <td class="py-1 text-center">:-</td>
                                     <td class="py-1">${data.permAddress}</td>
                                 </tr>` : ''}
                                 ${data.tempAddress ? `
-                                <tr class="border-b border-slate-100">
+                                <tr>
                                     <td class="py-1 font-semibold">Temporary Address</td>
                                     <td class="py-1 text-center">:-</td>
                                     <td class="py-1">${data.tempAddress}</td>
                                 </tr>` : ''}
                                 ${data.father ? `
-                                <tr class="border-b border-slate-100">
+                                <tr>
                                     <td class="py-1 font-semibold">Father's Name</td>
                                     <td class="py-1 text-center">:-</td>
                                     <td class="py-1">${data.father}</td>
                                 </tr>` : ''}
                                 ${data.mother ? `
-                                <tr class="border-b border-slate-100">
+                                <tr>
                                     <td class="py-1 font-semibold">Mother's Name</td>
                                     <td class="py-1 text-center">:-</td>
                                     <td class="py-1">${data.mother}</td>
                                 </tr>` : ''}
                                 ${data.grandfather ? `
-                                <tr class="border-b border-slate-100">
+                                <tr>
                                     <td class="py-1 font-semibold">Grand Father's Name</td>
                                     <td class="py-1 text-center">:-</td>
                                     <td class="py-1">${data.grandfather}</td>
                                 </tr>` : ''}
                                 ${data.dob ? `
-                                <tr class="border-b border-slate-100">
+                                <tr>
                                     <td class="py-1 font-semibold">Date Of Birth</td>
                                     <td class="py-1 text-center">:-</td>
                                     <td class="py-1">${data.dob}</td>
                                 </tr>` : ''}
                                 ${data.citizenship ? `
-                                <tr class="border-b border-slate-100">
+                                <tr>
                                     <td class="py-1 font-semibold">Citizenship No.</td>
                                     <td class="py-1 text-center">:-</td>
                                     <td class="py-1">${data.citizenship}</td>
                                 </tr>` : ''}
                                 ${data.gender ? `
-                                <tr class="border-b border-slate-100">
+                                <tr>
                                     <td class="py-1 font-semibold">Gender</td>
                                     <td class="py-1 text-center">:-</td>
                                     <td class="py-1">${data.gender}</td>
                                 </tr>` : ''}
                                 ${data.marital ? `
-                                <tr class="border-b border-slate-100">
+                                <tr>
                                     <td class="py-1 font-semibold">Marital Status</td>
                                     <td class="py-1 text-center">:-</td>
                                     <td class="py-1">${data.marital}</td>
                                 </tr>` : ''}
                                 ${data.nationality ? `
-                                <tr class="border-b border-slate-100">
+                                <tr>
                                     <td class="py-1 font-semibold">Nationality</td>
                                     <td class="py-1 text-center">:-</td>
                                     <td class="py-1">${data.nationality}</td>
                                 </tr>` : ''}
                                 ${data.religion ? `
-                                <tr class="border-b border-slate-100">
+                                <tr>
                                     <td class="py-1 font-semibold">Religion</td>
                                     <td class="py-1 text-center">:-</td>
                                     <td class="py-1">${data.religion}</td>
                                 </tr>` : ''}
                                 ${data.languages ? `
-                                <tr class="border-b border-slate-100">
+                                <tr>
                                     <td class="py-1 font-semibold">Language</td>
                                     <td class="py-1 text-center">:-</td>
                                     <td class="py-1">${data.languages}</td>
                                 </tr>` : ''}
                                 ${data.pan ? `
-                                <tr class="border-b border-slate-100">
+                                <tr>
                                     <td class="py-1 font-semibold">PAN No.</td>
                                     <td class="py-1 text-center">:-</td>
                                     <td class="py-1">${data.pan}</td>
                                 </tr>` : ''}
                                 ${data.blood ? `
-                                <tr class="border-b border-slate-100">
+                                <tr>
                                     <td class="py-1 font-semibold">Blood Group</td>
                                     <td class="py-1 text-center">:-</td>
                                     <td class="py-1">${data.blood}</td>
                                 </tr>` : ''}
                                 ${data.phone ? `
-                                <tr class="border-b border-slate-100">
+                                <tr>
                                     <td class="py-1 font-semibold">Contact No.</td>
                                     <td class="py-1 text-center">:-</td>
                                     <td class="py-1">${data.phone}</td>
                                 </tr>` : ''}
                                 ${data.email ? `
-                                <tr class="border-b border-slate-100">
+                                <tr>
                                     <td class="py-1 font-semibold">E-Mail</td>
                                     <td class="py-1 text-center">:-</td>
                                     <td class="py-1">${data.email}</td>
@@ -971,27 +1029,27 @@
                             Academic Qualifications
                         </h2>
                         <div class="overflow-x-auto">
-                            <table class="w-full text-xs text-left text-slate-700 border border-slate-300">
-                                <thead class="bg-slate-100 text-slate-900 font-bold border-b border-slate-300">
+                            <table class="w-full text-xs text-left text-slate-700">
+                                <thead class="bg-slate-100 text-slate-900 font-bold">
                                     <tr>
-                                        <th class="p-2 border-r border-slate-300 text-center w-10">S.N.</th>
-                                        <th class="p-2 border-r border-slate-300">Level / Qualification</th>
-                                        <th class="p-2 border-r border-slate-300">Board / University</th>
-                                        <th class="p-2 border-r border-slate-300 text-center">Year</th>
-                                        <th class="p-2 border-r border-slate-300 text-center">% / GPA</th>
-                                        <th class="p-2 border-r border-slate-300 text-center">Division</th>
+                                        <th class="p-2 text-center w-10">S.N.</th>
+                                        <th class="p-2">Level / Qualification</th>
+                                        <th class="p-2">Board / University</th>
+                                        <th class="p-2 text-center">Year</th>
+                                        <th class="p-2 text-center">% / GPA</th>
+                                        <th class="p-2 text-center">Division</th>
                                         <th class="p-2 text-center">Remarks</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     ${academicItems.map((item, idx) => `
-                                        <tr class="border-b border-slate-200 hover:bg-slate-50">
-                                            <td class="p-2 border-r border-slate-200 text-center font-medium">${idx + 1}</td>
-                                            <td class="p-2 border-r border-slate-200 font-semibold text-slate-900">${item.level || ''}</td>
-                                            <td class="p-2 border-r border-slate-200">${item.board || ''}</td>
-                                            <td class="p-2 border-r border-slate-200 text-center">${item.year || ''}</td>
-                                            <td class="p-2 border-r border-slate-200 text-center">${item.percent || '-'}</td>
-                                            <td class="p-2 border-r border-slate-200 text-center">${item.division || '-'}</td>
+                                        <tr class="hover:bg-slate-50">
+                                            <td class="p-2 text-center font-medium">${idx + 1}</td>
+                                            <td class="p-2 font-semibold text-slate-900">${item.level || ''}</td>
+                                            <td class="p-2">${item.board || ''}</td>
+                                            <td class="p-2 text-center">${item.year || ''}</td>
+                                            <td class="p-2 text-center">${item.percent || '-'}</td>
+                                            <td class="p-2 text-center">${item.division || '-'}</td>
                                             <td class="p-2 text-center">${item.remarks || 'Pass'}</td>
                                         </tr>
                                     `).join('')}
@@ -1048,9 +1106,14 @@
             return `
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
                     <div class="md:col-span-4 border-r border-slate-200 pr-4 space-y-4 text-xs">
-                        <div>
-                            <h1 class="text-xl font-bold text-slate-900">${data.fullname}</h1>
-                            <p class="font-semibold uppercase tracking-wider text-[11px] mt-0.5" style="color: ${accentColor}">${data.jobtitle}</p>
+                        <div class="flex items-center justify-between gap-2">
+                            <div>
+                                <h1 class="text-xl font-bold text-slate-900">${data.fullname}</h1>
+                                <p class="font-semibold uppercase tracking-wider text-[11px] mt-0.5" style="color: ${accentColor}">${data.jobtitle}</p>
+                            </div>
+                            ${profilePhotoUrl ? `
+                                <img src="${profilePhotoUrl}" alt="Profile Photo" class="w-16 h-16 rounded-full object-cover border-2 border-slate-300 shadow-sm flex-shrink-0" />
+                            ` : ''}
                         </div>
 
                         <div class="space-y-1.5 text-slate-600 text-[11px]">
@@ -1129,33 +1192,38 @@
 
             return `
                 <div class="space-y-5">
-                    <div class="p-6 rounded-xl text-white flex justify-between items-center" style="background-color: ${accentColor}">
+                    <div class="p-6 rounded-xl text-white flex justify-between items-center relative overflow-hidden" style="background-color: ${accentColor}">
                         <div>
                             <h1 class="text-2xl font-bold">${data.fullname}</h1>
                             <p class="text-xs opacity-90 mt-0.5">${data.jobtitle}</p>
                         </div>
-                        <div class="text-right text-xs opacity-90 space-y-0.5">
-                            <div>${data.email || ''}</div>
-                            <div>${data.phone || ''}</div>
-                            <div>${data.permAddress || ''}</div>
+                        <div class="flex items-center gap-4">
+                            <div class="text-right text-xs opacity-90 space-y-0.5">
+                                <div>${data.email || ''}</div>
+                                <div>${data.phone || ''}</div>
+                                <div>${data.permAddress || ''}</div>
+                            </div>
+                            ${profilePhotoUrl ? `
+                                <img src="${profilePhotoUrl}" alt="Profile Photo" class="w-20 h-20 rounded-full object-cover border-2 border-white/80 shadow-md flex-shrink-0" />
+                            ` : ''}
                         </div>
                     </div>
 
                     ${academicItems.length > 0 ? `
                         <div>
                             <h3 class="font-bold text-xs uppercase tracking-wider text-slate-800 border-b pb-1 mb-2">Qualifications</h3>
-                            <table class="w-full text-xs text-left border">
-                                <tr class="bg-slate-100 font-bold border-b">
-                                    <th class="p-1.5 border-r">Degree / Level</th>
-                                    <th class="p-1.5 border-r">Institution</th>
-                                    <th class="p-1.5 text-center border-r">Year</th>
+                            <table class="w-full text-xs text-left">
+                                <tr class="bg-slate-100 font-bold">
+                                    <th class="p-1.5">Degree / Level</th>
+                                    <th class="p-1.5">Institution</th>
+                                    <th class="p-1.5 text-center">Year</th>
                                     <th class="p-1.5 text-center">Score</th>
                                 </tr>
                                 ${academicItems.map(item => `
-                                    <tr class="border-b">
-                                        <td class="p-1.5 font-semibold border-r">${item.level}</td>
-                                        <td class="p-1.5 border-r">${item.board}</td>
-                                        <td class="p-1.5 text-center border-r">${item.year}</td>
+                                    <tr>
+                                        <td class="p-1.5 font-semibold">${item.level}</td>
+                                        <td class="p-1.5">${item.board}</td>
+                                        <td class="p-1.5 text-center">${item.year}</td>
                                         <td class="p-1.5 text-center">${item.percent}</td>
                                     </tr>
                                 `).join('')}
@@ -1205,6 +1273,87 @@
             window.print();
         }
 
+        // Direct High Quality JPG Export Engine
+        async function downloadJPG() {
+            try {
+                showToast("Generating High Quality JPG...");
+                const element = document.getElementById('cv-preview-render');
+                
+                // Capture element at 3x pixel density for crystal clear quality
+                const canvas = await html2canvas(element, {
+                    scale: 3,
+                    useCORS: true,
+                    logging: false,
+                    backgroundColor: '#ffffff'
+                });
+                
+                const imgData = canvas.toDataURL('image/jpeg', 0.95);
+                const name = document.getElementById('inp-fullname').value || 'cv';
+                const filename = `${name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '_')}_cv.jpg`;
+                
+                const dlLink = document.createElement('a');
+                dlLink.href = imgData;
+                dlLink.download = filename;
+                document.body.appendChild(dlLink);
+                dlLink.click();
+                dlLink.remove();
+                
+                showToast("High Quality JPG downloaded!");
+            } catch (err) {
+                console.error(err);
+                showToast("Failed to generate JPG image.");
+            }
+        }
+
+        // Direct PDF Export Engine
+        async function downloadPDF() {
+            try {
+                showToast("Rendering PDF... Please wait.");
+                const element = document.getElementById('cv-preview-render');
+                
+                // High resolution capture
+                const canvas = await html2canvas(element, {
+                    scale: 2.5,
+                    useCORS: true,
+                    logging: false,
+                    backgroundColor: '#ffffff'
+                });
+                
+                const imgData = canvas.toDataURL('image/jpeg', 0.95);
+                const { jsPDF } = window.jspdf;
+                
+                // Standard A4 paper format
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = pdf.internal.pageSize.getHeight();
+                
+                const imgWidth = pdfWidth;
+                const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+                
+                let heightLeft = imgHeight;
+                let position = 0;
+                
+                pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pdfHeight;
+                
+                while (heightLeft > 0) {
+                    position = heightLeft - imgHeight;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pdfHeight;
+                }
+                
+                const name = document.getElementById('inp-fullname').value || 'cv';
+                const filename = `${name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '_')}_cv.pdf`;
+                
+                pdf.save(filename);
+                showToast("PDF downloaded successfully!");
+            } catch (err) {
+                console.error(err);
+                showToast("Failed to generate PDF document.");
+            }
+        }
+
         function exportJSON() {
             const data = {
                 fullname: document.getElementById('inp-fullname').value,
@@ -1227,6 +1376,7 @@
                 languages: document.getElementById('inp-languages').value,
                 extraQual: document.getElementById('inp-extra-qual').value,
                 skills: document.getElementById('inp-skills-raw').value,
+                photo: profilePhotoUrl,
                 academic: academicItems,
                 experiences: workExperiences
             };
@@ -1266,6 +1416,13 @@
                     document.getElementById('inp-languages').value = imported.languages || '';
                     document.getElementById('inp-extra-qual').value = imported.extraQual || '';
                     document.getElementById('inp-skills-raw').value = imported.skills || '';
+
+                    if (imported.photo) {
+                        profilePhotoUrl = imported.photo;
+                        document.getElementById('btn-remove-photo').classList.remove('hidden');
+                    } else {
+                        removePhoto();
+                    }
 
                     academicItems = imported.academic || [];
                     workExperiences = imported.experiences || [];
