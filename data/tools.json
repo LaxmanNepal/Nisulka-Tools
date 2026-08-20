@@ -74,6 +74,19 @@
     "status": "active"
   },
   {
+    "name": "3D Audio Generator",
+    "slug": "3d-audio-generator",
+    "path": "audio-tools/3d-audio-generator",
+    "description": "Free online 3D Audio Generator tool.",
+    "category": "Audio Tools",
+    "categorySlug": "audio-tools",
+    "logo": "/Nisulka-Tools/tools/audio-tools/3d-audio-generator/logo.jpg",
+    "url": "/Nisulka-Tools/tools/audio-tools/3d-audio-generator/",
+    "keywords": [],
+    "featured": false,
+    "status": "active"
+  },
+  {
     "name": "Image Compressor",
     "slug": "image-compressor",
     "path": "image-tools/image-compressor",

@@ -23,6 +23,16 @@
     ]
   },
   {
+    "name": "Audio Tools",
+    "slug": "audio-tools",
+    "description": "Free online audio tools for everyday tasks.",
+    "url": "/Nisulka-Tools/categories/audio-tools/",
+    "toolCount": 1,
+    "tools": [
+      "3d-audio-generator"
+    ]
+  },
+  {
     "name": "Image Tools",
     "slug": "image-tools",
     "description": "Free online image tools for everyday tasks.",
