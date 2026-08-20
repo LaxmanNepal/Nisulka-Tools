@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Realtime CV & Resume Generator - Nisulka Tools</title>
+    <meta name="description" content="Build, customize, and export professional, ATS-friendly CVs and resumes in real time with Nisulka Tools. 100% free, private, and instant PDF download.">
+
+    <!-- Official Nisulka CSS Styles -->
+    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/variables.css">
+    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/global.css">
+    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/header.css">
+    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/footer.css">
+    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/components.css">
+    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/tool.css">
+
+    <!-- Tailwind CSS for responsive utility styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&family=Outfit:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Custom Tool Styling -->
+    <style>
+        .font-inter { font-family: 'Inter', sans-serif; }
+        .font-roboto { font-family: 'Roboto', sans-serif; }
+        .font-poppins { font-family: 'Poppins', sans-serif; }
+        .font-merriweather { font-family: 'Merriweather', serif; }
+        .font-outfit { font-family: 'Outfit', sans-serif; }
+
+        /* A4 Paper Aspect Ratio Container */
+        .cv-paper {
+            width: 100%;
+            min-height: 297mm;
+            background: white;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        /* Printable Optimization */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #cv-preview-render, #cv-preview-render * {
+                visibility: visible;
+            }
+            #cv-preview-render {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                box-shadow: none !important;
+                border: none !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            @page {
+                size: A4 portrait;
+                margin: 0mm;
+            }
+        }
+
+        /* Custom scrollbar for control panels */
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col justify-between">
+
+    <!-- Nisulka Official Header Mount Point -->
+    <div id="site-header-mount"></div>
+
+    <!-- Toast Notification Box -->
+    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- Main Tool Workspace -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- Breadcrumb Navigation -->
+        <nav class="flex text-sm text-slate-500 mb-4" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center space-x-1 md:space-x-2">
+                <li class="inline-flex items-center">
+                    <a href="https://apps.laxmannepal.com.np/Nisulka-Tools/" class="hover:text-blue-600 transition-colors">
+                        <i class="fa-solid fa-house mr-1.5 text-xs"></i> Home
+                    </a>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <i class="fa-solid fa-chevron-right text-xs text-slate-400 mx-2"></i>
+                        <span class="text-slate-400">Tools</span>
+                    </div>
+                </li>
+                <li aria-current="page">
+                    <div class="flex items-center">
+                        <i class="fa-solid fa-chevron-right text-xs text-slate-400 mx-2"></i>
+                        <span class="text-slate-700 font-medium">Realtime CV Generator</span>
+                    </div>
+                </li>
+            </ol>
+        </nav>
+
+        <!-- Tool Header / Title Bar -->
+        <div class="mb-6 bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight flex items-center gap-3">
+                        <span class="p-2.5 bg-blue-600 text-white rounded-xl shadow-md shadow-blue-500/20 text-xl inline-flex items-center justify-center">
+                            <i class="fa-solid fa-file-invoice"></i>
+                        </span>
+                        Realtime CV & Resume Generator
+                    </h1>
+                    <p class="text-slate-600 text-sm sm:text-base mt-1">
+                        Build ATS-ready academic & professional CVs in real time with full customization and instant PDF export.
+                    </p>
+                </div>
+
+                <!-- Action Controls -->
+                <div class="flex flex-wrap items-center gap-2">
+                    <div class="relative inline-block text-left">
+                        <button onclick="togglePresetDropdown()" class="px-3.5 py-2 text-xs font-semibold text-slate-800 bg-slate-100 hover:bg-slate-200 rounded-lg transition border border-slate-300 flex items-center gap-1.5">
+                            <i class="fa-solid fa-wand-magic-sparkles text-blue-600"></i> Load Sample Data
+                            <i class="fa-solid fa-chevron-down text-[10px] ml-1"></i>
+                        </button>
+                        <div id="preset-dropdown" class="hidden absolute right-0 mt-2 w-56 rounded-xl bg-white shadow-xl ring-1 ring-black ring-opacity-5 z-20 divide-y divide-slate-100 border border-slate-200">
+                            <div class="py-1">
+                                <button onclick="loadPreset('aayusha')" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-blue-50 hover:text-blue-600 flex items-center gap-2">
+                                    <i class="fa-solid fa-graduation-cap text-blue-500"></i> General CV (Aayusha Acharya)
+                                </button>
+                                <button onclick="loadPreset('alex')" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-blue-50 hover:text-blue-600 flex items-center gap-2">
+                                    <i class="fa-solid fa-laptop-code text-indigo-500"></i> Tech Resume (Software Eng.)
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button onclick="clearForm()" class="px-3.5 py-2 text-xs font-semibold text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-lg transition border border-rose-200 flex items-center gap-1.5">
+                        <i class="fa-solid fa-rotate-left"></i> Reset
+                    </button>
+                    <button onclick="exportJSON()" class="px-3.5 py-2 text-xs font-semibold text-slate-800 bg-slate-100 hover:bg-slate-200 rounded-lg transition border border-slate-300 flex items-center gap-1.5">
+                        <i class="fa-solid fa-download"></i> Save Data
+                    </button>
+                    <label class="px-3.5 py-2 text-xs font-semibold text-slate-800 bg-slate-100 hover:bg-slate-200 rounded-lg transition border border-slate-300 flex items-center gap-1.5 cursor-pointer">
+                        <i class="fa-solid fa-upload"></i> Import JSON
+                        <input type="file" id="import-json" accept=".json" class="hidden" onchange="importJSON(event)">
+                    </label>
+                    <button onclick="triggerPrint()" class="px-4 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-md shadow-blue-500/20 transition flex items-center gap-2">
+                        <i class="fa-solid fa-print"></i> Print / Save PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- View Switcher Tabs for Mobile Devices -->
+        <div class="lg:hidden mb-4 flex bg-slate-200/70 p-1 rounded-xl font-medium text-sm">
+            <button id="btn-tab-edit" onclick="switchMobileTab('edit')" class="flex-1 py-2.5 rounded-lg text-center transition font-semibold bg-white text-blue-600 shadow-sm flex items-center justify-center gap-2">
+                <i class="fa-solid fa-pen-to-square"></i> Form Editor
+            </button>
+            <button id="btn-tab-preview" onclick="switchMobileTab('preview')" class="flex-1 py-2.5 rounded-lg text-center transition font-semibold text-slate-600 hover:text-slate-900 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-eye"></i> Live Canvas
+            </button>
+        </div>
+
+        <!-- Main Form Workspace -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+            <!-- LEFT PANEL: Inputs and Configuration (5 Cols) -->
+            <div id="panel-editor" class="lg:col-span-5 bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+
+                <!-- 1. Design & Layout Options -->
+                <div class="border border-slate-200 rounded-xl overflow-hidden bg-slate-50/50">
+                    <button onclick="toggleSection('sec-design')" class="w-full px-4 py-3 bg-slate-100 hover:bg-slate-200/60 font-semibold text-slate-800 text-sm flex items-center justify-between transition">
+                        <span class="flex items-center gap-2 text-blue-600">
+                            <i class="fa-solid fa-palette"></i> Template & Design
+                        </span>
+                        <i id="icon-sec-design" class="fa-solid fa-chevron-down text-xs text-slate-500"></i>
+                    </button>
+                    <div id="sec-design" class="p-4 space-y-4 bg-white border-t border-slate-200">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">CV Layout Template</label>
+                            <select id="cfg-template" onchange="renderCV()" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                <option value="standard" selected>Standard General CV (Structured Table)</option>
+                                <option value="modern">Modern Minimalist (Sidebar Left)</option>
+                                <option value="classic">Executive Classic (Centered Header)</option>
+                                <option value="creative">Creative Accent (Top Color Banner)</option>
+                                <option value="compact">Compact Grid</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Theme Accent Color</label>
+                            <div class="flex items-center gap-2.5 flex-wrap">
+                                <button onclick="setAccentColor('#1e3a8a')" class="w-7 h-7 rounded-full bg-blue-900 hover:scale-105 transition" title="Navy Blue"></button>
+                                <button onclick="setAccentColor('#2563eb')" class="w-7 h-7 rounded-full bg-blue-600 hover:scale-105 transition" title="Royal Blue"></button>
+                                <button onclick="setAccentColor('#0d9488')" class="w-7 h-7 rounded-full bg-teal-600 hover:scale-105 transition" title="Teal"></button>
+                                <button onclick="setAccentColor('#059669')" class="w-7 h-7 rounded-full bg-emerald-600 hover:scale-105 transition" title="Emerald"></button>
+                                <button onclick="setAccentColor('#7c3aed')" class="w-7 h-7 rounded-full bg-purple-600 hover:scale-105 transition" title="Purple"></button>
+                                <button onclick="setAccentColor('#334155')" class="w-7 h-7 rounded-full bg-slate-700 hover:scale-105 transition" title="Slate Gray"></button>
+                                <input type="color" id="cfg-color-picker" onchange="setAccentColor(this.value)" class="w-7 h-7 rounded-md cursor-pointer border border-slate-300" title="Custom Color">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Typography</label>
+                                <select id="cfg-font" onchange="renderCV()" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500">
+                                    <option value="font-inter">Inter (Sans)</option>
+                                    <option value="font-roboto">Roboto (Clean)</option>
+                                    <option value="font-poppins">Poppins (Modern)</option>
+                                    <option value="font-merriweather">Merriweather (Serif)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Font Size</label>
+                                <select id="cfg-fontsize" onchange="renderCV()" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500">
+                                    <option value="text-xs">Compact (12px)</option>
+                                    <option value="text-sm" selected>Standard (14px)</option>
+                                    <option value="text-base">Large (16px)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Personal Information -->
+                <div class="border border-slate-200 rounded-xl overflow-hidden bg-slate-50/50">
+                    <button onclick="toggleSection('sec-personal')" class="w-full px-4 py-3 bg-slate-100 hover:bg-slate-200/60 font-semibold text-slate-800 text-sm flex items-center justify-between transition">
+                        <span class="flex items-center gap-2 text-blue-600">
+                            <i class="fa-solid fa-address-card"></i> Personal Details & Contact
+                        </span>
+                        <i id="icon-sec-personal" class="fa-solid fa-chevron-down text-xs text-slate-500"></i>
+                    </button>
+                    <div id="sec-personal" class="p-4 space-y-3 bg-white border-t border-slate-200">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1">Full Name *</label>
+                            <input type="text" id="inp-fullname" oninput="renderCV()" placeholder="e.g. Aayusha Acharya" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1">Designation / Objective Title</label>
+                            <input type="text" id="inp-jobtitle" oninput="renderCV()" placeholder="e.g. Front Desk / Customer Support Associate" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 mb-1">E-Mail</label>
+                                <input type="email" id="inp-email" oninput="renderCV()" placeholder="acharyaaayusha48@gmail.com" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 mb-1">Contact No.</label>
+                                <input type="text" id="inp-phone" oninput="renderCV()" placeholder="+977 9865348329" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 mb-1">Permanent Address</label>
+                                <input type="text" id="inp-perm-address" oninput="renderCV()" placeholder="Jitpursimara, 22 Bara" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 mb-1">Temporary Address</label>
+                                <input type="text" id="inp-temp-address" oninput="renderCV()" placeholder="Hetauda-09, Makawanpur" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500">
+                            </div>
+                        </div>
+
+                        <!-- Extended Personal Details Section -->
+                        <div class="pt-2 border-t border-slate-200">
+                            <span class="block text-[11px] font-bold text-slate-500 uppercase mb-2">Extended Bio Details (For Official CVs)</span>
+                            <div class="grid grid-cols-2 gap-3 mb-2">
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-700 mb-1">Father's Name</label>
+                                    <input type="text" id="inp-father" oninput="renderCV()" placeholder="Uttam Prasad Acharya" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg p-2">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-700 mb-1">Mother's Name</label>
+                                    <input type="text" id="inp-mother" oninput="renderCV()" placeholder="Sita Acharya" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg p-2">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3 mb-2">
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-700 mb-1">Grand Father's Name</label>
+                                    <input type="text" id="inp-grandfather" oninput="renderCV()" placeholder="Krishna Prasad Acharya" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg p-2">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-700 mb-1">Date Of Birth</label>
+                                    <input type="text" id="inp-dob" oninput="renderCV()" placeholder="2061-03-17 (2004-07-01)" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg p-2">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-3 gap-2 mb-2">
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-700 mb-1">Citizenship No.</label>
+                                    <input type="text" id="inp-citizenship" oninput="renderCV()" placeholder="33-02-80-00387" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg p-2">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-700 mb-1">PAN No.</label>
+                                    <input type="text" id="inp-pan" oninput="renderCV()" placeholder="145016966" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg p-2">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-700 mb-1">Blood Group</label>
+                                    <input type="text" id="inp-blood" oninput="renderCV()" placeholder="B+" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg p-2">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-3 gap-2">
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-700 mb-1">Gender</label>
+                                    <input type="text" id="inp-gender" oninput="renderCV()" placeholder="Female" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg p-2">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-700 mb-1">Marital Status</label>
+                                    <input type="text" id="inp-marital" oninput="renderCV()" placeholder="Unmarried" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg p-2">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-700 mb-1">Nationality</label>
+                                    <input type="text" id="inp-nationality" oninput="renderCV()" placeholder="Nepali" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg p-2">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3 mt-2">
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-700 mb-1">Religion</label>
+                                    <input type="text" id="inp-religion" oninput="renderCV()" placeholder="Hindu" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg p-2">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-700 mb-1">Languages</label>
+                                    <input type="text" id="inp-languages" oninput="renderCV()" placeholder="Nepali, English" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg p-2">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- 3. Academic Qualifications Table -->
+                <div class="border border-slate-200 rounded-xl overflow-hidden bg-slate-50/50">
+                    <button onclick="toggleSection('sec-academic')" class="w-full px-4 py-3 bg-slate-100 hover:bg-slate-200/60 font-semibold text-slate-800 text-sm flex items-center justify-between transition">
+                        <span class="flex items-center gap-2 text-blue-600">
+                            <i class="fa-solid fa-graduation-cap"></i> Academic Qualifications
+                        </span>
+                        <i id="icon-sec-academic" class="fa-solid fa-chevron-down text-xs text-slate-500"></i>
+                    </button>
+                    <div id="sec-academic" class="p-4 space-y-4 bg-white border-t border-slate-200">
+                        <div id="academic-list" class="space-y-4">
+                            <!-- Dynamic Academic Rows -->
+                        </div>
+                        <button onclick="addAcademicItem()" class="w-full py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 font-medium text-xs rounded-lg border border-blue-200 transition flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-plus"></i> Add Academic Record
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 4. Work Experience -->
+                <div class="border border-slate-200 rounded-xl overflow-hidden bg-slate-50/50">
+                    <button onclick="toggleSection('sec-experience')" class="w-full px-4 py-3 bg-slate-100 hover:bg-slate-200/60 font-semibold text-slate-800 text-sm flex items-center justify-between transition">
+                        <span class="flex items-center gap-2 text-blue-600">
+                            <i class="fa-solid fa-briefcase"></i> Work Experience
+                        </span>
+                        <i id="icon-sec-experience" class="fa-solid fa-chevron-down text-xs text-slate-500"></i>
+                    </button>
+                    <div id="sec-experience" class="p-4 space-y-4 bg-white border-t border-slate-200">
+                        <div id="experience-list" class="space-y-4">
+                            <!-- Dynamic Experience Cards -->
+                        </div>
+                        <button onclick="addExperienceItem()" class="w-full py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 font-medium text-xs rounded-lg border border-blue-200 transition flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-plus"></i> Add Work Experience
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 5. Extra Qualifications & Skills -->
+                <div class="border border-slate-200 rounded-xl overflow-hidden bg-slate-50/50">
+                    <button onclick="toggleSection('sec-skills')" class="w-full px-4 py-3 bg-slate-100 hover:bg-slate-200/60 font-semibold text-slate-800 text-sm flex items-center justify-between transition">
+                        <span class="flex items-center gap-2 text-blue-600">
+                            <i class="fa-solid fa-list-check"></i> Skills & Extra Qualifications
+                        </span>
+                        <i id="icon-sec-skills" class="fa-solid fa-chevron-down text-xs text-slate-500"></i>
+                    </button>
+                    <div id="sec-skills" class="p-4 space-y-3 bg-white border-t border-slate-200">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Key Qualifications / Computer Training</label>
+                            <input type="text" id="inp-extra-qual" oninput="renderCV()" placeholder="Diploma in Computer Application" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg p-2">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Skills & Key Abilities (Line by line or comma separated)</label>
+                            <textarea id="inp-skills-raw" oninput="renderCV()" rows="4" placeholder="Proficient in Microsoft Office Suite&#10;Experience with online form management&#10;Strong organizational skills" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg p-2 custom-scroll"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ATS Assistant Card -->
+                <div class="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100 flex items-start gap-3">
+                    <i class="fa-solid fa-circle-check text-blue-600 text-lg mt-0.5"></i>
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wide">ATS & Parser Readiness</h4>
+                        <p id="ats-score-text" class="text-xs text-slate-600 mt-1">Completeness: <span id="ats-badge" class="font-bold text-emerald-600">90%</span>. Clean typography structure ensures seamless parser indexing.</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT PANEL: Live CV Render (7 Cols) -->
+            <div id="panel-preview" class="lg:col-span-7 sticky top-6">
+                <!-- Preview Canvas Header -->
+                <div class="bg-slate-800 text-white px-4 py-3 rounded-t-2xl flex items-center justify-between text-xs font-medium">
+                    <span class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        Live CV Render Canvas
+                    </span>
+                    <span class="text-slate-300">Standard A4 Sheet</span>
+                </div>
+
+                <!-- Printable Render Container -->
+                <div class="bg-slate-200/80 p-3 sm:p-6 rounded-b-2xl overflow-x-auto min-h-[650px] flex justify-center">
+                    <div id="cv-preview-render" class="cv-paper rounded-lg p-8 sm:p-10 font-inter text-slate-800 transition-all duration-300">
+                        <!-- Content rendered dynamically via JS -->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Information / Best Practices Section -->
+        <div class="mt-12 bg-white rounded-2xl p-6 sm:p-8 border border-slate-200/80 shadow-sm space-y-6">
+            <div>
+                <h2 class="text-xl font-bold text-slate-900 mb-2 flex items-center gap-2">
+                    <i class="fa-solid fa-lightbulb text-amber-500"></i> Tips for Creating an Effective Official CV
+                </h2>
+                <p class="text-slate-600 text-sm leading-relaxed">
+                    Whether you are applying for institutional government positions, private enterprises, or academic institutions, follow these proven standards:
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                    <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 font-bold flex items-center justify-center mb-3">1</div>
+                    <h3 class="font-semibold text-slate-800 mb-1">Accurate Bio Details</h3>
+                    <p class="text-slate-600 text-xs leading-relaxed">Ensure names, citizenship numbers, dates of birth, and official records match your national identification credentials exactly.</p>
+                </div>
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                    <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 font-bold flex items-center justify-center mb-3">2</div>
+                    <h3 class="font-semibold text-slate-800 mb-1">Chronological Order</h3>
+                    <p class="text-slate-600 text-xs leading-relaxed">List academic records and work experience starting from the most recent or highest degree completed.</p>
+                </div>
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                    <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 font-bold flex items-center justify-center mb-3">3</div>
+                    <h3 class="font-semibold text-slate-800 mb-1">Clear Key Skills</h3>
+                    <p class="text-slate-600 text-xs leading-relaxed">Highlight practical technical certifications like Microsoft Office, computer applications, or online record handling.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="mt-8 bg-white rounded-2xl p-6 sm:p-8 border border-slate-200/80 shadow-sm">
+            <h2 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+                <i class="fa-solid fa-circle-question text-blue-600"></i> Frequently Asked Questions
+            </h2>
+
+            <div class="space-y-4 text-sm">
+                <details class="group bg-slate-50 p-4 rounded-xl border border-slate-200/70 [&_summary::-webkit-details-marker]:hidden">
+                    <summary class="flex items-center justify-between font-semibold text-slate-800 cursor-pointer">
+                        Is my personal information stored on your server?
+                        <span class="ml-2 transition group-open:rotate-180">
+                            <i class="fa-solid fa-chevron-down text-xs text-slate-400"></i>
+                        </span>
+                    </summary>
+                    <p class="mt-3 text-slate-600 leading-relaxed text-xs sm:text-sm">
+                        No! Nisulka Tools functions 100% locally inside your web browser. None of your sensitive identification data, contact details, or job history is uploaded to external servers.
+                    </p>
+                </details>
+
+                <details class="group bg-slate-50 p-4 rounded-xl border border-slate-200/70 [&_summary::-webkit-details-marker]:hidden">
+                    <summary class="flex items-center justify-between font-semibold text-slate-800 cursor-pointer">
+                        How do I export my CV as a clean PDF?
+                        <span class="ml-2 transition group-open:rotate-180">
+                            <i class="fa-solid fa-chevron-down text-xs text-slate-400"></i>
+                        </span>
+                    </summary>
+                    <p class="mt-3 text-slate-600 leading-relaxed text-xs sm:text-sm">
+                        Click the top "Print / Save PDF" button. In your browser print dialog, select "Save as PDF" and uncheck "Headers and Footers" for clean, seamless output.
+                    </p>
+                </details>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Nisulka Official Footer Mount Point -->
+    <div id="site-footer-mount"></div>
+
+    <!-- Nisulka Official JS External Loads -->
+    <script src="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/js/header.js"></script>
+    <script src="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/js/footer.js"></script>
+
+    <script>
+        // Global Application State
+        let accentColor = '#1e3a8a';
+        let academicItems = [];
+        let workExperiences = [];
+
+        // Preset Data: Aayusha Acharya CV (General / Tabular)
+        const presetAayusha = {
+            fullname: "Aayusha Acharya",
+            jobtitle: "Curriculum Vitae",
+            email: "acharyaaayusha48@gmail.com",
+            phone: "+977 9865348329",
+            permAddress: "Jitpursimara, 22 Bara",
+            tempAddress: "Hetauda-09, Makawanpur",
+            father: "Uttam Prasad Acharya",
+            mother: "Sita Acharya",
+            grandfather: "Krishna Prasad Acharya",
+            dob: "2061-03-17 (2004-07-01)",
+            citizenship: "33-02-80-00387",
+            pan: "145016966",
+            blood: "B+",
+            gender: "Female",
+            marital: "Unmarried",
+            nationality: "Nepali",
+            religion: "Hindu",
+            languages: "Nepali, English",
+            extraQual: "Diploma in Computer Application",
+            skills: "Proficient in Microsoft Office Suite (Word, Excel, PowerPoint)\nExperience with online form management and printing\nStrong organizational and administrative skills\nExcellent verbal and written communication abilities\nAttention to detail and accuracy in data entry",
+            academic: [
+                { id: 1, level: "SEE", board: "NEB / Board", year: "2075", percent: "68.75%", division: "First", remarks: "Pass" },
+                { id: 2, level: "I.Sc. Ag (Diploma in Animal Science)", board: "CTEVT", year: "2079", percent: "76.15%", division: "First", remarks: "Pass" },
+                { id: 3, level: "B.A. 3rd Year", board: "TU", year: "Current", percent: "-", division: "-", remarks: "Running" }
+            ],
+            experiences: [
+                {
+                    id: 1,
+                    role: "Front Desk & Customer Support Associate",
+                    company: "Customer Care & Communication Center",
+                    period: "2022 - Present",
+                    desc: "• Managed front desk operations including greeting customers, answering inquiries, and handling phone calls.\n• Assisted customers with printing services, online form submissions, and troubleshooting technical issues.\n• Maintained cleanliness and organization of the reception area.\n• Handled cash transactions and maintained records of daily sales."
+                }
+            ]
+        };
+
+        // Preset Data: Alex Morgan (Tech Resume)
+        const presetAlex = {
+            fullname: "Alex Morgan",
+            jobtitle: "Senior Full Stack Developer",
+            email: "alex.morgan@example.com",
+            phone: "+1 (555) 019-2834",
+            permAddress: "San Francisco, CA",
+            tempAddress: "Remote / USA",
+            father: "-",
+            mother: "-",
+            grandfather: "-",
+            dob: "1995-08-12",
+            citizenship: "-",
+            pan: "-",
+            blood: "O+",
+            gender: "Male",
+            marital: "Single",
+            nationality: "American",
+            religion: "-",
+            languages: "English, Spanish",
+            extraQual: "AWS Certified Solutions Architect",
+            skills: "JavaScript (ES6+), TypeScript, React, Node.js, Python, PostgreSQL, REST APIs, Git, Tailwind CSS",
+            academic: [
+                { id: 1, level: "B.S. Computer Science", board: "UC Berkeley", year: "2018", percent: "3.8 GPA", division: "Honors", remarks: "Completed" }
+            ],
+            experiences: [
+                {
+                    id: 1,
+                    role: "Senior Software Engineer",
+                    company: "TechNova Solutions",
+                    period: "2021 - Present",
+                    desc: "Architected micro-frontend architecture increasing web performance by 35%. Mentored junior engineers and automated deployment pipelines."
+                }
+            ]
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadPreset('aayusha');
+        });
+
+        // Show Toast Messages instead of native alert()
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = "bg-slate-900 text-white text-xs px-4 py-2.5 rounded-xl shadow-lg border border-slate-700 pointer-events-auto flex items-center gap-2 transition-all duration-300 transform translate-y-2";
+            toast.innerHTML = `<i class="fa-solid fa-circle-info text-blue-400"></i> ${message}`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.add('opacity-0', '-translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Dropdown toggle
+        function togglePresetDropdown() {
+            const dropdown = document.getElementById('preset-dropdown');
+            dropdown.classList.toggle('hidden');
+        }
+
+        // Close dropdown when clicking outside
+        window.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('preset-dropdown');
+            if (!e.target.closest('#preset-dropdown') && !e.target.closest('button[onclick="togglePresetDropdown()"]')) {
+                dropdown.classList.add('hidden');
+            }
+        });
+
+        // Toggle UI Accordion sections
+        function toggleSection(id) {
+            const el = document.getElementById(id);
+            const icon = document.getElementById('icon-' + id);
+            if (el.classList.contains('hidden')) {
+                el.classList.remove('hidden');
+                icon.classList.replace('fa-chevron-right', 'fa-chevron-down');
+            } else {
+                el.classList.add('hidden');
+                icon.classList.replace('fa-chevron-down', 'fa-chevron-right');
+            }
+        }
+
+        // Mobile Tab Switcher
+        function switchMobileTab(mode) {
+            const btnEdit = document.getElementById('btn-tab-edit');
+            const btnPrev = document.getElementById('btn-tab-preview');
+            const panelEdit = document.getElementById('panel-editor');
+            const panelPrev = document.getElementById('panel-preview');
+
+            if (mode === 'edit') {
+                btnEdit.className = "flex-1 py-2.5 rounded-lg text-center transition font-semibold bg-white text-blue-600 shadow-sm flex items-center justify-center gap-2";
+                btnPrev.className = "flex-1 py-2.5 rounded-lg text-center transition font-semibold text-slate-600 hover:text-slate-900 flex items-center justify-center gap-2";
+                panelEdit.classList.remove('hidden');
+                panelPrev.classList.add('hidden');
+            } else {
+                btnPrev.className = "flex-1 py-2.5 rounded-lg text-center transition font-semibold bg-white text-blue-600 shadow-sm flex items-center justify-center gap-2";
+                btnEdit.className = "flex-1 py-2.5 rounded-lg text-center transition font-semibold text-slate-600 hover:text-slate-900 flex items-center justify-center gap-2";
+                panelPrev.classList.remove('hidden');
+                panelEdit.classList.add('hidden');
+            }
+        }
+
+        function setAccentColor(color) {
+            accentColor = color;
+            renderCV();
+        }
+
+        function loadPreset(key) {
+            const data = key === 'aayusha' ? presetAayusha : presetAlex;
+
+            document.getElementById('inp-fullname').value = data.fullname || '';
+            document.getElementById('inp-jobtitle').value = data.jobtitle || '';
+            document.getElementById('inp-email').value = data.email || '';
+            document.getElementById('inp-phone').value = data.phone || '';
+            document.getElementById('inp-perm-address').value = data.permAddress || '';
+            document.getElementById('inp-temp-address').value = data.tempAddress || '';
+            document.getElementById('inp-father').value = data.father || '';
+            document.getElementById('inp-mother').value = data.mother || '';
+            document.getElementById('inp-grandfather').value = data.grandfather || '';
+            document.getElementById('inp-dob').value = data.dob || '';
+            document.getElementById('inp-citizenship').value = data.citizenship || '';
+            document.getElementById('inp-pan').value = data.pan || '';
+            document.getElementById('inp-blood').value = data.blood || '';
+            document.getElementById('inp-gender').value = data.gender || '';
+            document.getElementById('inp-marital').value = data.marital || '';
+            document.getElementById('inp-nationality').value = data.nationality || '';
+            document.getElementById('inp-religion').value = data.religion || '';
+            document.getElementById('inp-languages').value = data.languages || '';
+            document.getElementById('inp-extra-qual').value = data.extraQual || '';
+            document.getElementById('inp-skills-raw').value = data.skills || '';
+
+            academicItems = JSON.parse(JSON.stringify(data.academic || []));
+            workExperiences = JSON.parse(JSON.stringify(data.experiences || []));
+
+            renderFormDynamicLists();
+            renderCV();
+            showToast(`Loaded preset: ${data.fullname}`);
+            document.getElementById('preset-dropdown').classList.add('hidden');
+        }
+
+        function clearForm() {
+            const fields = ['inp-fullname','inp-jobtitle','inp-email','inp-phone','inp-perm-address','inp-temp-address','inp-father','inp-mother','inp-grandfather','inp-dob','inp-citizenship','inp-pan','inp-blood','inp-gender','inp-marital','inp-nationality','inp-religion','inp-languages','inp-extra-qual','inp-skills-raw'];
+            fields.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+            academicItems = [];
+            workExperiences = [];
+            renderFormDynamicLists();
+            renderCV();
+            showToast("Form cleared successfully.");
+        }
+
+        // Dynamic Academic Handlers
+        function addAcademicItem() {
+            academicItems.push({
+                id: Date.now(),
+                level: '',
+                board: '',
+                year: '',
+                percent: '',
+                division: '',
+                remarks: ''
+            });
+            renderFormDynamicLists();
+            renderCV();
+        }
+
+        function removeAcademic(id) {
+            academicItems = academicItems.filter(i => i.id !== id);
+            renderFormDynamicLists();
+            renderCV();
+        }
+
+        function updateAcademic(id, field, value) {
+            const item = academicItems.find(i => i.id === id);
+            if (item) {
+                item[field] = value;
+                renderCV();
+            }
+        }
+
+        // Dynamic Experience Handlers
+        function addExperienceItem() {
+            workExperiences.push({
+                id: Date.now(),
+                role: '',
+                company: '',
+                period: '',
+                desc: ''
+            });
+            renderFormDynamicLists();
+            renderCV();
+        }
+
+        function removeExperience(id) {
+            workExperiences = workExperiences.filter(i => i.id !== id);
+            renderFormDynamicLists();
+            renderCV();
+        }
+
+        function updateExperience(id, field, value) {
+            const item = workExperiences.find(i => i.id === id);
+            if (item) {
+                item[field] = value;
+                renderCV();
+            }
+        }
+
+        function renderFormDynamicLists() {
+            // Render Academic Inputs
+            const acaContainer = document.getElementById('academic-list');
+            acaContainer.innerHTML = academicItems.map(item => `
+                <div class="p-3 bg-slate-50 rounded-lg border border-slate-200 relative space-y-2">
+                    <button onclick="removeAcademic(${item.id})" class="absolute top-2 right-2 text-rose-500 hover:text-rose-700 text-xs p-1">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" value="${item.level || ''}" oninput="updateAcademic(${item.id}, 'level', this.value)" placeholder="Level / Degree" class="text-xs font-semibold bg-white border border-slate-300 rounded p-1.5 focus:outline-none">
+                        <input type="text" value="${item.board || ''}" oninput="updateAcademic(${item.id}, 'board', this.value)" placeholder="Board / University" class="text-xs bg-white border border-slate-300 rounded p-1.5 focus:outline-none">
+                    </div>
+                    <div class="grid grid-cols-4 gap-1.5">
+                        <input type="text" value="${item.year || ''}" oninput="updateAcademic(${item.id}, 'year', this.value)" placeholder="Passed Year" class="text-xs bg-white border border-slate-300 rounded p-1.5">
+                        <input type="text" value="${item.percent || ''}" oninput="updateAcademic(${item.id}, 'percent', this.value)" placeholder="Percentage" class="text-xs bg-white border border-slate-300 rounded p-1.5">
+                        <input type="text" value="${item.division || ''}" oninput="updateAcademic(${item.id}, 'division', this.value)" placeholder="Division" class="text-xs bg-white border border-slate-300 rounded p-1.5">
+                        <input type="text" value="${item.remarks || ''}" oninput="updateAcademic(${item.id}, 'remarks', this.value)" placeholder="Remarks" class="text-xs bg-white border border-slate-300 rounded p-1.5">
+                    </div>
+                </div>
+            `).join('');
+
+            // Render Experience Inputs
+            const expContainer = document.getElementById('experience-list');
+            expContainer.innerHTML = workExperiences.map(item => `
+                <div class="p-3 bg-slate-50 rounded-lg border border-slate-200 relative space-y-2">
+                    <button onclick="removeExperience(${item.id})" class="absolute top-2 right-2 text-rose-500 hover:text-rose-700 text-xs p-1">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                    <input type="text" value="${item.role || ''}" oninput="updateExperience(${item.id}, 'role', this.value)" placeholder="Role Title" class="w-full text-xs font-semibold bg-white border border-slate-300 rounded p-1.5">
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" value="${item.company || ''}" oninput="updateExperience(${item.id}, 'company', this.value)" placeholder="Organization" class="text-xs bg-white border border-slate-300 rounded p-1.5">
+                        <input type="text" value="${item.period || ''}" oninput="updateExperience(${item.id}, 'period', this.value)" placeholder="Period / Year" class="text-xs bg-white border border-slate-300 rounded p-1.5">
+                    </div>
+                    <textarea oninput="updateExperience(${item.id}, 'desc', this.value)" placeholder="Job Duties..." rows="3" class="w-full text-xs bg-white border border-slate-300 rounded p-1.5">${item.desc || ''}</textarea>
+                </div>
+            `).join('');
+        }
+
+        function renderCV() {
+            const fontClass = document.getElementById('cfg-font').value;
+            const fontSizeClass = document.getElementById('cfg-fontsize').value;
+            const templateStyle = document.getElementById('cfg-template').value;
+
+            const data = {
+                fullname: document.getElementById('inp-fullname').value || 'Aayusha Acharya',
+                jobtitle: document.getElementById('inp-jobtitle').value || 'Curriculum Vitae',
+                email: document.getElementById('inp-email').value,
+                phone: document.getElementById('inp-phone').value,
+                permAddress: document.getElementById('inp-perm-address').value,
+                tempAddress: document.getElementById('inp-temp-address').value,
+                father: document.getElementById('inp-father').value,
+                mother: document.getElementById('inp-mother').value,
+                grandfather: document.getElementById('inp-grandfather').value,
+                dob: document.getElementById('inp-dob').value,
+                citizenship: document.getElementById('inp-citizenship').value,
+                pan: document.getElementById('inp-pan').value,
+                blood: document.getElementById('inp-blood').value,
+                gender: document.getElementById('inp-gender').value,
+                marital: document.getElementById('inp-marital').value,
+                nationality: document.getElementById('inp-nationality').value,
+                religion: document.getElementById('inp-religion').value,
+                languages: document.getElementById('inp-languages').value,
+                extraQual: document.getElementById('inp-extra-qual').value,
+                skillsRaw: document.getElementById('inp-skills-raw').value
+            };
+
+            const container = document.getElementById('cv-preview-render');
+            container.className = `cv-paper rounded-lg p-8 sm:p-10 ${fontClass} ${fontSizeClass} text-slate-800 transition-all duration-300`;
+
+            if (templateStyle === 'standard') {
+                container.innerHTML = buildStandardTemplate(data);
+            } else if (templateStyle === 'modern') {
+                container.innerHTML = buildModernTemplate(data);
+            } else if (templateStyle === 'classic') {
+                container.innerHTML = buildClassicTemplate(data);
+            } else if (templateStyle === 'creative') {
+                container.innerHTML = buildCreativeTemplate(data);
+            } else {
+                container.innerHTML = buildCompactTemplate(data);
+            }
+
+            updateATSCheck(data);
+        }
+
+        // Template Builder 1: Standard General CV (Tabular Format)
+        function buildStandardTemplate(data) {
+            const skillsList = data.skillsRaw ? data.skillsRaw.split('\n').filter(s => s.trim().length > 0) : [];
+
+            return `
+                <div class="space-y-6">
+                    <!-- Title Header -->
+                    <div class="text-center pb-3 border-b-2" style="border-color: ${accentColor}">
+                        <h1 class="text-2xl font-bold uppercase tracking-wider text-slate-900">${data.fullname}</h1>
+                        <p class="text-sm font-semibold tracking-wide uppercase mt-1" style="color: ${accentColor}">${data.jobtitle || 'Curriculum Vitae'}</p>
+                    </div>
+
+                    <!-- Personal Details Table -->
+                    <div>
+                        <h2 class="text-xs font-bold uppercase tracking-wider text-slate-900 mb-2 pb-1 border-b" style="border-color: ${accentColor}">
+                            Personal Details
+                        </h2>
+                        <table class="w-full text-xs text-slate-700 border-collapse">
+                            <tbody>
+                                <tr class="border-b border-slate-100">
+                                    <td class="py-1 font-semibold w-1/3">Name</td>
+                                    <td class="py-1 w-6 text-center">:-</td>
+                                    <td class="py-1 font-medium">${data.fullname}</td>
+                                </tr>
+                                ${data.permAddress ? `
+                                <tr class="border-b border-slate-100">
+                                    <td class="py-1 font-semibold">Permanent Address</td>
+                                    <td class="py-1 text-center">:-</td>
+                                    <td class="py-1">${data.permAddress}</td>
+                                </tr>` : ''}
+                                ${data.tempAddress ? `
+                                <tr class="border-b border-slate-100">
+                                    <td class="py-1 font-semibold">Temporary Address</td>
+                                    <td class="py-1 text-center">:-</td>
+                                    <td class="py-1">${data.tempAddress}</td>
+                                </tr>` : ''}
+                                ${data.father ? `
+                                <tr class="border-b border-slate-100">
+                                    <td class="py-1 font-semibold">Father's Name</td>
+                                    <td class="py-1 text-center">:-</td>
+                                    <td class="py-1">${data.father}</td>
+                                </tr>` : ''}
+                                ${data.mother ? `
+                                <tr class="border-b border-slate-100">
+                                    <td class="py-1 font-semibold">Mother's Name</td>
+                                    <td class="py-1 text-center">:-</td>
+                                    <td class="py-1">${data.mother}</td>
+                                </tr>` : ''}
+                                ${data.grandfather ? `
+                                <tr class="border-b border-slate-100">
+                                    <td class="py-1 font-semibold">Grand Father's Name</td>
+                                    <td class="py-1 text-center">:-</td>
+                                    <td class="py-1">${data.grandfather}</td>
+                                </tr>` : ''}
+                                ${data.dob ? `
+                                <tr class="border-b border-slate-100">
+                                    <td class="py-1 font-semibold">Date Of Birth</td>
+                                    <td class="py-1 text-center">:-</td>
+                                    <td class="py-1">${data.dob}</td>
+                                </tr>` : ''}
+                                ${data.citizenship ? `
+                                <tr class="border-b border-slate-100">
+                                    <td class="py-1 font-semibold">Citizenship No.</td>
+                                    <td class="py-1 text-center">:-</td>
+                                    <td class="py-1">${data.citizenship}</td>
+                                </tr>` : ''}
+                                ${data.gender ? `
+                                <tr class="border-b border-slate-100">
+                                    <td class="py-1 font-semibold">Gender</td>
+                                    <td class="py-1 text-center">:-</td>
+                                    <td class="py-1">${data.gender}</td>
+                                </tr>` : ''}
+                                ${data.marital ? `
+                                <tr class="border-b border-slate-100">
+                                    <td class="py-1 font-semibold">Marital Status</td>
+                                    <td class="py-1 text-center">:-</td>
+                                    <td class="py-1">${data.marital}</td>
+                                </tr>` : ''}
+                                ${data.nationality ? `
+                                <tr class="border-b border-slate-100">
+                                    <td class="py-1 font-semibold">Nationality</td>
+                                    <td class="py-1 text-center">:-</td>
+                                    <td class="py-1">${data.nationality}</td>
+                                </tr>` : ''}
+                                ${data.religion ? `
+                                <tr class="border-b border-slate-100">
+                                    <td class="py-1 font-semibold">Religion</td>
+                                    <td class="py-1 text-center">:-</td>
+                                    <td class="py-1">${data.religion}</td>
+                                </tr>` : ''}
+                                ${data.languages ? `
+                                <tr class="border-b border-slate-100">
+                                    <td class="py-1 font-semibold">Language</td>
+                                    <td class="py-1 text-center">:-</td>
+                                    <td class="py-1">${data.languages}</td>
+                                </tr>` : ''}
+                                ${data.pan ? `
+                                <tr class="border-b border-slate-100">
+                                    <td class="py-1 font-semibold">PAN No.</td>
+                                    <td class="py-1 text-center">:-</td>
+                                    <td class="py-1">${data.pan}</td>
+                                </tr>` : ''}
+                                ${data.blood ? `
+                                <tr class="border-b border-slate-100">
+                                    <td class="py-1 font-semibold">Blood Group</td>
+                                    <td class="py-1 text-center">:-</td>
+                                    <td class="py-1">${data.blood}</td>
+                                </tr>` : ''}
+                                ${data.phone ? `
+                                <tr class="border-b border-slate-100">
+                                    <td class="py-1 font-semibold">Contact No.</td>
+                                    <td class="py-1 text-center">:-</td>
+                                    <td class="py-1">${data.phone}</td>
+                                </tr>` : ''}
+                                ${data.email ? `
+                                <tr class="border-b border-slate-100">
+                                    <td class="py-1 font-semibold">E-Mail</td>
+                                    <td class="py-1 text-center">:-</td>
+                                    <td class="py-1">${data.email}</td>
+                                </tr>` : ''}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Academic Qualifications Table -->
+                    ${academicItems.length > 0 ? `
+                    <div>
+                        <h2 class="text-xs font-bold uppercase tracking-wider text-slate-900 mb-2 pb-1 border-b" style="border-color: ${accentColor}">
+                            Academic Qualifications
+                        </h2>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-xs text-left text-slate-700 border border-slate-300">
+                                <thead class="bg-slate-100 text-slate-900 font-bold border-b border-slate-300">
+                                    <tr>
+                                        <th class="p-2 border-r border-slate-300 text-center w-10">S.N.</th>
+                                        <th class="p-2 border-r border-slate-300">Level / Qualification</th>
+                                        <th class="p-2 border-r border-slate-300">Board / University</th>
+                                        <th class="p-2 border-r border-slate-300 text-center">Year</th>
+                                        <th class="p-2 border-r border-slate-300 text-center">% / GPA</th>
+                                        <th class="p-2 border-r border-slate-300 text-center">Division</th>
+                                        <th class="p-2 text-center">Remarks</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${academicItems.map((item, idx) => `
+                                        <tr class="border-b border-slate-200 hover:bg-slate-50">
+                                            <td class="p-2 border-r border-slate-200 text-center font-medium">${idx + 1}</td>
+                                            <td class="p-2 border-r border-slate-200 font-semibold text-slate-900">${item.level || ''}</td>
+                                            <td class="p-2 border-r border-slate-200">${item.board || ''}</td>
+                                            <td class="p-2 border-r border-slate-200 text-center">${item.year || ''}</td>
+                                            <td class="p-2 border-r border-slate-200 text-center">${item.percent || '-'}</td>
+                                            <td class="p-2 border-r border-slate-200 text-center">${item.division || '-'}</td>
+                                            <td class="p-2 text-center">${item.remarks || 'Pass'}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>` : ''}
+
+                    <!-- Extra Qualifications & Skills -->
+                    ${(data.extraQual || skillsList.length > 0) ? `
+                    <div>
+                        <h2 class="text-xs font-bold uppercase tracking-wider text-slate-900 mb-2 pb-1 border-b" style="border-color: ${accentColor}">
+                            Extra Qualifications & Skills
+                        </h2>
+                        ${data.extraQual ? `<p class="text-xs font-bold text-slate-800 mb-1.5">${data.extraQual}</p>` : ''}
+                        ${skillsList.length > 0 ? `
+                            <ul class="list-disc list-inside text-xs text-slate-700 space-y-1">
+                                ${skillsList.map(s => `<li>${s.replace(/^[•\-\*]\s*/, '')}</li>`).join('')}
+                            </ul>
+                        ` : ''}
+                    </div>` : ''}
+
+                    <!-- Work Experience -->
+                    ${workExperiences.length > 0 ? `
+                    <div>
+                        <h2 class="text-xs font-bold uppercase tracking-wider text-slate-900 mb-3 pb-1 border-b" style="border-color: ${accentColor}">
+                            Work Experience
+                        </h2>
+                        <div class="space-y-4">
+                            ${workExperiences.map(item => `
+                                <div>
+                                    <div class="flex justify-between items-baseline">
+                                        <h3 class="font-bold text-slate-900 text-xs sm:text-sm">${item.role}</h3>
+                                        <span class="text-xs text-slate-500 font-medium">${item.period}</span>
+                                    </div>
+                                    <p class="text-xs italic text-slate-700 font-medium">${item.company}</p>
+                                    ${item.desc ? `
+                                        <div class="text-xs text-slate-600 mt-1.5 whitespace-pre-line leading-relaxed">
+                                            ${item.desc}
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>` : ''}
+                </div>
+            `;
+        }
+
+        // Template Builder 2: Modern Minimalist
+        function buildModernTemplate(data) {
+            const skillsList = data.skillsRaw ? data.skillsRaw.split('\n').filter(s => s.trim().length > 0) : [];
+
+            return `
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                    <div class="md:col-span-4 border-r border-slate-200 pr-4 space-y-4 text-xs">
+                        <div>
+                            <h1 class="text-xl font-bold text-slate-900">${data.fullname}</h1>
+                            <p class="font-semibold uppercase tracking-wider text-[11px] mt-0.5" style="color: ${accentColor}">${data.jobtitle}</p>
+                        </div>
+
+                        <div class="space-y-1.5 text-slate-600 text-[11px]">
+                            ${data.email ? `<div><i class="fa-solid fa-envelope mr-1 text-slate-400"></i> ${data.email}</div>` : ''}
+                            ${data.phone ? `<div><i class="fa-solid fa-phone mr-1 text-slate-400"></i> ${data.phone}</div>` : ''}
+                            ${data.permAddress ? `<div><i class="fa-solid fa-location-dot mr-1 text-slate-400"></i> ${data.permAddress}</div>` : ''}
+                        </div>
+
+                        ${data.dob || data.citizenship || data.languages ? `
+                            <div class="pt-3 border-t border-slate-200 space-y-1 text-[11px] text-slate-600">
+                                <span class="font-bold text-slate-800 uppercase block mb-1">Details</span>
+                                ${data.dob ? `<div>DOB: ${data.dob}</div>` : ''}
+                                ${data.citizenship ? `<div>Citizen No: ${data.citizenship}</div>` : ''}
+                                ${data.languages ? `<div>Languages: ${data.languages}</div>` : ''}
+                            </div>
+                        ` : ''}
+
+                        ${skillsList.length > 0 ? `
+                            <div class="pt-3 border-t border-slate-200">
+                                <span class="font-bold text-slate-800 uppercase block mb-2 text-[11px]">Skills & Abilities</span>
+                                <div class="flex flex-wrap gap-1">
+                                    ${skillsList.map(s => `<span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded text-[10px] font-medium">${s.replace(/^[•\-\*]\s*/, '')}</span>`).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+
+                    <div class="md:col-span-8 space-y-5">
+                        ${workExperiences.length > 0 ? `
+                            <div>
+                                <h3 class="font-bold text-xs uppercase tracking-wider mb-2 pb-1 border-b" style="color: ${accentColor}">Professional Experience</h3>
+                                <div class="space-y-3">
+                                    ${workExperiences.map(item => `
+                                        <div>
+                                            <div class="flex justify-between font-semibold text-xs text-slate-900">
+                                                <span>${item.role}</span>
+                                                <span class="text-slate-400 font-normal text-[11px]">${item.period}</span>
+                                            </div>
+                                            <p class="text-[11px] text-slate-600 font-medium">${item.company}</p>
+                                            <p class="text-xs text-slate-600 mt-1 whitespace-pre-line">${item.desc}</p>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+
+                        ${academicItems.length > 0 ? `
+                            <div>
+                                <h3 class="font-bold text-xs uppercase tracking-wider mb-2 pb-1 border-b" style="color: ${accentColor}">Academic Background</h3>
+                                <div class="space-y-2">
+                                    ${academicItems.map(item => `
+                                        <div class="text-xs">
+                                            <div class="flex justify-between font-bold text-slate-800">
+                                                <span>${item.level}</span>
+                                                <span class="font-normal text-slate-500 text-[11px]">${item.year}</span>
+                                            </div>
+                                            <p class="text-[11px] text-slate-600">${item.board} | ${item.percent || ''} (${item.division || ''})</p>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Template Builder 3: Classic Executive
+        function buildClassicTemplate(data) {
+            return buildStandardTemplate(data);
+        }
+
+        // Template Builder 4: Creative Accent
+        function buildCreativeTemplate(data) {
+            const skillsList = data.skillsRaw ? data.skillsRaw.split('\n').filter(s => s.trim().length > 0) : [];
+
+            return `
+                <div class="space-y-5">
+                    <div class="p-6 rounded-xl text-white flex justify-between items-center" style="background-color: ${accentColor}">
+                        <div>
+                            <h1 class="text-2xl font-bold">${data.fullname}</h1>
+                            <p class="text-xs opacity-90 mt-0.5">${data.jobtitle}</p>
+                        </div>
+                        <div class="text-right text-xs opacity-90 space-y-0.5">
+                            <div>${data.email || ''}</div>
+                            <div>${data.phone || ''}</div>
+                            <div>${data.permAddress || ''}</div>
+                        </div>
+                    </div>
+
+                    ${academicItems.length > 0 ? `
+                        <div>
+                            <h3 class="font-bold text-xs uppercase tracking-wider text-slate-800 border-b pb-1 mb-2">Qualifications</h3>
+                            <table class="w-full text-xs text-left border">
+                                <tr class="bg-slate-100 font-bold border-b">
+                                    <th class="p-1.5 border-r">Degree / Level</th>
+                                    <th class="p-1.5 border-r">Institution</th>
+                                    <th class="p-1.5 text-center border-r">Year</th>
+                                    <th class="p-1.5 text-center">Score</th>
+                                </tr>
+                                ${academicItems.map(item => `
+                                    <tr class="border-b">
+                                        <td class="p-1.5 font-semibold border-r">${item.level}</td>
+                                        <td class="p-1.5 border-r">${item.board}</td>
+                                        <td class="p-1.5 text-center border-r">${item.year}</td>
+                                        <td class="p-1.5 text-center">${item.percent}</td>
+                                    </tr>
+                                `).join('')}
+                            </table>
+                        </div>
+                    ` : ''}
+
+                    ${workExperiences.length > 0 ? `
+                        <div>
+                            <h3 class="font-bold text-xs uppercase tracking-wider text-slate-800 border-b pb-1 mb-2">Work Experience</h3>
+                            <div class="space-y-3">
+                                ${workExperiences.map(item => `
+                                    <div class="border-l-2 pl-3" style="border-color: ${accentColor}">
+                                        <div class="font-bold text-xs text-slate-900">${item.role} - <span class="text-slate-600 font-normal">${item.company}</span></div>
+                                        <span class="text-[11px] text-slate-400">${item.period}</span>
+                                        <p class="text-xs text-slate-600 mt-1 whitespace-pre-line">${item.desc}</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        // Template Builder 5: Compact Grid
+        function buildCompactTemplate(data) {
+            return buildStandardTemplate(data);
+        }
+
+        function updateATSCheck(data) {
+            let score = 0;
+            if (data.fullname) score += 20;
+            if (data.email || data.phone) score += 20;
+            if (academicItems.length > 0) score += 30;
+            if (workExperiences.length > 0) score += 15;
+            if (data.skillsRaw) score += 15;
+
+            const badge = document.getElementById('ats-badge');
+            badge.textContent = `${score}%`;
+            if (score >= 80) badge.className = "font-bold text-emerald-600";
+            else if (score >= 50) badge.className = "font-bold text-amber-600";
+            else badge.className = "font-bold text-rose-600";
+        }
+
+        function triggerPrint() {
+            window.print();
+        }
+
+        function exportJSON() {
+            const data = {
+                fullname: document.getElementById('inp-fullname').value,
+                jobtitle: document.getElementById('inp-jobtitle').value,
+                email: document.getElementById('inp-email').value,
+                phone: document.getElementById('inp-phone').value,
+                permAddress: document.getElementById('inp-perm-address').value,
+                tempAddress: document.getElementById('inp-temp-address').value,
+                father: document.getElementById('inp-father').value,
+                mother: document.getElementById('inp-mother').value,
+                grandfather: document.getElementById('inp-grandfather').value,
+                dob: document.getElementById('inp-dob').value,
+                citizenship: document.getElementById('inp-citizenship').value,
+                pan: document.getElementById('inp-pan').value,
+                blood: document.getElementById('inp-blood').value,
+                gender: document.getElementById('inp-gender').value,
+                marital: document.getElementById('inp-marital').value,
+                nationality: document.getElementById('inp-nationality').value,
+                religion: document.getElementById('inp-religion').value,
+                languages: document.getElementById('inp-languages').value,
+                extraQual: document.getElementById('inp-extra-qual').value,
+                skills: document.getElementById('inp-skills-raw').value,
+                academic: academicItems,
+                experiences: workExperiences
+            };
+
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
+            const dlAnchorElem = document.createElement('a');
+            dlAnchorElem.setAttribute("href", dataStr);
+            dlAnchorElem.setAttribute("download", `${(data.fullname || 'cv').toLowerCase().replace(/\s+/g, '_')}_data.json`);
+            document.body.appendChild(dlAnchorElem);
+            dlAnchorElem.click();
+            dlAnchorElem.remove();
+            showToast("CV JSON data exported successfully.");
+        }
+
+        function importJSON(event) {
+            const fileReader = new FileReader();
+            fileReader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    document.getElementById('inp-fullname').value = imported.fullname || '';
+                    document.getElementById('inp-jobtitle').value = imported.jobtitle || '';
+                    document.getElementById('inp-email').value = imported.email || '';
+                    document.getElementById('inp-phone').value = imported.phone || '';
+                    document.getElementById('inp-perm-address').value = imported.permAddress || '';
+                    document.getElementById('inp-temp-address').value = imported.tempAddress || '';
+                    document.getElementById('inp-father').value = imported.father || '';
+                    document.getElementById('inp-mother').value = imported.mother || '';
+                    document.getElementById('inp-grandfather').value = imported.grandfather || '';
+                    document.getElementById('inp-dob').value = imported.dob || '';
+                    document.getElementById('inp-citizenship').value = imported.citizenship || '';
+                    document.getElementById('inp-pan').value = imported.pan || '';
+                    document.getElementById('inp-blood').value = imported.blood || '';
+                    document.getElementById('inp-gender').value = imported.gender || '';
+                    document.getElementById('inp-marital').value = imported.marital || '';
+                    document.getElementById('inp-nationality').value = imported.nationality || '';
+                    document.getElementById('inp-religion').value = imported.religion || '';
+                    document.getElementById('inp-languages').value = imported.languages || '';
+                    document.getElementById('inp-extra-qual').value = imported.extraQual || '';
+                    document.getElementById('inp-skills-raw').value = imported.skills || '';
+
+                    academicItems = imported.academic || [];
+                    workExperiences = imported.experiences || [];
+
+                    renderFormDynamicLists();
+                    renderCV();
+                    showToast("CV Data imported successfully!");
+                } catch (err) {
+                    showToast("Failed to parse JSON file. Ensure it is a valid CV backup.");
+                }
+            };
+            if (event.target.files[0]) {
+                fileReader.readAsText(event.target.files[0]);
+            }
+        }
+    </script>
+</body>
+</html>
