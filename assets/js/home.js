@@ -60,15 +60,13 @@ function inferCategory(tool) {
 
 function setupSearch() {
     if (!searchInput) return;
-    const openSearchPage = event => {
-        event.preventDefault();
+    const navigate = () => {
         const query = searchInput.value.trim();
         window.location.href = query ? `search.html?q=${encodeURIComponent(query)}` : "search.html";
     };
-    searchInput.addEventListener("focus", openSearchPage, { once: true });
-    searchInput.addEventListener("click", openSearchPage, { once: true });
     searchInput.addEventListener("keydown", event => {
-        if (event.key === "Enter") openSearchPage(event);
+        if (event.key === "Enter") { event.preventDefault(); navigate(); }
+        if (event.key === "Escape") searchInput.value = "";
     });
 }
 
@@ -105,17 +103,12 @@ function getCategories() {
 function renderCategories() {
     if (!categoryList) return;
     const filtered = getSearchFilteredTools();
-    categoryList.innerHTML = `
-        <button type="button" class="category-button ${activeCategory === "All" ? "is-active" : ""}" data-category="All" aria-pressed="${activeCategory === "All"}">All Tools <span class="category-count">${filtered.length}</span></button>
-        ${getCategories().map(([category, total]) => {
-            const count = searchQuery ? filtered.filter(tool => tool.category === category).length : total;
-            return `<button type="button" class="category-button ${activeCategory === category ? "is-active" : ""}" data-category="${escapeAttribute(category)}" aria-pressed="${activeCategory === category}">${escapeHTML(category)} <span class="category-count">${count}</span></button>`;
-        }).join("")}
-    `;
+    categoryList.innerHTML = `<button type="button" class="category-button ${activeCategory === "All" ? "is-active" : ""}" data-category="All" aria-pressed="${activeCategory === "All"}">All Tools <span class="category-count">${filtered.length}</span></button>${getCategories().map(([category, total]) => { const count = searchQuery ? filtered.filter(tool => tool.category === category).length : total; return `<button type="button" class="category-button ${activeCategory === category ? "is-active" : ""}" data-category="${escapeAttribute(category)}" aria-pressed="${activeCategory === category}">${escapeHTML(category)} <span class="category-count">${count}</span></button>`; }).join("")}`;
     categoryList.querySelectorAll(".category-button").forEach(button => button.addEventListener("click", () => {
         activeCategory = button.dataset.category || "All";
         renderCategories();
         renderTools();
+        document.getElementById("tools")?.scrollIntoView({ behavior: "smooth", block: "start" });
     }));
 }
 
@@ -131,25 +124,18 @@ function createToolCard(tool) {
     const name = escapeHTML(tool.name || "Unnamed Tool");
     const url = safeURL(tool.url || "#");
     const logo = safeURL(tool.logo || "");
-    const logoMarkup = logo
-        ? `<img class="tool-card-logo" src="${logo}" alt="${name} logo" loading="lazy" width="128" height="128" onerror="this.onerror=null; this.remove();">`
-        : "";
-    return `<article class="tool-card"><a class="tool-card-link" href="${url}" aria-label="Open ${name}"><div class="tool-card-icon-wrapper">${logoMarkup}</div><h4 class="tool-card-title">${name}</h4></a></article>`;
+    const logoMarkup = logo ? `<img class="tool-card-logo" src="${logo}" alt="${name} logo" loading="lazy" width="128" height="128" onerror="this.onerror=null; this.remove();">` : "";
+    return `<article class="tool-card"><a class="tool-card-link" href="${url}" data-tool-slug="${escapeAttribute(String(tool.slug || ""))}" aria-label="Open ${name}"><div class="tool-card-icon-wrapper">${logoMarkup}</div><h4 class="tool-card-title">${name}</h4></a></article>`;
 }
 
 function safeURL(value) {
     const valueString = String(value || "").trim();
     if (!valueString) return "";
     if (valueString.startsWith("/") || valueString.startsWith("./") || valueString.startsWith("../")) return escapeAttribute(valueString);
-    try {
-        const url = new URL(valueString, location.origin);
-        return ["http:", "https:"].includes(url.protocol) ? escapeAttribute(url.href) : "";
-    } catch (_) { return ""; }
+    try { const url = new URL(valueString, location.origin); return ["http:", "https:"].includes(url.protocol) ? escapeAttribute(url.href) : ""; } catch (_) { return ""; }
 }
 
-function updateToolCount(count) {
-    if (toolCount) toolCount.textContent = `${count} ${count === 1 ? "tool" : "tools"}`;
-}
+function updateToolCount(count) { if (toolCount) toolCount.textContent = `${count} ${count === 1 ? "tool" : "tools"}`; }
 
 function showNoResults() {
     allToolsContainer.innerHTML = `<div class="tools-empty"><h3>No tools found</h3><p>Try another search or choose a different category.</p><button type="button" class="btn btn-primary" id="clear-search">Clear filters</button></div>`;
@@ -164,13 +150,8 @@ function clearFilters() {
     renderTools();
 }
 
-function showLoadingState() {
-    if (allToolsContainer) allToolsContainer.innerHTML = Array.from({ length: 10 }, () => `<div class="tool-skeleton"></div>`).join("");
-}
-
-function showErrorState() {
-    if (allToolsContainer) allToolsContainer.innerHTML = `<div class="tools-empty"><h3>Tools couldn't be loaded</h3><p>Something went wrong while loading the tool collection.</p><button type="button" class="btn btn-primary" onclick="location.reload()">Try again</button></div>`;
-}
+function showLoadingState() { if (allToolsContainer) allToolsContainer.innerHTML = Array.from({ length: 10 }, () => `<div class="tool-skeleton"></div>`).join(""); }
+function showErrorState() { if (allToolsContainer) allToolsContainer.innerHTML = `<div class="tools-empty"><h3>Tools couldn't be loaded</h3><p>Something went wrong while loading the tool collection.</p><button type="button" class="btn btn-primary" onclick="location.reload()">Try again</button></div>`; }
 
 function setupFAQ() {
     document.querySelectorAll(".tool-faq-question").forEach(question => question.addEventListener("click", () => {
@@ -181,7 +162,5 @@ function setupFAQ() {
     }));
 }
 
-function escapeHTML(value) {
-    return String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;").replace(/'/g, "&#039;");
-}
+function escapeHTML(value) { return String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;").replace(/'/g, "&#039;"); }
 function escapeAttribute(value) { return escapeHTML(value); }
