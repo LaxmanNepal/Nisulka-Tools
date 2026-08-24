@@ -60,17 +60,11 @@ function inferCategory(tool) {
 
 function setupSearch() {
     if (!searchInput) return;
-
-    // The homepage search is a navigation entry point, not the search UI itself.
     const openSearchPage = event => {
         event.preventDefault();
         const query = searchInput.value.trim();
-        const destination = query
-            ? `search.html?q=${encodeURIComponent(query)}`
-            : "search.html";
-        window.location.href = destination;
+        window.location.href = query ? `search.html?q=${encodeURIComponent(query)}` : "search.html";
     };
-
     searchInput.addEventListener("focus", openSearchPage, { once: true });
     searchInput.addEventListener("click", openSearchPage, { once: true });
     searchInput.addEventListener("keydown", event => {
@@ -137,7 +131,10 @@ function createToolCard(tool) {
     const name = escapeHTML(tool.name || "Unnamed Tool");
     const url = safeURL(tool.url || "#");
     const logo = safeURL(tool.logo || "");
-    return `<article class="tool-card"><a class="tool-card-link" href="${url}" aria-label="Open ${name}"><div class="tool-card-icon-wrapper">${logo ? `<img class="tool-card-logo" src="${logo}" alt="${name} logo" loading="lazy" width="92" height="92" onerror="this.onerror=null; this.classList.add('tool-logo-broken');">` : ""}<span class="tool-card-logo-fallback" aria-hidden="true">◇</span></div><h4 class="tool-card-title">${name}</h4></a></article>`;
+    const logoMarkup = logo
+        ? `<img class="tool-card-logo" src="${logo}" alt="${name} logo" loading="lazy" width="128" height="128" onerror="this.onerror=null; this.remove();">`
+        : "";
+    return `<article class="tool-card"><a class="tool-card-link" href="${url}" aria-label="Open ${name}"><div class="tool-card-icon-wrapper">${logoMarkup}</div><h4 class="tool-card-title">${name}</h4></a></article>`;
 }
 
 function safeURL(value) {
