@@ -1,0 +1,11 @@
+{
+  "name": "Nisulka Tools",
+  "short_name": "Nisulka",
+  "start_url": "/Nisulka-Tools/",
+  "scope": "/Nisulka-Tools/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "description": "Free online tools for everyday digital tasks.",
+  "icons": []
+}
