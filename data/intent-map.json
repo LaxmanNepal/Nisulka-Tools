@@ -1,0 +1,12 @@
+[
+  {"intent":"compress image","keywords":["compress image","reduce photo size","make image smaller","jpg smaller","png smaller"],"tool":"image-compressor"},
+  {"intent":"remove background","keywords":["remove background","transparent background","cut out image","erase background"],"tool":"image-background-remover"},
+  {"intent":"youtube thumbnail","keywords":["youtube thumbnail","download thumbnail","video thumbnail"],"tool":"youtube-thumbnail-downloader"},
+  {"intent":"youtube title","keywords":["youtube title","video title","title idea","youtube seo title"],"tool":"youtube-title-generator"},
+  {"intent":"youtube analytics","keywords":["youtube analytics","channel audit","channel analysis","youtube stats"],"tool":"youtube-channel-analysis"},
+  {"intent":"currency conversion","keywords":["currency converter","convert money","usd to npr","kwd to npr","npr to kwd"],"tool":"currency-converter"},
+  {"intent":"nepali gold price","keywords":["gold price nepal","nepal gold","today gold price","sun ko bhau"],"tool":"gold-price-in-nepal"},
+  {"intent":"weather","keywords":["weather","forecast","temperature","rain"],"tool":"weather"},
+  {"intent":"cv resume","keywords":["cv","resume","curriculum vitae","job resume"],"tool":"cv-generator"},
+  {"intent":"nepali voice","keywords":["nepali voice","nepali text to speech","nepali ai voice"],"tool":"nepali-ai-voice-generator"}
+]
