@@ -1,0 +1,7 @@
+[
+  {"slug":"youtube-creator-pack","name":"YouTube Creator Pack","description":"Tools for thumbnails, titles, analytics and creator workflows.","tools":["youtube-thumbnail-downloader","youtube-title-generator","youtube-channel-analysis"]},
+  {"slug":"nepali-toolkit","name":"Nepali Toolkit","description":"Useful tools for Nepali language, voice, news and local information.","tools":["nepali-ai-voice-generator","english-nepali-dictionary","nepali-news","gold-price-in-nepal"]},
+  {"slug":"image-toolkit","name":"Image Toolkit","description":"Practical browser tools for everyday image work.","tools":["image-compressor","image-background-remover"]},
+  {"slug":"ai-toolkit","name":"AI Toolkit","description":"AI-powered utilities for audio, images and voice.","tools":["Ai-Text-To-Audio","image-background-remover","nepali-ai-voice-generator","text-to-audio-generator"]},
+  {"slug":"everyday-essentials","name":"Everyday Essentials","description":"Simple tools for common digital tasks.","tools":["currency-converter","cv-generator","weather","about-your-system"]}
+]
