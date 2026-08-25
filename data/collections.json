@@ -1,0 +1,7 @@
+[
+  {"slug":"youtube-creator-pack","name":"YouTube Creator Pack","description":"Tools for YouTube creators, thumbnails, titles and channel growth.","keywords":["youtube","video","thumbnail","title","creator"],"tools":["youtube-thumbnail-downloader","youtube-title-generator","youtube-channel-analysis"]},
+  {"slug":"nepali-tools-pack","name":"Nepali Toolkit","description":"Useful tools and live information for Nepali users.","keywords":["nepal","nepali","bs","ad","gold","news"],"tools":["gold-price-in-nepal","nepali-news","English-Nepali-Dictionary"]},
+  {"slug":"image-toolkit","name":"Image Toolkit","description":"Fast browser-based tools for everyday image work.","keywords":["image","photo","jpg","png","compress","background"],"tools":["image-compressor","image-background-remover"]},
+  {"slug":"ai-toolkit","name":"AI Toolkit","description":"AI-powered and AI-assisted utilities in one place.","keywords":["ai","voice","audio","generator","background"],"tools":["Ai-Text-To-Audio","image-background-remover","nepali-ai-voice-generator","text-to-audio-generator"]},
+  {"slug":"everyday-tools","name":"Everyday Essentials","description":"Practical utilities for everyday digital tasks.","keywords":["currency","cv","weather","system","draw"],"tools":["currency-converter","cv-generator","weather","about-your-system","draw-app"]}
+]
