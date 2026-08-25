@@ -1,0 +1,17 @@
+{
+  "defaults": {
+    "titleSuffix": " | Nisulka Tools",
+    "descriptionSuffix": " Free online tool from Nisulka Tools.",
+    "schemaType": "WebApplication"
+  },
+  "overrides": {
+    "image-compressor": {"title":"Image Compressor Online - Compress JPG, PNG & WebP","description":"Compress JPG, PNG and WebP images online for free while reducing file size."},
+    "youtube-thumbnail-downloader": {"title":"YouTube Thumbnail Downloader - Download Video Thumbnails","description":"Download YouTube video thumbnails in high quality from a video URL."},
+    "youtube-title-generator": {"title":"YouTube Title Generator - Create Better Video Titles","description":"Generate engaging YouTube video title ideas for your next upload."},
+    "currency-converter": {"title":"Currency Converter - Convert Exchange Rates Online","description":"Convert currencies quickly with an easy-to-use online currency converter."},
+    "text-to-handwriting": {"title":"Text to Handwriting Converter - Free Online","description":"Convert typed text into a realistic handwritten-style image with customizable paper, ink and spacing."},
+    "nepali-ai-voice-generator": {"title":"Nepali AI Voice Generator - Convert Text to Nepali Speech","description":"Turn Nepali text into natural-sounding AI voice audio online."},
+    "gold-price-in-nepal": {"title":"Gold Price in Nepal - Latest Gold Rate Tool","description":"Check gold price information in Nepal with a simple online tool."},
+    "youtube-channel-analysis": {"title":"YouTube Channel Analyzer - Analytics & SEO Tool","description":"Analyze a YouTube channel with useful engagement, upload and monetization insights."}
+  }
+}
