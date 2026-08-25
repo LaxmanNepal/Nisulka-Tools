@@ -1,0 +1,20 @@
+{
+  "defaults": [
+    {"q":"Is this tool free?","a":"Yes. This Nisulka Tools utility is designed to be available directly in your browser."},
+    {"q":"Do I need to install anything?","a":"No. Use the tool directly from a modern web browser."},
+    {"q":"Does Nisulka Tools store my files?","a":"File handling depends on the individual tool. Check the tool page before uploading sensitive information."}
+  ],
+  "overrides": {
+    "image-compressor": [
+      {"q":"How do I compress an image?","a":"Upload your image, adjust the compression options if available, then download the optimized file."},
+      {"q":"Which image formats are supported?","a":"Support depends on the tool implementation; common formats include JPG, PNG and WebP."}
+    ],
+    "text-to-handwriting": [
+      {"q":"Can I customize the handwriting?","a":"Yes. The tool provides controls for handwriting appearance, ink, paper, spacing and alignment."},
+      {"q":"Can I download the handwritten result?","a":"Yes. Generate your handwriting image and use the download option provided by the tool."}
+    ],
+    "youtube-thumbnail-downloader": [
+      {"q":"How do I download a YouTube thumbnail?","a":"Paste the YouTube video URL into the tool and choose the available thumbnail image."}
+    ]
+  }
+}
