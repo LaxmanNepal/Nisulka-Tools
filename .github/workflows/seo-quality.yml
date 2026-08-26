@@ -18,27 +18,42 @@ jobs:
         run: python scripts/validate-tools.py
       - name: Generate SEO coverage
         run: python scripts/generate-seo-report.py
+      - name: Generate technical SEO audit
+        run: python scripts/seo-audit.py
+      - name: Generate broken-link and orphan-page audit
+        run: python scripts/seo-link-audit.py
       - name: Generate category entry pages
         run: python scripts/generate-category-pages.py
-      - name: Generate sitemap
+      - name: Generate canonical sitemap
         run: python scripts/generate-sitemap.py
       - name: SEO summary
         run: |
           python - <<'PY'
           import json
           r=json.load(open('reports/seo-coverage.json'))
+          a=json.load(open('reports/seo-audit.json'))
+          l=json.load(open('reports/seo-links.json'))
           print(f"Tools: {r['tool_count']}")
           print(f"SEO coverage: {r['seo_coverage']}%")
           print(f"FAQ coverage: {r['faq_coverage']}%")
-          print(f"Missing keywords: {len(r['missing_keywords'])}")
+          print(f"Technical SEO issues: {a['issue_count']}")
+          print(f"Broken links: {l['broken_count']}")
+          print(f"Orphan tool pages: {l['orphan_count']}")
           PY
-      - name: Fail on SEO coverage regressions
+      - name: Fail on critical SEO regressions
         run: |
           python - <<'PY'
           import json,sys
           r=json.load(open('reports/seo-coverage.json'))
+          a=json.load(open('reports/seo-audit.json'))
+          l=json.load(open('reports/seo-links.json'))
           if r['duplicate_slugs'] or r['duplicate_urls']:
             print('Duplicate slugs or URLs detected');sys.exit(1)
           if r['seo_coverage'] < 80:
             print('SEO metadata coverage below 80%');sys.exit(1)
+          critical=[x for x in a['issues'] if 'missing URL' in x or x.startswith('duplicate')]
+          if critical:
+            print('\n'.join(critical));sys.exit(1)
+          if l['broken_count']:
+            print('Broken internal links detected');sys.exit(1)
           PY
