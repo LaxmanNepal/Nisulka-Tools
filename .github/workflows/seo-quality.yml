@@ -1,0 +1,44 @@
+name: Nisulka SEO Quality
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '17 2 * * 1'
+jobs:
+  seo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Validate tool catalogue
+        run: python scripts/validate-tools.py
+      - name: Generate SEO coverage
+        run: python scripts/generate-seo-report.py
+      - name: Generate category entry pages
+        run: python scripts/generate-category-pages.py
+      - name: Generate sitemap
+        run: python scripts/generate-sitemap.py
+      - name: SEO summary
+        run: |
+          python - <<'PY'
+          import json
+          r=json.load(open('reports/seo-coverage.json'))
+          print(f"Tools: {r['tool_count']}")
+          print(f"SEO coverage: {r['seo_coverage']}%")
+          print(f"FAQ coverage: {r['faq_coverage']}%")
+          print(f"Missing keywords: {len(r['missing_keywords'])}")
+          PY
+      - name: Fail on SEO coverage regressions
+        run: |
+          python - <<'PY'
+          import json,sys
+          r=json.load(open('reports/seo-coverage.json'))
+          if r['duplicate_slugs'] or r['duplicate_urls']:
+            print('Duplicate slugs or URLs detected');sys.exit(1)
+          if r['seo_coverage'] < 80:
+            print('SEO metadata coverage below 80%');sys.exit(1)
+          PY
