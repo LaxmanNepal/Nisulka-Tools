@@ -24,6 +24,8 @@ jobs:
         run: python scripts/seo-intelligence.py
       - name: Generate prioritized action plan
         run: python scripts/seo-action-plan.py
+      - name: Generate SEO opportunity graph
+        run: python scripts/seo-opportunity-engine.py
       - name: Generate broken-link and orphan-page audit
         run: python scripts/seo-link-audit.py
       - name: Generate category entry pages
@@ -34,10 +36,12 @@ jobs:
         run: |
           python - <<'PY'
           import json,os
-          i=json.load(open('reports/seo-intelligence.json')); a=json.load(open('reports/seo-action-plan.json')); l=json.load(open('reports/seo-links.json'))
+          i=json.load(open('reports/seo-intelligence.json')); a=json.load(open('reports/seo-action-plan.json')); l=json.load(open('reports/seo-links.json')); o=json.load(open('reports/seo-opportunities.json'))
           with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as f:
-            f.write(f"## Nisulka SEO Health\n\n| Metric | Value |\n|---|---:|\n| Tools | {i['tool_count']} |\n| Average score | {i['average_score']}% |\n| Critical tools | {i['critical']} |\n| High tools | {i['high']} |\n| Medium tools | {i['medium']} |\n| Good tools | {i['good']} |\n| Critical actions | {a['critical']} |\n| High actions | {a['high']} |\n| Broken links | {l['broken_count']} |\n| Orphan pages | {l['orphan_count']} |\n\n### Top actions\n")
+            f.write(f"## Nisulka SEO Health\n\n| Metric | Value |\n|---|---:|\n| Tools | {i['tool_count']} |\n| Average score | {i['average_score']}% |\n| Critical tools | {i['critical']} |\n| High tools | {i['high']} |\n| Medium tools | {i['medium']} |\n| Good tools | {i['good']} |\n| SEO actions | {a['total_actions']} |\n| Opportunities | {o['counts']['opportunities']} |\n| Link opportunities | {o['counts']['link_targets']} |\n| Cannibalization risks | {o['counts']['cannibalization_risks']} |\n| Broken links | {l['broken_count']} |\n| Orphan pages | {l['orphan_count']} |\n\n### Top actions\n")
             for x in a['actions'][:10]: f.write(f"- **{x['tool']}** ({x['score']}/100): {x['reason']}\n")
+            f.write("\n### Top opportunities\n")
+            for x in o['opportunities'][:10]: f.write(f"- **{x['name']}** — opportunity {x['opportunity']}/100: {', '.join(x['reasons'])}\n")
           PY
       - name: Fail on critical SEO regressions
         run: |
