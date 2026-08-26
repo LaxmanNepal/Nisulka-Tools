@@ -2,12 +2,10 @@ name: Generate Tools Data
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
     paths:
       - "tools/**"
       - ".github/workflows/generate-tools.yml"
-
   workflow_dispatch:
 
 permissions:
@@ -16,7 +14,6 @@ permissions:
 jobs:
   generate-tools:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -24,197 +21,69 @@ jobs:
       - name: Generate tools.json and categories.json
         run: |
           python3 <<'PY'
-          import json
-          import os
-          import re
+          import json, os, re
           from collections import OrderedDict
-
-          TOOLS_DIR = "tools"
-          TOOLS_OUTPUT = "data/tools.json"
-          CATEGORIES_OUTPUT = "data/categories.json"
-
-          def slugify(value):
-              value = str(value or "").strip().lower()
-              value = re.sub(r"[^a-z0-9]+", "-", value)
-              return value.strip("-") or "other-tools"
-
-          def get_meta(html, name):
-              patterns = [
-                  rf'<meta\s+name=["\']{re.escape(name)}["\']\s+content=["\'](.*?)["\']',
-                  rf'<meta\s+content=["\'](.*?)["\']\s+name=["\']{re.escape(name)}["\']'
-              ]
-
-              for pattern in patterns:
-                  match = re.search(pattern, html, re.IGNORECASE | re.DOTALL)
-                  if match:
-                      return match.group(1).strip()
-              return ""
-
-          def category_from_folder(tool_dir):
-              relative = os.path.relpath(tool_dir, TOOLS_DIR)
-              parts = relative.split(os.sep)
-
-              if len(parts) >= 2:
-                  folder = parts[0]
-                  words = folder.replace("_", " ").replace("-", " ").strip()
-                  if words:
-                      return words.title()
-
-              return ""
-
-          tools = []
-
-          if not os.path.isdir(TOOLS_DIR):
-              print("No tools directory found.")
-              raise SystemExit(0)
-
-          for root, dirs, files in os.walk(TOOLS_DIR):
-              dirs.sort()
-              files.sort()
-
-              if "index.html" not in files:
-                  continue
-
-              index_file = os.path.join(root, "index.html")
-              logo_file = os.path.join(root, "logo.jpg")
-
-              relative = os.path.relpath(root, TOOLS_DIR)
-              parts = relative.split(os.sep)
-              slug = parts[-1]
-
-              if not os.path.isfile(logo_file):
-                  print(f"Skipping {relative}: logo.jpg not found")
-                  continue
-
-              with open(index_file, "r", encoding="utf-8") as f:
-                  html = f.read()
-
-              name = get_meta(html, "tool:name")
-              description = get_meta(html, "tool:description")
-              category = get_meta(html, "tool:category")
-              featured = get_meta(html, "tool:featured").lower()
-              keywords = get_meta(html, "tool:keywords")
-              status = get_meta(html, "tool:status").lower()
-
-              if not status:
-                  status = "active"
-
-              if status == "hidden":
-                  print(f"Skipping hidden tool: {relative}")
-                  continue
-
-              if not name:
-                  name = slug.replace("-", " ").replace("_", " ").title()
-
-              if not description:
-                  description = f"Free online {name} tool."
-
-              # Priority: explicit tool metadata > first-level folder category > Other Tools
-              if not category:
-                  category = category_from_folder(root)
-
-              if not category:
-                  category = "Other Tools"
-
-              featured_value = featured in {"true", "1", "yes"}
-
-              keyword_list = [
-                  keyword.strip()
-                  for keyword in keywords.split(",")
-                  if keyword.strip()
-              ] if keywords else []
-
-              web_path = "/".join(parts)
-
-              tool = {
-                  "name": name,
-                  "slug": slug,
-                  "path": relative.replace(os.sep, "/"),
-                  "description": description,
-                  "category": category,
-                  "categorySlug": slugify(category),
-                  "logo": f"/Nisulka-Tools/tools/{web_path}/logo.jpg",
-                  "url": f"/Nisulka-Tools/tools/{web_path}/",
-                  "keywords": keyword_list,
-                  "featured": featured_value,
-                  "status": status
-              }
-
-              tools.append(tool)
-              print(f"Added: {name} [{category}] -> {relative}")
-
-          tools.sort(key=lambda item: (item["category"].lower(), item["name"].lower()))
-
-          categories_map = OrderedDict()
-
-          for tool in tools:
-              category = tool["category"]
-              category_slug = tool["categorySlug"]
-
-              if category not in categories_map:
-                  categories_map[category] = {
-                      "name": category,
-                      "slug": category_slug,
-                      "description": f"Free online {category.lower()} for everyday tasks.",
-                      "url": f"/Nisulka-Tools/categories/{category_slug}/",
-                      "toolCount": 0,
-                      "tools": []
-                  }
-
-              categories_map[category]["toolCount"] += 1
-              categories_map[category]["tools"].append(tool["slug"])
-
-          categories = list(categories_map.values())
-
-          os.makedirs("data", exist_ok=True)
-
-          with open(TOOLS_OUTPUT, "w", encoding="utf-8") as f:
-              json.dump(tools, f, ensure_ascii=False, indent=2)
-              f.write("\n")
-
-          with open(CATEGORIES_OUTPUT, "w", encoding="utf-8") as f:
-              json.dump(categories, f, ensure_ascii=False, indent=2)
-              f.write("\n")
-
-          print()
-          print(f"Generated {TOOLS_OUTPUT}")
-          print(f"Generated {CATEGORIES_OUTPUT}")
-          print(f"Total tools: {len(tools)}")
-          print(f"Total categories: {len(categories)}")
+          TOOLS_DIR='tools'; TOOLS_OUTPUT='data/tools.json'; CATEGORIES_OUTPUT='data/categories.json'
+          def slugify(v):
+              return re.sub(r'[^a-z0-9]+','-',str(v or '').strip().lower()).strip('-') or 'other-tools'
+          def get_meta(html,name):
+              patterns=[rf'<meta\s+name=["\']{re.escape(name)}["\']\s+content=["\'](.*?)["\']',rf'<meta\s+content=["\'](.*?)["\']\s+name=["\']{re.escape(name)}["\']']
+              for p in patterns:
+                  m=re.search(p,html,re.I|re.S)
+                  if m:return m.group(1).strip()
+              return ''
+          def category_from_folder(d):
+              parts=os.path.relpath(d,TOOLS_DIR).split(os.sep)
+              if len(parts)>=2:
+                  v=parts[0].replace('_',' ').replace('-',' ').strip()
+                  if v:return v.title()
+              return ''
+          tools=[]
+          if os.path.isdir(TOOLS_DIR):
+              for root,dirs,files in os.walk(TOOLS_DIR):
+                  dirs.sort();files.sort()
+                  if 'index.html' not in files:continue
+                  rel=os.path.relpath(root,TOOLS_DIR);parts=rel.split(os.sep);slug=parts[-1]
+                  if not os.path.isfile(os.path.join(root,'logo.jpg')):continue
+                  html=open(os.path.join(root,'index.html'),encoding='utf-8').read()
+                  name=get_meta(html,'tool:name') or slug.replace('-',' ').replace('_',' ').title()
+                  description=get_meta(html,'tool:description') or f'Free online {name} tool.'
+                  category=get_meta(html,'tool:category') or category_from_folder(root) or 'Other Tools'
+                  status=get_meta(html,'tool:status').lower() or 'active'
+                  if status=='hidden':continue
+                  keywords=[x.strip() for x in get_meta(html,'tool:keywords').split(',') if x.strip()]
+                  web_path='/'.join(parts)
+                  tools.append({'name':name,'slug':slug,'path':rel.replace(os.sep,'/'),'description':description,'category':category,'categorySlug':slugify(category),'logo':f'/Nisulka-Tools/tools/{web_path}/logo.jpg','url':f'/Nisulka-Tools/tools/{web_path}/','keywords':keywords,'featured':get_meta(html,'tool:featured').lower() in {'true','1','yes'},'status':status})
+          tools.sort(key=lambda x:(x['category'].lower(),x['name'].lower()))
+          cats=OrderedDict()
+          for t in tools:
+              c=t['category'];s=t['categorySlug'];cats.setdefault(c,{'name':c,'slug':s,'description':f"Free online {c.lower()} for everyday tasks.",'url':f'/Nisulka-Tools/categories/{s}/','toolCount':0,'tools':[]});cats[c]['toolCount']+=1;cats[c]['tools'].append(t['slug'])
+          os.makedirs('data',exist_ok=True);json.dump(tools,open(TOOLS_OUTPUT,'w',encoding='utf-8'),ensure_ascii=False,indent=2);open(TOOLS_OUTPUT,'a').write('\n');json.dump(list(cats.values()),open(CATEGORIES_OUTPUT,'w',encoding='utf-8'),ensure_ascii=False,indent=2);open(CATEGORIES_OUTPUT,'a').write('\n')
+          print(f'Generated {len(tools)} tools and {len(cats)} categories')
           PY
 
-      - name: Show generated summary
+      - name: Inject shared SEO into every tool page
         run: |
-          python3 - <<'PY'
-          import json
-
-          with open("data/tools.json", encoding="utf-8") as f:
-              tools = json.load(f)
-
-          with open("data/categories.json", encoding="utf-8") as f:
-              categories = json.load(f)
-
-          print("======================================")
-          print("NISULKA TOOLS DATA")
-          print("======================================")
-          print(f"Tools: {len(tools)}")
-          print(f"Categories: {len(categories)}")
-          print()
-
-          for category in categories:
-              print(f"- {category['name']}: {category['toolCount']} tools")
+          python3 <<'PY'
+          from pathlib import Path
+          root=Path('tools')
+          marker='assets/js/seo-page.js'
+          changed=0
+          for p in root.rglob('index.html'):
+              text=p.read_text(encoding='utf-8')
+              if marker in text: continue
+              rel=p.parent.relative_to(root)
+              depth=len(rel.parts)+2
+              prefix='../'*depth
+              injection=f'\n    <link rel="stylesheet" href="{prefix}assets/css/seo-page.css">\n    <script defer src="{prefix}assets/js/seo-page.js"></script>\n'
+              if '</head>' not in text: continue
+              p.write_text(text.replace('</head>',injection+'</head>',1),encoding='utf-8');changed+=1
+          print(f'Injected SEO runtime into {changed} tool pages')
           PY
 
-      - name: Commit generated data
+      - name: Commit generated data and SEO integration
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          git add data/tools.json data/categories.json
-
-          if git diff --cached --quiet; then
-            echo "No generated data changes"
-          else
-            git commit -m "chore: update tools and categories data"
-            git push
-          fi
+          git add data/tools.json data/categories.json tools
+          if git diff --cached --quiet; then echo "No generated changes"; else git commit -m "chore: integrate shared tool SEO"; git push; fi
