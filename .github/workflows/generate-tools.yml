@@ -17,70 +17,47 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
       - name: Generate tools.json and categories.json
         run: |
           python3 <<'PY'
-          import json, os, re
+          import json,os,re
           from collections import OrderedDict
-          TOOLS_DIR='tools'; TOOLS_OUTPUT='data/tools.json'; CATEGORIES_OUTPUT='data/categories.json'
-          def slugify(v):
-              return re.sub(r'[^a-z0-9]+','-',str(v or '').strip().lower()).strip('-') or 'other-tools'
-          def get_meta(html,name):
-              patterns=[rf'<meta\s+name=["\']{re.escape(name)}["\']\s+content=["\'](.*?)["\']',rf'<meta\s+content=["\'](.*?)["\']\s+name=["\']{re.escape(name)}["\']']
-              for p in patterns:
-                  m=re.search(p,html,re.I|re.S)
-                  if m:return m.group(1).strip()
-              return ''
-          def category_from_folder(d):
-              parts=os.path.relpath(d,TOOLS_DIR).split(os.sep)
-              if len(parts)>=2:
-                  v=parts[0].replace('_',' ').replace('-',' ').strip()
-                  if v:return v.title()
-              return ''
+          def slugify(v): return re.sub(r'[^a-z0-9]+','-',str(v or '').strip().lower()).strip('-') or 'other-tools'
+          def get_meta(h,n):
+            for p in [rf'<meta\s+name=["\']{re.escape(n)}["\']\s+content=["\'](.*?)["\']',rf'<meta\s+content=["\'](.*?)["\']\s+name=["\']{re.escape(n)}["\']']:
+              m=re.search(p,h,re.I|re.S)
+              if m:return m.group(1).strip()
+            return ''
           tools=[]
-          if os.path.isdir(TOOLS_DIR):
-              for root,dirs,files in os.walk(TOOLS_DIR):
-                  dirs.sort();files.sort()
-                  if 'index.html' not in files:continue
-                  rel=os.path.relpath(root,TOOLS_DIR);parts=rel.split(os.sep);slug=parts[-1]
-                  if not os.path.isfile(os.path.join(root,'logo.jpg')):continue
-                  html=open(os.path.join(root,'index.html'),encoding='utf-8').read()
-                  name=get_meta(html,'tool:name') or slug.replace('-',' ').replace('_',' ').title()
-                  description=get_meta(html,'tool:description') or f'Free online {name} tool.'
-                  category=get_meta(html,'tool:category') or category_from_folder(root) or 'Other Tools'
-                  status=get_meta(html,'tool:status').lower() or 'active'
-                  if status=='hidden':continue
-                  keywords=[x.strip() for x in get_meta(html,'tool:keywords').split(',') if x.strip()]
-                  web_path='/'.join(parts)
-                  tools.append({'name':name,'slug':slug,'path':rel.replace(os.sep,'/'),'description':description,'category':category,'categorySlug':slugify(category),'logo':f'/Nisulka-Tools/tools/{web_path}/logo.jpg','url':f'/Nisulka-Tools/tools/{web_path}/','keywords':keywords,'featured':get_meta(html,'tool:featured').lower() in {'true','1','yes'},'status':status})
-          tools.sort(key=lambda x:(x['category'].lower(),x['name'].lower()))
-          cats=OrderedDict()
+          for root,dirs,files in os.walk('tools'):
+            dirs.sort();files.sort()
+            if 'index.html' not in files or not os.path.isfile(os.path.join(root,'logo.jpg')): continue
+            rel=os.path.relpath(root,'tools');parts=rel.split(os.sep);slug=parts[-1];h=open(os.path.join(root,'index.html'),encoding='utf-8').read()
+            name=get_meta(h,'tool:name') or slug.replace('-',' ').replace('_',' ').title();desc=get_meta(h,'tool:description') or f'Free online {name} tool.';cat=get_meta(h,'tool:category')
+            if not cat and len(parts)>=2: cat=parts[0].replace('_',' ').replace('-',' ').title()
+            cat=cat or 'Other Tools';status=get_meta(h,'tool:status').lower() or 'active'
+            if status=='hidden': continue
+            keys=[x.strip() for x in get_meta(h,'tool:keywords').split(',') if x.strip()];web='/'.join(parts);cs=slugify(cat)
+            tools.append({'name':name,'slug':slug,'path':rel.replace(os.sep,'/'),'description':desc,'category':cat,'categorySlug':cs,'logo':f'/Nisulka-Tools/tools/{web}/logo.jpg','url':f'/Nisulka-Tools/tools/{web}/','keywords':keys,'featured':get_meta(h,'tool:featured').lower() in {'true','1','yes'},'status':status})
+          tools.sort(key=lambda x:(x['category'].lower(),x['name'].lower()));cats=OrderedDict()
           for t in tools:
-              c=t['category'];s=t['categorySlug'];cats.setdefault(c,{'name':c,'slug':s,'description':f"Free online {c.lower()} for everyday tasks.",'url':f'/Nisulka-Tools/categories/{s}/','toolCount':0,'tools':[]});cats[c]['toolCount']+=1;cats[c]['tools'].append(t['slug'])
-          os.makedirs('data',exist_ok=True);json.dump(tools,open(TOOLS_OUTPUT,'w',encoding='utf-8'),ensure_ascii=False,indent=2);open(TOOLS_OUTPUT,'a').write('\n');json.dump(list(cats.values()),open(CATEGORIES_OUTPUT,'w',encoding='utf-8'),ensure_ascii=False,indent=2);open(CATEGORIES_OUTPUT,'a').write('\n')
+            c=t['category'];s=t['categorySlug'];cats.setdefault(c,{'name':c,'slug':s,'description':f'Free online {c.lower()} for everyday tasks.','url':f'/Nisulka-Tools/categories/{s}/','toolCount':0,'tools':[]});cats[c]['toolCount']+=1;cats[c]['tools'].append(t['slug'])
+          os.makedirs('data',exist_ok=True);open('data/tools.json','w',encoding='utf-8').write(json.dumps(tools,ensure_ascii=False,indent=2)+'\n');open('data/categories.json','w',encoding='utf-8').write(json.dumps(list(cats.values()),ensure_ascii=False,indent=2)+'\n')
           print(f'Generated {len(tools)} tools and {len(cats)} categories')
           PY
-
       - name: Inject shared SEO into every tool page
         run: |
           python3 <<'PY'
           from pathlib import Path
-          root=Path('tools')
-          marker='assets/js/seo-page.js'
-          changed=0
+          root=Path('tools');marker='assets/js/seo-page.js';changed=0
           for p in root.rglob('index.html'):
-              text=p.read_text(encoding='utf-8')
-              if marker in text: continue
-              rel=p.parent.relative_to(root)
-              depth=len(rel.parts)+2
-              prefix='../'*depth
-              injection=f'\n    <link rel="stylesheet" href="{prefix}assets/css/seo-page.css">\n    <script defer src="{prefix}assets/js/seo-page.js"></script>\n'
-              if '</head>' not in text: continue
-              p.write_text(text.replace('</head>',injection+'</head>',1),encoding='utf-8');changed+=1
+            text=p.read_text(encoding='utf-8')
+            if marker in text or '</head>' not in text: continue
+            rel=p.parent.relative_to(root);prefix='../'*(len(rel.parts)+1)
+            injection=f'\n    <link rel="stylesheet" href="{prefix}assets/css/seo-page.css">\n    <script defer src="{prefix}assets/js/seo-page.js"></script>\n'
+            p.write_text(text.replace('</head>',injection+'</head>',1),encoding='utf-8');changed+=1
           print(f'Injected SEO runtime into {changed} tool pages')
           PY
-
       - name: Commit generated data and SEO integration
         run: |
           git config user.name "github-actions[bot]"
