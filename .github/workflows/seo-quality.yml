@@ -24,33 +24,29 @@ jobs:
           python scripts/seo-opportunity-engine.py
           python scripts/seo-link-audit.py
           python scripts/seo-history.py
+          python scripts/seo-change-report.py
           python scripts/generate-category-pages.py
           python scripts/generate-sitemap.py
-      - name: Detect SEO changes
-        run: |
-          python - <<'PY'
-          import json,os
-          h=json.load(open('reports/seo-history.json'))
-          cur=h[-1]; prev=h[-2] if len(h)>1 else None
-          out={'has_baseline':bool(prev),'score_delta':0,'new_broken_links':0,'new_orphans':0,'action_delta':0,'opportunity_delta':0}
-          if prev:
-            out['score_delta']=round(cur['average_score']-prev['average_score'],1)
-            out['new_broken_links']=cur['broken_links']-prev['broken_links']
-            out['new_orphans']=cur['orphans']-prev['orphans']
-            out['action_delta']=cur['actions']-prev['actions']
-            out['opportunity_delta']=cur['opportunities']-prev['opportunities']
-          open('reports/seo-change.json','w').write(json.dumps(out,indent=2))
-          print(json.dumps(out,indent=2))
-          PY
       - name: Write GitHub SEO Summary
         run: |
           python - <<'PY'
           import json,os
           i=json.load(open('reports/seo-intelligence.json')); a=json.load(open('reports/seo-action-plan.json')); o=json.load(open('reports/seo-opportunities.json')); l=json.load(open('reports/seo-links.json')); c=json.load(open('reports/seo-change.json'))
           with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as f:
-            f.write(f"## Nisulka SEO Health\n\n| Metric | Value |\n|---|---:|\n| Average score | {i['average_score']}% |\n| Score change | {c['score_delta']:+} |\n| Tools | {i['tool_count']} |\n| Critical | {i['critical']} |\n| High | {i['high']} |\n| Actions | {a['total_actions']} |\n| Opportunities | {o['counts']['opportunities']} |\n| Broken links | {l['broken_count']} |\n| Orphans | {l['orphan_count']} |\n\n### Change detection\n- Broken-link change: {c['new_broken_links']:+}\n- Orphan-page change: {c['new_orphans']:+}\n- SEO-action change: {c['action_delta']:+}\n- Opportunity change: {c['opportunity_delta']:+}\n\n### Top actions\n")
+            f.write(f"## Nisulka SEO Health\n\n| Metric | Value |\n|---|---:|\n| Average score | {i['average_score']}% |\n| Score change | {c['score_change']:+} |\n| Tools | {i['tool_count']} |\n| Critical | {i['critical']} |\n| High | {i['high']} |\n| Actions | {a['total_actions']} |\n| Opportunities | {o['counts']['opportunities']} |\n| Broken links | {l['broken_count']} |\n| Orphans | {l['orphan_count']} |\n\n### Improved tools\n")
+            for x in c['improved'][:10]: f.write(f"- **{x['name']}** {x['from']} → {x['to']} (+{x['change']})\n")
+            f.write("\n### Regressed tools\n")
+            for x in c['regressed'][:10]: f.write(f"- **{x['name']}** {x['from']} → {x['to']} ({x['change']})\n")
+            f.write("\n### Top actions\n")
             for x in a['actions'][:10]: f.write(f"- **{x['tool']}** ({x['score']}/100): {x['reason']}\n")
           PY
+      - name: Upload SEO reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nisulka-seo-report-${{ github.run_number }}
+          path: reports/
+          retention-days: 90
       - name: Fail on critical regressions
         run: |
           python - <<'PY'
@@ -61,5 +57,7 @@ jobs:
           critical=[x for x in a['issues'] if 'missing URL' in x or x.startswith('duplicate')]
           if critical: sys.exit('\n'.join(critical))
           if l['broken_count']: sys.exit('Broken internal links detected')
+          if c['score_change'] <= -5: sys.exit('SEO score dropped by 5+ points')
+          if any(x['change']<=-10 for x in c['regressed']): sys.exit('A tool SEO score dropped by 10+ points')
           if c['new_broken_links']>0 or c['new_orphans']>0: sys.exit('New technical SEO regressions detected')
           PY
