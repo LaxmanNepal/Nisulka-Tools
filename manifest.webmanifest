@@ -1,18 +1,23 @@
 {
-  "name":"Nisulka Tools — Free Online Tools",
-  "short_name":"Nisulka Tools",
-  "start_url":"/Nisulka-Tools/?source=pwa",
-  "scope":"/Nisulka-Tools/",
-  "display":"standalone",
-  "display_override":["window-controls-overlay","standalone","minimal-ui"],
-  "orientation":"any",
-  "background_color":"#eef3f8",
-  "theme_color":"#007aff",
-  "description":"Free online tools for images, AI, YouTube, Nepali users, text, audio and everyday digital work.",
-  "categories":["utilities","productivity","education"],
-  "lang":"en",
-  "dir":"ltr",
-  "prefer_related_applications":false,
-  "icons":[{"src":"assets/icons/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any"}],
-  "shortcuts":[{"name":"All Tools","short_name":"Tools","url":"/?source=shortcut","icons":[{"src":"assets/icons/icon.svg","sizes":"any","type":"image/svg+xml"}]},{"name":"Search Tools","short_name":"Search","url":"search.html?source=shortcut","icons":[{"src":"assets/icons/icon.svg","sizes":"any","type":"image/svg+xml"}]}]
+  "name": "Nisulka Tools — Free Online Tools",
+  "short_name": "Nisulka Tools",
+  "start_url": "/Nisulka-Tools/?source=pwa",
+  "scope": "/Nisulka-Tools/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#eef3f8",
+  "theme_color": "#007aff",
+  "description": "Free online tools for images, AI, YouTube, Nepali users, text, audio and everyday digital work.",
+  "categories": ["utilities", "productivity", "education"],
+  "lang": "en",
+  "dir": "ltr",
+  "prefer_related_applications": false,
+  "icons": [
+    {"src": "assets/icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable"}
+  ],
+  "shortcuts": [
+    {"name": "All Tools", "short_name": "Tools", "url": "/Nisulka-Tools/?source=shortcut", "icons": [{"src": "assets/icons/icon.svg", "sizes": "any", "type": "image/svg+xml"}]},
+    {"name": "Search Tools", "short_name": "Search", "url": "/Nisulka-Tools/search.html?source=shortcut", "icons": [{"src": "assets/icons/icon.svg", "sizes": "any", "type": "image/svg+xml"}]}
+  ]
 }
