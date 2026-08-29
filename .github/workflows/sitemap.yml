@@ -1,29 +1,41 @@
 name: Generate Nisulka Tools Sitemap
-
 on:
   push:
     branches: [main]
     paths:
       - "data/tools.json"
-      - "scripts/generate_sitemap.py"
+      - "scripts/generate-sitemap.py"
       - ".github/workflows/sitemap.yml"
   schedule:
     - cron: "15 2 * * *"
   workflow_dispatch:
-
 permissions:
   contents: write
-
+concurrency:
+  group: nisulka-sitemap
+  cancel-in-progress: false
 jobs:
   sitemap:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-python@v6
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
+      - name: Validate catalogue
+        run: python3 scripts/validate_tools.py
       - name: Generate sitemap
-        run: python3 scripts/generate_sitemap.py
+        run: python3 scripts/generate-sitemap.py
+      - name: Validate sitemap output
+        run: |
+          python3 - <<'PY'
+          import xml.etree.ElementTree as ET
+          from pathlib import Path
+          ET.parse('sitemap.xml')
+          text=Path('sitemap.xml').read_text(encoding='utf-8')
+          if 'apps.laxmannepal.com.np/Nisulka-Tools/' not in text: raise SystemExit('Unexpected sitemap host')
+          print('Sitemap XML validated.')
+          PY
       - name: Commit sitemap
         run: |
           git config user.name "github-actions[bot]"
