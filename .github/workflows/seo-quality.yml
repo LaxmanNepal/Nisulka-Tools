@@ -2,15 +2,21 @@ name: Nisulka SEO Quality
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'reports/**'
   pull_request:
     branches: [main]
   schedule:
     - cron: '17 2 * * 1'
+permissions:
+  contents: write
 jobs:
   seo:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: '3.x'
@@ -40,6 +46,18 @@ jobs:
             f.write("\n### Top actions\n")
             for x in a['actions'][:10]: f.write(f"- **{x['tool']}** ({x['score']}/100): {x['reason']}\n")
           PY
+      - name: Persist generated SEO state
+        if: github.event_name != 'pull_request'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add reports/
+          if git diff --cached --quiet; then
+            echo 'No SEO state changes to commit.'
+          else
+            git commit -m 'chore: update generated SEO reports'
+            git push
+          fi
       - name: Upload SEO reports
         if: always()
         uses: actions/upload-artifact@v4
@@ -59,5 +77,5 @@ jobs:
           if l['broken_count']: sys.exit('Broken internal links detected')
           if c['score_change'] <= -5: sys.exit('SEO score dropped by 5+ points')
           if any(x['change']<=-10 for x in c['regressed']): sys.exit('A tool SEO score dropped by 10+ points')
-          if c['new_broken_links']>0 or c['new_orphans']>0: sys.exit('New technical SEO regressions detected')
+          if c.get('new_broken_links',0)>0 or c.get('new_orphans',0)>0: sys.exit('New technical SEO regressions detected')
           PY
