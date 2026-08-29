@@ -1,5 +1,4 @@
 name: Generate Tools Data
-
 on:
   push:
     branches: [main]
@@ -7,16 +6,21 @@ on:
       - "tools/**"
       - ".github/workflows/generate-tools.yml"
   workflow_dispatch:
-
 permissions:
   contents: write
-
+concurrency:
+  group: nisulka-generate-tools
+  cancel-in-progress: false
 jobs:
   generate-tools:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
       - name: Generate tools.json and categories.json
         run: |
           python3 <<'PY'
@@ -24,7 +28,8 @@ jobs:
           from collections import OrderedDict
           def slugify(v): return re.sub(r'[^a-z0-9]+','-',str(v or '').strip().lower()).strip('-') or 'other-tools'
           def get_meta(h,n):
-            for p in [rf'<meta\s+name=["\']{re.escape(n)}["\']\s+content=["\'](.*?)["\']',rf'<meta\s+content=["\'](.*?)["\']\s+name=["\']{re.escape(n)}["\']']:
+            patterns=[rf'<meta\s+name=["\']{re.escape(n)}["\']\s+content=["\'](.*?)["\']',rf'<meta\s+content=["\'](.*?)["\']\s+name=["\']{re.escape(n)}["\']']
+            for p in patterns:
               m=re.search(p,h,re.I|re.S)
               if m:return m.group(1).strip()
             return ''
@@ -58,6 +63,8 @@ jobs:
             p.write_text(text.replace('</head>',injection+'</head>',1),encoding='utf-8');changed+=1
           print(f'Injected SEO runtime into {changed} tool pages')
           PY
+      - name: Validate generated catalogue and pages
+        run: python3 scripts/validate_tools.py
       - name: Commit generated data and SEO integration
         run: |
           git config user.name "github-actions[bot]"
