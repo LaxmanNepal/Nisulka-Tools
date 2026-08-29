@@ -4,46 +4,44 @@ import path from 'node:path';
 
 const ROOT = process.cwd();
 const BASE = 'http://127.0.0.1:4173/Nisulka-Tools/';
-const tools = fs.readdirSync(path.join(ROOT, 'tools'), { withFileTypes: true })
-  .filter(entry => entry.isDirectory() && fs.existsSync(path.join(ROOT, 'tools', entry.name, 'index.html')))
-  .map(entry => entry.name)
-  .sort();
+const toolsRoot = path.join(ROOT, 'tools');
+const tools = fs.existsSync(toolsRoot)
+  ? fs.readdirSync(toolsRoot, { recursive: true })
+      .filter(p => typeof p === 'string' && p.endsWith(`${path.sep}index.html`))
+      .map(p => p.slice(0, -`${path.sep}index.html`.length).split(path.sep).join('/'))
+      .filter(p => p.length > 0)
+      .sort()
+  : [];
+const categoriesRoot = path.join(ROOT, 'categories');
+const categories = fs.existsSync(categoriesRoot)
+  ? fs.readdirSync(categoriesRoot, { withFileTypes: true })
+      .filter(e => e.isDirectory() && fs.existsSync(path.join(categoriesRoot, e.name, 'index.html')))
+      .map(e => e.name).sort()
+  : [];
 
 async function checkPage(page, url, label) {
   const failedResponses = [];
   const pageErrors = [];
-
   const onResponse = response => {
-    const requestUrl = response.url();
-    if (requestUrl.startsWith('http://127.0.0.1:4173/') && response.status() >= 400) {
-      failedResponses.push(`${response.status()} ${requestUrl}`);
+    if (response.url().startsWith('http://127.0.0.1:4173/') && response.status() >= 400) {
+      failedResponses.push(`${response.status()} ${response.url()}`);
     }
   };
   const onPageError = error => pageErrors.push(error.message);
-
   page.on('response', onResponse);
   page.on('pageerror', onPageError);
-
   await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
-  await page.waitForTimeout(800);
-
+  await page.waitForTimeout(500);
   await expect(page.locator('html')).toHaveAttribute('lang', /.+/);
   await expect(page.locator('title')).not.toHaveText('');
   await expect(page.locator('h1').first()).toBeVisible();
   await expect(page.locator('#site-header-mount')).toBeAttached();
   await expect(page.locator('#site-footer-mount')).toBeAttached();
-
-  const headerChildren = await page.locator('#site-header-mount').locator('xpath=./*').count();
-  const footerChildren = await page.locator('#site-footer-mount').locator('xpath=./*').count();
-  expect(headerChildren, `${label}: shared header did not mount`).toBeGreaterThan(0);
-  expect(footerChildren, `${label}: shared footer did not mount`).toBeGreaterThan(0);
-
-  const horizontalOverflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 2);
-  expect(horizontalOverflow, `${label}: horizontal overflow detected`).toBeFalsy();
-
-  expect(pageErrors, `${label}: uncaught browser errors`).toEqual([]);
+  expect(await page.locator('#site-header-mount').locator('xpath=./*').count(), `${label}: header did not mount`).toBeGreaterThan(0);
+  expect(await page.locator('#site-footer-mount').locator('xpath=./*').count(), `${label}: footer did not mount`).toBeGreaterThan(0);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 2), `${label}: horizontal overflow`).toBeFalsy();
+  expect(pageErrors, `${label}: browser errors`).toEqual([]);
   expect(failedResponses, `${label}: broken local resources`).toEqual([]);
-
   page.off('response', onResponse);
   page.off('pageerror', onPageError);
 }
@@ -55,9 +53,31 @@ test.describe('Nisulka Tools browser smoke tests', () => {
     await expect(page.locator('#all-tools')).toBeAttached();
   });
 
+  test('search page loads without console errors', async ({ page }) => {
+    await checkPage(page, `${BASE}search.html`, 'search');
+    await expect(page.locator('#search-page-input')).toBeVisible();
+    await expect(page.locator('#search-results')).toBeAttached();
+  });
+
+  test('PWA manifest is valid and scoped', async ({ request }) => {
+    const response = await request.get(`${BASE}manifest.webmanifest`);
+    expect(response.ok()).toBeTruthy();
+    const manifest = await response.json();
+    expect(manifest.scope).toBe('/Nisulka-Tools/');
+    expect(manifest.start_url).toContain('/Nisulka-Tools/');
+    expect(Array.isArray(manifest.icons)).toBeTruthy();
+    expect(manifest.icons.length).toBeGreaterThan(0);
+  });
+
   for (const slug of tools) {
     test(`tool: ${slug}`, async ({ page }) => {
       await checkPage(page, `${BASE}tools/${slug}/`, slug);
+    });
+  }
+
+  for (const slug of categories) {
+    test(`category: ${slug}`, async ({ page }) => {
+      await checkPage(page, `${BASE}categories/${slug}/`, slug);
     });
   }
 });
