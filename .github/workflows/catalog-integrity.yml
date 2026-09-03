@@ -1,0 +1,70 @@
+name: Catalog Integrity
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "data/tools.json"
+      - "data/categories.json"
+      - "assets/js/home.js"
+      - ".github/workflows/catalog-integrity.yml"
+  pull_request:
+    paths:
+      - "data/tools.json"
+      - "data/categories.json"
+      - "assets/js/home.js"
+      - ".github/workflows/catalog-integrity.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-catalog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate catalog JSON
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          tools_path = Path('data/tools.json')
+          categories_path = Path('data/categories.json')
+          tools = json.loads(tools_path.read_text(encoding='utf-8'))
+          categories = json.loads(categories_path.read_text(encoding='utf-8'))
+
+          assert isinstance(tools, list), 'tools.json must be an array'
+          assert isinstance(categories, list), 'categories.json must be an array'
+          assert tools, 'tools.json must not be empty'
+
+          required = {'name', 'slug', 'path', 'description', 'category', 'url', 'status'}
+          slugs = set()
+          urls = set()
+          for i, tool in enumerate(tools):
+              missing = required - tool.keys()
+              assert not missing, f'tools.json item {i} missing: {sorted(missing)}'
+              assert tool['status'] != 'hidden', f'hidden tool leaked into catalog: {tool["slug"]}'
+              assert tool['slug'] not in slugs, f'duplicate slug: {tool["slug"]}'
+              assert tool['url'].startswith('/Nisulka-Tools/'), f'invalid URL: {tool["url"]}'
+              assert tool['url'] not in urls, f'duplicate URL: {tool["url"]}'
+              slugs.add(tool['slug'])
+              urls.add(tool['url'])
+
+          category_names = {c.get('name') for c in categories}
+          assert category_names, 'categories.json must contain categories'
+          catalog_categories = {t['category'] for t in tools}
+          assert catalog_categories <= category_names, 'catalog contains categories missing from categories.json'
+
+          print(f'Catalog OK: {len(tools)} tools, {len(categories)} categories')
+          PY
+
+      - name: Verify homepage references catalog
+        run: |
+          grep -q 'data/tools.json' assets/js/home.js
+          grep -q 'id="all-tools"' index.html
+          grep -q 'id="tool-count"' index.html
+          echo "Homepage catalog integration OK"
