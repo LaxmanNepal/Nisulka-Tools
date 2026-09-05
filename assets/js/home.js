@@ -1,28 +1,335 @@
 "use strict";
-const TOOLS_DATA_URL="data/tools.json";
-const TOOLS_DATA_FALLBACK_URLS=["./data/tools.json","/Nisulka-Tools/data/tools.json"];
-const TOOLS_DATA_VERSION="20260905";
-let allTools=[],activeCategory="All",searchQuery="";
-const searchInput=document.getElementById("tool-search"),categoryList=document.getElementById("category-list"),allToolsContainer=document.getElementById("all-tools"),toolCount=document.getElementById("tool-count"),featuredContainer=document.getElementById("featured-tools");
-const CATEGORY_RULES=[{name:"Image Tools",words:["image","png","jpg","jpeg","webp","gif","photo","background","watermark"]},{name:"PDF Tools",words:["pdf"]},{name:"YouTube Tools",words:["youtube","thumbnail","video analytics","channel analysis"]},{name:"Nepali Tools",words:["nepali","nepal","calendar","unicode","romanized nepali"]},{name:"Text Tools",words:["text","handwriting","word","case converter"]},{name:"Converter Tools",words:["converter","conversion","convert"]},{name:"Developer Tools",words:["json","html","css","javascript","developer","code","base64"]},{name:"Calculator Tools",words:["calculator","calculate","percentage","age calculator"]},{name:"Finance Tools",words:["currency","finance","loan","interest","nepse","gold price"]},{name:"Social Media Tools",words:["instagram","facebook","tiktok","social media"]}];
-document.addEventListener("DOMContentLoaded",initializeHomepage);
-async function initializeHomepage(){showLoadingState();try{await loadTools();setupSearch();renderCategories();renderFeatured();renderTools();renderPersonalSections();setupFAQ()}catch(e){console.error("Nisulka Tools homepage error:",e);showErrorState(e)}}
-async function fetchToolsJSON(url){const r=await fetch(`${url}${url.includes("?")?"&":"?"}v=${TOOLS_DATA_VERSION}`,{cache:"no-store",headers:{Accept:"application/json"}});if(!r.ok)throw Error(`Unable to load ${url}: HTTP ${r.status}`);const d=await r.json();if(!Array.isArray(d))throw Error(`${url} must contain an array.`);return d}
-async function loadTools(){const urls=[TOOLS_DATA_URL,...TOOLS_DATA_FALLBACK_URLS];let lastError=null;for(const url of urls){try{const d=await fetchToolsJSON(url);const normalized=d.filter(t=>t&&t.status!=="hidden").map(normalizeTool).filter(t=>t.name&&t.slug&&t.url).sort((a,b)=>{const af=Boolean(a.featured),bf=Boolean(b.featured);return af!==bf?Number(bf)-Number(af):a.name.localeCompare(b.name)});if(!normalized.length)throw Error("tools.json contains no valid active tools.");allTools=normalized;window.NisulkaTools=window.NisulkaTools||{};window.NisulkaTools.tools=allTools;window.dispatchEvent(new CustomEvent("nisulka:tools-ready",{detail:{tools:allTools}}));return}catch(e){lastError=e;console.warn(`Nisulka Tools: failed to load ${url}`,e)}}throw lastError||Error("Unable to load tool collection.")}
-function normalizeTool(t){const c=String(t.category||"").trim();return{...t,category:normalizeCategory(c&&c!=="Other Tools"?c:inferCategory(t))}}
-function normalizeCategory(c){const key=String(c||"").trim().toLowerCase();const map={"ai tools":"AI Tools","image tools":"Image Tools","audio tools":"Audio Tools","youtube tools":"YouTube Tools","nepali tools":"Nepali Tools","text tools":"Text Tools","pdf tools":"PDF Tools","developer tools":"Developer Tools","calculator tools":"Calculator Tools","finance tools":"Finance Tools","social media tools":"Social Media Tools","analytics":"YouTube Tools","other tools":"Other Tools"};return map[key]||c||"Other Tools"}
-function inferCategory(t){const x=[t.name,t.description,t.slug,...(Array.isArray(t.keywords)?t.keywords:[])].join(" ").toLowerCase();for(const r of CATEGORY_RULES)if(r.words.some(w=>x.includes(w)))return r.name;return"Other Tools"}
-function setupSearch(){if(!searchInput)return;searchInput.addEventListener("input",()=>{searchQuery=searchInput.value.trim().toLowerCase();renderCategories();renderTools();renderFeatured()});searchInput.addEventListener("keydown",e=>{if(e.key==="Enter"&&searchQuery){e.preventDefault();location.href=`search.html?q=${encodeURIComponent(searchQuery)}`}if(e.key==="Escape"){searchInput.value="";searchQuery="";renderCategories();renderTools();renderFeatured()}})}
-document.addEventListener("keydown",e=>{if(e.key==="/"&&!isTypingTarget(e.target)){e.preventDefault();searchInput?.focus()}});function isTypingTarget(e){const t=e?.tagName?.toLowerCase();return t==="input"||t==="textarea"||t==="select"||e?.isContentEditable}
-function getSearchFilteredTools(){if(!searchQuery)return[...allTools];return allTools.filter(t=>[t.name,t.description,t.category,t.slug,...(Array.isArray(t.keywords)?t.keywords:[])].join(" ").toLowerCase().includes(searchQuery))}function getVisibleTools(){return getSearchFilteredTools().filter(t=>activeCategory==="All"||t.category===activeCategory)}
-function getCategories(){const m=new Map;allTools.forEach(t=>{const c=t.category||"Other Tools";m.set(c,(m.get(c)||0)+1)});return[...m.entries()].sort((a,b)=>a[0]==="Other Tools"?1:b[0]==="Other Tools"?-1:a[0].localeCompare(b[0]))}
-function renderCategories(){if(!categoryList)return;const f=getSearchFilteredTools();categoryList.innerHTML=`<button type="button" class="category-button ${activeCategory==="All"?"is-active":""}" data-category="All" aria-pressed="${activeCategory==="All"}">All Tools <span class="category-count">${f.length}</span></button>`+getCategories().map(([c,n])=>{const count=searchQuery?f.filter(t=>t.category===c).length:n;return`<button type="button" class="category-button ${activeCategory===c?"is-active":""}" data-category="${escapeAttribute(c)}" aria-pressed="${activeCategory===c}">${escapeHTML(c)} <span class="category-count">${count}</span></button>`}).join("");categoryList.querySelectorAll(".category-button").forEach(b=>b.addEventListener("click",()=>{activeCategory=b.dataset.category||"All";renderCategories();renderTools();document.getElementById("tools")?.scrollIntoView({behavior:"smooth",block:"start"})}))}
-function renderFeatured(){if(!featuredContainer)return;const featured=getSearchFilteredTools().filter(t=>t.featured).slice(0,6);if(!featured.length){featuredContainer.innerHTML="";return}featuredContainer.innerHTML=featured.map(createToolCard).join("");bindToolCards(featuredContainer)}
-function renderTools(){if(!allToolsContainer)return;const ts=getVisibleTools();updateToolCount(ts.length);if(!ts.length)return showNoResults();allToolsContainer.innerHTML=ts.map(createToolCard).join("");bindToolCards(allToolsContainer)}
-function renderPersonalSections(){renderToolCollection("recent-tools",window.NisulkaTools?.history?.all?.()||[],"No recently used tools yet.");const favoriteIds=new Set(window.NisulkaTools?.favorites?.all?.()||[]);renderToolCollection("favorite-tools",allTools.filter(t=>favoriteIds.has(String(t.slug))),"No favorite tools yet.");}
-function renderToolCollection(id,tools,emptyText){const el=document.getElementById(id);if(!el)return;if(!tools.length){el.innerHTML=`<div class="tools-empty"><p>${escapeHTML(emptyText)}</p></div>`;return}el.innerHTML=tools.slice(0,6).map(createToolCard).join("");bindToolCards(el)}
-window.addEventListener("nisulka:favorites-changed",renderPersonalSections);window.addEventListener("nisulka:history-changed",renderPersonalSections);
-function createToolCard(t){const n=escapeHTML(t.name||"Unnamed Tool"),u=safeURL(t.url||"#"),l=safeURL(t.logo||""),id=String(t.slug||""),fav=window.NisulkaTools?.favorites?.has?.(id)||false;const img=l?`<img class="tool-card-logo" src="${l}" alt="" loading="lazy" decoding="async" width="128" height="128" onerror="this.onerror=null;this.remove();">`:`<span class="tool-card-logo-fallback" aria-hidden="true">✦</span>`;return`<article class="tool-card"><a class="tool-card-link" href="${u}" data-tool-slug="${escapeAttribute(id)}" aria-label="Open ${n}"><div class="tool-card-icon-wrapper">${img}</div><h4 class="tool-card-title">${n}</h4></a><button class="tool-favorite-button" type="button" data-favorite-tool="${escapeAttribute(id)}" aria-label="${fav?'Remove from favorites':'Add to favorites'}" aria-pressed="${fav}">${fav?'★':'☆'}</button></article>`}
-function bindToolCards(root=document){root.querySelectorAll("[data-favorite-tool]").forEach(b=>b.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();window.NisulkaTools?.favorites?.toggle?.(b.dataset.favoriteTool);syncFavoriteButtons()}));root.querySelectorAll("a[data-tool-slug]").forEach(a=>a.addEventListener("click",()=>{const t=allTools.find(x=>String(x.slug)===String(a.dataset.toolSlug));if(t)window.NisulkaTools?.markToolUsed?.(t)}));syncFavoriteButtons()}
-function syncFavoriteButtons(){const fav=new Set(window.NisulkaTools?.favorites?.all?.()||[]);document.querySelectorAll("[data-favorite-tool]").forEach(b=>{const on=fav.has(String(b.dataset.favoriteTool));b.textContent=on?'★':'☆';b.setAttribute("aria-pressed",String(on));b.setAttribute("aria-label",on?'Remove from favorites':'Add to favorites')})}
-function safeURL(v){const s=String(v||"").trim();if(!s)return"";if(/^\.{0,2}\//.test(s))return escapeAttribute(s);try{const u=new URL(s,location.origin);return["http:","https:"].includes(u.protocol)?escapeAttribute(u.href):""}catch(_){return""}}function updateToolCount(n){if(toolCount)toolCount.textContent=`${n} ${n===1?"tool":"tools"}`}function showNoResults(){allToolsContainer.innerHTML=`<div class="tools-empty"><h3>No tools found</h3><p>Try another search or choose a different category.</p><button type="button" class="btn btn-primary" id="clear-search">Clear filters</button></div>`;document.getElementById("clear-search")?.addEventListener("click",clearFilters)}function clearFilters(){if(searchInput)searchInput.value="";searchQuery="";activeCategory="All";renderCategories();renderTools();renderFeatured()}function showLoadingState(){if(allToolsContainer)allToolsContainer.innerHTML=Array.from({length:10},()=>`<div class="tool-skeleton"></div>`).join("");if(featuredContainer)featuredContainer.innerHTML=""}function showErrorState(error){console.warn("Catalog failed after fallback URLs",error);if(allToolsContainer)allToolsContainer.innerHTML=`<div class="tools-empty"><h3>Tools couldn't be loaded</h3><p>We couldn't load the tool collection. Please try again.</p><button type="button" class="btn btn-primary" onclick="location.reload()">Try again</button></div>`;if(featuredContainer)featuredContainer.innerHTML="";if(toolCount)toolCount.textContent="Unavailable";console.error("Nisulka Tools catalog unavailable:",error)}function setupFAQ(){document.querySelectorAll(".tool-faq-question").forEach(q=>q.addEventListener("click",()=>{const x=q.getAttribute("aria-expanded")==="true";q.setAttribute("aria-expanded",x?"false":"true");const a=q.closest(".tool-faq-item")?.querySelector(".tool-faq-answer");if(a)a.hidden=x}))}function escapeHTML(v){return String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\"/g,"&quot;").replace(/'/g,"&#039;")}function escapeAttribute(v){return escapeHTML(v)}
+
+const TOOLS_DATA_URL = "data/tools.json";
+const TOOLS_DATA_FALLBACK_URLS = ["./data/tools.json", "/Nisulka-Tools/data/tools.json"];
+const TOOLS_DATA_VERSION = "20260905";
+const PAGE_SIZE = 18;
+
+let allTools = [];
+let activeCategory = "All";
+let searchQuery = "";
+let visibleLimit = PAGE_SIZE;
+
+const searchInput = document.getElementById("tool-search");
+const categoryList = document.getElementById("category-list");
+const allToolsContainer = document.getElementById("all-tools");
+const toolCount = document.getElementById("tool-count");
+const loadMoreButton = document.getElementById("load-more-tools");
+
+const CATEGORY_RULES = [
+  { name: "Image Tools", words: ["image", "png", "jpg", "jpeg", "webp", "gif", "photo", "background", "watermark"] },
+  { name: "PDF Tools", words: ["pdf"] },
+  { name: "YouTube Tools", words: ["youtube", "thumbnail", "video analytics", "channel analysis"] },
+  { name: "Nepali Tools", words: ["nepali", "nepal", "calendar", "unicode", "romanized nepali"] },
+  { name: "Text Tools", words: ["text", "handwriting", "word", "case converter"] },
+  { name: "Converter Tools", words: ["converter", "conversion", "convert"] },
+  { name: "Developer Tools", words: ["json", "html", "css", "javascript", "developer", "code", "base64"] },
+  { name: "Calculator Tools", words: ["calculator", "calculate", "percentage", "age calculator"] },
+  { name: "Finance Tools", words: ["currency", "finance", "loan", "interest", "nepse", "gold price"] },
+  { name: "Social Media Tools", words: ["instagram", "facebook", "tiktok", "social media"] }
+];
+
+document.addEventListener("DOMContentLoaded", initializeHomepage);
+
+async function initializeHomepage() {
+  showLoadingState();
+  try {
+    await loadTools();
+    setupSearch();
+    renderCategories();
+    renderTools();
+    setupFAQ();
+  } catch (error) {
+    console.error("Nisulka Tools homepage error:", error);
+    showErrorState(error);
+  }
+}
+
+async function fetchToolsJSON(url) {
+  const response = await fetch(`${url}${url.includes("?") ? "&" : "?"}v=${TOOLS_DATA_VERSION}`, {
+    cache: "no-store",
+    headers: { Accept: "application/json" }
+  });
+  if (!response.ok) throw Error(`Unable to load ${url}: HTTP ${response.status}`);
+  const data = await response.json();
+  if (!Array.isArray(data)) throw Error(`${url} must contain an array.`);
+  return data;
+}
+
+async function loadTools() {
+  const urls = [TOOLS_DATA_URL, ...TOOLS_DATA_FALLBACK_URLS];
+  let lastError = null;
+
+  for (const url of urls) {
+    try {
+      const data = await fetchToolsJSON(url);
+      const normalized = data
+        .filter(tool => tool && tool.status !== "hidden")
+        .map(normalizeTool)
+        .filter(tool => tool.name && tool.slug && tool.url)
+        .sort((a, b) => {
+          const featuredA = Boolean(a.featured);
+          const featuredB = Boolean(b.featured);
+          return featuredA !== featuredB
+            ? Number(featuredB) - Number(featuredA)
+            : a.name.localeCompare(b.name);
+        });
+
+      if (!normalized.length) throw Error("tools.json contains no valid active tools.");
+
+      allTools = normalized;
+      window.NisulkaTools = window.NisulkaTools || {};
+      window.NisulkaTools.tools = allTools;
+      window.dispatchEvent(new CustomEvent("nisulka:tools-ready", { detail: { tools: allTools } }));
+      return;
+    } catch (error) {
+      lastError = error;
+      console.warn(`Nisulka Tools: failed to load ${url}`, error);
+    }
+  }
+
+  throw lastError || Error("Unable to load tool collection.");
+}
+
+function normalizeTool(tool) {
+  const category = String(tool.category || "").trim();
+  return {
+    ...tool,
+    category: normalizeCategory(category && category !== "Other Tools" ? category : inferCategory(tool))
+  };
+}
+
+function normalizeCategory(category) {
+  const key = String(category || "").trim().toLowerCase();
+  const map = {
+    "ai tools": "AI Tools",
+    "image tools": "Image Tools",
+    "audio tools": "Audio Tools",
+    "youtube tools": "YouTube Tools",
+    "nepali tools": "Nepali Tools",
+    "text tools": "Text Tools",
+    "pdf tools": "PDF Tools",
+    "developer tools": "Developer Tools",
+    "calculator tools": "Calculator Tools",
+    "finance tools": "Finance Tools",
+    "social media tools": "Social Media Tools",
+    "analytics": "YouTube Tools",
+    "other tools": "Other Tools"
+  };
+  return map[key] || category || "Other Tools";
+}
+
+function inferCategory(tool) {
+  const haystack = [
+    tool.name,
+    tool.shortDescription,
+    tool.description,
+    tool.slug,
+    ...(Array.isArray(tool.keywords) ? tool.keywords : [])
+  ].join(" ").toLowerCase();
+
+  for (const rule of CATEGORY_RULES) {
+    if (rule.words.some(word => haystack.includes(word))) return rule.name;
+  }
+  return "Other Tools";
+}
+
+function setupSearch() {
+  if (!searchInput) return;
+
+  searchInput.addEventListener("input", () => {
+    searchQuery = searchInput.value.trim().toLowerCase();
+    visibleLimit = PAGE_SIZE;
+    renderCategories();
+    renderTools();
+  });
+
+  searchInput.addEventListener("keydown", event => {
+    if (event.key === "Enter" && searchQuery) {
+      event.preventDefault();
+      location.href = `search.html?q=${encodeURIComponent(searchQuery)}`;
+    }
+
+    if (event.key === "Escape") {
+      clearFilters();
+    }
+  });
+}
+
+document.addEventListener("keydown", event => {
+  if (event.key === "/" && !isTypingTarget(event.target)) {
+    event.preventDefault();
+    searchInput?.focus();
+  }
+});
+
+function isTypingTarget(element) {
+  const tag = element?.tagName?.toLowerCase();
+  return tag === "input" || tag === "textarea" || tag === "select" || element?.isContentEditable;
+}
+
+function getSearchFilteredTools() {
+  if (!searchQuery) return [...allTools];
+
+  return allTools.filter(tool => [
+    tool.name,
+    tool.shortDescription,
+    tool.description,
+    tool.category,
+    tool.slug,
+    ...(Array.isArray(tool.keywords) ? tool.keywords : [])
+  ].join(" ").toLowerCase().includes(searchQuery));
+}
+
+function getVisibleTools() {
+  return getSearchFilteredTools().filter(tool => activeCategory === "All" || tool.category === activeCategory);
+}
+
+function getCategories() {
+  const counts = new Map();
+  allTools.forEach(tool => {
+    const category = tool.category || "Other Tools";
+    counts.set(category, (counts.get(category) || 0) + 1);
+  });
+
+  return [...counts.entries()].sort((a, b) => {
+    if (a[0] === "Other Tools") return 1;
+    if (b[0] === "Other Tools") return -1;
+    return a[0].localeCompare(b[0]);
+  });
+}
+
+function renderCategories() {
+  if (!categoryList) return;
+
+  const filtered = getSearchFilteredTools();
+  categoryList.innerHTML = [
+    `<button type="button" class="category-button ${activeCategory === "All" ? "is-active" : ""}" data-category="All" aria-pressed="${activeCategory === "All"}">All Tools <span class="category-count">${filtered.length}</span></button>`,
+    ...getCategories().map(([category, total]) => {
+      const count = searchQuery ? filtered.filter(tool => tool.category === category).length : total;
+      return `<button type="button" class="category-button ${activeCategory === category ? "is-active" : ""}" data-category="${escapeAttribute(category)}" aria-pressed="${activeCategory === category}">${escapeHTML(category)} <span class="category-count">${count}</span></button>`;
+    })
+  ].join("");
+
+  categoryList.querySelectorAll(".category-button").forEach(button => {
+    button.addEventListener("click", () => {
+      activeCategory = button.dataset.category || "All";
+      visibleLimit = PAGE_SIZE;
+      renderCategories();
+      renderTools();
+      document.getElementById("tools")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  });
+}
+
+function renderTools() {
+  if (!allToolsContainer) return;
+
+  const matches = getVisibleTools();
+  const visible = matches.slice(0, visibleLimit);
+  updateToolCount(matches.length);
+
+  if (!matches.length) {
+    showNoResults();
+    updateLoadMore(0, 0);
+    return;
+  }
+
+  allToolsContainer.innerHTML = visible.map(createToolCard).join("");
+  updateLoadMore(visible.length, matches.length);
+}
+
+function createToolCard(tool) {
+  const name = escapeHTML(tool.name || "Unnamed Tool");
+  const url = safeURL(tool.url || "#");
+  const logo = safeURL(tool.logo || "");
+  const id = String(tool.slug || "");
+  const image = logo
+    ? `<img class="tool-card-logo" src="${logo}" alt="" loading="lazy" decoding="async" width="128" height="128" onerror="this.onerror=null;this.remove();">`
+    : `<span class="tool-card-logo-fallback" aria-hidden="true">✦</span>`;
+
+  return `<article class="tool-card"><a class="tool-card-link" href="${url}" data-tool-slug="${escapeAttribute(id)}" aria-label="Open ${name}"><div class="tool-card-icon-wrapper">${image}</div><h4 class="tool-card-title">${name}</h4></a><button class="tool-favorite-button" type="button" data-favorite-tool="${escapeAttribute(id)}" aria-label="Add to favorites" aria-pressed="false">☆</button></article>`;
+}
+
+function updateLoadMore(visible, total) {
+  if (!loadMoreButton) return;
+  const remaining = Math.max(0, total - visible);
+  loadMoreButton.hidden = remaining === 0;
+  loadMoreButton.textContent = remaining ? `Load more tools (${Math.min(PAGE_SIZE, remaining)})` : "";
+  loadMoreButton.setAttribute("aria-label", remaining ? `Load ${Math.min(PAGE_SIZE, remaining)} more tools` : "Load more tools");
+}
+
+function clearFilters() {
+  if (searchInput) searchInput.value = "";
+  searchQuery = "";
+  activeCategory = "All";
+  visibleLimit = PAGE_SIZE;
+  renderCategories();
+  renderTools();
+}
+
+if (loadMoreButton) {
+  loadMoreButton.addEventListener("click", () => {
+    visibleLimit += PAGE_SIZE;
+    renderTools();
+  });
+}
+
+function updateToolCount(count) {
+  if (toolCount) toolCount.textContent = `${count} ${count === 1 ? "tool" : "tools"}`;
+}
+
+function showNoResults() {
+  allToolsContainer.innerHTML = `<div class="tools-empty"><h3>No tools found</h3><p>Try another search or choose a different category.</p><button type="button" class="btn btn-primary" id="clear-search">Clear filters</button></div>`;
+  document.getElementById("clear-search")?.addEventListener("click", clearFilters);
+}
+
+function showLoadingState() {
+  if (allToolsContainer) allToolsContainer.innerHTML = Array.from({ length: 10 }, () => `<div class="tool-skeleton"></div>`).join("");
+}
+
+function showErrorState(error) {
+  console.warn("Catalog failed after fallback URLs", error);
+  if (allToolsContainer) {
+    allToolsContainer.innerHTML = `<div class="tools-empty"><h3>Tools couldn't be loaded</h3><p>We couldn't load the tool collection. Please try again.</p><button type="button" class="btn btn-primary" onclick="location.reload()">Try again</button></div>`;
+  }
+  if (toolCount) toolCount.textContent = "Unavailable";
+  if (loadMoreButton) loadMoreButton.hidden = true;
+}
+
+function setupFAQ() {
+  document.querySelectorAll(".tool-faq-question").forEach(question => {
+    question.addEventListener("click", () => {
+      const expanded = question.getAttribute("aria-expanded") === "true";
+      question.setAttribute("aria-expanded", expanded ? "false" : "true");
+      const answer = question.closest(".tool-faq-item")?.querySelector(".tool-faq-answer");
+      if (answer) answer.hidden = expanded;
+    });
+  });
+}
+
+function safeURL(value) {
+  const valueString = String(value || "").trim();
+  if (!valueString) return "";
+  if (/^\.{0,2}\//.test(valueString)) return escapeAttribute(valueString);
+
+  try {
+    const url = new URL(valueString, location.origin);
+    return ["http:", "https:"].includes(url.protocol) ? escapeAttribute(url.href) : "";
+  } catch (_) {
+    return "";
+  }
+}
+
+function escapeHTML(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function escapeAttribute(value) {
+  return escapeHTML(value);
+}
