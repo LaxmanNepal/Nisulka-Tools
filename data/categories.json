@@ -2,26 +2,25 @@
   {
     "name": "Ai Tools",
     "slug": "ai-tools",
-    "description": "Free online ai tools for everyday tasks.",
+    "description": "Free online AI tools for everyday tasks.",
     "url": "/Nisulka-Tools/categories/ai-tools/",
-    "toolCount": 5,
+    "toolCount": 6,
     "tools": [
       "Ai-Text-To-Audio",
       "image-background-remover",
       "nepali-ai-voice-generator",
       "slowed-and-reverb-generator",
-      "text-to-audio-generator"
+      "text-to-audio-generator",
+      "gemini-logo-remover"
     ]
   },
   {
     "name": "Analytics",
     "slug": "analytics",
-    "description": "Free online analytics for everyday tasks.",
+    "description": "Free online analytics tools for everyday tasks.",
     "url": "/Nisulka-Tools/categories/analytics/",
     "toolCount": 1,
-    "tools": [
-      "youtube-channel-analysis"
-    ]
+    "tools": ["youtube-channel-analysis"]
   },
   {
     "name": "Audio Tools",
@@ -29,57 +28,70 @@
     "description": "Free online audio tools for everyday tasks.",
     "url": "/Nisulka-Tools/categories/audio-tools/",
     "toolCount": 1,
-    "tools": [
-      "3d-audio-generator"
-    ]
+    "tools": ["3d-audio-generator"]
+  },
+  {
+    "name": "Developer Tools",
+    "slug": "developer-tools",
+    "description": "Free online developer and system tools.",
+    "url": "/Nisulka-Tools/categories/developer-tools/",
+    "toolCount": 1,
+    "tools": ["about-your-system"]
+  },
+  {
+    "name": "Finance Tools",
+    "slug": "finance-tools",
+    "description": "Free online finance and money tools.",
+    "url": "/Nisulka-Tools/categories/finance-tools/",
+    "toolCount": 1,
+    "tools": ["currency-converter"]
   },
   {
     "name": "Image Tools",
     "slug": "image-tools",
-    "description": "Free online image tools for everyday tasks.",
+    "description": "Free online image and drawing tools.",
     "url": "/Nisulka-Tools/categories/image-tools/",
-    "toolCount": 1,
-    "tools": [
-      "image-compressor"
-    ]
+    "toolCount": 2,
+    "tools": ["image-compressor", "draw-app"]
   },
   {
     "name": "Nepali Tools",
     "slug": "nepali-tools",
-    "description": "Free online nepali tools for everyday tasks.",
+    "description": "Free online Nepali language, news and Nepal-focused tools.",
     "url": "/Nisulka-Tools/categories/nepali-tools/",
-    "toolCount": 2,
-    "tools": [
-      "gold-price-in-nepal",
-      "nepali-news"
-    ]
+    "toolCount": 3,
+    "tools": ["gold-price-in-nepal", "nepali-news", "English-Nepali-Dictionary"]
   },
   {
     "name": "Other Tools",
     "slug": "other-tools",
-    "description": "Free online other tools for everyday tasks.",
+    "description": "Free online everyday utility tools.",
     "url": "/Nisulka-Tools/categories/other-tools/",
-    "toolCount": 9,
-    "tools": [
-      "about-your-system",
-      "currency-converter",
-      "cv-generator",
-      "draw-app",
-      "English-Nepali-Dictionary",
-      "instagram-image-downloader",
-      "weather",
-      "youtube-thumbnail-downloader",
-      "youtube-title-generator"
-    ]
+    "toolCount": 1,
+    "tools": ["weather"]
+  },
+  {
+    "name": "Social Media Tools",
+    "slug": "social-media-tools",
+    "description": "Free online tools for social media workflows.",
+    "url": "/Nisulka-Tools/categories/social-media-tools/",
+    "toolCount": 1,
+    "tools": ["instagram-image-downloader"]
   },
   {
     "name": "Text Tools",
     "slug": "text-tools",
-    "description": "Free online text tools for everyday tasks.",
+    "description": "Free online writing and text utilities.",
     "url": "/Nisulka-Tools/categories/text-tools/",
+    "toolCount": 2,
+    "tools": ["cv-generator", "text-to-handwriting"]
+  },
+  {
+    "name": "YouTube Tools",
+    "slug": "youtube-tools",
+    "description": "Free online tools for YouTube creators.",
+    "url": "/Nisulka-Tools/categories/youtube-tools/",
     "toolCount": 1,
-    "tools": [
-      "text-to-handwriting"
-    ]
+    "tools": ["youtube-thumbnail-downloader"]
   }
 ]
