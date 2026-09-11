@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Nisulka Tools V2 architecture audit.
 
-Maps tools, categories and assets; validates catalog-to-filesystem integrity;
-checks local HTML references; detects duplicate/near-duplicate tool names; and
-writes machine-readable + human-readable reports without changing the UI.
+Read-only audit that maps repository files, discoverable tools, categories and
+assets; validates registry integrity; checks local references; and reports
+orphans and duplicate/near-duplicate content without changing product UI.
 """
 from __future__ import annotations
 
@@ -32,7 +32,8 @@ def norm(value: str) -> str:
 
 
 def tokens(value: str) -> set[str]:
-    return {x for x in re.split(r"[^a-z0-9]+", str(value).lower()) if x and x not in {"the", "to", "and", "online", "free"}}
+    stop = {"the", "to", "and", "online", "free", "generator", "tool"}
+    return {x for x in re.split(r"[^a-z0-9]+", str(value).lower()) if x and x not in stop}
 
 
 def resolve_local_ref(source: Path, raw: str) -> Path | None:
@@ -43,30 +44,32 @@ def resolve_local_ref(source: Path, raw: str) -> Path | None:
     if clean.startswith(BASE_PREFIX):
         return ROOT / clean[len(BASE_PREFIX):].lstrip("/")
     if clean.startswith("/"):
-        # Root-relative URLs outside the deployed site are not repository-local.
         return None
     return (source.parent / clean).resolve()
 
 
 def file_inventory():
     files = [p for p in ROOT.rglob("*") if p.is_file() and ".git" not in p.parts]
-    by_ext = Counter((p.suffix.lower() or "[no extension]") for p in files)
-    return files, dict(sorted(by_ext.items()))
+    return files, dict(sorted(Counter((p.suffix.lower() or "[no extension]") for p in files).items()))
+
+
+def is_tool_entry(index: Path) -> bool:
+    parts = index.relative_to(TOOLS_ROOT).parts
+    # Supported tool layouts are tools/<slug>/index.html and
+    # tools/<category>/<slug>/index.html. Ignore nested asset indexes.
+    return len(parts) in (2, 3)
 
 
 def tool_inventory():
     tools = []
-    if not TOOLS_ROOT.exists():
-        return tools
-    for index in sorted(TOOLS_ROOT.rglob("index.html")):
-        rel = index.relative_to(ROOT).as_posix()
+    for index in sorted(p for p in TOOLS_ROOT.rglob("index.html") if is_tool_entry(p)):
         tool_dir = index.parent
         assets = [p.relative_to(ROOT).as_posix() for p in tool_dir.rglob("*") if p.is_file()]
         content = index.read_text(encoding="utf-8", errors="replace")
         title = re.search(r"<title[^>]*>(.*?)</title>", content, re.I | re.S)
         tools.append({
             "folder": tool_dir.relative_to(ROOT).as_posix(),
-            "index": rel,
+            "index": index.relative_to(ROOT).as_posix(),
             "nameHint": re.sub(r"\s+", " ", html.unescape(title.group(1)).strip()) if title else tool_dir.name,
             "assetCount": len(assets),
             "assets": assets,
@@ -76,24 +79,36 @@ def tool_inventory():
 
 
 def local_reference_audit(files: list[Path]):
-    broken = []
-    checked = 0
+    broken, checked = [], 0
     attr_re = re.compile(r"(?:src|href)\s*=\s*['\"]([^'\"]+)['\"]", re.I)
     for path in files:
-        if path.suffix.lower() not in {".html", ".css", ".js", ".mjs", ".json", ".webmanifest", ".xml", ".md"}:
+        if path.suffix.lower() not in {".html", ".css", ".js", ".mjs", ".webmanifest", ".xml"}:
             continue
-        try:
-            text = path.read_text(encoding="utf-8", errors="replace")
-        except OSError:
-            continue
+        text = path.read_text(encoding="utf-8", errors="replace")
         for raw in attr_re.findall(text):
             target = resolve_local_ref(path, raw)
             if target is None:
                 continue
             checked += 1
             if not target.exists():
-                broken.append({"source": path.relative_to(ROOT).as_posix(), "reference": raw, "resolved": target.relative_to(ROOT).as_posix() if target.is_relative_to(ROOT) else str(target)})
+                broken.append({
+                    "source": path.relative_to(ROOT).as_posix(),
+                    "reference": raw,
+                    "resolved": target.relative_to(ROOT).as_posix() if target.is_relative_to(ROOT) else str(target),
+                })
     return {"checked": checked, "broken": broken}
+
+
+def duplicate_assets(files: list[Path]):
+    buckets = defaultdict(list)
+    for path in files:
+        if path.suffix.lower() in {".jpg", ".jpeg", ".png", ".webp", ".gif", ".svg", ".css", ".js", ".mjs", ".json"}:
+            try:
+                digest = hashlib.sha256(path.read_bytes()).hexdigest()
+            except OSError:
+                continue
+            buckets[digest].append(path.relative_to(ROOT).as_posix())
+    return [paths for paths in buckets.values() if len(paths) > 1]
 
 
 def main() -> int:
@@ -104,16 +119,11 @@ def main() -> int:
 
     active = [t for t in tools_catalog if t.get("status") != "hidden"]
     tool_dirs = tool_inventory()
-    tool_dir_map = {t["folder"]: t for t in tool_dirs}
     catalog_paths = {str(t.get("path", "")).strip("/") for t in active}
+    errors, warnings = [], []
 
-    errors = []
-    warnings = []
-
-    # Catalog uniqueness and target checks.
     for field in ("slug", "url", "path"):
-        values = [str(t.get(field, "")).lower() for t in active]
-        for value, count in Counter(values).items():
+        for value, count in Counter(str(t.get(field, "")).lower() for t in active).items():
             if value and count > 1:
                 errors.append(f"duplicate catalog {field}: {value}")
 
@@ -128,7 +138,6 @@ def main() -> int:
             if logo_path is not None and not logo_path.exists():
                 warnings.append(f"catalog logo missing: {t.get('slug')} -> {logo}")
 
-    # Filesystem tools not represented in the catalog are surfaced, not deleted.
     orphans = []
     for item in tool_dirs:
         folder = item["folder"].removeprefix("tools/")
@@ -136,12 +145,11 @@ def main() -> int:
             orphans.append(folder)
             warnings.append(f"filesystem tool not in catalog: {folder}")
 
-    # Category consistency.
     category_by_slug = {str(c.get("slug")): c for c in categories_catalog}
     expected = defaultdict(list)
     for t in active:
-        expected[str(t.get("categorySlug") or norm(t.get("category")))].append(str(t.get("slug")))
         slug = str(t.get("categorySlug") or norm(t.get("category")))
+        expected[slug].append(str(t.get("slug")))
         if slug not in category_by_slug:
             errors.append(f"tool references missing category: {t.get('slug')} -> {slug}")
     for slug, category in category_by_slug.items():
@@ -152,12 +160,9 @@ def main() -> int:
         if int(category.get("toolCount", -1)) != len(wanted):
             errors.append(f"category count drift: {slug} count={category.get('toolCount')} expected={len(wanted)}")
 
-    # Potential duplicates: high token overlap, but never auto-delete.
     duplicate_candidates = []
     for i, a in enumerate(active):
         at = tokens(a.get("name", ""))
-        if not at:
-            continue
         for b in active[i + 1:]:
             bt = tokens(b.get("name", ""))
             union = at | bt
@@ -171,7 +176,10 @@ def main() -> int:
     for item in refs["broken"]:
         errors.append(f"broken local reference: {item['source']} -> {item['reference']}")
 
-    # Generated category route integrity. The V2 architecture uses /categories/<slug>/.
+    identical_assets = duplicate_assets(files)
+    for paths in identical_assets:
+        warnings.append("identical asset files: " + " ↔ ".join(paths))
+
     generated_category_issues = []
     categories_root = ROOT / "categories"
     if categories_root.exists():
@@ -185,57 +193,34 @@ def main() -> int:
         "schemaVersion": 2,
         "repository": "LaxmanNepal/Nisulka-Tools",
         "summary": {
-            "catalogTools": len(active),
-            "filesystemTools": len(tool_dirs),
-            "categories": len(category_by_slug),
-            "orphanToolFolders": len(orphans),
-            "potentialDuplicatePairs": len(duplicate_candidates),
-            "files": len(files),
-            "brokenLocalReferences": len(refs["broken"]),
-            "errors": len(errors),
-            "warnings": len(warnings),
+            "catalogTools": len(active), "filesystemTools": len(tool_dirs), "categories": len(category_by_slug),
+            "orphanToolFolders": len(orphans), "potentialDuplicatePairs": len(duplicate_candidates),
+            "identicalAssetGroups": len(identical_assets), "files": len(files),
+            "brokenLocalReferences": len(refs["broken"]), "errors": len(errors), "warnings": len(warnings)
         },
-        "categories": categories_catalog,
-        "tools": tool_dirs,
-        "orphans": sorted(orphans),
-        "potentialDuplicates": duplicate_candidates,
-        "brokenReferences": refs["broken"],
-        "generatedCategoryIssues": sorted(generated_category_issues),
-        "fileExtensions": extensions,
-        "errors": errors,
-        "warnings": warnings,
+        "categories": categories_catalog, "tools": tool_dirs, "orphans": sorted(orphans),
+        "potentialDuplicates": duplicate_candidates, "identicalAssets": identical_assets,
+        "brokenReferences": refs["broken"], "generatedCategoryIssues": sorted(generated_category_issues),
+        "fileExtensions": extensions, "errors": errors, "warnings": warnings
     }
-
     (REPORT_ROOT / "architecture-audit.json").write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
 
     lines = [
-        "# Nisulka Tools — V2 Architecture Audit",
-        "",
+        "# Nisulka Tools — V2 Architecture Audit", "",
         f"**Catalog tools:** {len(active)}  |  **Filesystem tools:** {len(tool_dirs)}  |  **Categories:** {len(category_by_slug)}",
-        f"**Repository files:** {len(files)}  |  **Broken local references:** {len(refs['broken'])}  |  **Errors:** {len(errors)}  |  **Warnings:** {len(warnings)}",
-        "",
-        "## Architecture map",
-        "",
-        "| Area | Count |",
-        "|---|---:|",
-        f"| Catalog tools | {len(active)} |",
-        f"| Filesystem tool entry points | {len(tool_dirs)} |",
-        f"| Categories | {len(category_by_slug)} |",
-        f"| Orphan tool folders | {len(orphans)} |",
-        f"| Potential duplicate pairs | {len(duplicate_candidates)} |",
-        f"| Files | {len(files)} |",
-        "",
-        "## Errors",
+        f"**Files:** {len(files)}  |  **Broken local references:** {len(refs['broken'])}  |  **Errors:** {len(errors)}  |  **Warnings:** {len(warnings)}", "",
+        "## Architecture map", "", "| Area | Count |", "|---|---:|",
+        f"| Catalog tools | {len(active)} |", f"| Filesystem tool entry points | {len(tool_dirs)} |",
+        f"| Categories | {len(category_by_slug)} |", f"| Orphan tool folders | {len(orphans)} |",
+        f"| Potential duplicate pairs | {len(duplicate_candidates)} |", f"| Identical asset groups | {len(identical_assets)} |",
+        f"| Files | {len(files)} |", "", "## Errors"
     ]
     lines += [f"- ❌ {x}" for x in errors] or ["- ✅ None"]
-    lines += ["", "## Warnings"]
-    lines += [f"- ⚠️ {x}" for x in warnings] or ["- ✅ None"]
-    lines += ["", "## Orphan tool folders"]
-    lines += [f"- `{x}`" for x in sorted(orphans)] or ["- None"]
-    lines += ["", "## Potential duplicate tools"]
-    lines += [f"- `{x['a']}` ↔ `{x['b']}` ({x['tokenOverlap']:.0%} token overlap)" for x in duplicate_candidates] or ["- None"]
-    lines += ["", "## Extension inventory"]
-    lines += [f"- `{k}`: {v}" for k, v in extensions.items()]
+    lines += ["", "## Warnings"] + ([f"- ⚠️ {x}" for x in warnings] or ["- ✅ None"])
+    lines += ["", "## Orphan tool folders"] + ([f"- `{x}`" for x in sorted(orphans)] or ["- None"])
+    lines += ["", "## Potential duplicate tools"] + ([f"- `{x['a']}` ↔ `{x['b']}` ({x['tokenOverlap']:.0%} token overlap)" for x in duplicate_candidates] or ["- None"])
+    lines += ["", "## Identical assets"] + ([f"- {' ↔ '.join(paths)}" for paths in identical_assets] or ["- None"])
+    lines += ["", "## Extension inventory"] + [f"- `{k}`: {v}" for k, v in extensions.items()]
     (REPORT_ROOT / "architecture-audit.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
     print(f"V2 Architecture Audit: {len(errors)} errors, {len(warnings)} warnings")
