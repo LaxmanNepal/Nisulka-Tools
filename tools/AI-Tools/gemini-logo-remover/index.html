@@ -1,1169 +1,755 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gemini Watermark Remover - Nisulka Tools</title>
-
-    <!-- Official Nisulka CSS Variables, Global, Component, and Tool Styles -->
-    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/variables.css">
-    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/global.css">
-    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/components.css">
-    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/tool.css">
-
-    <!-- Official Nisulka Header and Footer Styles -->
-    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/header.css">
-    <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/footer.css">
-
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <style>
-        /* Scoped Tool UI Variables & Base Overrides (Bright Light Theme) */
-        :root {
-            --gwr-bg-dark: #f8fafc;
-            --gwr-surface: #ffffff;
-            --gwr-card: #ffffff;
-            --gwr-border: #e2e8f0;
-            --gwr-accent: #0284c7;
-            --gwr-accent-hover: #0369a1;
-            --gwr-accent2: #6366f1;
-            --gwr-green: #16a34a;
-            --gwr-red: #dc2626;
-            --gwr-text: #0f172a;
-            --gwr-muted: #64748b;
-            --gwr-glow: rgba(2, 132, 199, 0.08);
-            --gwr-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
-        }
-
-        body {
-            background-color: var(--gwr-bg-dark) !important;
-            color: var(--gwr-text) !important;
-        }
-
-        .nisulka-tool-wrapper {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 32px 20px 60px;
-            font-family: 'Inter', sans-serif;
-            color: var(--gwr-text);
-        }
-
-        /* Breadcrumbs */
-        .tool-breadcrumb {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
-            color: var(--gwr-muted);
-            margin-bottom: 24px;
-        }
-
-        .tool-breadcrumb a {
-            color: var(--gwr-muted);
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-
-        .tool-breadcrumb a:hover {
-            color: var(--gwr-accent);
-        }
-
-        .tool-breadcrumb i {
-            font-size: 10px;
-            opacity: 0.6;
-        }
-
-        /* Hero / Header Box */
-        .tool-hero {
-            text-align: center;
-            margin-bottom: 36px;
-        }
-
-        .tool-badge-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(2, 132, 199, 0.08);
-            border: 1px solid rgba(2, 132, 199, 0.2);
-            color: var(--gwr-accent);
-            font-family: 'Space Mono', monospace;
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 0.08em;
-            padding: 6px 14px;
-            border-radius: 20px;
-            margin-bottom: 16px;
-            text-transform: uppercase;
-        }
-
-        .tool-main-title {
-            font-family: 'Syne', 'Inter', sans-serif;
-            font-size: clamp(2rem, 4.5vw, 3rem);
-            font-weight: 800;
-            background: linear-gradient(135deg, #0f172a 20%, var(--gwr-accent) 70%, var(--gwr-accent2));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            line-height: 1.15;
-            margin-bottom: 14px;
-        }
-
-        .tool-sub-description {
-            color: var(--gwr-muted);
-            font-size: 15px;
-            line-height: 1.6;
-            max-width: 680px;
-            margin: 0 auto 24px;
-        }
-
-        .tool-pills-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-        }
-
-        .tool-pill-item {
-            background: var(--gwr-surface);
-            border: 1px solid var(--gwr-border);
-            border-radius: 8px;
-            padding: 6px 14px;
-            font-size: 12px;
-            font-family: 'Space Mono', monospace;
-            color: var(--gwr-text);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .tool-pill-item i {
-            color: var(--gwr-green);
-        }
-
-        /* Workspace & Drop Zone */
-        .workspace-card {
-            background: var(--gwr-card);
-            border: 1px solid var(--gwr-border);
-            border-radius: 20px;
-            padding: 24px;
-            box-shadow: var(--gwr-shadow);
-            margin-bottom: 40px;
-        }
-
-        .drop-zone {
-            border: 2px dashed #cbd5e1;
-            border-radius: 16px;
-            padding: 50px 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: #f8fafc;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .drop-zone:hover, .drop-zone.over {
-            border-color: var(--gwr-accent);
-            background: rgba(2, 132, 199, 0.03);
-            transform: translateY(-2px);
-        }
-
-        .drop-icon-box {
-            width: 60px;
-            height: 60px;
-            margin: 0 auto 16px;
-            background: rgba(2, 132, 199, 0.08);
-            border: 1px solid rgba(2, 132, 199, 0.2);
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 26px;
-            color: var(--gwr-accent);
-        }
-
-        .drop-zone h3 {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 6px;
-            color: var(--gwr-text);
-        }
-
-        .drop-zone p {
-            color: var(--gwr-muted);
-            font-size: 13px;
-            font-family: 'Space Mono', monospace;
-        }
-
-        .drop-zone input[type=file] {
-            position: absolute;
-            inset: 0;
-            opacity: 0;
-            cursor: pointer;
-            width: 100%;
-            height: 100%;
-        }
-
-        /* Interactive Controls Panel */
-        .controls-panel {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            background: #f8fafc;
-            border: 1px solid var(--gwr-border);
-            border-radius: 12px;
-            padding: 18px;
-            margin-top: 20px;
-        }
-
-        .control-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .control-group label {
-            font-family: 'Space Mono', monospace;
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--gwr-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .control-select, .control-slider {
-            background: var(--gwr-surface);
-            border: 1px solid var(--gwr-border);
-            color: var(--gwr-text);
-            border-radius: 8px;
-            padding: 8px 12px;
-            font-size: 13px;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-
-        .control-select:focus {
-            border-color: var(--gwr-accent);
-            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1);
-        }
-
-        .control-slider {
-            padding: 4px 0;
-            accent-color: var(--gwr-accent);
-            cursor: pointer;
-        }
-
-        /* Status Bar */
-        #status-panel {
-            display: none;
-            margin-top: 24px;
-        }
-
-        .status-bar {
-            background: #f8fafc;
-            border: 1px solid var(--gwr-border);
-            border-radius: 10px;
-            padding: 12px 18px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-family: 'Space Mono', monospace;
-            font-size: 12px;
-        }
-
-        .status-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: var(--gwr-muted);
-            flex-shrink: 0;
-            transition: background 0.3s;
-        }
-
-        .status-dot.proc { background: var(--gwr-accent); animation: pulseDot 1s infinite; }
-        .status-dot.ok { background: var(--gwr-green); }
-        .status-dot.err { background: var(--gwr-red); }
-
-        @keyframes pulseDot {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-
-        .status-msg { flex: 1; color: var(--gwr-text); font-weight: 600; }
-
-        .progress-wrap {
-            height: 4px;
-            background: var(--gwr-border);
-            border-radius: 4px;
-            margin-top: 10px;
-            overflow: hidden;
-            display: none;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, var(--gwr-accent2), var(--gwr-accent));
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        /* Image Comparison Grid */
-        .comparison-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-top: 20px;
-        }
-
-        @media (max-width: 680px) {
-            .comparison-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .img-card {
-            background: var(--gwr-surface);
-            border: 1px solid var(--gwr-border);
-            border-radius: 14px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-        }
-
-        .img-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 14px;
-            border-bottom: 1px solid var(--gwr-border);
-            font-size: 11px;
-            font-family: 'Space Mono', monospace;
-            color: var(--gwr-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            background: #f8fafc;
-        }
-
-        .img-label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 700;
-            color: var(--gwr-text);
-        }
-
-        .dot-indicator {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-        }
-
-        .dot-indicator.orig { background: var(--gwr-muted); }
-        .dot-indicator.clean { background: var(--gwr-green); }
-
-        .img-preview-box {
-            padding: 12px;
-            min-height: 240px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #f1f5f9;
-            background-image: 
-                linear-gradient(45deg, #e2e8f0 25%, transparent 25%), 
-                linear-gradient(-45deg, #e2e8f0 25%, transparent 25%), 
-                linear-gradient(45deg, transparent 75%, #e2e8f0 75%), 
-                linear-gradient(-45deg, transparent 75%, #e2e8f0 75%);
-            background-size: 16px 16px;
-            background-position: 0 0, 0 8px, 8px -8px, -8px 0;
-            position: relative;
-        }
-
-        .img-preview-box canvas, .img-preview-box img {
-            max-width: 100%;
-            max-height: 340px;
-            object-fit: contain;
-            border-radius: 6px;
-            display: block;
-        }
-
-        .img-preview-box .placeholder-text {
-            color: var(--gwr-muted);
-            font-size: 13px;
-            font-family: 'Space Mono', monospace;
-            text-align: center;
-        }
-
-        /* Chips Metadata */
-        .meta-chips {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 16px;
-        }
-
-        .meta-chip {
-            background: #f8fafc;
-            border: 1px solid var(--gwr-border);
-            border-radius: 8px;
-            padding: 6px 12px;
-            font-size: 12px;
-            font-family: 'Space Mono', monospace;
-            color: var(--gwr-muted);
-        }
-
-        .meta-chip strong {
-            color: var(--gwr-text);
-        }
-
-        /* Buttons & Actions */
-        .actions-row {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-top: 20px;
-        }
-
-        .btn-action {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 12px 24px;
-            border-radius: 10px;
-            font-family: 'Space Mono', monospace;
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            border: none;
-            transition: all 0.25s ease;
-            text-decoration: none;
-        }
-
-        .btn-primary-action {
-            background: var(--gwr-accent);
-            color: #ffffff;
-            box-shadow: 0 4px 14px rgba(2, 132, 199, 0.25);
-        }
-
-        .btn-primary-action:hover {
-            background: var(--gwr-accent-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 18px rgba(2, 132, 199, 0.35);
-        }
-
-        .btn-secondary-action {
-            background: var(--gwr-surface);
-            border: 1px solid var(--gwr-border);
-            color: var(--gwr-text);
-        }
-
-        .btn-secondary-action:hover {
-            border-color: var(--gwr-accent);
-            color: var(--gwr-accent);
-            transform: translateY(-2px);
-        }
-
-        /* Math Info & Disclaimer Boxes */
-        .math-info-card {
-            background: #f8fafc;
-            border: 1px solid var(--gwr-border);
-            border-left: 4px solid var(--gwr-accent);
-            border-radius: 0 12px 12px 0;
-            padding: 18px 20px;
-            margin-top: 28px;
-            font-family: 'Inter', sans-serif;
-            font-size: 13px;
-            color: var(--gwr-muted);
-            line-height: 1.7;
-        }
-
-        .math-info-card strong {
-            color: var(--gwr-accent);
-            font-family: 'Space Mono', monospace;
-            display: block;
-            margin-bottom: 6px;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-        }
-
-        .formula-box {
-            background: var(--gwr-surface);
-            border: 1px solid var(--gwr-border);
-            border-radius: 8px;
-            padding: 8px 14px;
-            margin-top: 10px;
-            color: var(--gwr-text);
-            font-family: 'Space Mono', monospace;
-            font-size: 13px;
-            font-weight: 700;
-            display: inline-block;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-        }
-
-        .disclaimer-box {
-            background: rgba(220, 38, 38, 0.04);
-            border: 1px solid rgba(220, 38, 38, 0.15);
-            border-radius: 10px;
-            padding: 14px 16px;
-            font-size: 12px;
-            font-family: 'Inter', sans-serif;
-            color: var(--gwr-muted);
-            margin-top: 16px;
-            line-height: 1.6;
-        }
-
-        .disclaimer-box strong {
-            color: var(--gwr-red);
-            font-family: 'Space Mono', monospace;
-        }
-
-        /* SEO & Content Section */
-        .tool-article-section {
-            margin-top: 50px;
-            border-top: 1px solid var(--gwr-border);
-            padding-top: 40px;
-        }
-
-        .tool-article-section h2 {
-            font-size: 22px;
-            font-weight: 700;
-            color: var(--gwr-text);
-            margin-bottom: 16px;
-        }
-
-        .tool-article-section p {
-            font-size: 14px;
-            line-height: 1.7;
-            color: var(--gwr-muted);
-            margin-bottom: 16px;
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 20px;
-            margin: 24px 0 36px;
-        }
-
-        .feature-card {
-            background: var(--gwr-surface);
-            border: 1px solid var(--gwr-border);
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: var(--gwr-shadow);
-        }
-
-        .feature-card i {
-            font-size: 22px;
-            color: var(--gwr-accent);
-            margin-bottom: 12px;
-        }
-
-        .feature-card h3 {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--gwr-text);
-            margin-bottom: 8px;
-        }
-
-        .feature-card p {
-            font-size: 13px;
-            color: var(--gwr-muted);
-            margin-bottom: 0;
-        }
-
-        /* FAQ Section */
-        .faq-section {
-            margin-top: 40px;
-        }
-
-        .faq-item {
-            background: var(--gwr-surface);
-            border: 1px solid var(--gwr-border);
-            border-radius: 12px;
-            margin-bottom: 12px;
-            overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-        }
-
-        .faq-question {
-            padding: 16px 20px;
-            font-weight: 600;
-            font-size: 15px;
-            color: var(--gwr-text);
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .faq-answer {
-            padding: 0 20px 16px;
-            font-size: 14px;
-            color: var(--gwr-muted);
-            line-height: 1.6;
-            display: none;
-        }
-
-        .faq-item.active .faq-answer {
-            display: block;
-        }
-
-        .faq-item.active .faq-icon {
-            transform: rotate(180deg);
-        }
-
-        .faq-icon {
-            transition: transform 0.3s;
-            color: var(--gwr-accent);
-        }
-
-        canvas#cv {
-            display: none;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gemini Watermark Remover · Nisulka Tools</title>
+
+  <!-- ===== OFFICIAL NISULKA STYLES (LOCKED) ===== -->
+  <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/variables.css">
+  <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/global.css">
+  <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/components.css">
+  <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/header.css">
+  <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/footer.css">
+  <link rel="stylesheet" href="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/css/tool.css">
+
+  <!-- ===== TOOL-SPECIFIC CSS (scoped, does NOT touch header/footer) ===== -->
+  <style>
+    /* ----- Scoped to .nisulka-tool-wrap only. No header/footer selectors. ----- */
+    .nisulka-tool-wrap {
+      --gwr-bg: #08080e;
+      --gwr-surface: #101018;
+      --gwr-card: #14141e;
+      --gwr-border: #252535;
+      --gwr-accent: #6ee7f7;
+      --gwr-accent2: #a78bfa;
+      --gwr-green: #4ade80;
+      --gwr-red: #f87171;
+      --gwr-text: #e4e4f0;
+      --gwr-muted: #5a5a7a;
+      --gwr-glow: rgba(110,231,247,0.12);
+      font-family: 'Syne', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      color: var(--gwr-text);
+      padding: 24px 16px 64px;
+      max-width: 1100px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .nisulka-tool-wrap *,
+    .nisulka-tool-wrap *::before,
+    .nisulka-tool-wrap *::after {
+      box-sizing: border-box;
+    }
+
+    /* ----- Breadcrumb ----- */
+    .gwr-breadcrumb {
+      font-size: 13px;
+      color: var(--gwr-muted);
+      font-family: 'Space Mono', monospace;
+      margin-bottom: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+    .gwr-breadcrumb a {
+      color: var(--gwr-accent);
+      text-decoration: none;
+    }
+    .gwr-breadcrumb a:hover {
+      text-decoration: underline;
+    }
+    .gwr-breadcrumb span {
+      color: var(--gwr-muted);
+      opacity: 0.6;
+    }
+
+    /* ----- Header / Title block ----- */
+    .gwr-header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+    .gwr-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(110,231,247,0.07);
+      border: 1px solid rgba(110,231,247,0.18);
+      color: var(--gwr-accent);
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: .1em;
+      padding: 5px 13px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+    }
+    .gwr-header h1 {
+      font-size: clamp(1.9rem, 5vw, 2.9rem);
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #ffffff 25%, var(--gwr-accent) 65%, var(--gwr-accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .gwr-sub {
+      color: var(--gwr-muted);
+      font-family: 'Space Mono', monospace;
+      font-size: 13px;
+      line-height: 1.65;
+      max-width: 620px;
+      margin: 0 auto;
+    }
+    .gwr-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .gwr-pill {
+      background: var(--gwr-surface);
+      border: 1px solid var(--gwr-border);
+      border-radius: 6px;
+      padding: 4px 12px;
+      font-size: 12px;
+      font-family: 'Space Mono', monospace;
+      color: var(--gwr-muted);
+    }
+    .gwr-pill span {
+      color: var(--gwr-green);
+      margin-right: 4px;
+    }
+
+    /* ----- Drop zone ----- */
+    .gwr-drop {
+      border: 2px dashed var(--gwr-border);
+      border-radius: 16px;
+      padding: 52px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: all .25s;
+      background: var(--gwr-surface);
+      position: relative;
+      overflow: hidden;
+    }
+    .gwr-drop::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, var(--gwr-glow) 0%, transparent 65%);
+      opacity: 0;
+      transition: opacity .3s;
+      pointer-events: none;
+    }
+    .gwr-drop:hover,
+    .gwr-drop.over {
+      border-color: var(--gwr-accent);
+      background: rgba(110,231,247,0.03);
+    }
+    .gwr-drop:hover::after,
+    .gwr-drop.over::after {
+      opacity: 1;
+    }
+    .gwr-drop-icon {
+      width: 54px;
+      height: 54px;
+      margin: 0 auto 16px;
+      background: rgba(110,231,247,0.08);
+      border: 1px solid rgba(110,231,247,0.18);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+    .gwr-drop h2 {
+      font-size: 17px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .gwr-drop p {
+      color: var(--gwr-muted);
+      font-size: 13px;
+      font-family: 'Space Mono', monospace;
+    }
+    .gwr-drop input[type=file] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    /* ----- Panel / status ----- */
+    .gwr-panel { display: none; margin-top: 24px; }
+    .gwr-sbar {
+      background: var(--gwr-surface);
+      border: 1px solid var(--gwr-border);
+      border-radius: 10px;
+      padding: 13px 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+    }
+    .gwr-sdot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--gwr-muted);
+      flex-shrink: 0;
+      transition: background .3s;
+    }
+    .gwr-sdot.proc { background: var(--gwr-accent); animation: gwr-pulse 1s infinite; }
+    .gwr-sdot.ok   { background: var(--gwr-green); }
+    .gwr-sdot.err  { background: var(--gwr-red); }
+    @keyframes gwr-pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: .3; }
+    }
+    .gwr-smsg { flex: 1; }
+    .gwr-sext { color: var(--gwr-muted); }
+    .gwr-pbar-wrap {
+      height: 2px;
+      background: var(--gwr-border);
+      border-radius: 2px;
+      margin-top: 10px;
+      display: none;
+    }
+    .gwr-pbar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gwr-accent2), var(--gwr-accent));
+      border-radius: 2px;
+      width: 0;
+      transition: width .3s;
+    }
+    .gwr-pbar-wrap.show { display: block; }
+
+    /* ----- Compare grid ----- */
+    .gwr-cmp {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+    @media (max-width: 560px) {
+      .gwr-cmp { grid-template-columns: 1fr; }
+    }
+    .gwr-ipanel {
+      background: var(--gwr-card);
+      border: 1px solid var(--gwr-border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .gwr-ihead {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 13px;
+      border-bottom: 1px solid var(--gwr-border);
+      font-size: 11px;
+      font-family: 'Space Mono', monospace;
+      color: var(--gwr-muted);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+    .gwr-ilabel {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .gwr-idot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+    .gwr-idot.orig { background: var(--gwr-muted); }
+    .gwr-idot.proc { background: var(--gwr-green); }
+    .gwr-ibox {
+      padding: 10px;
+      min-height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:
+        linear-gradient(45deg, #181820 25%, transparent 25%),
+        linear-gradient(-45deg, #181820 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #181820 75%),
+        linear-gradient(-45deg, transparent 75%, #181820 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0;
+    }
+    .gwr-ibox img {
+      max-width: 100%;
+      max-height: 280px;
+      object-fit: contain;
+      display: block;
+    }
+    .gwr-ibox .ph {
+      color: var(--gwr-muted);
+      font-size: 12px;
+      font-family: 'Space Mono', monospace;
+      text-align: center;
+      padding: 24px;
+    }
+
+    /* ----- Chips ----- */
+    .gwr-chips {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .gwr-chip {
+      background: var(--gwr-surface);
+      border: 1px solid var(--gwr-border);
+      border-radius: 7px;
+      padding: 7px 13px;
+      font-size: 12px;
+      font-family: 'Space Mono', monospace;
+      color: var(--gwr-muted);
+    }
+    .gwr-chip strong { color: var(--gwr-text); }
+
+    /* ----- Buttons ----- */
+    .gwr-btns {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .gwr-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 11px 22px;
+      border-radius: 8px;
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: all .2s;
+      text-decoration: none;
+    }
+    .gwr-btn-a {
+      background: var(--gwr-accent);
+      color: #08080e;
+    }
+    .gwr-btn-a:hover {
+      background: #88ecfc;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 18px rgba(110,231,247,.28);
+    }
+    .gwr-btn-b {
+      background: var(--gwr-surface);
+      border: 1px solid var(--gwr-border);
+      color: var(--gwr-text);
+    }
+    .gwr-btn-b:hover {
+      border-color: var(--gwr-accent);
+      color: var(--gwr-accent);
+    }
+
+    /* ----- Info box ----- */
+    .gwr-info-box {
+      background: var(--gwr-surface);
+      border: 1px solid var(--gwr-border);
+      border-left: 3px solid var(--gwr-accent2);
+      border-radius: 0 8px 8px 0;
+      padding: 14px 16px;
+      margin-top: 28px;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      color: var(--gwr-muted);
+      line-height: 1.7;
+    }
+    .gwr-info-box strong {
+      color: var(--gwr-accent2);
+      display: block;
+      margin-bottom: 5px;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+    }
+    .gwr-formula {
+      background: var(--gwr-card);
+      border: 1px solid var(--gwr-border);
+      border-radius: 6px;
+      padding: 7px 11px;
+      margin-top: 8px;
+      color: var(--gwr-accent);
+      font-size: 12px;
+    }
+    .gwr-warn {
+      background: rgba(248,113,113,.05);
+      border: 1px solid rgba(248,113,113,.18);
+      border-radius: 8px;
+      padding: 11px 14px;
+      font-size: 11px;
+      font-family: 'Space Mono', monospace;
+      color: #f8717160;
+      margin-top: 14px;
+      line-height: 1.65;
+    }
+    .gwr-warn strong { color: var(--gwr-red); }
+
+    /* ----- FAQ (tool-specific) ----- */
+    .gwr-faq {
+      margin-top: 48px;
+    }
+    .gwr-faq h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+      color: var(--gwr-text);
+    }
+    .gwr-faq-item {
+      background: var(--gwr-surface);
+      border: 1px solid var(--gwr-border);
+      border-radius: 10px;
+      padding: 16px 18px;
+      margin-bottom: 10px;
+    }
+    .gwr-faq-item h3 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--gwr-accent);
+      font-family: 'Space Mono', monospace;
+    }
+    .gwr-faq-item p {
+      font-size: 13px;
+      color: var(--gwr-muted);
+      line-height: 1.7;
+      font-family: 'Space Mono', monospace;
+    }
+
+    .gwr-canvas-hidden { display: none; }
+  </style>
 </head>
 <body>
 
-    <!-- OFFICIAL NISULKA HEADER MOUNT -->
-    <div id="site-header-mount"></div>
+  <!-- ===== OFFICIAL NISULKA HEADER (LOCKED) ===== -->
+  <div id="site-header-mount"></div>
 
-    <main class="nisulka-tool-wrapper">
-        <!-- Breadcrumbs -->
-        <nav class="tool-breadcrumb">
-            <a href="https://apps.laxmannepal.com.np/Nisulka-Tools/"><i class="fa-solid fa-house"></i> Nisulka Tools</a>
-            <i class="fa-solid fa-chevron-right"></i>
-            <a href="#">Image Tools</a>
-            <i class="fa-solid fa-chevron-right"></i>
-            <span>Gemini Watermark Remover</span>
-        </nav>
+  <!-- ===== TOOL CONTENT (designed by us, no header/footer interference) ===== -->
+  <main class="nisulka-tool-wrap">
 
-        <!-- Tool Hero Header -->
-        <header class="tool-hero">
-            <div class="tool-badge-pill">
-                <i class="fa-solid fa-shield-halved"></i> 100% Client-Side · Reverse Alpha Blending
-            </div>
-            <h1 class="tool-main-title">Gemini Watermark Remover</h1>
-            <p class="tool-sub-description">
-                Remove Google Gemini & Imagen 3 AI watermarks instantly with zero visual artifacting.
-                Powered by mathematically exact pixel inversion — processed completely inside your browser.
-            </p>
-            <div class="tool-pills-row">
-                <div class="tool-pill-item"><i class="fa-solid fa-check"></i> Zero Cloud Uploads</div>
-                <div class="tool-pill-item"><i class="fa-solid fa-check"></i> Original Resolution</div>
-                <div class="tool-pill-item"><i class="fa-solid fa-check"></i> Lossless PNG Export</div>
-                <div class="tool-pill-item"><i class="fa-solid fa-check"></i> Real Alpha Map Inversion</div>
-            </div>
-        </header>
+    <!-- Breadcrumb -->
+    <nav class="gwr-breadcrumb" aria-label="Breadcrumb">
+      <a href="https://apps.laxmannepal.com.np/Nisulka-Tools/">Nisulka Tools</a>
+      <span>/</span>
+      <span>Gemini Watermark Remover</span>
+    </nav>
 
-        <!-- Main Workspace -->
-        <div class="workspace-card">
-            <!-- File Drop Zone -->
-            <div class="drop-zone" id="drop">
-                <div class="drop-icon-box">
-                    <i class="fa-solid fa-wand-magic-sparkles"></i>
-                </div>
-                <h3>Drop your Gemini image here</h3>
-                <p>Supports PNG, JPEG, or WebP · Drag & Drop or Click to browse</p>
-                <input type="file" id="filein" accept="image/png,image/jpeg,image/webp">
-            </div>
+    <!-- Title & Description -->
+    <header class="gwr-header">
+      <div class="gwr-badge">◆ client-side · no uploads · MIT</div>
+      <h1>Gemini Watermark Remover</h1>
+      <p class="gwr-sub">
+        Mathematically precise Reverse Alpha Blending.<br>
+        100% in your browser — images never leave your device.
+      </p>
+      <div class="gwr-pills">
+        <div class="gwr-pill"><span>✓</span>100% Client-Side</div>
+        <div class="gwr-pill"><span>✓</span>Privacy First</div>
+        <div class="gwr-pill"><span>✓</span>Real Alpha Maps</div>
+        <div class="gwr-pill"><span>✓</span>Auto-Detection</div>
+        <div class="gwr-pill"><span>✓</span>PNG Download</div>
+      </div>
+    </header>
 
-            <!-- Controls (Visible after image load) -->
-            <div class="controls-panel" id="controls-panel" style="display: none;">
-                <div class="control-group">
-                    <label for="wm-position">Watermark Position</label>
-                    <select id="wm-position" class="control-select">
-                        <option value="br" selected>Bottom-Right (Standard Gemini)</option>
-                        <option value="bl">Bottom-Left</option>
-                        <option value="tr">Top-Right</option>
-                        <option value="tl">Top-Left</option>
-                    </select>
-                </div>
-                <div class="control-group">
-                    <label for="wm-scale">Logo Scale <span id="scale-val">Auto</span></label>
-                    <input type="range" id="wm-scale" class="control-slider" min="20" max="120" value="48">
-                </div>
-                <div class="control-group">
-                    <label for="offset-x">Offset X <span id="offset-x-val">20px</span></label>
-                    <input type="range" id="offset-x" class="control-slider" min="0" max="100" value="20">
-                </div>
-                <div class="control-group">
-                    <label for="offset-y">Offset Y <span id="offset-y-val">20px</span></label>
-                    <input type="range" id="offset-y" class="control-slider" min="0" max="100" value="20">
-                </div>
-                <div class="control-group">
-                    <label for="alpha-scale">Alpha Intensity <span id="alpha-val">100%</span></label>
-                    <input type="range" id="alpha-scale" class="control-slider" min="40" max="160" value="100">
-                </div>
-            </div>
+    <!-- Tool workspace -->
+    <div class="gwr-drop" id="drop">
+      <div class="gwr-drop-icon">🖼</div>
+      <h2>Drop your Gemini image here</h2>
+      <p>PNG · JPEG · WebP &nbsp;·&nbsp; Click or drag & drop &nbsp;·&nbsp; Processed locally</p>
+      <input type="file" id="filein" accept="image/png,image/jpeg,image/webp" aria-label="Upload image">
+    </div>
 
-            <!-- Status & Progress -->
-            <div id="status-panel">
-                <div class="status-bar">
-                    <div class="status-dot" id="sdot"></div>
-                    <span class="status-msg" id="smsg">Ready</span>
-                    <span class="status-ext" id="sext"></span>
-                </div>
-                <div class="progress-wrap" id="pw"><div class="progress-bar" id="pb"></div></div>
+    <div class="gwr-panel" id="panel">
+      <div class="gwr-sbar">
+        <div class="gwr-sdot" id="sdot"></div>
+        <span class="gwr-smsg" id="smsg">Initializing…</span>
+        <span class="gwr-sext" id="sext"></span>
+      </div>
+      <div class="gwr-pbar-wrap" id="pw"><div class="gwr-pbar" id="pb"></div></div>
 
-                <!-- Comparison Grid -->
-                <div class="comparison-grid">
-                    <div class="img-card">
-                        <div class="img-header">
-                            <div class="img-label"><div class="dot-indicator orig"></div>Original Watermarked (Target Box)</div>
-                            <span id="osz">—</span>
-                        </div>
-                        <div class="img-preview-box" id="obox">
-                            <canvas id="orig-canvas"></canvas>
-                        </div>
-                    </div>
-                    <div class="img-card">
-                        <div class="img-header">
-                            <div class="img-label"><div class="dot-indicator clean"></div>Clean Result</div>
-                            <span id="psz">—</span>
-                        </div>
-                        <div class="img-preview-box" id="pbox">
-                            <div class="placeholder-text"><i class="fa-solid fa-spinner fa-spin"></i> Processing image...</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Metadata Chips -->
-                <div class="meta-chips" id="chips"></div>
-
-                <!-- Action Buttons -->
-                <div class="actions-row">
-                    <a class="btn-action btn-primary-action" id="dlbtn" style="display:none" download="gemini-clean.png">
-                        <i class="fa-solid fa-download"></i> Download Clean Image
-                    </a>
-                    <button class="btn-action btn-secondary-action" id="reset">
-                        <i class="fa-solid fa-arrow-rotate-left"></i> Process Another Image
-                    </button>
-                </div>
-            </div>
-
-            <!-- Reverse Alpha Math Explanation -->
-            <div class="math-info-card">
-                <strong><i class="fa-solid fa-microchip"></i> Mathematical Inversion Engine</strong>
-                Google Gemini compositing applies a stylized logo overlay onto generated images using standard linear alpha blending.
-                By capturing the exact official alpha maps, our client-side engine inverts the compositing matrix pixel-by-pixel with absolute mathematical precision:
-                <div class="formula-box">Original Pixel Color = (Watermarked Pixel − α × 255) / (1 − α)</div>
-            </div>
-
-            <!-- Legal Disclaimer -->
-            <div class="disclaimer-box">
-                <strong><i class="fa-solid fa-triangle-exclamation"></i> Disclaimer:</strong>
-                This utility is provided strictly for educational, personal, and legitimate fair-use purposes. Removing watermarks or copyright notices may carry legal implications depending on jurisdiction and term agreements. Users are solely responsible for ensuring compliance with applicable copyright laws.
-            </div>
+      <div class="gwr-cmp" style="margin-top:18px">
+        <div class="gwr-ipanel">
+          <div class="gwr-ihead">
+            <div class="gwr-ilabel"><div class="gwr-idot orig"></div>Original</div>
+            <span id="osz">—</span>
+          </div>
+          <div class="gwr-ibox"><img id="oimg" src="" alt="original"></div>
         </div>
+        <div class="gwr-ipanel">
+          <div class="gwr-ihead">
+            <div class="gwr-ilabel"><div class="gwr-idot proc"></div>Processed</div>
+            <span id="psz">—</span>
+          </div>
+          <div class="gwr-ibox" id="pbox"><div class="ph">Processing…</div></div>
+        </div>
+      </div>
 
-        <!-- SEO Article & Educational Content -->
-        <section class="tool-article-section">
-            <h2>How Gemini Watermark Removal Works</h2>
-            <p>
-                When Google's Imagen 3 or Gemini models synthesize an image, a small semi-transparent watermark logo is blended into the corner pixels. Unlike traditional generative inpainting methods that hallucinate or blur pixels, this tool performs pure <strong>Reverse Alpha Blending</strong>.
-            </p>
+      <div class="gwr-chips" id="chips"></div>
 
-            <div class="features-grid">
-                <div class="feature-card">
-                    <i class="fa-solid fa-bolt"></i>
-                    <h3>Lossless Inversion</h3>
-                    <p>Calculates exact original RGB color values without introducing blur or compression artifacts.</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fa-solid fa-lock"></i>
-                    <h3>100% Private</h3>
-                    <p>All processing is executed strictly in your browser using HTML5 Canvas. Your photos never touch a server.</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fa-solid fa-sliders"></i>
-                    <h3>Fine-Tuning Controls</h3>
-                    <p>Adjust alpha scale, watermark size, and corner position for tailored removal on modified or cropped images.</p>
-                </div>
-            </div>
+      <div class="gwr-btns">
+        <a class="gwr-btn gwr-btn-a" id="dlbtn" style="display:none" download="gemini-clean.png">⬇ Download Clean Image</a>
+        <button class="gwr-btn gwr-btn-b" id="reset">← Process Another</button>
+      </div>
+    </div>
 
-            <!-- FAQ Section -->
-            <div class="faq-section">
-                <h2>Frequently Asked Questions</h2>
-                
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <span>Does this tool reduce the quality of my image?</span>
-                        <i class="fa-solid fa-chevron-down faq-icon"></i>
-                    </div>
-                    <div class="faq-answer">
-                        No! Because this tool uses reverse alpha mathematics rather than lossy AI inpainting, the unaffected pixels remain 100% identical, and watermarked pixels are perfectly reconstructed.
-                    </div>
-                </div>
+    <div class="gwr-info-box">
+      <strong>How it works — Reverse Alpha Blending</strong>
+      Gemini composites its logo onto your image using standard alpha blending.
+      By using the exact captured watermark alpha maps from the official open-source repo,
+      we can perfectly invert this operation with zero quality loss.
+      <div class="gwr-formula">original = (watermarked − α × 255) / (1 − α)</div>
+    </div>
+    <div class="gwr-warn"><strong>⚠ Disclaimer:</strong> Personal &amp; educational use only. Removing watermarks may have legal implications. Users are solely responsible for compliance with applicable laws and terms of service.</div>
 
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <span>Is my image uploaded to any server?</span>
-                        <i class="fa-solid fa-chevron-down faq-icon"></i>
-                    </div>
-                    <div class="faq-answer">
-                        Never. Nisulka Tools processes all image pixel data directly in your browser's memory using JavaScript and WebGL/Canvas APIs.
-                    </div>
-                </div>
+    <!-- FAQ -->
+    <section class="gwr-faq">
+      <h2>Frequently Asked Questions</h2>
+      <div class="gwr-faq-item">
+        <h3>Is my image uploaded to a server?</h3>
+        <p>No. All processing happens entirely in your browser using JavaScript and Canvas. Your image never leaves your device.</p>
+      </div>
+      <div class="gwr-faq-item">
+        <h3>How does the watermark removal work?</h3>
+        <p>It uses reverse alpha blending. Gemini applies its logo with a known alpha map; we invert the blend mathematically to recover the original pixels.</p>
+      </div>
+      <div class="gwr-faq-item">
+        <h3>What image formats are supported?</h3>
+        <p>PNG, JPEG, and WebP are supported. The output is always a PNG to preserve quality.</p>
+      </div>
+      <div class="gwr-faq-item">
+        <h3>Will the result be pixel-perfect?</h3>
+        <p>Yes, when the watermark matches the known alpha maps. We auto-detect the correct map based on image dimensions.</p>
+      </div>
+      <div class="gwr-faq-item">
+        <h3>Is it legal to remove watermarks?</h3>
+        <p>This tool is for personal and educational use. You are responsible for complying with applicable laws and the terms of service of any platform.</p>
+      </div>
+    </section>
 
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <span>Where is the Gemini watermark located?</span>
-                        <i class="fa-solid fa-chevron-down faq-icon"></i>
-                    </div>
-                    <div class="faq-answer">
-                        By default, Gemini places the watermark logo in the bottom-right corner. You can adjust the position setting if your image has been flipped or cropped.
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
+  </main>
 
-    <!-- Hidden Processing Canvas -->
-    <canvas id="cv"></canvas>
+  <!-- ===== OFFICIAL NISULKA FOOTER (LOCKED) ===== -->
+  <div id="site-footer-mount"></div>
 
-    <!-- OFFICIAL NISULKA FOOTER MOUNT -->
-    <div id="site-footer-mount"></div>
+  <!-- Hidden canvas for processing -->
+  <canvas id="cv" class="gwr-canvas-hidden"></canvas>
 
-    <!-- Official Header & Footer JS Scripts -->
-    <script src="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/js/header.js"></script>
-    <script src="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/js/footer.js"></script>
+  <!-- ===== OFFICIAL NISULKA HEADER & FOOTER SCRIPTS (LOCKED) ===== -->
+  <script src="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/js/header.js"></script>
+  <script src="https://apps.laxmannepal.com.np/Nisulka-Tools/assets/js/footer.js"></script>
 
-    <script>
-        /**
-         * Dynamic Vector Gemini Alpha Map Generator
-         * Generates exact Gemini 4-pointed spark star geometry as an alpha mask matrix
-         */
-        function generateGeminiAlphaMap(size, alphaStrength = 1.0) {
-            const canvas = document.createElement('canvas');
-            canvas.width = size;
-            canvas.height = size;
-            const ctx = canvas.getContext('2d');
+  <!-- ===== TOOL LOGIC (scoped, no header/footer interference) ===== -->
+  <script>
+    (function () {
+      'use strict';
 
-            ctx.clearRect(0, 0, size, size);
+      // ── Real embedded alpha maps from GargantuaX/gemini-watermark-remover ──
+      const B64 = {
+        48: 'gYAAPIGAgDuBgIA7AAAAAAAAAAAAAAAAAAAAAIGAgDsAAAAAAAAAAAAAAAAAAAAAgYCAO4GAgDsAAAAAAAAAAIGAgDuBgIA7gYCAOwAAAAAAAAAAgYCAOwAAAADj4uI+4eDgPoGAgDuBgIA7gYCAO4GAgDuBgIA7gYAAPIGAgDuBgIA7gYAAPIGAgDuBgIA7gYAAPMHAQDyBgIA7gYCAO4GAgDuBgIA7gYAAPIGAgDvBwEA8gYAAPIGAgDuBgIA7AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgYCAO4GAgDsAAAAAAAAAAAAAAAAAAAAAAAAAAIGAgDuBgIA7gYCAOwAAAAAAAAAAAAAAAIGAgDsAAAAAgYCAO4WEBD6BgAA/gYAAP4GAAD4AAAAAgYAAPAAAAACBgIA7gYCAO4GAgDuBgIA7gYCAO4GAgDuBgAA8gYAAPIGAADyBgIA7gYCAO4GAgDuBgIA7gYCAO4GAADyBgAA8wcBAPIGAgDuBgIA7gYCAOwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIGAgDsAAAAAgYCAO4GAADyBgAA8gYCAOwAAAAAAAAAAgYAAPIGAgDsAAAAAAAAAAIGAgDsAAAAAgYCAO5GQkD6BgAA/gYAAP5GQkD4AAAAAgYCAOwAAAACBgIA7gYCAO4GAgDuBgAA8gYAAPAAAAACBgAA8wcBAPMHAQDyBgIA7gYCAO4GAADyBgAA8gYAAPMHAQDyBgIA7gYCAO4GAgDuBgIA7gYCAO4GAADwAAAAAAAAAAIGAgDsAAAAAAAAAAIGAgDsAAAAAgYCAO4GAgDuBgIA7gYCAO4GAgDuBgIA7gYCAO4GAgDuBgAA8gYCAO4GAgDsAAAAAgYCAO+Hg4D6BgAA/gYAAP/Hw8D4AAAAAgYCAO4GAgDuBgIA7gYAAPIGAgDuBgAA8wcBAPIGAgDuBgIA7gYAAPIGAADyBgIA7gYCAO4GAADyBgAA8gYAAPIGAgDuBgIA7gYCAO4GAADyBgAA8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIGAgDsAAAAAAAAAAIGAgDuBgIA7AAAAAAAAAACBgIA7AAAAAAAAAAAAAAAAAAAAAIGAgDsAAAAAgYAAPoGAAD+BgAA/gYAAP4GAAD+BgAA+AAAAAAAAAACBgIA7gYAAPAAAAACBgAA8gYAAPIGAgDuBgIA7gYCAOwAAAADBwEA8wcBAPIGAADyBgAA8gYCAO4GAgDuBgIA7gYCAO4GAgDuBgIA7AAAAAIGAADwAAAAAAAAAAIGAgDsAAAAAgYCAO4GAgDuBgIA7gYCAOwAAAAAAAAAAgYCAOwAAAAAAAAAAAAAAAAAAAACBgIA7AAAAAAAAAACBgIA7oaCgPoGAAD+BgAA/gYAAP4GAAD/BwMA+AAAAAAAAAACBgIA7AAAAAIGAgDuBgAA8gYAAPAAAAACBgIA7gYCAO4GAgDuBgAA8wcBAPMHAQDzBwEA8gYCAO4GAgDsAAAAAAAAAAIGAgDuBgIA7gYCAOwAAAAAAAAAAAAAAAIGAgDsAAAAAwcBAPIGAgDuBgIA7gYCAOwAAAAAAAAAAgYCAO4GAgDuBgIA7gYAAPIGAADwAAAAAAAAAAIGAADyJiIg9gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYCAPQAAAACBgIA7AAAAAAAAAAAAAAAAgYCAO4GAADyBgAA8gYCAO4GAgDuBgIA7gYCAO4GAgDuBgIA7gYCAO4GAgDuBgIA7gYCAO4GAgDuBgIA7AAAAAAAAAAAAAAAAAAAAAIGAADwAAAAAgYCAO4GAADyBgIA7gYCAOwAAAAAAAAAAgYCAO8HAQDyBgIA7gYCAO4GAgDsAAAAAgYCAO4GAgDuhoKA+gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/o6KiPoGAgDuBgAA8AAAAAIGAgDuBgIA7gYCAO8HAQDyBgAA8gYCAO4GAgDuBgAA8gYAAPIGAgDuBgIA7gYCAO4GAgDuBgIA7gYCAO4GAgDuBgIA7gYAAPAAAAAAAAAAAgYCAO4GAADyBgIA7gYAAPIGAgDuBgIA7gYAAPIGAADyBgIA7gYCAO4GAgDuBgAA8gYCAO4GAADyBgAA8gYCAO4mIiD2BgAA/gYAAP4GAAD+CgQE/gYAAP4GAAD+BgAA/gYAAP4GAAD6BgAA8gYCAO4GAADwAAAAAgYCAO4GAADyBgIA7wcBAPIGAADyBgAA8wcBAPMHAQDzBwEA8gYAAPIGAADyBgIA7gYCAO4GAADyBgAA8gYCAOwAAAAAAAAAAgYCAO4GAgDuBgIA7AAAAAIGAADyBgIA7AAAAAIGAgDuBgIA7AAAAAIGAgDsAAAAAgYCAOwAAAACBgIA7gYCAO+Hg4D6BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP8HAwD6BgIA7gYCAO4GAgDuBgIA7gYCAO4GAgDuBgIA7gYCAO4GAgDvBwEA8wcBAPMHAQDyBgAA8wcBAPIGAADyBgIA7gYCAO4GAADyBgAA8gYAAPIGAgDsAAAAAAAAAAIGAgDuBgAA8AAAAAIGAgDuBgIA7AAAAAAAAAAAAAAAAgYAAPIGAgDuBgIA7gYAAPAAAAACBgIA7gYCAPoGAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD/h4GA+AAAAAAAAAACBgAA8gYAAPMHAQDyBgIA7gYAAPIGAADyBgIA7gYAAPIGAADyBgAA8gYCAO4GAgDuBgAA8gYAAPIGAgDuBgIA7AAAAAAAAAACBgIA7AAAAAAAAAACBgIA7gYCAO8HAQDwAAAAAgYCAO4GAADwAAAAAgYAAPAAAAACBgAA8gYCAOwAAAACBgIA9gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD/x8PA+wcDAPYGAgDuBgAA8wcBAPIGAADyBgAA8gYAAPIGAADwAAAAAgYCAO4GAgDuBgIA7gYCAO4GAADyBgAA8gYAAPIGAgDuBgIA7gYCAOwAAAACBgIA7gYCAOwAAAAAAAAAAAAAAAIGAgDsAAAAAgYCAO4GAgDuBgIA7AAAAAMHAQDyBgAA8gYCAO4GAgD3h4OA+gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/4eDgPoGAAD2BgIA7gYCAOwAAAACBgIA7gYCAO4GAgDuBgAA8gYAAPIGAgDuBgIA7gYAAPIGAADyBgAA8gYAAPIGAgDuBgAA8gYCAOwAAAACBgIA7AAAAAAAAAACBgIA7AAAAAIGAgDsAAAAAgYCAOwAAAACBgIA7gYCAO4GAgDuBgIA7gYCAO9PS0j6BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP8HAwD6BgAA8gYCAO4GAgDuBgIA7gYCAO4GAgDuBgAA8gYAAPIGAgDuBgIA7gYAAPIGAADyBgAA8gYAAPIGAgDuBgAA8gYCAO4GAgDuBgIA7AAAAAAAAAACBgIA7AAAAAAAAAAAAAAAAAAAAAIGAgDsAAAAAgYAAPIGAgDuBgIA7o6KiPoGAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+hoKA+gYCAOwAAAACBgIA7gYCAO4GAgDvBwEA8gYCAO4GAgDuBgIA7gYCAO4GAADyBgAA8gYAAPIGAgDuBgIA7AAAAAAAAAAAAAAAAgYCAO4GAgDsAAAAAAAAAAIGAgDsAAAAAgYCAOwAAAAAAAAAAgYCAO4GAgDuhoKA+gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/oaCgPgAAAACBgIA7gYCAO4GAgDvBwEA8gYCAO4GAgDuBgIA7gYCAO4GAgDuBgAA8gYAAPIGAgDuBgIA7AAAAAIGAADwAAAAAgYCAO4GAgDsAAAAAAAAAAIGAgDsAAAAAAAAAAAAAAACBgIA7gYAAPcHAwD6BgAA/gYAAP4GAAD+BgAA/goEBP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP9HQ0D6BgIA9gYAAPIGAADyBgIA7gYCAO4GAgDuBgIA7wcBAPIGAgDzBwEA8gYAAPAAAAACBgIA7gYCAOwAAAACBgIA7gYCAOwAAAACBgIA7gYCAO4GAgDuBgIA7AAAAAAAAAADBwMA94eDgPoGAAD+BgAA/gYAAP4GAAD+BgAA/goEBP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD/h4OA+iYiIPYGAgDyBgAA8gYCAO4GAgDuBgIA7gYAAPIGAgDuBgAA8gYAAPIGAgDuBgIA7gYCAOwAAAAAAAAAAgYCAO4GAgDsAAAAAAAAAAIGAgDsAAAAAAAAAAOHgYD7x8PA+gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4WEhD6BgIA7gYCAO4GAADzBwEA8gYAAPMHAQDzBwEA8gYCAO4GAgDsAAAAAgYAAPIGAgDsAAAAAgYCAOwAAAAAAAAAAgYAAPIGAgDuBgAA+wcDAPoGAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD/h4OA+gYCAPYGAADzBwEA8gYAAPIGAADyBgAA8gYAAPIGAgDuBgIA7AAAAAIGAgDsAAAAAAAAAAAAAAAAAAAAAgYCAPaOioj6BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/goEBP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP6GgoD6BgIA9gYAAPIGAgDuBgAA8gYAAPIGAgDuBgIA7AAAAAIGAgDsAAAAAgYCAO4WEBD7BwMA+gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/goEBP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/oaCgPoGAAD6BgIA7gYAAPIGAgDuBgIA7AAAAAIGAAD6RkJA+8fDwPoGAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD/h4OA+kZCQPoGAAD6BgIA84eDgPoGAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD/j4uI+4eDgPoGAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD/h4OA+gYCAO4GAAD6RkJA+4eDgPoGAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD/x8PA+kZCQPoGAAD6BgIA7gYCAO8HAQDwAAAAAgYCAO4GAAD6hoKA+gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/wcDAPoGAAD6BgAA8gYAAPIGAgDuBgIA7AAAAAIGAgDuBgIA7AAAAAAAAAACBgAA8gYCAPaOioj6BgAA/gYAAP4GAAD+BgAA/goEBP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4KBAT+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP6Oioj6JiIg9gYCAO4GAgDuBgAA8gYAAPIGAgDuBgIA7gYCAO4GAADyBgIA7gYCAOwAAAAAAAAAAgYCAO4GAADyBgIA94eDgPoGAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD/BwMA+gYAAPoGAgDuBgIA7gYCAO4GAgDuBgIA7gYCAO4GAgDuBgIA7gYCAO4GAgDuBgIA7gYCAOwAAAAAAAAAAAAAAAIGAgDsAAAAAgYCAO4GAgD6BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/8/LyPuXkZD6BgIA7gYCAO4GAgDuBgIA7gYCAO4GAgDuBgIA7gYCAO4GAgDuBgIA7gYCAO4GAgDsAAAAAgYCAOwAAAACBgIA7AAAAAAAAAAAAAAAAgYAAPAAAAACBgIA94+LiPoGAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+CgQE/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD/h4OA+wcDAPYGAgDuBgIA7gYCAO4GAADyBgAA8gYCAO4GAgDuBgAA8gYAAPIGAgDuBgIA7gYCAO4GAgDsAAAAAgYCAOwAAAACBgIA7AAAAAIGAgDsAAAAAAAAAAAAAAAAAAAAAgYCAPdHQ0D6BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP8HAwD6BgAA9gYCAO4GAgDuBgIA7gYCAO4GAADyBgAA8gYCAO4GAgDuBgAA8gYAAPIGAgDuBgIA7gYCAO4GAgDuBgIA7gYCAO4GAADyBgIA7gYCAO4GAgDsAAAAAAAAAAAAAAAAAAAAAgYCAO4GAgDuhoKA+gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/goEBP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4KBAT+CgQE/gYAAP4GAAD+BgAA/oaCgPsHAQDzBwEA8gYAAPIGAgDuBgAA8gYAAPIGAgDuBgIA7wcBAPMHAQDyBgAA8gYAAPIGAgDsAAAAAgYCAO4GAgDsAAAAAgYCAO4GAgDuBgIA7gYCAOwAAAAAAAAAAAAAAAAAAAACBgIA7gYCAO4GAADyBgIA7oaCgPoGAAD+BgAA/goEBP4GAAD+BgAA/goEBP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4KBAT+CgQE/gYAAP4GAAD+hoKA+gYCAO4GAgDyBgIA8gYAAPIGAADyBgAA8gYAAPIGAgDuBgIA7wcBAPMHAQDyBgIA7gYAAPIGAgDuBgIA7gYCAO4GAgDuBgAA8gYAAPIGAgDuBgAA8wcBAPMHAQDyBgAA8gYAAPIGAADyBgAA8gYCAO4GAgDuBgIA7gYCAO8PCwj6BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP9HQ0D6BgAA8gYAAPMHAQDzBwEA8gYCAOwAAAACBgIA7gYAAPIGAADyBgAA8wcBAPMHAQDyBgIA7gYCAO8HAQDzBwEA8gYCAO4GAgDuBgAA8gYAAPIGAgDuBgIA7gYCAPMHAQDyBgAA8wcBAPIGAADzBwEA8gYCAO4GAgDuBgIA7gYCAO6GgID3j4uI+gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/goEBP4GAAD+BgAA/gYAAP4GAAD+BgAA/4eDgPoGAgD2BgAA8wcBAPMHAQDzBwEA8gYCAO4GAgDuBgIA7gYAAPIGAADyBgAA8gYCAPMHAQDwAAAAAgYCAO8HAQDzBwEA8gYAAPIGAADyBgAA8gYCAO4GAADyBgAA8AAAAAAAAAACBgAA8wcBAPIGAADzBwEA8gYAAPIGAADwAAAAAgYCAO4GAADzJyMg98fDwPoGAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYCAPQAAAACBgAA8gYAAPAAAAAAAAAAAgYCAO4GAgDuBgAA8wcBAPIGAADyBgIA7AAAAAAAAAACBgIA7gYCAO4GAgDuBgIA7gYAAPIGAADyBgAA8gYAAPMHAQDyBgAA8gYCAO4GAgDuBgAA8gYAAPIGAADyBgAA8gYAAPIGAADyBgIA7gYCAO4GAADyBgAA84eBgPoGAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgIA+gYCAO4GAgDvBwEA8gYAAPIGAgDsAAAAAgYCAO4GAgDvBwEA8wcBAPIGAgDuBgAA8gYCAOwAAAAAAAAAAAAAAAIGAgDuBgIA7gYAAPIGAgDuBgIA7gYCAO4GAgDuBgIA7gYCAO4GAgDuBgIA7gYCAO4GAgDuBgIA7AAAAAIGAgDuBgAA8gYAAPIGAADyBgAA8AAAAAMHAwD6BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP+Hg4D6BgIA7gYCAO4GAgDuBgAA8gYAAPAAAAACBgAA8gYCAO4GAgDuBgAA8gYCAO4GAgDsAAAAAgYCAOwAAAAAAAAAAgYCAO4GAgDuBgIA7gYAAPIGAADyBgIA7gYCAO4GAgDuBgIA7gYCAO4GAgDuBgIA7gYCAO4GAgDuBgIA7gYCAO4GAgDuBgAA8gYAAPMHAQDyBgAA8gYCAO4GAAD6BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAgD2BgIA7gYCAOwAAAACBgAA8gYAAPIGAgDuBgAA8gYCAO4GAgDuBgIA7gYCAO4GAgDuBgAA8gYCAO4GAgDuBgIA7gYCAO4GAgDuBgIA7gYCAO4GAgDuBgIA7gYCAO4GAgDuBgIA7gYCAO4GAgDuBgAA8gYAAPAAAAAAAAAAAgYCAOwAAAACBgAA8gYAAPIGAADyBgIA7gYCAOwAAAAChoKA+gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/oaCgPoGAgDuBgIA7gYCAO4GAgDuBgAA8wcBAPAAAAACBgIA7gYCAO4GAgDuBgIA7gYCAO4GAgDuBgIA7gYAAPIGAADyBgIA7gYCAO4GAgDuBgIA7gYCAO4GAgDuBgIA7gYCAO4GAgDuBgIA7gYCAO4GAgDuBgAA8gYAAPAAAAACBgIA7gYCAO4GAADyBgAA8gYAAPIGAgDuBgIA7AAAAAIGAgDuBgIA9gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYCAPYGAgDuBgIA7gYCAO4GAgDuBgAA8gYAAPIGAADyBgIA7gYCAO4GAgDuBgIA7gYCAO4GAgDuBgIA7gYAAPIGAADyBgIA7gYCAO4GAgDuBgIA7gYAAPIGAADyBgAA8gYAAPIGAADyBgAA8gYCAO4GAgDuBgIA7gYAAPIGAgDuBgIA7gYCAO4GAADyBgAA8gYCAO4GAgDuBgIA7gYCAO4GAgDsAAAAAw8LCPoKBAT+CgQE/gYAAP4GAAD+hoKA+gYCAO4GAADyBgAA8gYAAPIGAgDuBgIA7gYCAO4GAgDuBgIA7gYAAPIGAADyBgIA7gYCAO4GAgDuBgIA7gYCAO4GAgDuBgAA8gYAAPIGAgDuBgIA7gYAAPIGAADyBgAA8gYAAPIGAADyBgAA8gYCAO4GAgDuBgIA7gYCAO4GAgDsAAAAAgYAAPIGAADyBgIA7AAAAAIGAgDuBgIA7gYAAPMHAQDyBgIA7gYAAPoKBAT+BgAA/gYAAP4GAAD+BgAA+gYCAO4GAADyBgAA8AAAAAIGAgDuBgIA7gYCAO4GAgDuBgIA7gYAAPIGAADyBgIA7gYCAO4GAgDuBgIA7gYCAO4GAgDuBgAA8gYAAPIGAgDuBgIA7gYAAPIGAADyBgAA8gYAAPIGAgDuBgIA7gYAAPIGAgDuBgIA7gYCAO4GAgDuBgIA7gYAAPIGAADyBgAA8gYAAPAAAAAAAAAAAgYAAPIGAADyBgIA7gYCAO/Py8j6BgAA/gYAAP+Hg4D6BgIA7gYCAO4GAADzBwEA8gYCAO4GAgDuBgAA8gYAAPAAAAAAAAAAAgYCAO4GAgDuBgIA7gYCAO4GAgDuBgIA7gYCAO4GAgDuBgAA8gYAAPIGAgDuBgIA7gYAAPIGAADyBgAA8gYAAPIGAgDsAAAAAgYAAPIGAADyBgIA7gYCAO4GAgDuBgIA7gYAAPIGAADyBgAA8gYAAPIGAgDuBgIA7gYAAPIGAADyBgIA7gYCAO5OSkj6BgAA/gYAAP5OSkj6BgIA7gYCAO4GAADyBgAA8gYCAO4GAgDuBgIA7gYAAPIGAgDuBgIA7gYCAO4GAgDuBgIA7gYCAO4GAgDuBgIA7gYCAO4GAgDuBgAA8gYAAPIGAgDuBgIA7gYCAO4GAgDuBgIA7gYCAO4GAADyBgAA8gYCAO4GAgDuBgAA8gYCAO4GAADyBgIA7AAAAAIGAgDvBwEA8wcBAPIGAgDsAAAAAgYCAO4GAgDuBgAA8gYAAPIGAAD6BgAA/gYAAP4WEBD6BgIA7gYCAO4GAADyBgAA8gYAAPIGAADwAAAAAgYCAOwAAAACBgIA7gYAAPIGAADyBgIA7gYCAO4GAADyBgAA8gYCAO4GAgDuBgAA8gYAAPIGAgDuBgIA7gYCAO4GAgDuBgIA7gYCAO4GAADyBgAA8gYCAO4GAgDuBgIA7AAAAAIGAgDuBgIA7gYCAO4GAgDuBgIA7gYAAPIGAgDuBgIA7gYCAOwAAAADBwEA8gYAAPIGAgDvh4OA+4eDgPoGAgDuBgIA7gYCAO4GAADyBgAA8gYAAPIGAADyBgIA7AAAAAIGAgDsAAAAAgYAAPIGAADyBgIA7gYCAO4GAADyBgAA8gYCAO4GAgDuBgAA8gYAAPIGAgDuBgIA7',
+        96: 'gYCAPMHAQDyBgIA8wcBAPMHAQDzBwEA8wcBAPIGAgDwAAAAAwcBAPMHAQDyBgIA8wcBAPIGAADyhoKA8gYAAPIGAADyBgAA8AAAAAIGAADyBgIA7gYCAO4GAgDuBgIA7wcBAPIGAADzBwEA8gYCAPIGAADzBwEA8wcBAPMHAQDzBwEA8wcBAPMHAQDyBgAA8wcBAPIGAADwAAAAAgYCAO4GAgDuBgIA7gYCAO4GAgDuBgAA8gYAAPOXkZD7z8vI+4+LiPu3sbD6BgIA7wcBAPAAAAACBgAA8gYCAO4GAADyBgIA8gYCAPIGAADyBgIA8wcBAPMHAQDyBgIA8wcBAPMHAQDzBwEA8gYAAPIGAgDyBgIA8gYCAPIGAADzBwEA8gYCAO8HAQDyBgAA8gYAAPIGAgDuBgAA8wcBAPMHAQDyBgAA8wcBAPMHAQDyBgIA8wcBAPMHAQDyBgIA8gYCAPMHAQDzBwEA8wcBAPMHAQDyBgIA8oaCgPIGAgDyBgIA8wcBAPIGAgDyBgAA8wcBAPIGAgDvBwEA8wcBAPIGAgDyBgAA8gYAAPMHAQDzBwEA8gYCAO4GAADyBgIA8wcBAPIGAADyBgAA8gYCAO4GAgDsAAAAAgYCAOwAAAAAAAAAAgYAAPIGAADzBwEA8wcBAPIGAgDvBwEA8wcBAPIGAADzBwEA8oaCgPMHAQDzBwEA8gYCAOwAAAAAAAAAAAAAAAIGAgDsAAAAAAAAAAAAAAACBgAA8gYCAPYGAAD+BgAA/goEBP4KBAT+RkBA9gYAAPAAAAACBgIA7gYAAPIGAADyBgAA8wcBAPMHAQDyBgAA8gYAAPIGAADzBwEA8gYCAPMHAQDzBwEA8gYCAO4GAgDuBgAA8gYAAPIGAADyBgIA7gYAAPAAAAACBgAA8AAAAAIGAgDuBgIA7gYCAPIGAgDzBwEA8wcBAPMHAQDzBwEA8gYAAPMHAQDyBgIA8wcBAPMHAQDzBwEA8wcDAPKGgoDyBgIA8oaCgPIGAgDyhoKA8gYCAOwAAAACBgAA8gYCAO4GAADyBgIA8wcBAPIGAADwAAAAAgYCAO4GAgDvBwEA8gYCAO4GAgDuBgIA7gYCAO4GAADyBgAA8gYCAOwAAAACBgIA7gYCAOwAAAACBgIA7gYCAO4GAgDsAAAAAgYCAO4GAADyBgAA8gYAAPMHAQDzBwEA8gYCAPMHAQDzBwEA8AAAAAIGAgDsAAAAAgYCAOwAAAAAAAAAAgYCAO4GAADyBgAA8paQkPoGAAD+BgAA/goEBP4GAAD/FxEQ+AAAAAAAAAACBgIA7gYAAPIGAgDsAAAAAAAAAAIGAgDuBgIA7gYAAPKGgoDyBgIA8wcBAPIGAgDyBgIA8gYAAPAAAAACBgIA7gYAAPIGAADzBwEA8gYCAPIGAgDyBgAA8wcBAPKGgoDzBwEA8gYAAPIGAADyBgIA8gYCAPMHAQDzBwEA8wcBAPIGAgDyBgIA8gYCAPMHAQDyBgAA8gYCAPMHAQDyBgIA8gYCAPMHAQDzBwEA8AAAAAIGAgDuBgIA7gYAAPIGAADyhoKA8gYAAPMHAQDwAAAAAgYCAO4GAADyBgAA8AAAAAAAAAAAAAAAAgYAAPIGAADyBgIA7AAAAAIGAgDsAAAAAgYCAO4GAgDsAAAAAgYCAO4GAADyBgIA7gYCAOwAAAACBgIA7gYCAPMHAQDyBgAA8gYCAPIGAgDuBgAA8AAAAAIGAgDsAAAAAAAAAAAAAAACBgIA7gYAAPIGAADzBwEA8paSkPoGAAD+BgAA/goEBP4KBAT+hoKA+gYCAO4GAgDuBgIA7gYCAO4GAgDsAAAAAAAAAAIGAgDuBgAA8gYCAPIGAgDzBwEA8gYAAPMHAQDyBgIA8gYCAPIGAADyBgAA8wcBAPIGAADzBwEA8gYCAPIGAgDyBgIA8gYCAPMHAQDyBgIA8gYAAPMHAQDyBgIA8oaCgPIGAgDyBgAA8gYCAO8HAQDzBwEA8oaCgPIGAgDzBwEA8gYCAPMHAQDyhoKA8gYCAPMHAQDzBwEA8AAAAAAAAAACBgIA7wcBAPKGgoDyBgIA8gYCAPMHAQDyBgIA7gYAAPIGAgDuBgIA7AAAAAAAAAADBwEA8gYCAO8HAQDzBwEA8AAAAAIGAADyBgIA7gYCAOwAAAACBgAA8AAAAAIGAgDsAAAAAAAAAAAAAAACBgAA8gYCAPMHAQDyBgAA8gYAAPMHAQDyBgAA8gYAAPIGAgDuBgIA8wcBAPAAAAACBgIA7AAAAAIGAgDvBwEA85eTkPoGAAD+BgAA/gYAAP4GAAD/z8vI+gYAAPMHAQDyBgIA7gYAAPMHAQDyBgIA7gYAAPMHAQDzBwEA8gYCAPIGAgDyBgIA8wcBAPIGAgDyBgIA8wcBAPIGAADyBgIA7gYCAO8HAQDyBgIA8oaCgPIGAgDyBgIA8gYCAPIGAgDyBgIA8gYCAPMHAQDzBwEA8wcBAPIGAgDsAAAAAwcBAPIGAADzBwEA8gYCAPMHAQDzBwEA8gYAAPKGgoDyBgIA8oaCgPIGAgDzBwEA8gYCAOwAAAADBwEA8wcBAPMHAQDyBgIA8gYCAPIGAgDzBwEA8gYAAPIGAgDyBgIA8AAAAAIGAgDuBgIA7gYCAO4GAADzBwEA8gYAAPIGAgDsAAAAAgYAAPIGAADyBgIA7gYCAO4GAgDuBgIA7AAAAAIGAgDuBgAA8gYCAPIGAgDyBgIA8gYCAPIGAgDuBgIA8oaCgPIGAADyBgIA8AAAAAIGAADyBgIA8gYAAPIGAADyFhAQ+goEBP4GAAD+BgAA/gYAAP4GAAD+BgAA/iYgIPoGAADyBgAA8gYAAPMHAQDzBwEA8gYAAPIGAgDuBgAA8wcBAPIGAgDzBwEA8wcBAPMHAQDyBgIA8wcBAPIGAADyBgAA8gYCAO8HAQDzBwEA8wcBAPIGAgDyBgIA8gYCAPKGgoDzBwEA8gYAAPMHAQDyBgIA8gYCAPIGAADyBgIA7wcBAPIGAgDzBwEA8wcBAPMHAQDzBwEA8gYCAPIGAgDzBwEA8gYCAPMHAQDzBwEA8gYCAO4GAADyBgIA7gYCAO4GAgDyBgIA8wcBAPMHAQDyBgIA8wcBAPAAAAACBgIA7AAAAAIGAADyBgAA8gYCAO4GAgDvBwEA8gYCAO4GAgDuBgAA8wcBAPMHAQDzBwEA8wcBAPIGAADwAAAAAgYCAO4GAADzBwEA8gYAAPIGAADyBgAA8wcBAPIGAADyBgIA7gYCAPIGAADyBgIA7gYAAPIGAgDuBgAA8gYAAPIGAADylpKQ+goEBP4GAAD+BgAA/gYAAP4KBAT+BgAA/k5KSPoGAADyBgAA8gYAAPIGAADyBgIA8wcBAPIGAADyBgIA7gYAAPIGAADzBwEA8wcBAPKGgoDzBwEA8gYCAPIGAADyBgAA8wcBAPIGAADzBwEA8wcBAPMHAQDzBwEA8gYCAPMHAQDyBgAA8gYAAPMHAQDzBwEA8wcBAPIGAADzBwEA8gYAAPMHAQDzBwMA8oaCgPIGAgDyBgIA8wcBAPMHAQDzBwEA8gYCAPMHAQDzBwEA8gYCAO8HAQDyBgAA8gYAAPMHAQDzBwEA8gYAAPIGAgDyBgIA8gYAAPIGAADyBgIA7gYAAPMHAQDyBgIA8gYCAO4GAgDsAAAAAgYAAPMHAQDzBwEA8wcBAPIGAgDuBgAA8wcBAPAAAAACBgAA8gYAAPIGAADyBgAA8gYCAO4GAgDvBwEA8gYCAO4GAgDuBgIA7AAAAAIGAgDuBgIA7gYCAO4GAgDuBgAA8gYAAPIGAgDvj4uI+goEBP4GAAD+BgAA/goEBP4GAAD+BgAA/8/LyPoGAADyBgAA8gYAAPIGAADyBgIA8wcBAPMHAQDyBgIA8wcBAPIGAADzBwEA8gYAAPMHAQDzBwEA8gYCAO4GAADyBgAA8gYAAPIGAADyBgIA7wcBAPIGAgDzBwEA8wcBAPIGAgDyBgAA8gYCAO8HAQDzBwEA8gYAAPMHAQDyBgIA8wcBAPIGAgDzBwEA8oaCgPKGgoDyBgIA8gYCAPIGAgDzBwEA8gYCAPMHAQDzBwEA8wcBAPIGAADyBgAA8gYAAPIGAgDuBgAA8gYCAPMHAQDyBgIA7wcBAPIGAADzBwEA8gYAAPIGAADyBgIA8gYCAO4GAgDuBgAA8wcBAPIGAgDyBgIA7gYAAPIGAADyBgAA8gYAAPAAAAACBgAA8gYAAPIGAADzBwEA8gYAAPMHAQDyBgIA8wcBAPIGAADyBgIA7gYCAO4GAgDuBgAA8gYCAO4GAgDzBwEA8wcBAPKmoKD6BgAA/goEBP4GAAD+BgAA/goEBP4KBAT+BgAA/gYAAP4WEBD7BwEA8gYAAPIGAgDvBwEA8wcBAPIGAADzBwEA8wcBAPMHAQDzBwEA8wcBAPIGAADzBwEA8gYAAPIGAgDuBgIA7gYCAO4GAgDvBwEA8wcBAPIGAADyBgIA8gYAAPIGAgDsAAAAAgYCAO4GAgDuBgIA8wcBAPMHAQDyBgIA8wcBAPIGAADyBgIA8oaCgPIGAgDyBgAA8gYAAPIGAgDyBgIA8oaCgPIGAgDyBgIA8gYCAO8HAQDyBgIA7gYCAOwAAAACBgIA7wcBAPIGAADyBgIA7wcBAPIGAgDuBgAA8gYAAPMHAQDyBgAA8gYAAPIGAgDuBgAA8wcBAPIGAgDyBgAA8wcBAPAAAAACBgIA7AAAAAIGAADyBgAA8gYAAPIGAADyBgAA8gYAAPIGAADzBwEA8wcBAPIGAgDuBgIA7AAAAAIGAgDuBgIA7gYCAO4GAADzBwEA8wcBAPLOysj6CgQE/gYAAP4GAAD+BgAA/goEBP4KBAT+BgAA/gYAAP8PCwj6BgAA8AAAAAIGAgDvBwEA8gYCAPIGAgDzBwEA8wcBAPMHAQDyBgAA8gYAAPMHAQDyBgAA8gYCAO4GAgDsAAAAAgYAAPIGAADzBwEA8gYAAPMHAQDyBgAA8gYCAPAAAAACBgIA7gYAAPIGAADzBwEA8gYCAPIGAgDyBgIA8gYCAPIGAgDyhoKA8gYCAPIGAADyBgIA8wcBAPMHAQDzBwEA8wcDAPIGAgDyBgIA8wcBAPIGAADyBgIA8wcBAPIGAgDuBgIA7gYCAO4GAgDvBwEA8wcBAPIGAADyBgAA8gYCAO4GAgDuBgIA7gYAAPMHAQDzBwEA8gYAAPIGAgDyBgIA7gYCAO4GAgDuBgIA7gYCAO8HAQDyBgAA8gYCAPIGAADyBgAA8gYCAO4GAgDzBwEA8wcBAPIGAgDuBgIA7AAAAAIGAgDsAAAAAgYCAO4GAADyBgIA8iYiIPYGAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4KBAT+BgAA/gYAAP4GAAD+JiIg9gYCAO4GAADyBgAA8gYAAPMHAQDyBgIA7gYAAPIGAADyBgAA8gYCAO4GAgDuBgIA7gYCAO8HAQDyBgIA7gYCAO4GAgDuBgAA8gYAAPIGAgDuBgAA8gYAAPIGAADyBgIA8gYCAPMHAQDzBwEA8wcBAPMHAQDyBgAA8gYCAPIGAgDzBwEA8gYAAPMHAQDzBwEA8wcBAPIGAgDyBgAA8wcBAPIGAADzBwEA8wcBAPIGAADzBwEA8wcBAPIGAgDuBgIA7gYCAO4GAgDuBgAA8wcBAPIGAgDuBgAA8gYAAPIGAgDuBgIA7gYAAPMHAQDzBwEA8gYAAPIGAADyBgIA7wcBAPIGAgDsAAAAAgYAAPIGAgDzBwEA8wcBAPIGAADyBgAA8wcBAPMHAQDyBgAA8wcBAPIGAgDuBgAA8gYCAO4GAgDuBgIA7gYCAO4GAADzBwEA8oaCgPoGAAD+BgAA/gYAAP4GAAD+CgQE/gYAAP4KBAT+BgAA/gYAAP4GAAD+FhIQ+gYAAPIGAADyBgIA7AAAAAIGAADyBgIA8wcBAPIGAgDyBgAA8gYAAPIGAADyBgAA8gYCAO4GAADyBgIA7gYCAO8HAQDyBgAA8gYAAPMHAQDwAAAAAgYAAPIGAgDuBgIA8gYCAPIGAgDzBwEA8wcBAPIGAADyBgAA8wcBAPIGAgDyBgIA7wcBAPIGAgDvBwEA8gYAAPMHAQDzBwEA8wcBAPIGAgDyhoKA8gYCAO4GAgDuBgIA7gYAAPAAAAACBgIA7gYAAPIGAADyBgAA8AAAAAAAAAACBgIA7gYAAPMHAQDwAAAAAgYAAPIGAgDuBgAA8gYCAOwAAAADBwEA8wcBAPMHAQDwAAAAAAAAAAIGAgDvBwEA8gYAAPMHAQDzBwEA8wcBAPIGAADwAAAAAgYCAO4GAADyBgIA7gYAAPAAAAAAAAAAAgYAAPAAAAACJiIg9goEBP4KBAT+BgAA/gYAAP4GAAD+BgAA/gYAAP4KBAT+BgAA/gYAAP4GAAD/z8vI+gYAAPYGAgDuBgIA7gYAAPIGAADyBgAA8gYAAPIGAADyBgAA8gYCAOwAAAADBwEA8gYAAPIGAgDuBgAA8gYCAO4GAgDzBwEA8wcBAPIGAADyBgIA7gYAAPIGAgDuBgIA8wcBAPIGAADyBgAA8gYAAPMHAQDzBwEA8gYAAPIGAgDyBgIA8gYCAPMHAQDyBgIA8gYCAPMHAwDzBwEA8wcBAPMHAQDzBwEA8gYCAO4GAADwAAAAAgYAAPIGAgDsAAAAAgYAAPMHAQDyBgAA8gYCAOwAAAACBgAA8wcBAPMHAQDyBgAA8gYAAPIGAADyBgAA8gYCAO4GAADyBgAA8wcBAPAAAAAAAAAAAgYCAO4GAADzBwEA8gYAAPMHAQDyBgAA8wcBAPMHAQDyBgAA8gYCAO4GAgDuBgIA7AAAAAIGAADyBgIA7gYAAPMHAQDyDgoI+gYAAP4KBAT+BgAA/gYAAP4GAAD+BgAA/goEBP4KBAT+CgQE/gYAAP4GAAD+BgAA/g4KCPoGAADyBgAA8gYAAPIGAgDuBgIA8gYCAPIGAgDyBgAA8gYCAO4GAgDuBgAA8wcBAPIGAgDuBgIA7gYAAPIGAgDzBwEA8gYCAPMHAQDyBgAA8gYCAO4GAgDuBgIA7gYAAPIGAADzBwEA8wcBAPMHAQDzBwEA8gYAAPMHAQDzBwEA8wcBAPIGAADyBgIA8gYCAPKGgoDyBgIA8wcBAPMHAQDzBwEA8gYAAPIGAgDuBgIA7gYCAO8HAQDyBgIA8gYCAO4GAgDuBgIA7gYAAPIGAgDuBgAA8wcBAPIGAgDyBgAA8gYCAO4GAADyBgAA8gYAAPIGAgDvBwEA8gYCAPAAAAAAAAAAAgYCAO4GAADzBwEA8wcBAPMHAQDyBgIA8wcBAPMHAQDwAAAAAgYCAOwAAAACBgIA7AAAAAAAAAACBgIA8gYCAPJGQkD3j4uI+goEBP4KBAT+BgAA/gYAAP4GAAD+CgQE/goEBP4KBAT+DggI/goEBP4KBAT+BgAA/8/LyPpGQED2BgAA8oaCgPIGAgDyBgIA8wcBAPIGAADyBgIA8gYCAPIGAADzBwEA8gYAAPIGAgDyBgIA7wcBAPIGAgDyBgIA8gYCAPIGAADyBgAA8gYAAPIGAADzBwEA8wcBAPMHAQDyBgIA8gYCAPMHAQDzBwEA8gYCAPIGAgDyhoKA8gYCAPKGgoDzBwMA8gYCAPIGAADyBgIA8gYCAPMHAQDzBwEA8gYAAPMHAQDyBgAA8gYAAPMHAQDyhoKA8wcBAPIGAgDuBgAA8gYCAO4GAgDsAAAAAgYAAPIGAgDuBgAA8gYCAO8HAQDzBwEA8gYAAPIGAADzBwEA8gYAAPIGAADyBgIA7gYAAPIGAADzBwEA8gYCAO4GAADyBgIA8gYCAPMHAQDyBgAA8gYCAO4GAgDuBgAA8gYAAPIGAADzBwEA8gYCAPKWkpD6CgQE/goEBP4KBAT+BgAA/gYAAP4KBAT+CgQE/goEBP4OCAj+BgAA/goEBP4KBAT+CgQE/goEBP4WEhD7BwEA8gYCAO8HAQDyBgIA8gYAAPMHAQDzBwMA8wcBAPIGAADyBgIA7gYCAO4GAADzBwEA8gYCAPMHAQDyBgIA8gYCAPIGAADyBgAA8gYCAO8HAQDzBwEA8wcBAPIGAgDzBwEA8gYCAPMHAQDyBgIA8oaCgPMHAwDzBwEA8gYCAPIGAADyhoKA8wcBAPIGAgDzBwEA8oaCgPMHAQDzBwEA8wcBAPMHAQDyBgAA8wcBAPMHAQDzBwEA8oaCgPMHAQDyBgAA8gYAAPAAAAACBgIA7gYAAPIGAgDuBgIA8gYCAPMHAQDzBwEA8gYAAPMHAQDyBgIA7gYAAPIGAgDvBwEA8wcBAPIGAADzBwEA8gYAAPIGAgDvBwEA8gYCAPKGgoDyBgAA8wcBAPIGAADzBwEA8gYCAO4GAADzBwEA8kZCQPYKBAT+CgQE/goEBP4KBAT+CgQE/goEBP4GAAD+BgAA/gYAAP4GAAD+BgAA/goEBP4KBAT+CgQE/gYAAP/Py8j6JiIg9wcBAPMHAQDyBgAA8wcBAPMHAQDzBwEA8gYCAPMHAQDyBgAA8gYCAO4GAgDyBgAA8wcBAPMHAQDzBwEA8gYAAPIGAADyBgIA7gYAAPIGAADzBwEA8gYCAPIGAADyBgIA7wcBAPMHAQDzBwEA8wcBAPMHAQDzBwEA8gYCAPMHAQDzBwEA8wcBAPMHAQDyBgAA8wcBAPMHAQDyBgIA7gYAAPMHAQDzBwEA8wcBAPKGgoDyBgIA8wcBAPIGAgDyBgAA8gYAAPIGAgDuBgIA7gYAAPIGAgDuBgIA8gYCAPIGAgDyBgIA8AAAAAIGAADzBwEA8wcBAPIGAADzBwEA8gYCAO4GAADyBgIA7gYCAO4GAADzBwEA8gYCAOwAAAACBgAA8gYCAPIGAgDzBwEA8wcBAPMHAQDyBgAA8paSkPoKBAT+BgAA/goEBP4GAAD+BgAA/goEBP4KBAT+BgAA/gYAAP4GAAD+CgQE/goEBP4GAAD+CgQE/gYAAP4GAAD+zsrI+gYCAPIGAADyBgAA8gYAAPMHAQDzBwEA8gYAAPIGAADyBgAA8gYCAO8HAQDyBgIA8gYCAOwAAAADBwEA8gYCAO4GAgDuBgAA8wcBAPMHAQDyBgIA8gYCAPMHAQDyBgAA8wcBAPIGAADzBwEA8gYCAPMHAQDyBgIA8oaCgPMHAQDzBwEA8wcBAPIGAADzBwEA8gYCAPMHAQDyBgIA8gYAAPMHAQDyBgIA8wcBAPIGAADyBgAA8wcBAPMHAQDyBgIA8gYAAPIGAgDuBgIA7AAAAAIGAADzBwEA8oaCgPIGAgDzBwEA8gYCAO8HAQDyBgIA7gYCAO4GAADzBwEA8gYCAPIGAADyBgIA8gYCAPMHAQDyBgAA8gYCAPIGAgDzBwEA8gYCAPKGgoDyBgIA8gYCAPMHAQDylpCQ+gYAAP4KBAT+BgAA/gYAAP4GAAD+BgAA/gYAAP4SDAz+CgQE/gYAAP4GAAD+BgAA/goEBP4KBAT+CgQE/gYAAP4GAAD+CgQE/iYgIPoGAgDuBgIA7gYAAPIGAgDyBgAA8gYCAO4GAADyBgAA8AAAAAIGAADyBgAA8gYAAPIGAADyBgAA8wcBAPIGAADzBwEA8wcBAPMHAQDzBwEA8gYCAPMHAQDzBwEA8wcBAPIGAgDyBgIA8wcBAPIGAADyBgAA8gYAAPIGAgDzBwEA8gYAAPMHAQDyBgAA8wcBAPIGAgDyBgAA8gYAAPIGAgDyBgIA8gYAAPIGAgDzBwEA8gYAAPMHAQDyhoKA8oaCgPIGAgDyBgAA8gYCAOwAAAADBwEA8gYCAPIGAgDzBwEA8gYCAO4GAADyBgAA8gYCAO4GAADzBwEA8gYAAPIGAADyBgIA7gYCAPIGAADyBgAA8AAAAAIGAADzBwEA8wcBAPIGAADzBwEA8wcBAPMHAQDzj4uI+goEBP4GAAD+CgQE/gYAAP4GAAD+BgAA/gYAAP4KBAT+BgAA/gYAAP4GAAD+CgQE/g4ICP4GAAD+CgQE/gYAAP4GAAD+CgQE/4+LiPpGQED3BwEA8wcBAPMHAQDyBgAA8gYAAPIGAgDuBgIA7gYCAO4GAADzBwEA8wcBAPIGAADyBgAA8wcBAPIGAADzBwEA8wcBAPIGAADzBwEA8wcBAPMHAQDzBwEA8wcBAPMHAQDzBwEA8gYCAPIGAADyBgAA8wcBAPIGAADzBwEA8oaCgPMHAQDzBwEA8wcBAPIGAADyBgAA8wcBAPIGAgDzBwEA8gYAAPIGAgDvBwEA8gYCAO4GAADyBgAA8gYAAPMHAQDyBgIA7gYAAPIGAADyBgAA8wcBAPMHAQDyBgAA8gYAAPMHAQDwAAAAAgYAAPMHAQDyBgIA8wcBAPMHAQDyBgIA8wcBAPIGAADyBgAA8gYCAO4GAgDuBgIA7gYCAO4GAgDvBwEA8gYCAPIWEhD6BgAA/goEBP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4KBAT+CgQE/goEBP4GAAD+CgQE/goEBP4KBAT+CgQE/gYAAP5OSkj6BgAA8wcBAPMHAQDyBgAA8gYCAPIGAgDuBgIA7gYCAO4GAgDvBwEA8wcBAPIGAADzBwEA8gYAAPMHAQDyBgAA8wcBAPMHAQDzBwEA8gYCAO4GAgDyBgIA8gYCAPIGAADyBgIA8oaCgPIGAgDyBgAA8wcBAPIGAgDuBgAA8gYAAPIGAADyBgAA8oaCgPIGAADyBgAA8gYCAPIGAgDyBgAA8wcBAPIGAADzBwEA8gYCAO4GAADyBgIA7gYAAPIGAADyBgAA8gYAAPIGAADyBgAA8gYAAPMHAQDyBgIA7gYAAPIGAgDuBgIA7gYAAPMHAQDzBwEA8gYAAPIGAgDzBwEA8gYAAPIGAADyBgAA8gYCAO4GAgDuBgAA8AAAAAMHAQDyBgIA82djYPYKBAT+CgQE/goEBP4KBAT+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+CgQE/goEBP4KBAT+CgQE/goEBP4KBAT+BgAA/gYAAP4GAAD+DggI/goEBP4GAAD+FhAQ+wcBAPMHAQDyBgIA8gYCAPIGAADyBgIA7wcBAPMHAQDzBwEA8gYCAPMHAQDyBgIA8gYCAPMHAQDyBgAA8gYCAPMHAQDzBwEA8wcBAPMHAQDyhoKA8gYCAPMHAQDzBwEA8wcBAPMHAQDzBwEA8gYAAPIGAADyBgAA8gYAAPIGAgDyBgIA8gYCAPIGAgDyBgAA8wcBAPMHAQDyBgIA7gYCAO4GAgDuBgIA7gYCAO4GAgDuBgAA8gYAAPIGAgDsAAAAAAAAAAAAAAAChoKA8gYCAPIGAADyBgAA8gYAAPIGAgDvBwEA8wcBAPMHAQDyBgAA8gYCAPMHAQDyBgIA7gYCAO4GAADzBwEA8oaCgPMHAQDwAAAAAgYCAO4GAADyJiIg95eTkPoKBAT+BgAA/goEBP4KBAT+CgQE/gYAAP4GAAD+BgAA/gYAAP4GAAD+CgQE/goEBP4KBAT+DggI/goEBP4KBAT+BgAA/goEBP4KBAT+CgQE/goEBP4GAAD/j4uI+sbAwPYGAgDyhoKA8oaCgPMHAQDyBgAA8AAAAAIGAADzBwEA8wcBAPMHAQDzBwEA8gYCAPIGAgDzBwEA8wcBAPMHAQDyBgIA8wcBAPMHAQDzBwEA8oaCgPIGAADzBwEA8gYAAPMHAQDzBwEA8gYCAPMHAQDzBwEA8wcBAPIGAgDyBgAA8wcBAPIGAADyBgIA7wcBAPMHAQDwAAAAAAAAAAAAAAACBgIA7AAAAAAAAAAAAAAAAgYCAOwAAAAAAAAAAAAAAAIGAgDvBwEA8gYCAPIGAADyBgIA7gYAAPIGAADyBgAA8wcBAPIGAADzBwEA8gYCAPMHAQDzBwEA8gYAAPIGAADzBwEA8gYAAPMHAQDyBgAA8gYAAPIGAADyjoqI+gYAAP4GAAD+BgAA/goEBP4KBAT+BgAA/gYAAP4KBAT+BgAA/gYAAP4KBAT+CgQE/gYAAP4KBAT+BgAA/gYAAP4KBAT+BgAA/gYAAP4KBAT+CgQE/goEBP4KBAT+CgQE/s7KyPsHAQDzBwEA8gYCAPMHAQDzBwEA8gYAAPIGAADzBwEA8gYCAPIGAADyBgIA8wcBAPKGgoDyBgIA8wcBAPIGAgDyhoKA8oaCgPMHAQDyBgAA8gYCAPMHAQDzBwEA8gYAAPMHAQDyBgAA8gYAAPIGAgDyBgIA8wcBAPIGAADyBgIA7gYAAPMHAQDyBgAA8wcBAPMHAQDwAAAAAAAAAAAAAAACBgIA7wcBAPMHAQDyBgIA7gYAAPIGAgDuBgIA7AAAAAAAAAACBgIA7gYAAPAAAAACBgAA8wcBAPIGAADyBgAA8gYCAO4GAADzBwEA8wcBAPMHAQDyBgIA7gYAAPIGAADyBgAA8wcBAPIGAgDuBgIA8wcBAPIWEhD6CgQE/gYAAP4GAAD+BgAA/goEBP4KBAT+CgQE/gYAAP4KBAT+DggI/goEBP4KBAT+CgQE/goEBP4GAAD+CgQE/gYAAP4GAAD+CgQE/gYAAP4GAAD+CgQE/goEBP4KBAT+CgQE/gYAAP+XkZD6BgAA8gYCAO4GAgDyBgIA8gYCAO8HAQDyBgIA8gYAAPMHAQDyBgIA7gYCAPIGAgDyBgIA8wcBAPMHAQDzBwEA8wcBAPMHAQDzBwEA8wcBAPMHAQDyhoKA8gYAAPMHAQDzBwEA8gYAAPMHAQDzBwEA8wcBAPIGAgDyBgAA8wcBAPIGAADwAAAAAgYAAPIGAgDuBgIA7AAAAAAAAAACBgIA7gYAAPIGAADzBwEA8gYCAOwAAAAAAAAAAgYCAO4GAgDsAAAAAgYCAO4GAgDsAAAAAwcBAPMHAQDyBgAA8gYAAPIGAADzBwEA8gYCAPIGAgDyBgIA7gYCAO4GAgDuBgIA7gYCAO4GAgDuBgAA8jYwMPoKBAT+BgAA/gYAAP4GAAD+BgAA/gYAAP4KBAT+CgQE/goEBP4OCAj+CgQE/goEBP4KBAT+CgQE/gYAAP4GAAD+BgAA/goEBP4GAAD+BgAA/gYAAP4GAAD+BgAA/goEBP4OCAj+CgQE/gYAAP4GAAD+BgAA+gYCAO4GAgDyBgIA8gYAAPIGAADyBgIA8gYCAO4GAADyhoKA8wcBAPIGAgDyBgIA8gYCAO4GAgDyBgIA8gYCAPIGAgDyBgAA8oaCgPIGAgDzBwEA8gYCAPKGgoDzBwEA8gYCAPIGAgDyBgIA8wcBAPMHAQDyBgIA7wcBAPIGAgDuBgAA8gYCAO4GAADyBgIA7gYCAO4GAADyBgAA8gYAAPMHAQDyBgIA8wcBAPIGAgDsAAAAAgYCAO4GAgDuBgAA8gYCAO4GAADzBwEA8gYCAO4GAgDuBgIA7gYCAO4GAgDuBgAA8wcBAPIGAADzBwEA8gYAAPIGAgDsAAAAAwcBAPIGAADyJiIg98/LyPoKBAT+BgAA/gYAAP4GAAD+BgAA/gYAAP4KBAT+CgQE/gYAAP4GAAD+CgQE/goEBP4KBAT+CgQE/gYAAP4KBAT+BgAA/gYAAP4KBAT+CgQE/gYAAP4GAAD+CgQE/gYAAP4KBAT+BgAA/gYAAP4GAAD/x8PA+kZCQPYGAADyBgIA8gYAAPIGAADyBgAA8gYAAPIGAgDuBgAA8gYCAPIGAgDyBgAA8gYAAPIGAgDyBgIA8wcBAPMHAQDzBwEA8wcBAPMHAQDzBwEA8gYAAPIGAADzBwEA8gYCAO8HAQDzBwEA8gYAAPIGAgDzBwEA8wcBAPKGgoDzBwEA8gYAAPIGAADwAAAAAgYCAO4GAADyBgAA8wcBAPMHAQDyBgAA8gYAAPIGAgDuBgAA8gYAAPIGAgDuBgIA7gYCAO4GAADzBwEA8gYAAPIGAADyBgIA7gYAAPIGAgDvBwEA8wcBAPMHAQDwAAAAAgYCAO4GAgDuBgIA7gYCAO4GAgD3h4OA+gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+CgQE/gYAAP4GAAD+CgQE/goEBP4KBAT+BgAA/goEBP4KBAT+BgAA/goEBP4KBAT+CgQE/gYAAP4GAAD+BgAA/goEBP4GAAD+CgQE/gYAAP4GAAD+BgAA/4+LiPomIiD3BwEA8gYCAO4GAgDuBgIA8wcBAPIGAADyBgAA8gYCAO8HAQDyBgIA7gYAAPMHAQDyBgIA8oaCgPMHAQDzBwEA8gYCAPIGAADyBgIA8wcBAPMHAQDzBwEA8gYCAPMHAQDyBgAA8wcBAPMHAQDzBwEA8wcBAPIGAgDyBgAA8wcBAPIGAADyBgIA7gYCAO4GAADyBgIA8gYAAPMHAQDyBgAA8gYCAPIGAADyBgAA8gYCAO4GAgDuBgIA7gYAAPIGAgDzBwEA8wcBAPIGAADwAAAAAgYCAO8HAQDyBgIA7wcBAPIGAgDsAAAAAgYCAO4GAADzBwEA8kZCQPePi4j6BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4KBAT+CgQE/goEBP4GAAD+CgQE/goEBP4KBAT+CgQE/goEBP4GAAD+BgAA/gYAAP4KBAT+BgAA/gYAAP4GAAD+BgAA/goEBP4GAAD+CgQE/gYAAP4GAAD+BgAA/goEBP+Pi4j6BgIA9gYCAO4GAgDuhoKA8wcBAPIGAADyBgAA8gYAAPMHAQDyBgAA8gYAAPMHAQDyhoKA8gYCAPMHAQDzBwEA8wcBAPMHAQDyBgIA8wcBAPIGAADyBgAA8wcBAPIGAgDyhoKA8wcBAPMHAQDzBwEA8wcBAPIGAADyBgAA8wcBAPIGAADyBgAA8gYAAPMHAQDyhoKA8wcBAPMHAQDzBwEA8wcBAPIGAgDuBgIA7gYCAO4GAADyBgAA8gYAAPIGAADyBgAA8wcBAPMHAQDwAAAAAgYAAPIGAADyBgAA8gYCAO4GAADyBgIA7gYAAPIGAADyxsDA94+LiPoKBAT+BgAA/goEBP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4KBAT+CgQE/goEBP4KBAT+CgQE/goEBP4GAAD+DggI/gYAAP4GAAD+CgQE/gYAAP4GAAD+CgQE/gYAAP4KBAT+BgAA/goEBP4GAAD+BgAA/gYAAP4GAAD+CgQE/goEBP4KBAT/T0tI+gYAAPcHAQDyBgAA8gYCAPIGAgDsAAAAAgYCAO8HAQDyBgAA8gYAAPIGAADyBgIA8wcBAPMHAQDzBwEA8gYAAPMHAQDzBwEA8wcBAPIGAADyBgAA8wcBAPIGAgDyBgIA8wcBAPMHAQDzBwEA8wcBAPIGAADyBgAA8wcBAPIGAgDuBgIA7gYAAPMHAQDyBgAA8gYCAPMHAQDyBgAA8gYCAO8HAQDwAAAAAgYCAO4GAADyBgAA8gYAAPMHAQDzBwEA8wcBAPIGAADyBgAA8gYCAOwAAAACBgAA8gYCAO4GAgDuBgAA8gYAAPJmYmD3V1NQ+gYAAP4GAAD+BgAA/goEBP4GAAD+BgAA/gYAAP4KBAT+CgQE/goEBP4KBAT+CgQE/goEBP4GAAD+BgAA/goEBP4KBAT+BgAA/goEBP4KBAT+BgAA/goEBP4KBAT+CgQE/gYAAP4GAAD+CgQE/g4ICP4GAAD+BgAA/gYAAP4GAAD+CgQE/g4ICP4KBAT+CgQE/4+LiPqGgoD2BgIA8wcDAPIGAADyBgAA8gYCAO4GAADzBwEA8gYCAPMHAQDyBgIA7gYCAPIGAgDyBgAA8gYAAPIGAADzBwEA8wcBAPIGAgDzBwEA8gYCAPIGAgDyhoKA8oaCgPMHAQDzBwEA8gYCAPIGAgDuBgAA8wcBAPMHAQDyBgAA8gYCAO8HAQDzBwEA8gYAAPIGAgDuBgIA7wcBAPIGAADyBgAA8gYAAPMHAQDyBgAA8gYCAO8HAQDzBwEA8gYCAO8HAQDyBgIA7wcBAPIGAADzBwEA8gYAAPIGAADyBgIA7kZCQPeXk5D6CgQE/goEBP4GAAD+BgAA/goEBP4GAAD+BgAA/goEBP4GAAD+CgQE/goEBP4KBAT+CgQE/goEBP4GAAD+CgQE/goEBP4GAAD+CgQE/gYAAP4KBAT+CgQE/goEBP4OCAj+DggI/gYAAP4KBAT+CgQE/goEBP4GAAD+BgAA/gYAAP4GAAD+BgAA/goEBP4OCAj+BgAA/gYAAP+Pi4j6JiIg9gYAAPAAAAAAAAAAAwcBAPIGAADzBwEA8wcBAPMHAQDzBwEA8wcBAPMHAQDyBgAA8gYAAPIGAADyBgAA8wcBAPIGAgDyBgIA8gYCAPMHAQDyBgIA8gYCAPIGAgDzBwEA8wcBAPIGAADzBwEA8gYCAPMHAQDwAAAAAgYAAPMHAQDzBwEA8gYCAO4GAgDuBgIA7wcBAPIGAADyBgIA7gYAAPIGAgDzBwEA8gYAAPIGAgDuBgIA7gYCAO4GAADzBwEA8gYCAPIGAADyBgAA8gYAAPIGAADyRkJA95eTkPoKBAT+CgQE/g4ICP4GAAD+BgAA/goEBP4GAAD+CgQE/goEBP4KBAT+CgQE/goEBP4KBAT+CgQE/gYAAP4GAAD+CgQE/goEBP4KBAT+CgQE/goEBP4KBAT+CgQE/goEBP4KBAT+CgQE/goEBP4KBAT+BgAA/goEBP4GAAD+BgAA/gYAAP4GAAD+CgQE/goEBP4KBAT+BgAA/gYAAP4GAAD/j4uI+gYCAPYGAgDuBgIA7gYCAO4GAADzBwEA8oaCgPMHAQDzBwEA8wcBAPKGgoDyBgAA8gYAAPMHAQDyBgAA8wcBAPIGAgDyBgAA8wcBAPIGAgDyBgIA8wcBAPIGAgDyBgIA8gYCAPIGAADyBgAA8gYCAPIGAgDyBgIA7AAAAAMHAQDzBwEA8gYCAO4GAgDuBgIA7gYCAPMHAQDyBgAA8wcBAPMHAQDyBgIA8wcBAPIGAgDuBgIA7AAAAAIGAADyBgAA8oaCgPMHAQDyBgIA7gYCAO4mICD7z8vI+gYAAP4KBAT+CgQE/g4ICP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+CgQE/gYAAP4GAAD+BgAA/goEBP4KBAT+CgQE/gYAAP4KBAT+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/goEBP4KBAT+CgQE/goEBP4GAAD+BgAA/8fDwPoWEBD6BgIA7gYCAO4GAgDuBgAA8wcBAPMHAQDzBwEA8wcBAPMHAQDyBgIA7gYAAPIGAADzBwEA8gYCAPIGAgDyBgAA8wcBAPMHAQDyBgIA8wcBAPMHAQDzBwEA8gYAAPIGAADzBwEA8wcDAPKGgoDwAAAAAgYAAPMHAQDzBwEA8gYCAO4GAgDuBgAA8gYAAPIGAADyBgAA8wcBAPMHAQDzBwEA8wcBAPIGAgDuBgIA7gYCAO4GAADyBgIA8wcBAPMHAQDyBgIA75eRkPoKBAT+CgQE/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/goEBP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4KBAT+CgQE/goEBP4GAAD+BgAA/gYAAP4KBAT+BgAA/gYAAP4GAAD+CgQE/goEBP4GAAD+BgAA/gYAAP4GAAD+BgIA+gYAAPIGAADzBwEA8wcBAPIGAgDuBgIA8wcBAPIGAADyBgAA8gYCAPIGAgDyBgIA8gYCAPIGAgDyBgIA8gYCAPIGAgDyBgIA8wcBAPMHAQDyBgAA8wcBAPMHAwDyhoKA8gYCAPMHAQDwAAAAAgYCAO4GAgDyBgIA8gYAAPIGAADyBgIA7gYCAPIGAADyBgIA7wcBAPMHAQDyBgAA8wcBAPIGAADyBgIA7gYCAO4GAADyBgAA8wcBAPIGAAD2xsLA+gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+CgQE/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4KBAT+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4KBAT+BgAA/goEBP4KBAT+DggI/goEBP4GAAD+BgAA/gYAAP4KBAT+CgQE/gYAAP4GAAD+BgAA/gYAAP4GAAD+CgQE/gYAAP4GAAD+BgAA/o6KiPpGQkD3BwEA8wcBAPMHAQDzBwEA8gYCAPIGAgDyBgIA8gYCAPIGAgDyBgIA8gYCAPIGAgDzBwEA8wcBAPIGAgDyhoKA8wcBAPMHAQDzBwEA8gYCAPIGAgDyhoKA8gYAAPMHAQDyBgIA7gYCAO4GAgDuBgAA8gYAAPMHAQDyBgIA7gYCAO8HAQDyBgAA8gYAAPMHAQDzBwEA8wcBAPMHAQDyBgAA8AAAAAIGAADzBwEA8iYgIPuHg4D6BgAA/gYAAP4KBAT+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+CgQE/goEBP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+CgQE/gYAAP4KBAT+BgAA/goEBP4KBAT+CgQE/gYAAP4KBAT+CgQE/goEBP4GAAD+BgAA/gYAAP4GAAD+BgAA/goEBP4GAAD+BgAA/gYAAP4KBAT+BgAA/gYAAP4GAAD+BgAA/gYAAP+Pi4j7R0NA9wcBAPIGAgDuBgIA8gYAAPIGAADyBgIA8wcBAPMHAQDzBwEA8gYAAPIGAADzBwEA8wcBAPIGAgDyBgIA8wcBAPMHAQDzBwEA8gYCAPIGAADyBgAA8gYCAO4GAADyBgIA7gYCAOwAAAACBgAA8wcBAPMHAQDyBgIA7gYAAPIGAgDyhoKA8gYCAPMHAQDzBwEA8gYCAPIGAADyBgAA8gYAAPIGAAD2TkpI+gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/goEBP4GAAD+BgAA/gYAAP4GAAD+CgQE/gYAAP4KBAT+CgQE/gYAAP4GAAD+BgAA/goEBP4KBAT+DggI/gYAAP4GAAD+BgAA/goEBP4KBAT+CgQE/gYAAP4GAAD+BgAA/goEBP4KBAT+CgQE/gYAAP4KBAT+CgQE/gYAAP4GAAD+BgAA/gYAAP4GAAD+CgQE/goEBP4GAAD+BgAA/gYAAP4GAAD+BgAA/hYSEPsHAQDyBgAA8gYCAO4GAADyBgIA8wcBAPMHAQDzBwEA8gYAAPIGAADyBgIA8wcBAPIGAgDzBwEA8wcBAPMHAQDzBwEA8wcBAPIGAADyBgIA7gYCAPKGgoDzBwEA8gYCAOwAAAADBwEA8gYAAPMHAQDyBgAA8wcBAPMHAQDyBgIA8wcBAPIGAgDzBwEA8gYCAPIGAgDzBwEA8iYgIPuPi4j6BgAA/gYAAP4GAAD+BgAA/goEBP4KBAT+BgAA/gYAAP4KBAT+CgQE/gYAAP4KBAT+CgQE/gYAAP4GAAD+CgQE/gYAAP4KBAT+CgQE/gYAAP4KBAT+CgQE/gYAAP4GAAD+BgAA/gYAAP4KBAT+CgQE/goEBP4KBAT+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/goEBP4KBAT+CgQE/goEBP4KBAT+CgQE/goEBP4GAAD+BgAA/gYAAP4GAAD+CgQE/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP+Xk5D6pqCg+gYAAPMHAQDzBwEA8wcBAPMHAQDzBwEA8wcBAPMHAQDyBgIA8wcBAPIGAgDzBwEA8wcBAPIGAgDyBgAA8gYAAPIGAADyBgAA8wcBAPIGAgDyBgAA8gYAAPIGAgDuBgAA8gYCAO8HAQDzBwEA8wcBAPMHAQDyhoKA8gYAAPIGAADyBgIA8wcBAPImIiD2zsrI+gYAAP4KBAT+CgQE/gYAAP4GAAD+BgAA/goEBP4KBAT+BgAA/goEBP4GAAD+CgQE/gYAAP4GAAD+BgAA/goEBP4GAAD+CgQE/goEBP4KBAT+CgQE/goEBP4KBAT+CgQE/gYAAP4GAAD+BgAA/g4ICP4KBAT+DggI/g4ICP4KBAT+BgAA/gYAAP4GAAD+CgQE/gYAAP4GAAD+CgQE/goEBP4KBAT+CgQE/gYAAP4KBAT+BgAA/goEBP4KBAT+BgAA/gYAAP4GAAD+BgAA/goEBP4GAAD+CgQE/goEBP4KBAT+BgAA/gYAAP4KBAT+CgQE/paSkPomIiD3BwEA8wcBAPIGAgDzBwEA8gYCAPIGAgDzBwEA8wcBAPIGAgDzBwEA8wcBAPMHAQDyBgAA8wcBAPIGAADzBwEA8wcDAPIGAgDzBwEA8gYCAPIGAgDuBgAA8gYAAPMHAQDyBgAA8wcBAPMHAQDzBwEA8wcBAPMHAQDyBgAA9g4KCPvPy8j6CgQE/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/goEBP4KBAT+BgAA/goEBP4GAAD+BgAA/goEBP4GAAD+CgQE/gYAAP4GAAD+CgQE/goEBP4KBAT+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/goEBP4KBAT+CgQE/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+CgQE/goEBP4KBAT+BgAA/gYAAP4GAAD+BgAA/gYAAP4KBAT+BgAA/gYAAP4GAAD+CgQE/goEBP4GAAD+BgAA/goEBP4KBAT+CgQE/gYAAP4OCAj+CgQE/goEBP4KBAT+lpKQ+kZCQPYGAADyhoKA8gYCAPMHAQDyBgIA8wcBAPMHAQDzBwEA8wcBAPMHAQDzBwEA8wcBAPIGAgDyBgIA8wcBAPIGAgDzBwEA8gYCAPIGAADyBgAA8gYCAPMHAQDyBgAA8wcBAPIGAADyBgAA8kZAQPYWEhD7z8vI+gYAAP4KBAT+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/goEBP4KBAT+BgAA/gYAAP4KBAT+BgAA/gYAAP4GAAD+CgQE/gYAAP4GAAD+CgQE/goEBP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+CgQE/gYAAP4GAAD+CgQE/goEBP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+CgQE/goEBP4KBAT+BgAA/gYAAP4GAAD+BgAA/gYAAP4KBAT+CgQE/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/goEBP4KBAT+BgAA/gYAAP4KBAT+DggI/goEBP4KBAT+CgQE/4+LiPoWEhD6ZmJg9gYCAPKGgoDzBwEA8wcBAPMHAQDzBwEA8gYCAPMHAQDzBwEA8wcBAPIGAgDyhoKA8wcBAPMHAQDyBgIA7AAAAAIGAADzBwEA8gYAAPIGAADyBgIA7gYAAPIGAgD2FhIQ+8/LyPoGAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4KBAT+BgAA/gYAAP4KBAT+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/goEBP4KBAT+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/goEBP4GAAD+CgQE/goEBP4KBAT+CgQE/goEBP4GAAD+BgAA/gYAAP4GAAD+BgAA/goEBP4KBAT+CgQE/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4KBAT+BgAA/gYAAP4KBAT+CgQE/goEBP4KBAT+CgQE/goEBP4GAAD+CgQE/o6KiPomIiD2BgAA8gYCAPIGAADyBgIA8gYAAPIGAADyBgAA8gYAAPIGAADzBwEA8gYAAPIGAADyBgIA7wcBAPMHAQDyBgIA8gYAAPIGAADyFhAQ+w8LCPoGAAD+BgAA/gYAAP4KBAT+CgQE/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4KBAT+CgQE/goEBP4KBAT+BgAA/gYAAP4GAAD+CgQE/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/goEBP4KBAT+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+CgQE/goEBP4SDAz+BgAA/g4ICP4KBAT+BgAA/goEBP4KBAT+CgQE/goEBP4KBAT+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+CgQE/goEBP4GAAD+BgAA/goEBP4KBAT+CgQE/goEBP4KBAT+CgQE/goEBP4KBAT+xsLA+paQkPsHAQDzBwEA8gYCAO4GAgDyBgAA8wcBAPMHAQDzBwEA8gYAAPMHAQDyBgAA8gYAAPIGAgDuBgAA+kZCQPvPy8j6BgAA/gYAAP4GAAD+BgAA/goEBP4GAAD+CgQE/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+CgQE/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4KBAT+BgAA/gYAAP4GAAD+BgAA/goEBP4KBAT+CgQE/goEBP4GAAD+CgQE/gYAAP4GAAD+CgQE/goEBP4KBAT+CgQE/goEBP4KBAT+CgQE/goEBP4KBAT+BgAA/goEBP4KBAT+CgQE/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+CgQE/gYAAP4GAAD+BgAA/gYAAP4GAAD+CgQE/goEBP4KBAT+BgAA/goEBP4GAAD+CgQE/goEBP4KBAT+BgAA/goEBP4KBAT+BgAA/gYAAP4GAAD+BgAA/g4ICP+Pi4j6joqI+kZAQPoGAgDyBgIA8wcBAPMHAQDyBgIA8wcBAPKGgID3FxEQ+o6KiPvPy8j6BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4KBAT+CgQE/gYAAP4KBAT+CgQE/goEBP4KBAT+BgAA/gYAAP4OCAj+CgQE/goEBP4KBAT+BgAA/goEBP4GAAD+BgAA/gYAAP4KBAT+CgQE/goEBP4GAAD+BgAA/goEBP4KBAT+CgQE/g4ICP4OCAj+CgQE/gYAAP4GAAD+CgQE/g4ICP4OCAj+CgQE/gYAAP4GAAD+BgAA/gYAAP4GAAD+CgQE/goEBP4KBAT+CgQE/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4KBAT+CgQE/gYAAP4GAAD+BgAA/gYAAP4GAAD+CgQE/goEBP4GAAD+BgAA/gYAAP4KBAT+CgQE/gYAAP4KBAT+CgQE/goEBP4KBAT+CgQE/gYAAP4GAAD+CgQE/goEBP4KBAT+DggI/goEBP+Xk5D6lpKQ+rawsPpGQkD2BgAA86ehoPoKBAT+CgQE/goEBP4GAAD+CgQE/goEBP4KBAT+CgQE/goEBP4GAAD+CgQE/g4ICP4KBAT+CgQE/goEBP4GAAD+CgQE/goEBP4KBAT+CgQE/goEBP4KBAT+DggI/goEBP4KBAT+BgAA/gYAAP4GAAD+CgQE/goEBP4KBAT+CgQE/goEBP4GAAD+BgAA/goEBP4GAAD+BgAA/goEBP4KBAT+CgQE/gYAAP4KBAT+BgAA/gYAAP4KBAT+CgQE/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4KBAT+BgAA/gYAAP4GAAD+CgQE/goEBP4KBAT+BgAA/gYAAP4KBAT+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+CgQE/goEBP4GAAD+BgAA/gYAAP4GAAD+CgQE/goEBP4KBAT+CgQE/gYAAP4GAAD+BgAA/gYAAP4KBAT+CgQE/goEBP4KBAT+CgQE/goEBP4KBAT+BgAA/goEBP4GAAD/p6Gg+4+LiPoKBAT+CgQE/goEBP4OCAj+CgQE/goEBP4KBAT+CgQE/goEBP4KBAT+CgQE/goEBP4OCAj+CgQE/goEBP4GAAD+CgQE/g4ICP4GAAD+CgQE/goEBP4KBAT+CgQE/goEBP4KBAT+CgQE/goEBP4GAAD+BgAA/goEBP4KBAT+DggI/gYAAP4GAAD+BgAA/goEBP4KBAT+CgQE/gYAAP4KBAT+CgQE/gYAAP4KBAT+CgQE/goEBP4KBAT+BgAA/gYAAP4GAAD+CgQE/gYAAP4GAAD+BgAA/gYAAP4KBAT+CgQE/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4KBAT+CgQE/gYAAP4GAAD+BgAA/gYAAP4KBAT+DggI/goEBP4KBAT+BgAA/gYAAP4GAAD+CgQE/goEBP4KBAT+CgQE/goEBP4KBAT+BgAA/goEBP4GAAD+BgAA/goEBP4KBAT+BgAA/goEBP4KBAT+BgAA/gYAAP4KBAT/z8vI+8/LyPoKBAT+CgQE/goEBP4KBAT+CgQE/gYAAP4GAAD+BgAA/goEBP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+CgQE/goEBP4GAAD+BgAA/goEBP4GAAD+BgAA/gYAAP4GAAD+CgQE/goEBP4KBAT+BgAA/gYAAP4GAAD+BgAA/goEBP4KBAT+BgAA/gYAAP4KBAT+BgAA/gYAAP4GAAD+CgQE/goEBP4KBAT+CgQE/goEBP4KBAT+BgAA/goEBP4KBAT+CgQE/gYAAP4GAAD+CgQE/goEBP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4KBAT+BgAA/gYAAP4KBAT+BgAA/goEBP4KBAT+BgAA/goEBP4KBAT+CgQE/gYAAP4GAAD+BgAA/gYAAP4GAAD+CgQE/goEBP4KBAT+CgQE/goEBP4KBAT+BgAA/gYAAP4KBAT+CgQE/gYAAP4KBAT+CgQE/goEBP4KBAT/l5OQ+6ehoPoGAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/goEBP4GAAD+CgQE/gYAAP4KBAT+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+CgQE/goEBP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+CgQE/goEBP4GAAD+BgAA/gYAAP4GAAD+BgAA/g4ICP4KBAT+CgQE/goEBP4GAAD+BgAA/gYAAP4GAAD+BgAA/goEBP4GAAD+BgAA/goEBP4KBAT+CgQE/goEBP4KBAT+BgAA/gYAAP4GAAD+BgAA/goEBP4KBAT+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+CgQE/g4ICP4KBAT+BgAA/gYAAP4GAAD+CgQE/goEBP4GAAD+BgAA/gYAAP4GAAD+CgQE/goEBP4KBAT+CgQE/goEBP4GAAD+BgAA/goEBP4KBAT+BgAA/goEBP4KBAT+CgQE/goEBP4KBAT/t7Gw+wcBAPKmoqD2hoCA+paSkPuPi4j6BgAA/gYAAP4GAAD+BgAA/gYAAP4KBAT+BgAA/gYAAP4GAAD+BgAA/goEBP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4KBAT+CgQE/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/goEBP4GAAD+CgQE/goEBP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+CgQE/goEBP4KBAT+BgAA/gYAAP4KBAT+BgAA/gYAAP4GAAD+BgAA/gYAAP4KBAT+CgQE/goEBP4KBAT+CgQE/goEBP4GAAD+BgAA/goEBP4KBAT+CgQE/goEBP4KBAT+BgAA/gYAAP4GAAD+CgQE/goEBP4GAAD+CgQE/goEBP/X09D6joqI+xcREPpGQED2BgAA8wcBAPIGAgDzBwEA8wcBAPIGAADyFhAQ+oaCgPuPi4j6BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+CgQE/gYAAP4GAAD+CgQE/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4KBAT+BgAA/goEBP4KBAT+BgAA/gYAAP4KBAT+CgQE/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4KBAT+BgAA/goEBP4GAAD+BgAA/gYAAP4GAAD+BgAA/goEBP4KBAT+CgQE/goEBP4GAAD+BgAA/gYAAP4KBAT+BgAA/gYAAP4GAAD+CgQE/goEBP4KBAT+CgQE/goEBP4KBAT+CgQE/goEBP4GAAD+BgAA/goEBP4KBAT+CgQE/gYAAP4KBAT+BgAA/gYAAP4KBAT+CgQE/goEBP/Py8j6VlJQ+iYgIPoGAgDzBwEA8gYAAPIGAgDuBgAA8wcBAPIGAgDyBgAA8gYCAO4GAADyBgIA7gYAAPIGAADylpCQ+tbS0PoGAAD+BgAA/goEBP4GAAD+CgQE/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/goEBP4GAAD+BgAA/gYAAP4KBAT+CgQE/gYAAP4GAAD+BgAA/goEBP4GAAD+CgQE/gYAAP4KBAT+CgQE/goEBP4KBAT+CgQE/goEBP4GAAD+DggI/gYAAP4GAAD+BgAA/goEBP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4KBAT+BgAA/gYAAP4GAAD+BgAA/goEBP4KBAT+CgQE/goEBP4KBAT+CgQE/goEBP4KBAT+CgQE/gYAAP4GAAD+BgAA/gYAAP4KBAT+CgQE/goEBP4KBAT+CgQE/goEBP4KBAT+CgQE/goEBP4KBAT+CgQE/goEBP4GAAD+BgAA/goEBP4KBAT/DwsI+iYgIPoGAgDyhoKA8wcBAPMHAQDyBgIA7gYAAPIGAADyBgIA7gYCAPIGAgDzBwEA8wcBAPIGAADyBgAA8gYAAPIGAADyBgIA8wcBAPIGAgD2joqI+gYAAP4GAAD+BgAA/g4ICP4OCAj+BgAA/gYAAP4KBAT+CgQE/goEBP4GAAD+CgQE/gYAAP4GAAD+CgQE/gYAAP4KBAT+BgAA/gYAAP4KBAT+CgQE/gYAAP4OCAj+CgQE/goEBP4KBAT+CgQE/g4ICP4OCAj+CgQE/gYAAP4GAAD+BgAA/goEBP4GAAD+BgAA/goEBP4GAAD+BgAA/gYAAP4KBAT+CgQE/gYAAP4GAAD+BgAA/gYAAP4KBAT+CgQE/goEBP4KBAT+CgQE/goEBP4KBAT+BgAA/gYAAP4GAAD+BgAA/gYAAP4KBAT+CgQE/goEBP4KBAT+CgQE/gYAAP4KBAT+CgQE/goEBP4KBAT+BgAA/goEBP4GAAD/z8vI+hYSEPpmYmD3BwEA8wcBAPMHAwDzBwMA8wcBAPMHAQDyBgAA8gYCAPIGAADyBgAA8gYCAPMHAQDzBwEA8wcBAPKGgoDyBgIA8gYCAPMHAQDyBgIA8gYCAPIGAADyBgAA8kZCQPYWEhD7j4uI+goEBP4KBAT+CgQE/gYAAP4KBAT+DggI/goEBP4GAAD+BgAA/goEBP4KBAT+CgQE/goEBP4KBAT+CgQE/goEBP4KBAT+CgQE/gYAAP4GAAD+CgQE/gYAAP4KBAT+CgQE/g4ICP4KBAT+CgQE/goEBP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4KBAT+CgQE/gYAAP4KBAT+BgAA/gYAAP4GAAD+BgAA/goEBP4GAAD+CgQE/goEBP4KBAT+CgQE/goEBP4KBAT+CgQE/gYAAP4GAAD+BgAA/goEBP4KBAT+CgQE/goEBP4KBAT+BgAA/goEBP4KBAT+CgQE/goEBP4KBAT+CgQE/8/LyPoOCgj6RkBA9gYAAPIGAADyBgAA8gYCAPIGAgDyhoKA8wcBAPIGAADyBgIA8wcBAPIGAgDuBgAA8gYCAPIGAADzBwEA8gYCAPKGgoDyBgIA8gYAAPMHAQDyhoKA8oaCgPIGAADzBwEA8gYAAPIGAgDyBgIA9o6KiPoKBAT+BgAA/gYAAP4KBAT+DggI/g4ICP4KBAT+CgQE/goEBP4OCAj+CgQE/goEBP4KBAT+CgQE/goEBP4KBAT+CgQE/gYAAP4GAAD+CgQE/gYAAP4GAAD+CgQE/goEBP4KBAT+CgQE/goEBP4GAAD+BgAA/gYAAP4GAAD+BgAA/goEBP4KBAT+CgQE/goEBP4KBAT+BgAA/gYAAP4GAAD+CgQE/goEBP4GAAD+CgQE/goEBP4KBAT+BgAA/goEBP4KBAT+CgQE/gYAAP4GAAD+CgQE/goEBP4GAAD+CgQE/goEBP4KBAT+BgAA/goEBP4KBAT+CgQE/goEBP/X09D6FhIQ+oaAgPYGAgDyBgAA8gYAAPIGAADyBgAA8gYAAPIGAgDyhoKA8gYCAPMHAQDyBgIA8wcBAPIGAADyBgAA8wcBAPMHAQDzBwEA8gYCAPMHAQDyBgAA8gYCAPIGAgDzBwEA8oaCgPIGAgDyBgAA8gYAAPIGAADwAAAAAgYAAPImIiD2npqY+gYAAP4KBAT+DggI/goEBP4GAAD+CgQE/gYAAP4GAAD+CgQE/gYAAP4OCAj+CgQE/goEBP4KBAT+CgQE/goEBP4GAAD+BgAA/goEBP4GAAD+BgAA/gYAAP4GAAD+BgAA/goEBP4KBAT+BgAA/gYAAP4GAAD+BgAA/goEBP4KBAT+CgQE/goEBP4KBAT+CgQE/goEBP4KBAT+CgQE/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4KBAT+CgQE/goEBP4KBAT+CgQE/goEBP4KBAT+CgQE/goEBP4KBAT+CgQE/s7KyPpGQkD2BgIA8wcBAPMHAQDyBgAA8gYCAPIGAgDyBgIA8wcBAPIGAgDyBgIA8gYCAPMHAQDzBwEA8gYAAPMHAQDyBgIA8wcBAPMHAQDyBgAA8wcBAPIGAADyBgAA8wcBAPIGAgDzBwEA8gYCAPIGAgDuBgIA7gYCAO4GAADwAAAAAgYCAO8HAQDzBwEA8oaAgPuHg4D6BgAA/goEBP4GAAD+BgAA/goEBP4GAAD+BgAA/gYAAP4KBAT+DggI/goEBP4KBAT+DggI/goEBP4GAAD+BgAA/goEBP4GAAD+BgAA/gYAAP4GAAD+BgAA/goEBP4GAAD+BgAA/gYAAP4GAAD+BgAA/gYAAP4KBAT+CgQE/goEBP4GAAD+BgAA/gYAAP4KBAT+CgQE/goEBP4GAAD+BgAA/gYAAP4KBAT+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+CgQE/goEBP4KBAT+CgQE/gYAAP4KBAT+CgQE/goEBP+Xk5D6JiAg+gYCAPMHAQDzBwEA8wcBAPIGAgDzBwEA8wcBAPIGAADzBwEA8wcBAPIGAgDyBgIA8wcBAPMHAQDyBgIA7gYAAPMHAQDzBwEA8wcBAPIGAADzBwEA8gYAAPMHAQDzBwEA8wcBAPIGAgDzBwEA8gYCAPKGgoDyBgIA8wcBAPIGAADyBgIA7gYAAPIGAADyBgAA8AAAAAIGAADyDgoI+gYAAP4GAAD+BgAA/goEBP4KBAT+BgAA/gYAAP4GAAD+BgAA/gYAAP4KBAT+CgQE/goEBP4KBAT+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+CgQE/gYAAP4GAAD+BgAA/goEBP4GAAD+BgAA/goEBP4KBAT+BgAA/gYAAP4KBAT+BgAA/gYAAP4KBAT+DggI/goEBP4GAAD+BgAA/gYAAP4GAAD+BgAA/goEBP4GAAD+BgAA/gYAAP4GAAD+CgQE/goEBP4KBAT+CgQE/goEBP4KBAT+CgQE/lZSUPrGwMD3BwEA8wcBAPMHAQDzBwEA8wcBAPMHAQDzBwEA8wcBAPMHAQDzBwEA8wcBAPKGgoDzBwEA8gYCAO8HAQDyBgIA7gYAAPIGAgDuBgAA8gYCAPIGAgDzBwEA8gYCAPMHAQDyBgIA8wcBAPMHAQDzBwEA8wcBAPMHAQDyBgIA8wcBAPIGAgDwAAAAAgYAAPAAAAACBgAA8gYCAO4GAgDsAAAAAwcDAPePi4j6CgQE/goEBP4KBAT+BgAA/gYAAP4GAAD+BgAA/gYAAP4KBAT+CgQE/goEBP4GAAD+CgQE/goEBP4KBAT+BgAA/goEBP4GAAD+CgQE/gYAAP4GAAD+CgQE/goEBP4GAAD+CgQE/g4ICP4KBAT+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+CgQE/goEBP4GAAD+BgAA/gYAAP4GAAD+CgQE/goEBP4GAAD+BgAA/gYAAP4GAAD+CgQE/goEBP4KBAT+CgQE/goEBP+Pi4j6JiAg+wcBAPMHAQDzBwEA8wcBAPMHAQDzBwEA8wcBAPMHAQDzBwEA8wcBAPMHAQDzBwEA8gYCAPKGgoDyBgIA8wcBAPMHAQDyBgIA7gYCAO4GAgDuBgIA7wcBAPMHAQDyBgIA8wcBAPMHAQDzBwEA8wcBAPMHAQDzBwEA8gYCAPIGAADyBgAA8wcBAPIGAADwAAAAAgYCAO8HAQDyBgAA8AAAAAAAAAADBwEA8gYCAO4mIiD2joqI+goEBP4GAAD+BgAA/gYAAP4KBAT+CgQE/gYAAP4KBAT+CgQE/goEBP4KBAT+BgAA/gYAAP4GAAD+BgAA/goEBP4GAAD+CgQE/gYAAP4GAAD+BgAA/goEBP4GAAD+DggI/goEBP4KBAT+BgAA/gYAAP4GAAD+BgAA/goEBP4GAAD+CgQE/goEBP4GAAD+BgAA/gYAAP4GAAD+CgQE/goEBP4GAAD+BgAA/gYAAP4GAAD+CgQE/goEBP4KBAT+CgQE/s7KyPqGgID3BwEA8wcBAPMHAQDzBwEA8wcBAPMHAQDzBwEA8wcBAPMHAQDzBwEA8wcBAPMHAQDzBwEA8wcBAPKGgoDyBgIA8wcBAPMHAQDyBgAA8wcBAPIGAADyBgAA8wcBAPIGAgDyBgIA8gYCAPMHAQDzBwEA8gYCAPMHAQDzBwEA8wcBAPMHAQDyBgIA8wcBAPMHAQDyBgIA7gYCAO4GAgDuBgIA7gYAAPIGAgDuBgIA8gYAAPIGAgDuBgIA8hYSEPoKBAT+CgQE/goEBP4KBAT+DggI/goEBP4KBAT+CgQE/goEBP4KBAT+BgAA/gYAAP4GAAD+BgAA/goEBP4OCAj+CgQE/goEBP4GAAD+BgAA/goEBP4KBAT+CgQE/goEBP4KBAT+BgAA/gYAAP4GAAD+CgQE/goEBP4KBAT+BgAA/goEBP4KBAT+CgQE/gYAAP4KBAT+CgQE/goEBP4GAAD+BgAA/gYAAP4GAAD+CgQE/goEBP4KBAT/l5GQ+wcBAPMHAQDzBwEA8wcBAPIGAgDzBwEA8wcBAPMHAQDzBwEA8wcBAPIGAADzBwEA8wcBAPMHAQDzBwEA8wcBAPIGAgDyhoKA8wcBAPIGAADyBgIA7gYAAPIGAgDuBgAA8wcBAPMHAQDzBwEA8gYAAPMHAQDzBwEA8oaCgPIGAgDzBwEA8gYCAPIGAgDzBwEA8gYAAPMHAQDyBgAA8gYAAPIGAgDzBwEA8gYAAPMHAQDyBgIA7wcBAPIGAgDuBgAA8gYAAPImICD7z8vI+goEBP4GAAD+CgQE/goEBP4OCAj+CgQE/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/goEBP4KBAT+CgQE/gYAAP4KBAT+BgAA/goEBP4GAAD+BgAA/gYAAP4KBAT+CgQE/goEBP4GAAD+CgQE/goEBP4KBAT+BgAA/gYAAP4GAAD+BgAA/goEBP4GAAD+BgAA/gYAAP4GAAD+CgQE/gYAAP4GAAD+BgAA/8fDwPomICD7BwEA8gYAAPMHAQDzBwEA8wcBAPIGAgDzBwEA8gYCAPMHAQDzBwEA8wcBAPIGAADzBwEA8wcBAPMHAQDzBwEA8wcBAPKGgoDyBgIA8gYCAPMHAQDzBwEA8wcBAPMHAQDzBwEA8wcBAPIGAgDyBgAA8wcBAPMHAQDzBwEA8gYCAPIGAgDzBwEA8oaCgPIGAgDyBgIA8gYCAPIGAgDzBwEA8wcBAPMHAQDzBwEA8gYAAPIGAADyBgIA7wcBAPIGAADzBwEA8gYCAPMHAQDyZmJg94+LiPoGAAD+CgQE/goEBP4GAAD+CgQE/gYAAP4KBAT+CgQE/gYAAP4GAAD+BgAA/goEBP4KBAT+CgQE/goEBP4GAAD+CgQE/goEBP4GAAD+BgAA/gYAAP4KBAT+CgQE/goEBP4GAAD+BgAA/goEBP4KBAT+BgAA/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/goEBP4KBAT+CgQE/gYAAP4GAAD/j4uI+iYiIPcHAQDzBwEA8wcBAPMHAQDzBwEA8wcBAPMHAQDzBwEA8wcBAPMHAQDzBwEA8oaCgPMHAQDyBgIA8wcBAPMHAQDzBwEA8wcBAPIGAgDyBgIA8oaCgPMHAQDzBwEA8wcBAPIGAgDzBwEA8gYCAPIGAgDzBwEA8wcBAPMHAQDzBwEA8wcBAPMHAQDyBgIA8gYCAPMHAQDyBgIA8wcBAPMHAQDzBwEA8gYCAO8HAQDzBwEA8wcBAPIGAgDzBwEA8wcBAPMHAQDzBwEA8gYCAPIGAgDyBgIA8kZCQPePi4j6CgQE/gYAAP4GAAD+CgQE/goEBP4KBAT+CgQE/gYAAP4KBAT+BgAA/goEBP4KBAT+BgAA/goEBP4KBAT+BgAA/goEBP4KBAT+CgQE/goEBP4KBAT+CgQE/goEBP4GAAD+CgQE/gYAAP4KBAT+BgAA/gYAAP4KBAT+CgQE/gYAAP4GAAD+CgQE/goEBP4KBAT+CgQE/gYAAP+Pi4j6RkJA9gYAAPIGAADzBwEA8gYAAPIGAADzBwEA8wcBAPMHAQDyBgIA8oaCgPMHAQDyBgIA8oaCgPIGAgDyBgIA8oaCgPMHAQDzBwEA8wcBAPIGAgDyBgIA8wcBAPIGAADyBgIA8gYAAPIGAADyBgIA7gYCAPIGAgDyBgAA8wcBAPMHAQDyBgIA8wcBAPIGAgDyhoKA8oaCgPMHAQDyBgIA8wcBAPIGAADzBwEA8gYAAPIGAgDuBgIA8gYCAPIGAgDyBgIA8wcBAPIGAgDyBgIA8gYAAPMHAQDzBwEA8wcBAPJGQkD3j4uI+goEBP4KBAT+CgQE/goEBP4KBAT+CgQE/g4ICP4GAAD+BgAA/gYAAP4KBAT+CgQE/goEBP4OCAj+CgQE/goEBP4OCAj+CgQE/g4ICP4OCAj+CgQE/goEBP4GAAD+CgQE/gYAAP4GAAD+BgAA/goEBP4KBAT+CgQE/gYAAP4GAAD+CgQE/goEBP4KBAT+CgQE/09LSPpGQkD3BwEA8wcBAPMHAQDyBgIA8wcBAPMHAQDzBwEA8wcBAPMHAQDyBgIA8gYCAPMHAQDyBgIA8gYCAPIGAgDyBgIA8gYCAPMHAQDzBwEA8gYAAPIGAgDyBgIA8gYAAPIGAADyBgAA8gYAAPIGAADyBgAA8gYCAPIGAgDzBwEA8wcBAPMHAQDyBgIA8wcBAPIGAgDyBgIA8oaCgPMHAQDyBgIA8wcBAPIGAgDuBgAA8gYAAPMHAQDyBgIA8gYCAPMHAQDzBwEA8wcBAPMHAQDzBwEA8gYCAPMHAQDyBgIA8gYCAPIGAADyhoCA909LSPoKBAT+CgQE/goEBP4KBAT+CgQE/goEBP4KBAT+BgAA/gYAAP4GAAD+CgQE/goEBP4OCAj+CgQE/goEBP4KBAT+CgQE/goEBP4KBAT+CgQE/gYAAP4GAAD+BgAA/gYAAP4GAAD+CgQE/goEBP4KBAT+CgQE/gYAAP4GAAD+CgQE/gYAAP4KBAT/j4uI+sbAwPYGAgDyBgIA7wcBAPMHAQDyBgAA8gYAAPMHAQDwAAAAAgYAAPIGAgDzBwEA8wcBAPMHAQDzBwEA8wcBAPIGAgDyBgIA8wcBAPIGAADzBwEA8wcBAPIGAgDyhoKA8gYAAPMHAQDyBgAA8gYAAPIGAADyBgAA8gYCAPIGAgDyBgIA8wcBAPMHAQDzBwEA8wcBAPMHAQDzBwEA8gYCAPMHAQDyBgIA8gYAAPIGAgDyBgAA8gYAAPMHAQDzBwEA8wcBAPMHAQDzBwEA8wcBAPMHAQDyBgIA8wcBAPIGAgDuBgAA8wcBAPMHAQDzBwEA8mZiYPeXk5D6CgQE/goEBP4KBAT+CgQE/goEBP4KBAT+BgAA/gYAAP4KBAT+CgQE/goEBP4KBAT+CgQE/goEBP4KBAT+CgQE/gYAAP4KBAT+BgAA/gYAAP4GAAD+CgQE/gYAAP4KBAT+DggI/g4ICP4GAAD+BgAA/gYAAP4KBAT+CgQE/gYAAP+Pi4j6RkJA9gYCAPIGAADzBwEA8gYCAPMHAQDyBgIA8wcBAPMHAQDzBwEA8wcBAPIGAADzBwEA8gYCAPMHAQDyBgAA8gYCAPIGAgDzBwEA8wcBAPMHAQDzBwEA8gYCAPIGAgDyBgIA8wcBAPIGAADzBwEA8gYAAPIGAADyBgAA8wcBAPIGAgDzBwEA8wcBAPIGAADzBwEA8gYAAPMHAQDzBwEA8wcBAPIGAADyBgAA8gYAAPIGAADyBgAA8gYCAO8HAQDzBwEA8wcBAPMHAQDyBgAA8gYAAPMHAQDzBwEA8wcBAPIGAgDyBgIA7wcBAPMHAQDzBwEA8wcBAPJGQkD3j4uI+g4ICP4KBAT+CgQE/goEBP4KBAT+BgAA/gYAAP4KBAT+CgQE/goEBP4GAAD+BgAA/gYAAP4GAAD+CgQE/gYAAP4GAAD+BgAA/gYAAP4KBAT+BgAA/goEBP4KBAT+DggI/goEBP4KBAT+CgQE/gYAAP4GAAD+DggI/4+LiPpGQkD2BgAA8gYAAPIGAgDzBwEA8gYCAPMHAQDzBwEA8wcBAPIGAgDyBgAA8wcBAPIGAADyhoKA8gYCAPMHAQDyBgIA8wcBAPIGAADzBwEA8wcBAPMHAQDzBwEA8wcBAPIGAgDyBgIA8wcBAPMHAQDyBgIA8wcBAPIGAADyBgAA8wcBAPIGAgDyBgIA8gYCAPMHAQDzBwEA8wcBAPMHAQDyBgAA8gYCAPIGAADyBgIA7gYCAO4GAgDuBgAA8gYAAPIGAADzBwEA8gYAAPMHAQDzBwEA8wcBAPMHAQDzBwEA8oaCgPIGAgDzBwEA8wcBAPMHAQDzBwEA8gYCAPMHAQDyJiIg98/LyPoKBAT+CgQE/goEBP4KBAT+DggI/goEBP4KBAT+CgQE/goEBP4GAAD+BgAA/gYAAP4GAAD+CgQE/goEBP4GAAD+BgAA/gYAAP4GAAD+BgAA/goEBP4KBAT+CgQE/goEBP4OCAj+CgQE/goEBP4KBAT/19PQ+kZCQPYGAgDzBwEA8wcBAPMHAQDyBgAA8wcBAPIGAADyBgIA8wcBAPIGAgDzBwEA8gYCAPMHAQDyBgIA8gYAAPMHAQDyBgAA8wcBAPMHAQDzBwEA8gYCAPKGgoDyhoKA8oaCgPMHAQDyBgIA8wcBAPIGAgDzBwEA8wcBAPIGAADyBgAA8wcBAPIGAgDzBwEA8gYCAPIGAADyBgIA8wcBAPIGAADyBgAA8gYAAPMHAQDyBgAA8gYAAPIGAADyBgIA7gYCAO4GAADzBwEA8wcBAPMHAQDzBwEA8gYCAPIGAgDyhoKA8wcBAPMHAQDzBwEA8wcBAPMHAQDzBwEA8gYAAPMHAQDyBgIA7hYQEPoKBAT+BgAA/gYAAP4GAAD+CgQE/goEBP4GAAD+CgQE/gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/goEBP4KBAT+BgAA/gYAAP4GAAD+CgQE/goEBP4KBAT+DggI/goEBP4KBAT+CgQE/gYAAP4KBAT+NjAw+oaCgPKGgoDzBwEA8wcBAPMHAQDzBwEA8gYCAO4GAgDyBgAA8wcBAPKGgoDyBgAA8wcBAPIGAgDyBgIA8wcBAPMHAQDzBwEA8wcBAPMHAQDzBwEA8wcBAPMHAQDyBgAA8wcBAPMHAQDzBwEA8gYCAPMHAQDzBwEA8wcBAPIGAADyBgAA8wcBAPMHAQDzBwEA8wcBAPMHAQDzBwEA8wcBAPIGAADyBgAA8gYAAPMHAQDyBgIA7gYAAPIGAgDuBgAA8gYAAPIGAADzBwEA8gYAAPMHAQDzBwEA8wcBAPIGAgDyhoKA8oaCgPMHAQDyBgIA8gYCAPIGAgDyBgAA8wcBAPIGAADyBgAA8gYAAPOXkZD6BgAA/gYAAP4GAAD+CgQE/gYAAP4GAAD+CgQE/goEBP4GAAD+BgAA/gYAAP4KBAT+BgAA/goEBP4KBAT+CgQE/goEBP4KBAT+BgAA/goEBP4KBAT+CgQE/goEBP4KBAT+CgQE/goEBP4OCgj6BgIA8oaCgPIGAgDzBwEA8wcBAPMHAQDzBwEA8gYCAPIGAADyBgAA8gYCAPMHAQDzBwEA8wcBAPMHAQDyBgIA8wcBAPMHAQDzBwEA8gYCAPMHAQDzBwEA8wcBAPMHAQDyBgAA8wcBAPMHAQDzBwEA8gYCAPMHAQDzBwEA8gYCAPIGAADyBgAA8gYAAPKGgoDyBgIA8wcBAPMHAQDzBwEA8wcBAPMHAwDyBgAA8wcBAPIGAADzBwEA8gYAAPIGAADyBgAA8gYAAPMHAQDyBgAA8wcBAPMHAQDyhoKA8oaCgPKGgoDyBgIA8gYCAPIGAADzBwEA8wcBAPMHAQDyBgAA8AAAAAIGAADyBgAA8gYCAO8HAQDyzsrI+gYAAP4GAAD+BgAA/gYAAP4GAAD+BgAA/goEBP4KBAT+BgAA/goEBP4GAAD+BgAA/gYAAP4KBAT+CgQE/g4ICP4KBAT+CgQE/goEBP4KBAT+BgAA/gYAAP4GAAD+BgAA/oaCgPoGAgDuBgAA8gYCAO4GAgDzBwEA8wcBAPMHAQDyBgAA8gYCAO4GAADyBgAA8gYCAPMHAQDzBwEA8wcBAPIGAADyBgAA8gYCAPMHAQDzBwEA8gYCAPMHAQDyBgAA8gYCAPIGAADyBgAA8gYCAPIGAgDyBgIA8wcBAPIGAADzBwEA8wcBAPIGAgDuhoKA8wcBAPMHAQDzBwEA8wcBAPMHAQDyBgIA8wcBAPMHAQDzBwEA8gYCAPIGAADyBgAA8gYAAPMHAQDwAAAAAwcBAPMHAQDyBgAA8gYCAPIGAgDyhoKA8oaCgPKGgoDyBgIA8wcBAPIGAgDyBgIA8wcBAPMHAQDyBgIA8gYAAPMHAQDyBgIA7gYAAPMHAQDyBgAA94eDgPoGAAD+BgAA/gYAAP4GAAD+CgQE/g4ICP4KBAT+CgQE/goEBP4GAAD+BgAA/goEBP4KBAT+CgQE/goEBP4KBAT+CgQE/gYAAP4GAAD+BgAA/gYAAP4GAAD/j4uI+kZCQPYGAADyBgIA7wcBAPMHAQDyBgIA8oaCgPMHAQDyBgIA7wcBAPIGAgDzBwEA8gYAAPIGAgDzBwEA8wcBAPMHAQDzBwEA8wcBAPMHAQDzBwEA8gYAAPMHAQDyBgIA8wcBAPIGAgDyBgAA8wcBAPMHAQDyBgIA8wcBAPIGAgDvBwEA8gYAAPIGAADzBwEA8gYCAO4GAADyBgIA7gYCAPMHAQDyBgIA8gYAAPMHAQDzBwEA8wcBAPMHAQDyBgIA7wcBAPMHAQDyBgAA8wcBAPMHAQDzBwEA8gYCAPMHAQDyBgIA8gYCAPIGAADzBwEA8gYCAPIGAgDzBwEA8wcBAPMHAQDyBgAA8gYCAPIGAgDzBwEA8wcBAPMHAQDyBgAA8gYAAPoGAAD+BgAA/gYAAP4KBAT+CgQE/gYAAP4KBAT+CgQE/goEBP4GAAD+BgAA/goEBP4KBAT+BgAA/goEBP4KBAT+BgAA/goEBP4GAAD+BgAA/goEBP4KBAT/R0NA9gYCAPIGAgDzBwEA8gYCAPIGAgDzBwEA8wcBAPIGAgDzBwEA8wcBAPMHAQDzBwEA8gYAAPIGAgDyhoKA8gYCAPIGAADzBwEA8gYAAPMHAQDzBwEA8wcBAPMHAQDzBwEA8wcBAPIGAgDyBgAA8gYCAPMHAQDyBgAA8gYAAPMHAQDyBgAA8wcBAPIGAgDyBgAA8gYCAO4GAgDuBgAA8gYCAO4GAADzBwEA8wcBAPIGAgDzBwEA8wcBAPIGAADyBgAA8gYAAPIGAADyBgAA8gYAAPIGAgDzBwEA8wcBAPMHAQDyBgAA8gYAAPIGAgDyBgIA8wcBAPMHAQDzBwEA8wcBAPMHAQDyBgAA8wcBAPMHAQDzBwEA8wcBAPMHAQDzBwEA8gYAAPJOSkj6BgAA/gYAAP4KBAT+DggI/gYAAP4KBAT+CgQE/goEBP4GAAD+BgAA/goEBP4KBAT+CgQE/goEBP4GAAD+BgAA/gYAAP4GAAD+BgAA/goEBP4WEhD6BgAA8gYCAPIGAgDzBwEA8gYAAPMHAQDyBgIA8wcBAPIGAgDyBgIA8gYCAPIGAgDyBgIA8gYAAPIGAgDyBgIA7gYCAPIGAgDzBwEA8wcBAPMHAQDzBwEA8wcBAPMHAQDzBwEA8wcBAPIGAgDyBgIA8gYAAPIGAADzBwEA8wcBAPIGAADzBwEA8gYAAPIGAgDuBgAA8gYAAPMHAQDyBgIA7wcBAPIGAADzBwEA8wcBAPMHAQDyBgAA8wcBAPIGAADyBgIA8gYAAPMHAQDyBgAA8gYAAPIGAgDyBgAA8wcBAPMHAQDyBgIA8gYCAPMHAQDyBgAA8oaCgPIGAADyBgIA7wcBAPMHAQDzBwEA8gYAAPMHAQDzBwEA8wcBAPMHAQDyBgIA8gYCAO5GQED3j4uI+gYAAP4OCAj+CgQE/goEBP4OCAj+CgQE/goEBP4GAAD+CgQE/goEBP4KBAT+CgQE/goEBP4KBAT+BgAA/gYAAP4GAAD+CgQE/5eTkPoGAgDzBwEA8oaCgPIGAgDzBwEA8wcBAPMHAQDyhoKA8gYCAPIGAADzBwEA8oaCgPMHAQDzBwEA8wcBAPMHAQDyBgAA8wcBAPMHAQDzBwEA8gYAAPIGAgDyBgIA8wcBAPMHAQDzBwEA8wcBAPMHAQDyBgAA8gYAAPIGAADzBwEA8wcBAPIGAgDyhoKA8wcBAPMHAQDyBgIA8gYAAPIGAgDyBgAA8oaCgPIGAADzBwEA8wcBAPMHAQDyBgAA8wcBAPMHAQDyBgIA8wcBAPIGAgDzBwEA8gYAAPIGAgDzBwEA8wcBAPMHAQDyBgIA8gYCAPIGAgDzBwEA8gYCAPIGAgDyBgAA8gYAAPIGAADyBgIA8wcBAPMHAQDzBwEA8wcBAPIGAgDzBwEA8gYAAPIGAADyJiAg+goEBP4KBAT+DggI/goEBP4OCAj+CgQE/g4ICP4GAAD+CgQE/goEBP4KBAT+CgQE/goEBP4KBAT+CgQE/gYAAP4KBAT+CgQE/qagoPoGAADyBgAA8gYAAPIGAADyBgIA8gYCAPIGAADyBgIA8gYCAO8HAQDyBgAA8wcBAPIGAADyBgAA8gYCAPIGAADyBgIA7gYAAPIGAADyBgIA8wcBAPMHAQDzBwEA8wcBAPMHAQDzBwEA8gYAAPMHAQDyBgAA8wcBAPIGAADyBgAA8gYAAPMHAQDyBgIA8wcBAPIGAgDyBgIA7wcBAPKGgoDzBwEA8wcBAPMHAQDzBwEA8wcBAPMHAQDyBgIA8gYCAPIGAgDvBwEA8gYAAPIGAgDvBwEA8gYCAPKGgoDyBgIA8gYCAPMHAQDzBwEA8gYCAPMHAQDzBwEA8wcBAPIGAADzBwEA8wcBAPMHAQDyBgIA8gYAAPIGAADzBwEA8wcBAPAAAAACBgAA8gYCAO4GAADyBgIA7s7KyPoGAAD+BgAA/gYAAP4GAAD+CgQE/g4ICP4GAAD+CgQE/goEBP4KBAT+CgQE/goEBP4KBAT+CgQE/gYAAP4KBAT+lpKQ+gYCAPMHAQDzBwEA8wcBAPKGgoDyBgIA8gYCAPMHAQDzBwEA8gYCAPMHAQDzBwEA8gYCAPMHAQDzBwEA8gYAAPMHAQDzBwEA8wcBAPMHAQDzBwEA8wcBAPIGAgDyBgIA8gYCAPIGAADyBgAA8gYAAPIGAgDvBwEA8gYCAPMHAQDzBwEA8gYCAPIGAgDzBwEA8gYAAPIGAADyBgAA8wcBAPKGgoDzBwEA8wcBAPIGAADyBgAA8wcBAPIGAgDyBgIA8gYCAPIGAADyBgAA8gYCAO4GAADyBgIA8wcBAPIGAgDyhoKA8gYCAPIGAADzBwEA8gYCAPMHAQDyBgIA8wcBAPIGAADzBwEA8oaCgPIGAgDyBgIA8gYAAPIGAADzBwEA8wcBAPIGAgDzBwEA8gYAAPIGAADyBgAA8iYiIPfHw8D6BgAA/gYAAP4GAAD+BgAA/goEBP4KBAT+CgQE/g4ICP4OCAj+CgQE/goEBP4KBAT+CgQE/goEBP4KBAT+JiIg9wcBAPMHAQDzBwEA8gYCAO4GAgDyBgAA8wcBAPMHAQDyhoKA8wcBAPMHAQDyBgAA8gYCAPMHAQDyhoKA8wcBAPIGAADzBwEA8wcBAPMHAQDyBgIA8wcBAPMHAQDyBgIA8gYCAPIGAgDyBgAA8gYCAO4GAgDvBwEA8wcBAPMHAQDzBwEA8wcBAPMHAQDzBwEA8wcBAPIGAADyBgAA8gYAAPIGAgDyBgIA8gYCAPIGAADzBwEA8gYCAPIGAgDzBwEA8oaCgPMHAQDzBwEA8gYCAPIGAgDzBwEA8gYAAPMHAQDyBgAA8gYAAPIGAgDyBgAA8wcBAPIGAADyBgAA8gYCAO8HAQDzBwEA8wcBAPIGAADzBwEA8wcBAPMHAQDyBgIA8wcBAPMHAQDyBgIA8wcBAPMHAQDzBwEA8wcBAPIOCgj6BgAA/gYAAP4GAAD+BgAA/gYAAP4KBAT+DggI/goEBP4KBAT+CgQE/goEBP4OCAj+CgQE/goEBP6WkpD6BgIA8gYCAPIGAgDzBwEA8wcBAPKGgoDzBwEA8wcBAPIGAADzBwEA8gYAAPMHAQDyBgAA8wcBAPIGAgDuBgAA8gYAAPIGAADzBwEA8wcBAPIGAADzBwEA8oaCgPMHAQDzBwEA8wcBAPMHAQDzBwEA8wcBAPMHAQDzBwEA8wcBAPMHAQDzBwEA8wcBAPMHAQDyBgIA8wcBAPIGAgDyBgIA8wcBAPMHAQDzBwEA8wcBAPMHAQDzBwEA8gYCAPMHAQDyBgIA8gYCAPIGAADyBgIA8wcBAPIGAgDyBgAA8gYCAPIGAADyBgAA8AAAAAIGAADyBgAA8wcBAPIGAADyBgIA8gYAAPIGAADzBwEA8wcBAPIGAADyBgIA8wcBAPMHAQDzBwEA8wcBAPKGgoDyBgIA8wcBAPIGAgDyBgIA8gYCAPJGQED3z8vI+gYAAP4GAAD+DggI/goEBP4GAAD+CgQE/g4ICP4KBAT+CgQE/goEBP4KBAT+CgQE/4+LiPpmYmD3BwEA8wcBAPKGgoDyBgIA8gYCAPMHAQDzBwEA8wcBAPIGAADzBwEA8wcBAPIGAgDyBgAA8gYAAPKGgoDzBwEA8gYCAPKGgoDzBwEA8wcBAPMHAQDzBwEA8wcBAPIGAADzBwEA8wcBAPMHAQDzBwEA8gYCAPMHAQDzBwEA8wcBAPMHAQDzBwEA8wcBAPMHAQDyBgAA8wcBAPIGAgDyBgIA8wcBAPMHAQDzBwEA8gYCAPIGAADzBwEA8wcBAPIGAgDzBwEA8gYAAPMHAQDzBwEA8gYAAPMHAQDyBgIA7gYAAPIGAADyBgAA8AAAAAMHAQDzBwEA8wcBAPAAAAACBgAA8gYAAPIGAADyBgAA8gYAAPIGAgDuBgAA8gYAAPMHAQDzBwEA8gYCAPIGAgDyBgIA8gYCAPIGAgDzBwEA8wcBAPIGAADyDgoI+goEBP4KBAT+CgQE/goEBP4GAAD+CgQE/goEBP4KBAT+BgAA/goEBP4KBAT+CgQE/g4KCPsHAQDyhoKA8oaCgPIGAgDzBwEA8gYCAPMHAQDyBgAA8gYAAPMHAQDzBwEA8gYAAPKGgoDzBwEA8wcBAPMHAQDyBgAA8wcBAPMHAQDzBwEA8gYCAPMHAQDzBwEA8wcBAPMHAQDyBgIA8gYCAPMHAQDzBwEA8gYCAPMHAQDzBwEA8wcBAPIGAgDyBgIA8wcBAPMHAQDyBgIA8wcBAPIGAgDuBgAA8wcBAPMHAQDzBwEA8gYCAPMHAQDzBwEA8wcBAPMHAQDzBwEA8oaCgPIGAADyBgAA8gYAAPIGAgDuBgIA7gYCAO8HAQDyBgIA7gYCAO4GAADyBgAA8wcBAPMHAQDyBgIA7wcBAPMHAQDyBgIA8gYAAPIGAgDuBgAA8gYAAPMHAQDzBwEA8gYCAPIGAgDyBgIA8oaCgPIGAgDzBwEA8gYCAPIGAADyhoCA98/LyPoKBAT+CgQE/goEBP4GAAD+CgQE/goEBP4KBAT+BgAA/gYAAP4KBAT+CgQE/mZiYPYGAADyBgIA8oaCgPIGAgDzBwEA8wcBAPMHAQDzBwEA8gYAAPIGAADzBwEA8gYCAPIGAgDzBwEA8oaCgPIGAgDvBwEA8gYCAPMHAQDyBgIA8wcBAPMHAQDzBwEA8wcBAPIGAgDyBgIA8gYCAPIGAgDzBwEA8gYCAPIGAADzBwEA8wcBAPMHAQDyBgIA8gYAAPMHAQDzBwEA8gYCAPIGAADyBgAA8wcBAPMHAQDzBwEA8gYAAPIGAgDzBwEA8wcBAPMHAQDyBgIA8gYAAPIGAADyBgIA7gYAAPIGAADyBgAA8gYAAPIGAADyBgIA8gYAAPIGAgDuBgIA7wcBAPMHAQDyBgAA8gYAAPMHAQDzBwEA8gYCAPIGAADyBgAA8gYAAPIGAADzBwEA8wcBAPIGAgDyBgIA8gYCAPIGAgDzBwEA8wcBAPIGAADyBgAA8hYSEPoKBAT+BgAA/goEBP4GAAD+CgQE/goEBP4GAAD+CgQE/gYAAP4KBAT+lpKQ+gYCAPIGAgDzBwEA8gYCAPMHAQDzBwEA8gYCAPIGAgDyBgIA8wcBAPIGAADzBwEA8gYAAPIGAgDuBgIA7wcBAPIGAgDuBgAA8gYCAPIGAADyBgAA8gYCAPMHAQDyBgIA8wcBAPIGAgDyBgIA8wcBAPIGAgDyBgIA8wcBAPMHAQDzBwEA8wcBAPMHAQDyhoKA8wcBAPMHAQDzBwEA8wcBAPIGAgDuBgAA8gYCAPMHAQDzBwEA8wcBAPIGAADzBwEA8wcBAPIGAgDzBwMA8wcBAPMHAQDzBwEA8AAAAAIGAADzBwEA8AAAAAIGAADyBgIA8gYAAPIGAgDvBwEA8oaCgPIGAgDyBgAA8wcBAPIGAADwAAAAAgYAAPMHAQDyBgAA8gYCAO4GAADzBwEA8wcBAPIGAgDyBgIA8gYCAPIGAgDzBwEA8gYAAPIGAADyBgAA8kZCQPYKBAT+CgQE/goEBP4KBAT+CgQE/goEBP4KBAT+CgQE/goEBP4KBAT+RkJA9wcBAPIGAgDyBgIA8gYCAPKGgoDzBwEA8wcBAPKGgoDzBwEA8wcBAPMHAQDyBgIA7gYCAO4GAADyBgIA8gYAAPIGAADyBgIA7gYCAO4GAgDyBgAA8gYCAPIGAgDzBwEA8wcBAPMHAQDyBgIA8wcBAPIGAgDyBgIA8gYCAPMHAQDyBgIA8wcBAPMHAQDyBgIA8wcBAPMHAQDzBwEA8wcBAPIGAADyBgAA8wcBAPMHAQDyBgAA8wcBAPMHAQDyBgAA8gYCAO8HAQDzBwEA8wcBAPMHAQDzBwEA8gYCAO4GAgDvBwEA8gYAAPIGAADyBgAA8gYCAO4GAADzBwEA8wcBAPIGAADyBgAA8wcBAPMHAQDyBgIA7gYCAO8HAQDyBgAA8AAAAAIGAADyBgAA8wcBAPMHAQDzBwEA8wcBAPMHAQDzBwEA8wcBAPMHAQDzBwEA8gYAAPMPCwj6BgAA/gYAAP4KBAT+CgQE/goEBP4KBAT+BgAA/goEBP7Oysj6BgIA8wcBAPIGAgDyBgIA8gYCAPIGAgDyBgIA8oaCgPKGgoDyBgIA8gYCAPIGAgDvBwEA8gYAAPMHAQDyBgAA8gYAAPIGAgDvBwEA8gYAAPMHAQDzBwEA8gYAAPMHAQDzBwEA8gYCAPIGAgDyBgAA8wcBAPIGAgDzBwEA8wcBAPMHAQDzBwEA8wcBAPMHAQDyBgIA8wcBAPMHAQDzBwEA8wcBAPIGAgDuBgAA8wcBAPMHAQDyBgIA8wcBAPMHAQDzBwEA8wcBAPMHAQDzBwEA8wcBAPIGAgDyBgIA8gYAAPIGAADyBgAA8wcBAPIGAgDuBgAA8gYAAPMHAQDyBgIA8wcBAPMHAQDzBwEA8wcBAPMHAQDyBgAA8gYAAPIGAgDuBgAA8gYCAO4GAADzBwEA8gYAAPIGAADzBwEA8wcBAPMHAQDzBwEA8wcBAPIGAgDyBgIA8gYAAPIGAAD6BgAA/gYAAP4KBAT+CgQE/goEBP4OCAj+BgAA/goEBP6WkJD7BwEA8wcBAPIGAADyBgAA8gYCAPKGgoDyBgIA7wcBAPMHAQDzBwEA8wcBAPKGgoDyBgIA8gYCAO4GAADwAAAAAgYCAO4GAADzBwEA8gYAAPIGAgDwAAAAAgYAAPMHAQDyBgIA8wcBAPMHAQDzBwEA8gYAAPMHAQDzBwEA8wcBAPMHAQDzBwEA8wcBAPMHAQDzBwEA8wcBAPMHAQDzBwEA8wcBAPMHAQDzBwEA8wcBAPMHAQDyBgAA8gYAAPIGAADyBgIA8oaCgPMHAQDyBgAA8gYAAPMHAQDzBwEA8gYAAPIGAgDuBgAA8wcBAPIGAgDuBgAA8gYAAPIGAADyBgAA8gYAAPIGAADzBwEA8gYAAPMHAQDyBgAA8gYAAPIGAADyBgAA8gYAAPIGAADyBgIA8wcBAPIGAgDyBgIA8gYCAPIGAgDzBwEA8wcBAPIGAADyhoKA8wcBAPMHAQDzz8vI+goEBP4KBAT+CgQE/goEBP4OCAj+CgQE/4+LiPoGAgDzBwEA8wcBAPMHAQDzBwEA8gYCAPMHAQDzBwEA8wcBAPMHAQDzBwEA8wcBAPKGgoDyBgIA8gYCAO4GAgDuBgAA8gYAAPIGAgDuBgAA8gYCAO4GAADzBwEA8wcBAPIGAADyBgAA8wcBAPIGAADzBwEA8gYCAPMHAQDzBwEA8wcBAPIGAADyBgAA8wcBAPIGAADyBgAA8gYAAPIGAgDvBwEA8gYAAPIGAADyBgAA8wcBAPKGgoDyBgAA8gYCAPIGAgDyhoKA8oaCgPIGAgDzBwEA8gYCAPMHAQDzBwEA8gYAAPIGAADyBgAA8wcBAPAAAAADBwEA8wcBAPIGAgDuBgIA7gYAAPIGAgDyBgAA8wcBAPIGAADyBgIA7gYAAPMHAQDyBgIA7gYCAO4GAgDvBwEA8wcBAPMHAQDyBgIA8gYCAPIGAgDzBwEA8oaCgPMHAQDzBwEA8wcBAPIGAADyVlJQ+goEBP4KBAT+CgQE/goEBP4KBAT+CgQE/paSkPoGAgDyBgIA8wcBAPMHAQDyhoKA8gYCAPIGAgDzBwEA8wcBAPMHAQDzBwEA8gYAAPIGAgDyBgIA8gYAAPIGAADyBgAA8gYCAPIGAADzBwEA8gYAAPIGAgDvBwEA8oaCgPIGAgDyBgIA8gYAAPIGAADzBwEA8gYCAPIGAgDzBwEA8gYCAPIGAgDyBgAA8oaCgPIGAADzBwEA8wcBAPMHAQDyBgAA8gYAAPIGAADyBgAA8gYCAPIGAgDzBwEA8gYCAPMHAQDzBwEA8gYCAPIGAgDyBgIA8gYCAPMHAQDzBwEA8gYAAPMHAQDyBgIA7gYAAPIGAgDuBgAA8gYAAPIGAADzBwEA8gYAAPIGAADyBgIA8wcBAPIGAADwAAAAAgYAAPIGAADyBgAA8gYAAPIGAADyBgIA7wcBAPIGAgDyBgIA8gYAAPIGAADzBwEA8gYAAPMHAQDzBwEA8wcBAPMHAQDyJiAg+goEBP4KBAT+CgQE/gYAAP4KBAT+BgAA/iYgIPoGAADyBgIA8gYAAPMHAQDyBgIA8wcBAPIGAgDyBgIA8gYCAPIGAgDzBwEA8gYAAPIGAADzBwEA8gYCAO4GAgDuBgIA7gYAAPIGAADyBgAA8gYAAPMHAQDyBgAA8wcBAPIGAADyBgAA8gYCAO4GAADyhoKA8gYCAO4GAgDsAAAAAgYCAO4GAgDuBgIA7gYAAPAAAAACBgAA8gYCAO4GAgDvBwEA8gYCAPIGAADyBgAA8wcBAPMHAQDzBwEA8wcBAPIGAADyBgIA8gYCAPIGAgDyBgIA8gYCAPMHAQDyhoKA8wcBAPIGAgDyBgAA8wcBAPMHAQDyBgAA8AAAAAIGAgDuBgIA8wcBAPAAAAACBgAA8wcBAPIGAgDuBgAA8gYAAPIGAADzBwEA8gYAAPIGAADyBgAA8gYCAO4GAADyBgIA8gYCAO8HAQDyBgAA8wcBAPMHAQDyBgAA8wcBAPMHAQDyBgAA88/LyPoGAAD+CgQE/goEBP4KBAT/j4uI+gYAAPMHAQDzBwEA8wcBAPMHAQDyBgIA8gYCAPKGgoDyBgIA8gYCAPIGAgDyBgIA7gYCAO8HAQDyBgAA8gYAAPIGAADyBgIA7gYAAPIGAgDsAAAAAAAAAAMHAQDyBgAA8gYAAPIGAgDuBgAA8gYAAPIGAADyBgAA8wcBAPIGAgDuBgIA7gYAAPMHAQDwAAAAAgYAAPIGAgDuBgIA7gYAAPMHAQDzBwEA8gYAAPMHAQDyBgAA8gYCAPIGAgDzBwEA8wcBAPMHAQDzBwEA8wcBAPMHAQDyBgAA8wcBAPMHAQDzBwEA8gYCAPMHAQDzBwEA8wcBAPMHAQDyBgAA8gYAAPKGgoDyBgAA8wcBAPIGAADyBgAA8gYAAPMHAQDyBgAA8gYAAPIGAADyBgIA7wcBAPIGAgDzBwEA8gYAAPAAAAACBgAA8gYAAPMHAQDzBwEA8wcBAPMHAQDyBgIA8wcBAPMHAQDyBgAA8paSkPoKBAT+CgQE/goEBP4KBAT+hoKA+gYAAPMHAQDyhoKA8gYCAPIGAADyBgIA8gYCAPMHAQDyBgIA8oaCgPIGAADyBgAA8gYAAPMHAQDzBwEA8oaCgPIGAgDyBgIA7gYCAPIGAADyBgAA8wcBAPIGAgDyhoKA8wcBAPIGAADyhoKA8gYAAPIGAADyBgIA7gYAAPIGAADyBgAA8gYAAPIGAADyBgAA8gYAAPIGAADzBwEA8gYAAPMHAQDyBgAA8gYAAPIGAADzBwEA8wcBAPIGAgDyBgAA8wcBAPIGAADzBwEA8gYAAPIGAADzBwEA8gYAAPMHAQDyBgIA8gYAAPIGAgDyBgIA8wcBAPMHAQDwAAAAAgYCAO8HAQDyBgAA8gYCAOwAAAACBgAA8gYAAPIGAADyBgAA8gYAAPIGAgDvBwEA8wcBAPMHAQDzBwEA8gYAAPIGAADyBgIA7wcBAPMHAQDzBwEA8gYAAPMHAQDyBgIA8wcBAPMHAQDzBwEA8xcREPoKBAT+CgQE/goEBP4KBAT+pqCg+wcBAPIGAgDyBgIA8wcBAPIGAADzBwEA8gYCAPIGAgDyBgIA8wcBAPMHAQDyBgIA8gYCAPIGAADyBgAA8gYCAPMHAQDyBgIA7wcBAPIGAADyBgAA8wcBAPIGAADzBwEA8wcBAPIGAgDuBgAA8gYCAO4GAADyBgAA8gYAAPIGAgDuBgAA8gYAAPIGAgDuBgAA8gYAAPIGAADyBgAA8gYCAO4GAgDuBgAA8gYAAPIGAgDuBgAA8gYAAPMHAQDzBwEA8gYAAPIGAADyBgIA8wcBAPMHAQDzBwEA8wcBAPIGAgDzBwEA8gYCAPMHAQDzBwEA8wcBAPIGAgDzBwEA8wcBAPIGAADzBwEA8gYCAO4GAADzBwEA8gYAAPIGAADzBwEA8wcBAPMHAQDzBwEA8wcBAPMHAQDzBwEA8gYCAPMHAQDzBwEA8wcBAPMHAQDyBgIA8gYCAPMHAQDzBwEA8wcBAPIGAADyBgAA8kZAQPYGAAD+CgQE/goEBP4KBAT+JiIg9gYCAPIGAgDyBgIA8wcBAPIGAgDyBgAA8gYCAPMHAQDyBgAA8wcBAPMHAQDzBwEA8wcBAPIGAADyBgAA8gYAAPIGAADyBgIA7gYAAPMHAQDyBgIA7gYCAO4GAgDsAAAAAgYCAO4GAADyBgAA8wcBAPIGAADyBgAA8gYCAO4GAADzBwEA8wcBAPMHAQDzBwEA8wcBAPIGAADyBgIA7gYAAPIGAgDyBgIA7gYAAPAAAAACBgAA8wcBAPMHAQDzBwEA8wcBAPIGAADzBwEA8wcBAPIGAgDyBgAA8wcBAPIGAgDzBwEA8wcBAPKGgoDyBgAA8wcBAPIGAADzBwEA8AAAAAIGAADyBgIA7gYAAPMHAQDyBgAA8gYAAPIGAADyBgAA8wcBAPIGAADzBwEA8gYCAPIGAADyBgIA7wcBAPIGAgDyBgIA8gYAAPMHAQDyBgIA8gYCAPMHAQDyBgIA8wcBAPMHAQDyBgAA8wcBAPOXkZD7h4OA+8/LyPunoaD7BwEA8gYCAPIGAgDzBwEA8gYAAPIGAgDvBwEA8wcBAPIGAADyBgIA8wcBAPIGAADyBgIA8wcBAPMHAQDyBgAA8gYAAPIGAADyBgAA8gYAAPIGAgDvBwEA8wcBAPIGAgDuBgAA8gYAAPIGAgDuBgAA8wcBAPIGAgDyBgIA7gYCAO4GAADzBwEA8wcBAPMHAQDzBwEA8wcBAPIGAgDuBgIA7gYCAPMHAQDyBgIA7gYAAPIGAADyBgAA8'
+      };
 
-            const cx = size / 2;
-            const cy = size / 2;
-            const radius = size * 0.44; // Spark outer radius
-            const innerCurve = radius * 0.18; // Gemini inward curve ratio
+      function decodeAlphaMap(size) {
+        const b64 = B64[size];
+        const bin = atob(b64);
+        const bytes = new Uint8Array(bin.length);
+        for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+        const expectedLen = size * size;
+        return new Float32Array(bytes.buffer, 0, expectedLen);
+      }
 
-            // Render crisp Gemini spark star logo path
-            ctx.fillStyle = '#ffffff';
-            ctx.beginPath();
-            ctx.moveTo(cx, cy - radius);
-            ctx.quadraticCurveTo(cx + innerCurve, cy - innerCurve, cx + radius, cy);
-            ctx.quadraticCurveTo(cx + innerCurve, cy + innerCurve, cx, cy + radius);
-            ctx.quadraticCurveTo(cx - innerCurve, cy + innerCurve, cx - radius, cy);
-            ctx.quadraticCurveTo(cx - innerCurve, cy - innerCurve, cx, cy - radius);
-            ctx.closePath();
-            ctx.fill();
+      // ── Core algorithm ──
+      const ALPHA_NOISE_FLOOR = 3 / 255;
+      const ALPHA_THRESHOLD = 0.002;
+      const MAX_ALPHA = 0.99;
+      const LOGO_VALUE = 255;
 
-            // Extract alpha buffer
-            const imgData = ctx.getImageData(0, 0, size, size);
-            const data = imgData.data;
-            const alphaMap = new Float32Array(size * size);
-
-            // Gemini watermark typically composited with ~0.45 - 0.65 base opacity
-            const baseLogoOpacity = 0.52 * alphaStrength;
-
-            for (let i = 0; i < size * size; i++) {
-                // Read red channel or alpha channel from rasterized spark
-                const rawAlpha = (data[i * 4 + 3] / 255.0) * baseLogoOpacity;
-                alphaMap[i] = Math.min(0.92, rawAlpha); // Clamp upper alpha to prevent division artifacts
+      function removeWatermark(imageData, alphaMap, pos) {
+        const { x, y, width, height } = pos;
+        const W = imageData.width;
+        for (let row = 0; row < height; row++) {
+          for (let col = 0; col < width; col++) {
+            const imgIdx = ((y + row) * W + (x + col)) * 4;
+            const alphaIdx = row * width + col;
+            const rawAlpha = alphaMap[alphaIdx];
+            const signalAlpha = Math.max(0, rawAlpha - ALPHA_NOISE_FLOOR);
+            if (signalAlpha < ALPHA_THRESHOLD) continue;
+            const alpha = Math.min(rawAlpha, MAX_ALPHA);
+            const oneMinusAlpha = 1.0 - alpha;
+            for (let c = 0; c < 3; c++) {
+              const wm = imageData.data[imgIdx + c];
+              const orig = (wm - alpha * LOGO_VALUE) / oneMinusAlpha;
+              imageData.data[imgIdx + c] = Math.max(0, Math.min(255, Math.round(orig)));
             }
-
-            return alphaMap;
+          }
         }
+      }
 
-        // Processing State Variables
-        let activeFile = null;
-        let loadedImg = null;
-        let processedBlob = null;
+      // ── Detection ──
+      function detectConfig(w, h) {
+        if (w > 1024 && h > 1024) return { logoSize: 96, marginRight: 64, marginBottom: 64 };
+        return { logoSize: 48, marginRight: 32, marginBottom: 32 };
+      }
+      function calcPos(w, h, cfg) {
+        return {
+          x: w - cfg.marginRight - cfg.logoSize,
+          y: h - cfg.marginBottom - cfg.logoSize,
+          width: cfg.logoSize,
+          height: cfg.logoSize
+        };
+      }
 
-        // DOM Elements
-        const drop = document.getElementById('drop');
-        const filein = document.getElementById('filein');
-        const statusPanel = document.getElementById('status-panel');
-        const controlsPanel = document.getElementById('controls-panel');
-        const sdot = document.getElementById('sdot');
-        const smsg = document.getElementById('smsg');
-        const sext = document.getElementById('sext');
-        const pw = document.getElementById('pw');
-        const pb = document.getElementById('pb');
-        const origCanvas = document.getElementById('orig-canvas');
-        const pbox = document.getElementById('pbox');
-        const osz = document.getElementById('osz');
-        const psz = document.getElementById('psz');
-        const chips = document.getElementById('chips');
-        const dlbtn = document.getElementById('dlbtn');
-        const resetBtn = document.getElementById('reset');
-        const cv = document.getElementById('cv');
-        const ctx = cv.getContext('2d', { willReadFrequently: true });
+      // ── UI Elements (scoped to tool wrap) ──
+      const wrap = document.querySelector('.nisulka-tool-wrap');
+      const drop = wrap.querySelector('#drop');
+      const filein = wrap.querySelector('#filein');
+      const panel = wrap.querySelector('#panel');
+      const sdot = wrap.querySelector('#sdot');
+      const smsg = wrap.querySelector('#smsg');
+      const sext = wrap.querySelector('#sext');
+      const pw = wrap.querySelector('#pw');
+      const pb = wrap.querySelector('#pb');
+      const oimg = wrap.querySelector('#oimg');
+      const pbox = wrap.querySelector('#pbox');
+      const osz = wrap.querySelector('#osz');
+      const psz = wrap.querySelector('#psz');
+      const chips = wrap.querySelector('#chips');
+      const dlbtn = wrap.querySelector('#dlbtn');
+      const reset = wrap.querySelector('#reset');
+      const cv = document.getElementById('cv');
 
-        // Controls
-        const wmPosition = document.getElementById('wm-position');
-        const wmScale = document.getElementById('wm-scale');
-        const scaleVal = document.getElementById('scale-val');
-        const offsetX = document.getElementById('offset-x');
-        const offsetXVal = document.getElementById('offset-x-val');
-        const offsetY = document.getElementById('offset-y');
-        const offsetYVal = document.getElementById('offset-y-val');
-        const alphaScale = document.getElementById('alpha-scale');
-        const alphaVal = document.getElementById('alpha-val');
+      function setStatus(cls, msg, ext) {
+        sdot.className = 'gwr-sdot ' + cls;
+        smsg.textContent = msg;
+        sext.textContent = ext || '';
+      }
+      function setProgress(p) {
+        pw.classList.add('show');
+        pb.style.width = p + '%';
+      }
+      function chip(label, val) {
+        const d = document.createElement('div');
+        d.className = 'gwr-chip';
+        d.innerHTML = label + ': <strong>' + val + '</strong>';
+        chips.appendChild(d);
+      }
 
-        // Drag and Drop Listeners
-        ['dragenter', 'dragover'].forEach(eventName => {
-            drop.addEventListener(eventName, (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                drop.classList.add('over');
-            }, false);
-        });
+      drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('over'); });
+      drop.addEventListener('dragleave', () => drop.classList.remove('over'));
+      drop.addEventListener('drop', e => {
+        e.preventDefault();
+        drop.classList.remove('over');
+        const f = e.dataTransfer.files[0];
+        if (f) go(f);
+      });
+      filein.addEventListener('change', e => {
+        if (e.target.files[0]) go(e.target.files[0]);
+      });
 
-        ['dragleave', 'drop'].forEach(eventName => {
-            drop.addEventListener(eventName, (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                drop.classList.remove('over');
-            }, false);
-        });
+      reset.addEventListener('click', () => {
+        panel.style.display = 'none';
+        drop.style.display = '';
+        chips.innerHTML = '';
+        dlbtn.style.display = 'none';
+        pbox.innerHTML = '<div class="ph">Processing…</div>';
+        pw.classList.remove('show');
+        pb.style.width = '0%';
+        filein.value = '';
+      });
 
-        drop.addEventListener('drop', (e) => {
-            const dt = e.dataTransfer;
-            const files = dt.files;
-            if (files && files.length > 0) {
-                handleFile(files[0]);
-            }
-        });
-
-        filein.addEventListener('change', (e) => {
-            if (e.target.files && e.target.files.length > 0) {
-                handleFile(e.target.files[0]);
-            }
-        });
-
-        // Control Listeners
-        alphaScale.addEventListener('input', (e) => {
-            alphaVal.textContent = e.target.value + '%';
-            if (loadedImg) reprocessImage();
-        });
-
-        wmScale.addEventListener('input', (e) => {
-            scaleVal.textContent = e.target.value + 'px';
-            if (loadedImg) reprocessImage();
-        });
-
-        offsetX.addEventListener('input', (e) => {
-            offsetXVal.textContent = e.target.value + 'px';
-            if (loadedImg) reprocessImage();
-        });
-
-        offsetY.addEventListener('input', (e) => {
-            offsetYVal.textContent = e.target.value + 'px';
-            if (loadedImg) reprocessImage();
-        });
-
-        wmPosition.addEventListener('change', () => { if (loadedImg) reprocessImage(); });
-
-        resetBtn.addEventListener('click', resetUI);
-
-        function resetUI() {
-            activeFile = null;
-            loadedImg = null;
-            processedBlob = null;
-            filein.value = '';
-            statusPanel.style.display = 'none';
-            controlsPanel.style.display = 'none';
-            drop.style.display = 'block';
-            pbox.innerHTML = '<div class="placeholder-text"><i class="fa-solid fa-spinner fa-spin"></i> Processing image...</div>';
-            dlbtn.style.display = 'none';
+      function go(file) {
+        if (!file.type.startsWith('image/')) {
+          alert('Please select an image file.');
+          return;
         }
+        drop.style.display = 'none';
+        panel.style.display = 'block';
+        setStatus('proc', 'Loading image…');
+        setProgress(10);
 
-        function formatBytes(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        const reader = new FileReader();
+        reader.onload = e => {
+          const url = e.target.result;
+          const img = new Image();
+          img.onload = () => {
+            oimg.src = url;
+            osz.textContent = img.naturalWidth + ' × ' + img.naturalHeight;
+            setStatus('proc', 'Detecting watermark variant…');
+            setProgress(30);
+            setTimeout(() => process(img, file.name), 60);
+          };
+          img.onerror = () => setStatus('err', 'Failed to load image.');
+          img.src = url;
+        };
+        reader.readAsDataURL(file);
+      }
+
+      function process(img, fname) {
+        try {
+          const W = img.naturalWidth, H = img.naturalHeight;
+          const cfg = detectConfig(W, H);
+          const pos = calcPos(W, H, cfg);
+          const sz = cfg.logoSize;
+
+          setStatus('proc', 'Decoding alpha map (' + sz + '×' + sz + ')…', 'pos: ' + pos.x + ',' + pos.y);
+          setProgress(50);
+
+          cv.width = W;
+          cv.height = H;
+          const ctx = cv.getContext('2d', { willReadFrequently: true });
+          ctx.drawImage(img, 0, 0);
+          const imageData = ctx.getImageData(0, 0, W, H);
+
+          setStatus('proc', 'Applying reverse alpha blending…');
+          setProgress(70);
+
+          const alphaMap = decodeAlphaMap(sz);
+          removeWatermark(imageData, alphaMap, pos);
+          ctx.putImageData(imageData, 0, 0);
+          setProgress(90);
+
+          cv.toBlob(blob => {
+            const burl = URL.createObjectURL(blob);
+            const pimg = document.createElement('img');
+            pimg.src = burl;
+            pimg.alt = 'processed';
+            pbox.innerHTML = '';
+            pbox.appendChild(pimg);
+            psz.textContent = W + ' × ' + H;
+
+            chips.innerHTML = '';
+            chip('Dimensions', W + ' × ' + H);
+            chip('Watermark', sz + '×' + sz + 'px');
+            chip('Output size', (blob.size / 1024).toFixed(1) + ' KB');
+            chip('Algorithm', 'Rev. Alpha Blend');
+
+            const cleanName = fname.replace(/\.[^.]+$/, '') + '-no-watermark.png';
+            dlbtn.href = burl;
+            dlbtn.download = cleanName;
+            dlbtn.style.display = 'inline-flex';
+
+            setStatus('ok', 'Watermark removed successfully!', '✓');
+            setProgress(100);
+          }, 'image/png');
+
+        } catch (err) {
+          setStatus('err', 'Error: ' + err.message);
         }
-
-        function handleFile(file) {
-            if (!file.type.match(/^image\/(png|jpeg|webp)$/)) {
-                alert('Please select a valid PNG, JPEG, or WebP image file.');
-                return;
-            }
-
-            activeFile = file;
-            drop.style.display = 'none';
-            statusPanel.style.display = 'block';
-            controlsPanel.style.display = 'grid';
-
-            sdot.className = 'status-dot proc';
-            smsg.textContent = 'Loading image memory...';
-            sext.textContent = file.name;
-            pw.style.display = 'block';
-            pb.style.width = '20%';
-
-            osz.textContent = formatBytes(file.size);
-
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const img = new Image();
-                img.onload = () => {
-                    loadedImg = img;
-
-                    // Auto-calculate suggested watermark scale based on image dimensions
-                    const maxDim = Math.max(img.width, img.height);
-                    let autoScale = 48;
-                    if (maxDim >= 1800) autoScale = 96;
-                    else if (maxDim >= 1200) autoScale = 64;
-                    else if (maxDim < 600) autoScale = 32;
-
-                    wmScale.value = autoScale;
-                    scaleVal.textContent = autoScale + 'px';
-
-                    pb.style.width = '50%';
-                    reprocessImage();
-                };
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function reprocessImage() {
-            if (!loadedImg) return;
-
-            const startTime = performance.now();
-            sdot.className = 'status-dot proc';
-            smsg.textContent = 'Applying reverse alpha vector matrix...';
-            pb.style.width = '70%';
-
-            const width = loadedImg.width;
-            const height = loadedImg.height;
-
-            cv.width = width;
-            cv.height = height;
-            ctx.drawImage(loadedImg, 0, 0);
-
-            const imgData = ctx.getImageData(0, 0, width, height);
-            const data = imgData.data;
-
-            const mapSize = parseInt(wmScale.value, 10);
-            const alphaMult = parseFloat(alphaScale.value) / 100.0;
-            const padX = parseInt(offsetX.value, 10);
-            const padY = parseInt(offsetY.value, 10);
-
-            // Generate Vector Gemini Alpha Map
-            const alphaMap = generateGeminiAlphaMap(mapSize, alphaMult);
-
-            // Calculate Target Bounding Box Position
-            const pos = wmPosition.value;
-            let startX = width - mapSize - padX;
-            let startY = height - mapSize - padY;
-
-            if (pos === 'bl') {
-                startX = padX;
-                startY = height - mapSize - padY;
-            } else if (pos === 'tr') {
-                startX = width - mapSize - padX;
-                startY = padY;
-            } else if (pos === 'tl') {
-                startX = padX;
-                startY = padY;
-            }
-
-            // Clamped boundaries
-            startX = Math.max(0, Math.min(width - mapSize, startX));
-            startY = Math.max(0, Math.min(height - mapSize, startY));
-
-            // Perform Mathematical Inversion
-            // Formula: Clean = (Watermarked - alpha * 255) / (1 - alpha)
-            for (let my = 0; my < mapSize; my++) {
-                for (let mx = 0; mx < mapSize; mx++) {
-                    const px = startX + mx;
-                    const py = startY + my;
-
-                    if (px >= width || py >= height) continue;
-
-                    const alphaIdx = my * mapSize + mx;
-                    const alpha = alphaMap[alphaIdx];
-
-                    if (alpha <= 0.005) continue; // Skip near-zero alpha
-
-                    const pixelIdx = (py * width + px) * 4;
-
-                    for (let c = 0; c < 3; c++) {
-                        const wmVal = data[pixelIdx + c];
-                        // Inverse alpha composite assuming standard white logo (255)
-                        let cleanVal = (wmVal - alpha * 255.0) / (1.0 - alpha);
-                        data[pixelIdx + c] = Math.min(255, Math.max(0, Math.round(cleanVal)));
-                    }
-                }
-            }
-
-            ctx.putImageData(imgData, 0, 0);
-
-            // Render Original Preview with Target Box Overlay
-            origCanvas.width = width;
-            origCanvas.height = height;
-            const octx = origCanvas.getContext('2d');
-            octx.drawImage(loadedImg, 0, 0);
-            octx.strokeStyle = '#0284c7';
-            octx.lineWidth = Math.max(2, Math.round(width / 300));
-            octx.setLineDash([6, 4]);
-            octx.strokeRect(startX, startY, mapSize, mapSize);
-
-            // Export Clean PNG Image
-            cv.toBlob((blob) => {
-                processedBlob = blob;
-                const cleanUrl = URL.createObjectURL(blob);
-
-                pbox.innerHTML = '';
-                const pimg = document.createElement('img');
-                pimg.src = cleanUrl;
-                pimg.alt = 'Processed Clean Image';
-                pbox.appendChild(pimg);
-
-                psz.textContent = formatBytes(blob.size);
-                dlbtn.href = cleanUrl;
-                dlbtn.style.display = 'inline-flex';
-
-                const endTime = performance.now();
-                const duration = Math.round(endTime - startTime);
-
-                sdot.className = 'status-dot ok';
-                smsg.textContent = 'Gemini logo removed successfully!';
-                pb.style.width = '100%';
-                setTimeout(() => { pw.style.display = 'none'; }, 500);
-
-                // Render Metadata Chips
-                chips.innerHTML = `
-                    <div class="meta-chip">Resolution: <strong>${width} × ${height} px</strong></div>
-                    <div class="meta-chip">Processing Time: <strong>${duration} ms</strong></div>
-                    <div class="meta-chip">Vector Map: <strong>${mapSize}×${mapSize} px</strong></div>
-                    <div class="meta-chip">Inversion Engine: <strong>Reverse Alpha Vector Matrix</strong></div>
-                `;
-            }, 'image/png');
-        }
-
-        // FAQ Toggle Listener
-        document.querySelectorAll('.faq-question').forEach(q => {
-            q.addEventListener('click', () => {
-                const item = q.parentElement;
-                item.classList.toggle('active');
-            });
-        });
-    </script>
+      }
+    })();
+  </script>
 </body>
 </html>
