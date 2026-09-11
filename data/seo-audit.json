@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-11T17:09:19.285228+00:00",
-  "totalTools": 12,
+  "generatedAt": "2026-09-11T17:12:41.128899+00:00",
+  "totalTools": 11,
   "averageScore": 77.4,
   "tools": [
     {
@@ -193,44 +193,6 @@
       "rank": 5
     },
     {
-      "name": "Remove Gemini Logo",
-      "slug": "remove-gemini-logo",
-      "url": "/Nisulka-Tools/tools/remove-gemini-logo/",
-      "score": 78,
-      "grade": "B",
-      "title": "Gemini Watermark Remover — Free Online AI Image Watermark Eraser | Nisulka Tools",
-      "description": "Remove visible Google Gemini AI logos, star badges, and watermarks from your images online for free. Clean images client-side in your browser with zero quality loss.",
-      "wordCount": 501,
-      "h1Count": 1,
-      "h2Count": 6,
-      "images": 2,
-      "imagesWithoutAlt": 0,
-      "canonical": "https://apps.laxmannepal.com.np/Nisulka-Tools/tools/gemini-watermark-remover/",
-      "openGraph": {
-        "title": false,
-        "description": false
-      },
-      "passed": [
-        "Meta description length is good",
-        "Exactly one H1 found",
-        "H2 headings found",
-        "Canonical URL found",
-        "All images have alt attributes",
-        "Sufficient page content"
-      ],
-      "issues": [
-        "Title length should ideally be 30-65 characters (80)",
-        "Missing Open Graph title",
-        "Missing Open Graph description"
-      ],
-      "issueSummary": {
-        "total": 3,
-        "critical": 0,
-        "warning": 3
-      },
-      "rank": 6
-    },
-    {
       "name": "English Nepali Dictionary",
       "slug": "English-Nepali-Dictionary",
       "url": "/Nisulka-Tools/tools/English-Nepali-Dictionary/",
@@ -266,7 +228,7 @@
         "critical": 0,
         "warning": 3
       },
-      "rank": 7
+      "rank": 6
     },
     {
       "name": "Cv Generator",
@@ -304,7 +266,7 @@
         "critical": 0,
         "warning": 3
       },
-      "rank": 8
+      "rank": 7
     },
     {
       "name": "Weather",
@@ -342,7 +304,7 @@
         "critical": 0,
         "warning": 3
       },
-      "rank": 9
+      "rank": 8
     },
     {
       "name": "Youtube Title Generator",
@@ -380,7 +342,7 @@
         "critical": 0,
         "warning": 3
       },
-      "rank": 10
+      "rank": 9
     },
     {
       "name": "About Your System",
@@ -418,7 +380,7 @@
         "critical": 0,
         "warning": 4
       },
-      "rank": 11
+      "rank": 10
     },
     {
       "name": "Draw App",
@@ -456,7 +418,7 @@
         "critical": 0,
         "warning": 4
       },
-      "rank": 12
+      "rank": 11
     }
   ]
 }
