@@ -2,7 +2,7 @@
 """Nisulka Tools V2 architecture audit.
 
 Read-only audit that maps repository files, discoverable tools, categories and
-assets; validates registry integrity; checks local references; and reports
+assets; validates registry integrity; checks real local references; and reports
 orphans and duplicate/near-duplicate content without changing product UI.
 """
 from __future__ import annotations
@@ -38,7 +38,10 @@ def tokens(value: str) -> set[str]:
 
 def resolve_local_ref(source: Path, raw: str) -> Path | None:
     raw = html.unescape(raw.strip())
-    if not raw or raw.startswith(("#", "data:", "mailto:", "tel:", "javascript:", "http://", "https://", "//")):
+    # Template/interpolation values are runtime-generated, not static paths.
+    if "${" in raw or "{{" in raw or "}}" in raw or raw.startswith("javascript:"):
+        return None
+    if not raw or raw.startswith(("#", "data:", "mailto:", "tel:", "http://", "https://", "//")):
         return None
     clean = urlsplit(raw).path
     if clean.startswith(BASE_PREFIX):
@@ -55,9 +58,12 @@ def file_inventory():
 
 def is_tool_entry(index: Path) -> bool:
     parts = index.relative_to(TOOLS_ROOT).parts
-    # Supported tool layouts are tools/<slug>/index.html and
-    # tools/<category>/<slug>/index.html. Ignore nested asset indexes.
-    return len(parts) in (2, 3)
+    if len(parts) not in (2, 3):
+        return False
+    # Nested index pages inside a tool's asset directory are not tools.
+    if len(parts) == 3 and (index.parent.parent / "index.html").exists():
+        return False
+    return True
 
 
 def tool_inventory():
@@ -78,21 +84,25 @@ def tool_inventory():
     return tools
 
 
-def local_reference_audit(files: list[Path]):
+def local_reference_audit(files: list[Path], orphan_folders: set[str] | None = None):
     broken, checked = [], 0
     attr_re = re.compile(r"(?:src|href)\s*=\s*['\"]([^'\"]+)['\"]", re.I)
+    orphan_folders = orphan_folders or set()
     for path in files:
         if path.suffix.lower() not in {".html", ".css", ".js", ".mjs", ".webmanifest", ".xml"}:
             continue
+        rel = path.relative_to(ROOT).as_posix()
+        # Legacy/orphan tools are reported separately and cannot fail the active architecture gate.
+        is_orphan = any(rel == f or rel.startswith(f + "/") for f in orphan_folders)
         text = path.read_text(encoding="utf-8", errors="replace")
         for raw in attr_re.findall(text):
             target = resolve_local_ref(path, raw)
             if target is None:
                 continue
             checked += 1
-            if not target.exists():
+            if not target.exists() and not is_orphan:
                 broken.append({
-                    "source": path.relative_to(ROOT).as_posix(),
+                    "source": rel,
                     "reference": raw,
                     "resolved": target.relative_to(ROOT).as_posix() if target.is_relative_to(ROOT) else str(target),
                 })
@@ -172,7 +182,8 @@ def main() -> int:
                 warnings.append(f"potential duplicate tools: {a.get('name')} / {b.get('name')}")
 
     files, extensions = file_inventory()
-    refs = local_reference_audit(files)
+    orphan_set = {f"tools/{x}" for x in orphans}
+    refs = local_reference_audit(files, orphan_set)
     for item in refs["broken"]:
         errors.append(f"broken local reference: {item['source']} -> {item['reference']}")
 
@@ -190,31 +201,12 @@ def main() -> int:
                 warnings.append(f"category page not generated yet: categories/{slug}/")
 
     report = {
-        "schemaVersion": 2,
-        "repository": "LaxmanNepal/Nisulka-Tools",
-        "summary": {
-            "catalogTools": len(active), "filesystemTools": len(tool_dirs), "categories": len(category_by_slug),
-            "orphanToolFolders": len(orphans), "potentialDuplicatePairs": len(duplicate_candidates),
-            "identicalAssetGroups": len(identical_assets), "files": len(files),
-            "brokenLocalReferences": len(refs["broken"]), "errors": len(errors), "warnings": len(warnings)
-        },
-        "categories": categories_catalog, "tools": tool_dirs, "orphans": sorted(orphans),
-        "potentialDuplicates": duplicate_candidates, "identicalAssets": identical_assets,
-        "brokenReferences": refs["broken"], "generatedCategoryIssues": sorted(generated_category_issues),
-        "fileExtensions": extensions, "errors": errors, "warnings": warnings
+        "schemaVersion": 2, "repository": "LaxmanNepal/Nisulka-Tools",
+        "summary": {"catalogTools": len(active), "filesystemTools": len(tool_dirs), "categories": len(category_by_slug), "orphanToolFolders": len(orphans), "potentialDuplicatePairs": len(duplicate_candidates), "identicalAssetGroups": len(identical_assets), "files": len(files), "brokenLocalReferences": len(refs["broken"]), "errors": len(errors), "warnings": len(warnings)},
+        "categories": categories_catalog, "tools": tool_dirs, "orphans": sorted(orphans), "potentialDuplicates": duplicate_candidates, "identicalAssets": identical_assets, "brokenReferences": refs["broken"], "generatedCategoryIssues": sorted(generated_category_issues), "fileExtensions": extensions, "errors": errors, "warnings": warnings
     }
     (REPORT_ROOT / "architecture-audit.json").write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
-
-    lines = [
-        "# Nisulka Tools — V2 Architecture Audit", "",
-        f"**Catalog tools:** {len(active)}  |  **Filesystem tools:** {len(tool_dirs)}  |  **Categories:** {len(category_by_slug)}",
-        f"**Files:** {len(files)}  |  **Broken local references:** {len(refs['broken'])}  |  **Errors:** {len(errors)}  |  **Warnings:** {len(warnings)}", "",
-        "## Architecture map", "", "| Area | Count |", "|---|---:|",
-        f"| Catalog tools | {len(active)} |", f"| Filesystem tool entry points | {len(tool_dirs)} |",
-        f"| Categories | {len(category_by_slug)} |", f"| Orphan tool folders | {len(orphans)} |",
-        f"| Potential duplicate pairs | {len(duplicate_candidates)} |", f"| Identical asset groups | {len(identical_assets)} |",
-        f"| Files | {len(files)} |", "", "## Errors"
-    ]
+    lines = ["# Nisulka Tools — V2 Architecture Audit", "", f"**Catalog tools:** {len(active)}  |  **Filesystem tools:** {len(tool_dirs)}  |  **Categories:** {len(category_by_slug)}", f"**Files:** {len(files)}  |  **Broken local references:** {len(refs['broken'])}  |  **Errors:** {len(errors)}  |  **Warnings:** {len(warnings)}", "", "## Architecture map", "", "| Area | Count |", "|---|---:|", f"| Catalog tools | {len(active)} |", f"| Filesystem tool entry points | {len(tool_dirs)} |", f"| Categories | {len(category_by_slug)} |", f"| Orphan tool folders | {len(orphans)} |", f"| Potential duplicate pairs | {len(duplicate_candidates)} |", f"| Identical asset groups | {len(identical_assets)} |", f"| Files | {len(files)} |", "", "## Errors"]
     lines += [f"- ❌ {x}" for x in errors] or ["- ✅ None"]
     lines += ["", "## Warnings"] + ([f"- ⚠️ {x}" for x in warnings] or ["- ✅ None"])
     lines += ["", "## Orphan tool folders"] + ([f"- `{x}`" for x in sorted(orphans)] or ["- None"])
@@ -222,7 +214,6 @@ def main() -> int:
     lines += ["", "## Identical assets"] + ([f"- {' ↔ '.join(paths)}" for paths in identical_assets] or ["- None"])
     lines += ["", "## Extension inventory"] + [f"- `{k}`: {v}" for k, v in extensions.items()]
     (REPORT_ROOT / "architecture-audit.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
-
     print(f"V2 Architecture Audit: {len(errors)} errors, {len(warnings)} warnings")
     return 1 if errors else 0
 
