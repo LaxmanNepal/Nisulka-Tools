@@ -1,0 +1,56 @@
+name: Nisulka V2 Architecture Audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "tools/**"
+      - "assets/**"
+      - "data/**"
+      - "categories/**"
+      - "scripts/architecture-audit.py"
+      - "scripts/generate-category-pages.py"
+      - ".github/workflows/v2-architecture-audit.yml"
+  pull_request:
+    paths:
+      - "tools/**"
+      - "assets/**"
+      - "data/**"
+      - "categories/**"
+      - "scripts/architecture-audit.py"
+      - "scripts/generate-category-pages.py"
+      - ".github/workflows/v2-architecture-audit.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run V2 architecture audit
+        run: python3 scripts/architecture-audit.py
+
+      - name: Upload architecture reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nisulka-v2-architecture-audit
+          path: reports/architecture-audit.*
+          if-no-files-found: error
+
+      - name: Add audit summary
+        if: always()
+        run: |
+          if [ -f reports/architecture-audit.md ]; then
+            cat reports/architecture-audit.md >> "$GITHUB_STEP_SUMMARY"
+          fi
