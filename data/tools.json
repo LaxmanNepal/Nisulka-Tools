@@ -8,11 +8,7 @@
     "categorySlug": "ai-tools",
     "logo": "/Nisulka-Tools/tools/AI-Tools/Ai-Text-To-Audio/logo.jpg",
     "url": "/Nisulka-Tools/tools/AI-Tools/Ai-Text-To-Audio/",
-    "keywords": [
-      "text",
-      "audio",
-      "ai"
-    ],
+    "keywords": ["text", "audio", "ai"],
     "featured": false,
     "status": "active",
     "shortDescription": "Ai Text To Audio",
@@ -27,12 +23,7 @@
     "categorySlug": "ai-tools",
     "logo": "/Nisulka-Tools/tools/AI-Tools/image-background-remover/logo.jpg",
     "url": "/Nisulka-Tools/tools/AI-Tools/image-background-remover/",
-    "keywords": [
-      "image",
-      "background",
-      "remover",
-      "ai"
-    ],
+    "keywords": ["image", "background", "remover", "ai"],
     "featured": true,
     "status": "active",
     "shortDescription": "Image Background Remover",
@@ -47,12 +38,7 @@
     "categorySlug": "ai-tools",
     "logo": "/Nisulka-Tools/tools/AI-Tools/nepali-ai-voice-generator/logo.jpg",
     "url": "/Nisulka-Tools/tools/AI-Tools/nepali-ai-voice-generator/",
-    "keywords": [
-      "nepali",
-      "voice",
-      "generator",
-      "ai"
-    ],
+    "keywords": ["nepali", "voice", "generator", "ai"],
     "featured": true,
     "status": "active",
     "shortDescription": "Nepali Ai Voice Generator",
@@ -67,13 +53,7 @@
     "categorySlug": "ai-tools",
     "logo": "/Nisulka-Tools/tools/AI-Tools/slowed-and-reverb-generator/logo.jpg",
     "url": "/Nisulka-Tools/tools/AI-Tools/slowed-and-reverb-generator/",
-    "keywords": [
-      "slowed",
-      "and",
-      "reverb",
-      "generator",
-      "ai"
-    ],
+    "keywords": ["slowed", "and", "reverb", "generator", "ai"],
     "featured": false,
     "status": "active",
     "shortDescription": "Slowed And Reverb Generator",
@@ -88,16 +68,26 @@
     "categorySlug": "ai-tools",
     "logo": "/Nisulka-Tools/tools/AI-Tools/text-to-audio-generator/logo.jpg",
     "url": "/Nisulka-Tools/tools/AI-Tools/text-to-audio-generator/",
-    "keywords": [
-      "text",
-      "audio",
-      "generator",
-      "ai"
-    ],
+    "keywords": ["text", "audio", "generator", "ai"],
     "featured": false,
     "status": "active",
     "shortDescription": "Text To Audio Generator",
     "dateAdded": "2026-09-05"
+  },
+  {
+    "name": "Gemini Logo Remover",
+    "slug": "gemini-logo-remover",
+    "path": "AI-Tools/gemini-logo-remover",
+    "description": "Remove Gemini watermarks and logos from images directly in your browser.",
+    "category": "Ai Tools",
+    "categorySlug": "ai-tools",
+    "logo": "/Nisulka-Tools/tools/AI-Tools/gemini-logo-remover/logo.jpg",
+    "url": "/Nisulka-Tools/tools/AI-Tools/gemini-logo-remover/",
+    "keywords": ["gemini", "logo", "watermark", "remover", "image", "ai"],
+    "featured": false,
+    "status": "active",
+    "shortDescription": "Remove Gemini logos and watermarks in your browser.",
+    "dateAdded": "2026-09-11"
   },
   {
     "name": "YouTube Channel Analytics",
@@ -108,19 +98,7 @@
     "categorySlug": "analytics",
     "logo": "/Nisulka-Tools/tools/youtube-channel-analysis/logo.jpg",
     "url": "/Nisulka-Tools/tools/youtube-channel-analysis/",
-    "keywords": [
-      "youtube analytics",
-      "channel audit",
-      "engagement rate",
-      "monetization estimator",
-      "tag extractor",
-      "upload schedule",
-      "youtube insights",
-      "video analytics",
-      "youtube",
-      "channel",
-      "analytics"
-    ],
+    "keywords": ["youtube analytics", "channel audit", "engagement rate", "monetization estimator", "tag extractor", "upload schedule", "youtube insights", "video analytics", "youtube", "channel", "analytics"],
     "featured": true,
     "status": "active",
     "shortDescription": "Deep YouTube channel analytics, engagement breakdown, monetization estimator, tag extractor, and upload schedule analyzer.",
@@ -135,10 +113,7 @@
     "categorySlug": "audio-tools",
     "logo": "/Nisulka-Tools/tools/audio-tools/3d-audio-generator/logo.jpg",
     "url": "/Nisulka-Tools/tools/audio-tools/3d-audio-generator/",
-    "keywords": [
-      "audio",
-      "generator"
-    ],
+    "keywords": ["audio", "generator"],
     "featured": false,
     "status": "active",
     "shortDescription": "3D Audio Generator",
@@ -153,10 +128,7 @@
     "categorySlug": "image-tools",
     "logo": "/Nisulka-Tools/tools/image-tools/image-compressor/logo.jpg",
     "url": "/Nisulka-Tools/tools/image-tools/image-compressor/",
-    "keywords": [
-      "image",
-      "compressor"
-    ],
+    "keywords": ["image", "compressor"],
     "featured": true,
     "status": "active",
     "shortDescription": "Image Compressor",
@@ -171,12 +143,7 @@
     "categorySlug": "nepali-tools",
     "logo": "/Nisulka-Tools/tools/nepali-tools/gold-price-in-nepal/logo.jpg",
     "url": "/Nisulka-Tools/tools/nepali-tools/gold-price-in-nepal/",
-    "keywords": [
-      "gold",
-      "price",
-      "nepal",
-      "nepali"
-    ],
+    "keywords": ["gold", "price", "nepal", "nepali"],
     "featured": false,
     "status": "active",
     "shortDescription": "Gold Price In Nepal",
@@ -191,10 +158,7 @@
     "categorySlug": "nepali-tools",
     "logo": "/Nisulka-Tools/tools/nepali-tools/nepali-news/logo.jpg",
     "url": "/Nisulka-Tools/tools/nepali-tools/nepali-news/",
-    "keywords": [
-      "nepali",
-      "news"
-    ],
+    "keywords": ["nepali", "news"],
     "featured": false,
     "status": "active",
     "shortDescription": "Nepali News",
@@ -209,12 +173,7 @@
     "categorySlug": "developer-tools",
     "logo": "/Nisulka-Tools/tools/about-your-system/logo.jpg",
     "url": "/Nisulka-Tools/tools/about-your-system/",
-    "keywords": [
-      "about",
-      "your",
-      "system",
-      "developer"
-    ],
+    "keywords": ["about", "your", "system", "developer"],
     "featured": false,
     "status": "active",
     "shortDescription": "About Your System",
@@ -229,11 +188,7 @@
     "categorySlug": "finance-tools",
     "logo": "/Nisulka-Tools/tools/currency-converter/logo.jpg",
     "url": "/Nisulka-Tools/tools/currency-converter/",
-    "keywords": [
-      "currency",
-      "converter",
-      "finance"
-    ],
+    "keywords": ["currency", "converter", "finance"],
     "featured": true,
     "status": "active",
     "shortDescription": "Currency Converter",
@@ -248,10 +203,7 @@
     "categorySlug": "text-tools",
     "logo": "/Nisulka-Tools/tools/cv-generator/logo.jpg",
     "url": "/Nisulka-Tools/tools/cv-generator/",
-    "keywords": [
-      "generator",
-      "text"
-    ],
+    "keywords": ["generator", "text"],
     "featured": false,
     "status": "active",
     "shortDescription": "Cv Generator",
@@ -266,11 +218,7 @@
     "categorySlug": "image-tools",
     "logo": "/Nisulka-Tools/tools/draw-app/logo.jpg",
     "url": "/Nisulka-Tools/tools/draw-app/",
-    "keywords": [
-      "draw",
-      "app",
-      "image"
-    ],
+    "keywords": ["draw", "app", "image"],
     "featured": false,
     "status": "active",
     "shortDescription": "Draw App",
@@ -285,11 +233,7 @@
     "categorySlug": "nepali-tools",
     "logo": "/Nisulka-Tools/tools/English-Nepali-Dictionary/logo.jpg",
     "url": "/Nisulka-Tools/tools/English-Nepali-Dictionary/",
-    "keywords": [
-      "english",
-      "nepali",
-      "dictionary"
-    ],
+    "keywords": ["english", "nepali", "dictionary"],
     "featured": false,
     "status": "active",
     "shortDescription": "English Nepali Dictionary",
@@ -304,12 +248,7 @@
     "categorySlug": "social-media-tools",
     "logo": "/Nisulka-Tools/tools/instagram-image-downloader/logo.jpg",
     "url": "/Nisulka-Tools/tools/instagram-image-downloader/",
-    "keywords": [
-      "instagram",
-      "image",
-      "downloader",
-      "social media"
-    ],
+    "keywords": ["instagram", "image", "downloader", "social media"],
     "featured": false,
     "status": "active",
     "shortDescription": "Instagram Image Downloader",
@@ -324,10 +263,7 @@
     "categorySlug": "other-tools",
     "logo": "/Nisulka-Tools/tools/weather/logo.jpg",
     "url": "/Nisulka-Tools/tools/weather/",
-    "keywords": [
-      "weather",
-      "other"
-    ],
+    "keywords": ["weather", "other"],
     "featured": false,
     "status": "active",
     "shortDescription": "Weather",
@@ -342,11 +278,7 @@
     "categorySlug": "youtube-tools",
     "logo": "/Nisulka-Tools/tools/youtube-thumbnail-downloader/logo.jpg",
     "url": "/Nisulka-Tools/tools/youtube-thumbnail-downloader/",
-    "keywords": [
-      "youtube",
-      "thumbnail",
-      "downloader"
-    ],
+    "keywords": ["youtube", "thumbnail", "downloader"],
     "featured": false,
     "status": "active",
     "shortDescription": "Youtube Thumbnail Downloader",
@@ -361,12 +293,7 @@
     "categorySlug": "other-tools",
     "logo": "/Nisulka-Tools/tools/youtube-title-generator/logo.jpg",
     "url": "/Nisulka-Tools/tools/youtube-title-generator/",
-    "keywords": [
-      "youtube",
-      "title",
-      "generator",
-      "other"
-    ],
+    "keywords": ["youtube", "title", "generator", "other"],
     "featured": false,
     "status": "active",
     "shortDescription": "Youtube Title Generator",
@@ -381,17 +308,7 @@
     "categorySlug": "text-tools",
     "logo": "/Nisulka-Tools/tools/text-to-handwriting/logo.jpg",
     "url": "/Nisulka-Tools/tools/text-to-handwriting/",
-    "keywords": [
-      "text to handwriting",
-      "handwriting generator",
-      "handwritten text",
-      "handwriting converter",
-      "handwritten notes",
-      "text to handwritten image",
-      "text",
-      "handwriting",
-      "converter"
-    ],
+    "keywords": ["text to handwriting", "handwriting generator", "handwritten text", "handwriting converter", "handwritten notes", "text to handwritten image", "text", "handwriting", "converter"],
     "featured": true,
     "status": "active",
     "shortDescription": "Convert typed text into a handwritten-style image online for free. Customize handwriting, ink color, paper style, spacing and alignment.",
