@@ -29,6 +29,7 @@ jobs:
           npx --yes playwright@1.55.0 install --with-deps chromium
 
       - name: Start local static server
+        working-directory: ..
         run: |
           python3 -m http.server 4173 --bind 127.0.0.1 --directory . > /tmp/nisulka-server.log 2>&1 &
           echo $! > /tmp/nisulka-server.pid
